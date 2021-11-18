@@ -1,26 +1,24 @@
 import wikipediaapi
 import sys
 import requests
+from bs4 import BeautifulSoup
 
-S = requests.Session()
+
+
+class position:
+    def __init__(self, lat, long):
+        self.lat = lat
+        self.long = long
+
+
 
 def get_position(URL):
-    S = requests.Session()
+    req = requests.get("https://en.wikipedia.org/wiki/Masada").text
+    soup = BeautifulSoup(req, "html.parser")
+    latitude = soup.find("span", {"class": "latitude"})
+    longitude = soup.find("span", {"class": "longitude"})
+    return position(latitude.text, longitude.text)
 
-    PARAMS = {
-        "action": "query",
-        "format": "json",
-        "titles": "Wikimedia Foundation",
-        "prop": "coordinates"
-    }
-    R = S.get(url="https://en.wikipedia.org/wiki/Israel", params=PARAMS)
-    DATA = R.json()
-    PAGES = DATA['query']['pages']
-
-    for k, v in PAGES.items():
-        print("Latitute: " + str(v['coordinates'][0]['lat']))
-        print("Longitude: " + str(v['coordinates'][0]['lon']))
-    return 1999999
 
 
 def get_language(language):
@@ -49,7 +47,7 @@ def crawl(db_name, first_page, language):
     print(wiki_page.langlinks)
     print(wiki_page.text)
     print(wiki_page.fullurl)
-    print(get_position(wiki_page.fullurl))
+    print(get_position(wiki_page.fullurl).long)
 
 
     db_file.close()
