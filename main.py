@@ -63,24 +63,41 @@ def print_links(page):
         print("%s: %s" % (title, links[title]))
 
 
+def check_and_insert_wiki_page(file, wiki_page: wikipediaapi.WikipediaPage, language: str):
+    if not wiki_page.exists():
+        print("not exist")
+        return
+    if wiki_page.fullurl not in crawled_urls:
+        print("crawling in: " + wiki_page.fullurl)
+        poi = get_poi_from_page(wiki_page)
+        if poi['position']:
+            json.dump(poi, file)
+            print("this page entered to db: " + wiki_page.fullurl)
+    else:
+        print("not crawling in: " + wiki_page.fullurl)
+
+
 def crawl(file, wiki_page: wikipediaapi.WikipediaPage, language: str):
-    poi = get_poi_from_page(wiki_page)
-    if poi['position']:
-        json.dump(poi, file)
-    # print_links(wiki_page)
+    check_and_insert_wiki_page(file=file, wiki_page=wiki_page, language=language)
     links = wiki_page.links
     for title in sorted(links.keys()):
         wiki_page_l = links[title]  # the wikipedia page from the link
-        if not wiki_page_l.exists():
-            continue
-        if wiki_page_l.fullurl not in crawled_urls and get_position(wiki_page_l.fullurl):
-            print("not crawled")
-            print(links[title].fullurl)
-            crawled_urls[links[title].fullurl] = '1'
-            crawl(file, links[title], language)
-        else:
-            print("crawled or no position!!!!")
-            print(links[title].fullurl)
+        check_and_insert_wiki_page(file=file, wiki_page=wiki_page_l, language=language)
+
+    for title in sorted(links.keys()):
+        wiki_page_l = links[title]  # the wikipedia page from the link
+        crawl(file=file, wiki_page=wiki_page_l, language=language)
+
+        # if not wiki_page_l.exists():
+        #     continue
+        # if wiki_page_l.fullurl not in crawled_urls and get_position(wiki_page_l.fullurl):
+        #     print("not crawled")
+        #     print(links[title].fullurl)
+        #     crawled_urls[links[title].fullurl] = '1'
+        #     crawl(file, links[title], language)
+        # else:
+        #     print("crawled or no position!!!!")
+        #     print(links[title].fullurl)
 
 
 def main():
