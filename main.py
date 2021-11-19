@@ -1,24 +1,23 @@
+import json
+import re
+
 import wikipediaapi
 import sys
 import requests
 from bs4 import BeautifulSoup
 
 
-
-class position:
-    def __init__(self, lat, long):
-        self.lat = lat
-        self.long = long
-
-
-
 def get_position(URL):
-    req = requests.get("https://en.wikipedia.org/wiki/Masada").text
+    req = requests.get(URL).text
     soup = BeautifulSoup(req, "html.parser")
     latitude = soup.find("span", {"class": "latitude"})
     longitude = soup.find("span", {"class": "longitude"})
-    return position(latitude.text, longitude.text)
-
+    position = {}
+    if latitude is None or longitude is None:  # if no position
+        return position
+    position['latitude'] = latitude.text
+    position['longitude'] = longitude.text
+    return position
 
 
 def get_language(language):
@@ -30,33 +29,62 @@ def get_language(language):
 def search_page(name_to_search, language):
     wiki_wiki = wikipediaapi.Wikipedia(language)
     page = wiki_wiki.page(name_to_search)
+
     page_exist = page.exists()
     if page_exist:
         return page
     else:
-        raise ValueError('page ' + name_to_search + 'not found')
+        raise ValueError('page ' + name_to_search + ' not found')
 
 
-def crawl(db_name, first_page, language):
-    db_file = open(db_name, 'a')
-    wiki_page = search_page(first_page, language)
-
-    print(wiki_page.title)
-    print(wiki_page.summary)
-    print(wiki_page.categories)
-    print(wiki_page.langlinks)
-    print(wiki_page.text)
-    print(wiki_page.fullurl)
-    print(get_position(wiki_page.fullurl).long)
+def search_page_by_url(url, language):
+    name_to_search = re.sub("(https:.+\.wikipedia\.org\/wiki\/)", "", url)
+    return search_page(name_to_search, language)
 
 
-    db_file.close()
+def get_poi_from_page(wiki_page: wikipediaapi.WikipediaPage):
+    poi = {}
+    poi['title'] = wiki_page.title
+    poi['summary'] = wiki_page.summary
+    poi['categories'] = []
+    for category in wiki_page.categories:
+        poi['categories'].append(category)
+    poi['URL'] = wiki_page.fullurl
+    poi['language'] = wiki_page.language
+    poi['position'] = get_position(wiki_page.fullurl)
+    return poi
+
+
+def print_links(page):
+    links = page.links
+    for title in sorted(links.keys()):
+        print("%s: %s" % (title, links[title]))
+
+
+def crawl(file, wiki_page : wikipediaapi.WikipediaPage, language: str):
+    poi = get_poi_from_page(wiki_page)
+    if poi['position']:
+        json.dump(poi, file)
+    # print_links(wiki_page)
+    links = wiki_page.links
+    for title in sorted(links.keys()):
+        print(links[title].fullurl)
+        crawl(file, links[title], language)
+
 
 
 def main():
-    crawl(db_name="POI'S_DB", first_page='masada', language='en')
-    # get_position('https://en.wikipedia.org/wiki/Masada')
+    wiki_page = search_page('masada', 'en')
+    file = open("db_file.txt", 'a')
+    crawl(file=file, wiki_page=wiki_page, language='en')
+    file.close()
+    # pos = get_position('https://en.wikipedia.org/wiki/Book')
+    # if pos:
+    #     print("possssssss")
+
     # page = search_page('masada', get_language('english'))
+    # print(page.summary)
+    # page = search_page_by_url("https://en.wikipedia.org/wiki/Masada", 'en')
     # print(page.summary)
 
 
