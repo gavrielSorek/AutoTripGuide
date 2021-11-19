@@ -6,6 +6,7 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 
+crawled_urls = {}
 
 def get_position(URL):
     req = requests.get(URL).text
@@ -34,7 +35,7 @@ def search_page(name_to_search, language):
     if page_exist:
         return page
     else:
-        raise ValueError('page ' + name_to_search + ' not found')
+        return None
 
 
 def search_page_by_url(url, language):
@@ -68,13 +69,22 @@ def crawl(file, wiki_page : wikipediaapi.WikipediaPage, language: str):
     # print_links(wiki_page)
     links = wiki_page.links
     for title in sorted(links.keys()):
-        print(links[title].fullurl)
-        crawl(file, links[title], language)
-
+        if links[title].fullurl not in crawled_urls and get_position(links[title].fullurl):
+            print("not crawled")
+            print(links[title].fullurl)
+            crawled_urls[links[title].fullurl] = '1'
+            crawl(file, links[title], language)
+        else:
+            print("crawled or no position!!!!")
+            print(links[title].fullurl)
 
 
 def main():
-    wiki_page = search_page('masada', 'en')
+    # 'Alcsút Palace'
+    wiki_page = search_page('Achilleion (Corfu)', 'en')
+    # wiki_page = search_page('Alcsút Palace', 'en')
+    if wiki_page is None:
+        raise "page not found"
     file = open("db_file.txt", 'a')
     crawl(file=file, wiki_page=wiki_page, language='en')
     file.close()
