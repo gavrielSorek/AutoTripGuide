@@ -71,7 +71,9 @@ def crawl(file, wiki_page: wikipediaapi.WikipediaPage, language: str):
     links = wiki_page.links
     for title in sorted(links.keys()):
         wiki_page_l = links[title]  # the wikipedia page from the link
-        if wiki_page_l.fullurl not in crawled_urls and get_position(wiki_page_l.fullurl) and wiki_page_l.exists():
+        if not wiki_page_l.exists():
+            continue
+        if wiki_page_l.fullurl not in crawled_urls and get_position(wiki_page_l.fullurl):
             print("not crawled")
             print(links[title].fullurl)
             crawled_urls[links[title].fullurl] = '1'
@@ -83,10 +85,8 @@ def crawl(file, wiki_page: wikipediaapi.WikipediaPage, language: str):
 
 def main():
     # 'Alcsút Palace'
-    wiki_page = search_page('Achilleion (Corfu)', 'en')
+    wiki_page = search_page('Masada', 'en')
     # wiki_page = search_page('Alcsút Palace', 'en')
-    if wiki_page is None:
-        raise "page not found"
     file = open("db_file.txt", 'a')
     crawl(file=file, wiki_page=wiki_page, language='en')
     file.close()
