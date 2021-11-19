@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 
 crawled_urls = {}
 
+
 def get_position(URL):
     req = requests.get(URL).text
     soup = BeautifulSoup(req, "html.parser")
@@ -62,14 +63,15 @@ def print_links(page):
         print("%s: %s" % (title, links[title]))
 
 
-def crawl(file, wiki_page : wikipediaapi.WikipediaPage, language: str):
+def crawl(file, wiki_page: wikipediaapi.WikipediaPage, language: str):
     poi = get_poi_from_page(wiki_page)
     if poi['position']:
         json.dump(poi, file)
     # print_links(wiki_page)
     links = wiki_page.links
     for title in sorted(links.keys()):
-        if links[title].fullurl not in crawled_urls and get_position(links[title].fullurl):
+        wiki_page_l = links[title]  # the wikipedia page from the link
+        if wiki_page_l.fullurl not in crawled_urls and get_position(wiki_page_l.fullurl) and wiki_page_l.exists():
             print("not crawled")
             print(links[title].fullurl)
             crawled_urls[links[title].fullurl] = '1'
