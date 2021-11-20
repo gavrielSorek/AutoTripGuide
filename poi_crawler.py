@@ -76,9 +76,22 @@ def check_and_insert_wiki_page(wiki_page: wikipediaapi.WikipediaPage, languages)
         if poi['position']:
             pois.append(poi)
             crawled_urls[wiki_page.fullurl] = '1'
+            add_page_lang(wiki_page, languages)
             print("this page entered to db: " + wiki_page.fullurl)
     else:
         print("not crawling in: " + wiki_page.fullurl)
+
+
+def add_page_lang(page, languages):
+    lang_links = page.langlinks
+    for l in languages:
+        if l in lang_links:  # if wanted language in the langlinks
+            l_wiki_page = lang_links[l]
+            if l_wiki_page.fullurl not in crawled_urls:
+                poi = get_poi_from_page(l_wiki_page)
+                pois.append(poi)
+                crawled_urls[l_wiki_page.fullurl] = '1'
+                print("this page entered to db: " + l_wiki_page.fullurl)
 
 
 def crawl(wiki_page: wikipediaapi.WikipediaPage, languages):
@@ -113,7 +126,7 @@ def stop_crawler():
 def start_logic():
     wiki_page = search_page('Masada', 'en')
     tread = crawl_with_thread(wiki_page=wiki_page, languages=['en', 'he'])
-    time.sleep(10)
+    time.sleep(100)
     stop_crawler()
     tread.join()
     pois_file = open("db_file.json", 'w')
