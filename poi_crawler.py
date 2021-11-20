@@ -6,6 +6,7 @@ import threading
 import sys
 import requests
 from bs4 import BeautifulSoup
+
 crawl = True
 crawled_urls = {}
 pois = []
@@ -65,7 +66,7 @@ def print_links(page):
         print("%s: %s" % (title, links[title]))
 
 
-def check_and_insert_wiki_page(wiki_page: wikipediaapi.WikipediaPage):
+def check_and_insert_wiki_page(wiki_page: wikipediaapi.WikipediaPage, languages):
     if not wiki_page.exists():
         print("not exist")
         return
@@ -80,26 +81,26 @@ def check_and_insert_wiki_page(wiki_page: wikipediaapi.WikipediaPage):
         print("not crawling in: " + wiki_page.fullurl)
 
 
-def crawl(wiki_page: wikipediaapi.WikipediaPage, language: str):
-    check_and_insert_wiki_page(wiki_page=wiki_page)
+def crawl(wiki_page: wikipediaapi.WikipediaPage, languages):
+    check_and_insert_wiki_page(wiki_page=wiki_page, languages=languages)
     links = wiki_page.links
     while crawl:
         for title in sorted(links.keys()):
             if not crawl:
                 break
             wiki_page_l = links[title]  # the wikipedia page from the link
-            check_and_insert_wiki_page(wiki_page=wiki_page_l)
+            check_and_insert_wiki_page(wiki_page=wiki_page_l, languages=languages)
 
         for title in sorted(links.keys()):
             if not crawl:
                 break
             wiki_page_l = links[title]  # the wikipedia page from the link
-            crawl(wiki_page=wiki_page_l, language=language)
+            crawl(wiki_page=wiki_page_l, language=languages)
 
 
-def crawl_with_thread(wiki_page: wikipediaapi.WikipediaPage, language: str):
+def crawl_with_thread(wiki_page: wikipediaapi.WikipediaPage, languages):
     wiki_page = search_page('Masada', 'en')
-    crawler_thread = threading.Thread(target=crawl, args=(wiki_page, language,))
+    crawler_thread = threading.Thread(target=crawl, args=(wiki_page, languages,))
     crawler_thread.start()
     return crawler_thread
 
@@ -109,10 +110,9 @@ def stop_crawler():
     crawl = False
 
 
-def main():
-    # 'Alcsút Palace'
+def start_logic():
     wiki_page = search_page('Masada', 'en')
-    tread = crawl_with_thread(wiki_page=wiki_page, language='en')
+    tread = crawl_with_thread(wiki_page=wiki_page, languages=['en', 'he'])
     time.sleep(10)
     stop_crawler()
     tread.join()
@@ -122,5 +122,10 @@ def main():
     urls_file = open("urls_file.json", 'w')
     json.dump(crawled_urls, urls_file)
     urls_file.close()
+
+
+def main():
+    start_logic()
+
 
 main()

@@ -11,11 +11,11 @@ def main():
 
     # returns JSON object as
     # a dictionary
-    data = json.load(f)
+    pois = json.load(f)
 
     # Iterating through the json
     # list
-    for i in data:
+    for i in pois:
         print(i)
 
     # Closing file
