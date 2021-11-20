@@ -1,12 +1,14 @@
 import json
 import re
-
+import time
 import wikipediaapi
+import threading
 import sys
 import requests
 from bs4 import BeautifulSoup
-
+crawl = True
 crawled_urls = {}
+pois = []
 
 
 def get_position(URL):
@@ -63,7 +65,7 @@ def print_links(page):
         print("%s: %s" % (title, links[title]))
 
 
-def check_and_insert_wiki_page(file, wiki_page: wikipediaapi.WikipediaPage, language: str):
+def check_and_insert_wiki_page(wiki_page: wikipediaapi.WikipediaPage):
     if not wiki_page.exists():
         print("not exist")
         return
@@ -71,50 +73,54 @@ def check_and_insert_wiki_page(file, wiki_page: wikipediaapi.WikipediaPage, lang
         print("crawling in: " + wiki_page.fullurl)
         poi = get_poi_from_page(wiki_page)
         if poi['position']:
-            json.dump(poi, file)
+            pois.append(poi)
+            crawled_urls[wiki_page.fullurl] = '1'
             print("this page entered to db: " + wiki_page.fullurl)
     else:
         print("not crawling in: " + wiki_page.fullurl)
 
 
-def crawl(file, wiki_page: wikipediaapi.WikipediaPage, language: str):
-    check_and_insert_wiki_page(file=file, wiki_page=wiki_page, language=language)
+def crawl(wiki_page: wikipediaapi.WikipediaPage, language: str):
+    check_and_insert_wiki_page(wiki_page=wiki_page)
     links = wiki_page.links
-    for title in sorted(links.keys()):
-        wiki_page_l = links[title]  # the wikipedia page from the link
-        check_and_insert_wiki_page(file=file, wiki_page=wiki_page_l, language=language)
+    while crawl:
+        for title in sorted(links.keys()):
+            if not crawl:
+                break
+            wiki_page_l = links[title]  # the wikipedia page from the link
+            check_and_insert_wiki_page(wiki_page=wiki_page_l)
 
-    for title in sorted(links.keys()):
-        wiki_page_l = links[title]  # the wikipedia page from the link
-        crawl(file=file, wiki_page=wiki_page_l, language=language)
+        for title in sorted(links.keys()):
+            if not crawl:
+                break
+            wiki_page_l = links[title]  # the wikipedia page from the link
+            crawl(wiki_page=wiki_page_l, language=language)
 
-        # if not wiki_page_l.exists():
-        #     continue
-        # if wiki_page_l.fullurl not in crawled_urls and get_position(wiki_page_l.fullurl):
-        #     print("not crawled")
-        #     print(links[title].fullurl)
-        #     crawled_urls[links[title].fullurl] = '1'
-        #     crawl(file, links[title], language)
-        # else:
-        #     print("crawled or no position!!!!")
-        #     print(links[title].fullurl)
+
+def crawl_with_thread(wiki_page: wikipediaapi.WikipediaPage, language: str):
+    wiki_page = search_page('Masada', 'en')
+    crawler_thread = threading.Thread(target=crawl, args=(wiki_page, language,))
+    crawler_thread.start()
+    return crawler_thread
+
+
+def stop_crawler():
+    global crawl
+    crawl = False
 
 
 def main():
     # 'Alcsút Palace'
     wiki_page = search_page('Masada', 'en')
-    # wiki_page = search_page('Alcsút Palace', 'en')
-    file = open("db_file.txt", 'a')
-    crawl(file=file, wiki_page=wiki_page, language='en')
-    file.close()
-    # pos = get_position('https://en.wikipedia.org/wiki/Book')
-    # if pos:
-    #     print("possssssss")
-
-    # page = search_page('masada', get_language('english'))
-    # print(page.summary)
-    # page = search_page_by_url("https://en.wikipedia.org/wiki/Masada", 'en')
-    # print(page.summary)
-
+    tread = crawl_with_thread(wiki_page=wiki_page, language='en')
+    time.sleep(10)
+    stop_crawler()
+    tread.join()
+    pois_file = open("db_file.json", 'w')
+    json.dump(pois, pois_file)
+    pois_file.close()
+    urls_file = open("urls_file.json", 'w')
+    json.dump(crawled_urls, urls_file)
+    urls_file.close()
 
 main()
