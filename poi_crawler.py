@@ -12,6 +12,7 @@ crawled_urls = {}
 pois = []
 
 
+# return poi position, or empty position if poi doesn't have any
 def get_position(URL):
     req = requests.get(URL).text
     soup = BeautifulSoup(req, "html.parser")
@@ -25,6 +26,7 @@ def get_position(URL):
     return position
 
 
+# languages dictionary
 def get_language(language):
     languages = {"english": "en", "hebrew": "he"}
     return languages[language]
@@ -46,6 +48,7 @@ def search_page_by_url(url, language):
     return search_page(name_to_search, language)
 
 
+# return poi from given page
 def get_poi_from_page(wiki_page: wikipediaapi.WikipediaPage):
     poi = {'title': wiki_page.title, 'summary': wiki_page.summary, 'categories': [], 'URL': wiki_page.fullurl,
            'language': wiki_page.language}
@@ -53,12 +56,6 @@ def get_poi_from_page(wiki_page: wikipediaapi.WikipediaPage):
         poi['categories'].append(category)
     poi['position'] = get_position(wiki_page.fullurl)
     return poi
-
-
-def print_links(page):
-    links = page.links
-    for title in sorted(links.keys()):
-        print("%s: %s" % (title, links[title]))
 
 
 # return true if wiki_page is relevant
@@ -91,6 +88,7 @@ def check_and_insert_wiki_page(wiki_page: wikipediaapi.WikipediaPage, languages)
         print("not crawling in: " + wiki_page.fullurl)
 
 
+# add same pages in other languages
 def add_page_lang(page, languages):
     # lang_links = page.langlinks very expensive
     lang_links = page.langlinks_customize(languages=languages)
@@ -133,7 +131,7 @@ def stop_crawler():
 
 def start_logic():
     wiki_page = search_page('Masada', 'en')
-    #wiki_page = search_page('Kiryat Ata', 'en')
+    # wiki_page = search_page('Kiryat Ata', 'en')
     tread = crawl_with_thread(wiki_page=wiki_page, languages=['en', 'he'])
     time.sleep(100)
     stop_crawler()
