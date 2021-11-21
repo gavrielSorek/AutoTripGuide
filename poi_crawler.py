@@ -34,7 +34,6 @@ def get_language(language):
 def search_page(name_to_search, language):
     wiki_wiki = wikipediaapi.Wikipedia(language)
     page = wiki_wiki.page(name_to_search)
-
     page_exist = page.exists()
     if page_exist:
         return page
@@ -43,19 +42,15 @@ def search_page(name_to_search, language):
 
 
 def search_page_by_url(url, language):
-    name_to_search = re.sub("(https:.+\.wikipedia\.org\/wiki\/)", "", url)
+    name_to_search = re.sub("(https:.+\.wikipedia\.org/wiki/)", "", url)
     return search_page(name_to_search, language)
 
 
 def get_poi_from_page(wiki_page: wikipediaapi.WikipediaPage):
-    poi = {}
-    poi['title'] = wiki_page.title
-    poi['summary'] = wiki_page.summary
-    poi['categories'] = []
+    poi = {'title': wiki_page.title, 'summary': wiki_page.summary, 'categories': [], 'URL': wiki_page.fullurl,
+           'language': wiki_page.language}
     for category in wiki_page.categories:
         poi['categories'].append(category)
-    poi['URL'] = wiki_page.fullurl
-    poi['language'] = wiki_page.language
     poi['position'] = get_position(wiki_page.fullurl)
     return poi
 
@@ -70,6 +65,7 @@ def check_and_insert_wiki_page(wiki_page: wikipediaapi.WikipediaPage, languages)
     if not wiki_page.exists():
         print("not exist")
         return
+    # if new poi
     if wiki_page.fullurl not in crawled_urls:
         print("crawling in: " + wiki_page.fullurl)
         poi = get_poi_from_page(wiki_page)
@@ -83,10 +79,10 @@ def check_and_insert_wiki_page(wiki_page: wikipediaapi.WikipediaPage, languages)
 
 
 def add_page_lang(page, languages):
-    lang_links = page.langlinks
-    for l in languages:
-        if l in lang_links:  # if wanted language in the langlinks
-            l_wiki_page = lang_links[l]
+    lang_links = page.langlinks_customize(languages=languages)
+    for language in languages:
+        if language in lang_links:  # if wanted language is in the langlinks map
+            l_wiki_page = lang_links[language]
             if l_wiki_page.fullurl not in crawled_urls:
                 poi = get_poi_from_page(l_wiki_page)
                 pois.append(poi)
@@ -112,7 +108,6 @@ def crawl(wiki_page: wikipediaapi.WikipediaPage, languages):
 
 
 def crawl_with_thread(wiki_page: wikipediaapi.WikipediaPage, languages):
-    wiki_page = search_page('Masada', 'en')
     crawler_thread = threading.Thread(target=crawl, args=(wiki_page, languages,))
     crawler_thread.start()
     return crawler_thread

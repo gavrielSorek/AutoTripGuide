@@ -383,6 +383,7 @@ class Wikipedia(object):
     def langlinks_customize(
             self,
             page: 'WikipediaPage',
+            languages,
             **kwargs
     ) -> PagesDict:
         """
@@ -421,7 +422,7 @@ class Wikipedia(object):
                 page._attributes['pageid'] = -1
                 return {}
             else:
-                return self._build_langlinks_customize(v, page)
+                return self._build_langlinks_customize(v, page, languages)
         return {}
 
     def links(
@@ -715,23 +716,27 @@ class Wikipedia(object):
     def _build_langlinks_customize(
             self,
             extract,
-            page
+            page,
+            languages
     ) -> PagesDict:
         page._langlinks = {}
 
         self._common_attributes(extract, page)
+        lang_links = extract.get('langlinks', [])
+        lang_pages = {}
 
-        for langlink in extract.get('langlinks', []):
-            p = WikipediaPage(
-                wiki=self,
-                title=langlink['*'],
-                ns=Namespace.MAIN,
-                language=langlink['lang'],
-                url=langlink['url']
-            )
-            page._langlinks[p.language] = p
-
-        return page._langlinks
+        for langlink in lang_links:
+            if langlink['lang'] in languages:
+                p = WikipediaPage(
+                    wiki=self,
+                    title=langlink['*'],
+                    ns=Namespace.MAIN,
+                    language=langlink['lang'],
+                    url=langlink['url']
+                )
+                #page._langlinks[p.language] = p
+                lang_pages[p.language] = p
+        return lang_pages
 
     def _build_links(
             self,
@@ -1125,8 +1130,8 @@ class WikipediaPage(object):
         if not self._called['langlinks']:
             self._fetch('langlinks')
         return self._langlinks
-    @property
-    def langlinks_customize(self) -> PagesDict:
+
+    def langlinks_customize(self, languages) -> PagesDict:
         """
         Returns all language links to pages in other languages.
 
@@ -1137,9 +1142,8 @@ class WikipediaPage(object):
 
         :return: :class:`PagesDict`
         """
-        if not self._called['langlinks_customize']:
-            self._fetch('langlinks_customize')
-        return self._langlinks
+        return  getattr(self.wiki, 'langlinks_customize')(self, languages)
+
     @property
     def links(self) -> PagesDict:
         """
@@ -1208,6 +1212,7 @@ class WikipediaPage(object):
         getattr(self.wiki, call)(self)
         self._called[call] = True
         return self
+
 
     def __repr__(self):
         if any(self._called.values()):

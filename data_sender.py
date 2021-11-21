@@ -5,7 +5,7 @@
 import json
 
 
-def main():
+def send():
     # Opening JSON file
     f = open('db_file.json')
 
@@ -15,11 +15,16 @@ def main():
 
     # Iterating through the json
     # list
-    for i in pois:
-        print(i)
+    # for i in pois:
+    #     print(i)
+    poi = pois[0]
+    print(poi)
+    # print(poi['categories'])
+    for category in poi['categories']:
+        print(category)
 
     # Closing file
     f.close()
 
 
-main()
+send()
