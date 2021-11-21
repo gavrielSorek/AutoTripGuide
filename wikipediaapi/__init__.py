@@ -379,6 +379,50 @@ class Wikipedia(object):
             else:
                 return self._build_langlinks(v, page)
         return {}
+    #gavriels code
+    def langlinks_customize(
+            self,
+            page: 'WikipediaPage',
+            **kwargs
+    ) -> PagesDict:
+        """
+        Returns langlinks of the page with respect to parameters
+
+        API Calls for parameters:
+
+        - https://www.mediawiki.org/w/api.php?action=help&modules=query%2Blanglinks
+        - https://www.mediawiki.org/wiki/API:Langlinks
+
+        :param page: :class:`WikipediaPage`
+        :param kwargs: parameters used in API call
+        :return: links to pages in other languages
+
+        """
+
+        params = {
+            'action': 'query',
+            'prop': 'langlinks',
+            'titles': page.title,
+            'lllimit': 500,
+            'llprop': 'url',
+        }
+
+        used_params = kwargs
+        used_params.update(params)
+
+        raw = self._query(
+            page,
+            used_params
+        )
+        self._common_attributes(raw['query'], page)
+        pages = raw['query']['pages']
+        for k, v in pages.items():
+            if k == '-1':
+                page._attributes['pageid'] = -1
+                return {}
+            else:
+                return self._build_langlinks_customize(v, page)
+        return {}
 
     def links(
             self,
@@ -668,7 +712,7 @@ class Wikipedia(object):
 
         return page
 
-    def _build_langlinks(
+    def _build_langlinks_customize(
             self,
             extract,
             page
@@ -925,6 +969,7 @@ class WikipediaPage(object):
         self._section = []  # type: List[WikipediaPageSection]
         self._section_mapping = {}  # type: Dict[str, WikipediaPageSection]
         self._langlinks = {}  # type: PagesDict
+        self._langlinks_customize = {}  # type: PagesDict
         self._links = {}  # type: PagesDict
         self._backlinks = {}  # type: PagesDict
         self._categories = {}  # type: PagesDict
@@ -934,6 +979,7 @@ class WikipediaPage(object):
             'extracts': False,
             'info': False,
             'langlinks': False,
+            'langlinks_customize': False,
             'links': False,
             'backlinks': False,
             'categories': False,
@@ -1079,7 +1125,21 @@ class WikipediaPage(object):
         if not self._called['langlinks']:
             self._fetch('langlinks')
         return self._langlinks
+    @property
+    def langlinks_customize(self) -> PagesDict:
+        """
+        Returns all language links to pages in other languages.
 
+        This is wrapper for:
+
+        * https://www.mediawiki.org/w/api.php?action=help&modules=query%2Blanglinks
+        * https://www.mediawiki.org/wiki/API:Langlinks
+
+        :return: :class:`PagesDict`
+        """
+        if not self._called['langlinks_customize']:
+            self._fetch('langlinks_customize')
+        return self._langlinks
     @property
     def links(self) -> PagesDict:
         """
