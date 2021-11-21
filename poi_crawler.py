@@ -79,15 +79,15 @@ def check_and_insert_wiki_page(wiki_page: wikipediaapi.WikipediaPage, languages)
 
 
 def add_page_lang(page, languages):
+    # lang_links = page.langlinks very expensive
     lang_links = page.langlinks_customize(languages=languages)
-    for language in languages:
-        if language in lang_links:  # if wanted language is in the langlinks map
-            l_wiki_page = lang_links[language]
-            if l_wiki_page.fullurl not in crawled_urls:
-                poi = get_poi_from_page(l_wiki_page)
-                pois.append(poi)
-                crawled_urls[l_wiki_page.fullurl] = '1'
-                print("this page entered to db: " + l_wiki_page.fullurl)
+    for language in lang_links:
+        lang_page = lang_links[language]
+        if lang_page.fullurl not in crawled_urls:
+            poi = get_poi_from_page(lang_page)
+            pois.append(poi)
+            crawled_urls[lang_page.fullurl] = '1'
+            print("this page entered to db: " + lang_page.fullurl)
 
 
 def crawl(wiki_page: wikipediaapi.WikipediaPage, languages):
