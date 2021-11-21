@@ -61,6 +61,17 @@ def print_links(page):
         print("%s: %s" % (title, links[title]))
 
 
+# return true if wiki_page is relevant
+def is_relevant_page(wiki_page):
+    irrelevant_key_words = ['Cities in', 'Arab villages in']
+    categories = wiki_page.categories
+    for category in categories:
+        for irrelevant_key in irrelevant_key_words:
+            if re.search(irrelevant_key, category):
+                return False
+    return True
+
+
 def check_and_insert_wiki_page(wiki_page: wikipediaapi.WikipediaPage, languages):
     if not wiki_page.exists():
         print("not exist")
@@ -70,10 +81,12 @@ def check_and_insert_wiki_page(wiki_page: wikipediaapi.WikipediaPage, languages)
         print("crawling in: " + wiki_page.fullurl)
         poi = get_poi_from_page(wiki_page)
         if poi['position']:
+            if not is_relevant_page(wiki_page):  # if not relevant page
+                return
             pois.append(poi)
             crawled_urls[wiki_page.fullurl] = '1'
-            add_page_lang(wiki_page, languages)
             print("this page entered to db: " + wiki_page.fullurl)
+            add_page_lang(wiki_page, languages)
     else:
         print("not crawling in: " + wiki_page.fullurl)
 
@@ -120,6 +133,7 @@ def stop_crawler():
 
 def start_logic():
     wiki_page = search_page('Masada', 'en')
+    #wiki_page = search_page('Kiryat Ata', 'en')
     tread = crawl_with_thread(wiki_page=wiki_page, languages=['en', 'he'])
     time.sleep(100)
     stop_crawler()
