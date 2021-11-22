@@ -15,13 +15,12 @@ def send():
 
     # Iterating through the json
     # list
-    # for i in pois:
-    #     print(i)
+    for i in pois:
+        print(i)
     poi = pois[0]
     print(poi)
     # print(poi['categories'])
-    for category in poi['categories']:
-        print(category)
+
 
     # Closing file
     f.close()

@@ -6,11 +6,16 @@ import threading
 import sys
 import requests
 from bs4 import BeautifulSoup
+import redis
 
 crawl = True
 crawled_urls = {}
 pois = []
 
+redis_client = redis.Redis(host='localhost', port=6379, db=0)
+
+uuu = redis_client.exists('usernamea')
+print(uuu)
 
 # return poi position, or empty position if poi doesn't have any
 def get_position(URL):
@@ -74,14 +79,15 @@ def check_and_insert_wiki_page(wiki_page: wikipediaapi.WikipediaPage, languages)
         print("not exist")
         return
     # if new poi
-    if wiki_page.fullurl not in crawled_urls:
+    if  not redis_client.exists(wiki_page.fullurl):
         print("crawling in: " + wiki_page.fullurl)
         poi = get_poi_from_page(wiki_page)
         if poi['position']:
             if not is_relevant_page(wiki_page):  # if not relevant page
                 return
             pois.append(poi)
-            crawled_urls[wiki_page.fullurl] = '1'
+            redis_client.set(wiki_page.fullurl, '1')
+            #crawled_urls[wiki_page.fullurl] = '1'
             print("this page entered to db: " + wiki_page.fullurl)
             add_page_lang(wiki_page, languages)
     else:
@@ -94,10 +100,11 @@ def add_page_lang(page, languages):
     lang_links = page.langlinks_customize(languages=languages)
     for language in lang_links:
         lang_page = lang_links[language]
-        if lang_page.fullurl not in crawled_urls:
+        if not redis_client.exists(lang_page.fullurl):
             poi = get_poi_from_page(lang_page)
             pois.append(poi)
-            crawled_urls[lang_page.fullurl] = '1'
+            redis_client.set(lang_page.fullurl, '1')
+            #crawled_urls[lang_page.fullurl] = '1'
             print("this page entered to db: " + lang_page.fullurl)
 
 
@@ -140,7 +147,7 @@ def start_logic():
     json.dump(pois, pois_file)
     pois_file.close()
     urls_file = open("urls_file.json", 'w')
-    json.dump(crawled_urls, urls_file)
+    #json.dump(crawled_urls, urls_file)
     urls_file.close()
 
 
