@@ -121,6 +121,7 @@ class Crawler:
                 self.redis_client.set(lang_page.fullurl, '1')
                 print("this page entered to db: " + lang_page.fullurl)
 
+    # start crawling from wiki_page
     def crawl(self, wiki_page: wikipediaapi.WikipediaPage):
         # if page is invalid
         self.check_and_insert_wiki_page(wiki_page=wiki_page)
@@ -166,24 +167,12 @@ def start_logic():
     crawlers = [None] * num_of_thread
     for i in range(num_of_thread):
         crawlers[i] = Crawler(pages_to_start[i], redis_client=redis_client1, languages=languages_for_threads[i]
-                              ,output_json_f_name='json_file_' + str(i))
+                              , output_json_f_name='json_file_' + str(i))
     for i in range(num_of_thread):
         crawlers[i].crawl_with_thread()
-        #
-    # # # create crawler 1
-    # crawler1 = Crawler(search_page('Masada', 'en'), redis_client=redis_client1, languages=['en', 'he'],
-    #                    output_json_f_name='json_file_1')
-    # crawler1.crawl_with_thread()
-    # # # create crawler 2
-    # crawler2 = Crawler(search_page('Ein Gedi', 'en'), redis_client=redis_client1, languages=['en', 'he'],
-    #                    output_json_f_name='json_file_2')
-    # crawler2.crawl_with_thread()
-    # crawler3 = Crawler(search_page('Mitzpe_Ramon', 'en'), redis_client=redis_client1, languages=['en', 'he'],
-    #                    output_json_f_name='json_file_3')
-    # crawler3.crawl_with_thread()
-    time.sleep(10)
+    time.sleep(1000)
     for i in range(num_of_thread):
-        crawlers[i].stop_crawler()
+        print(crawlers[i].stop_crawler())
 
 
 def main():
