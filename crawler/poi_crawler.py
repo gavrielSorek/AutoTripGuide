@@ -159,21 +159,32 @@ class Crawler:
 
 def start_logic():
     redis_client1 = redis.Redis(host='localhost', port=6379, db=0)
-    # # create crawler 1
-    crawler1 = Crawler(search_page('Masada', 'en'), redis_client=redis_client1, languages=['en', 'he'],
-                       output_json_f_name='json_file_1')
-    crawler1.crawl_with_thread()
-    # # create crawler 2
-    crawler2 = Crawler(search_page('Ein Gedi', 'en'), redis_client=redis_client1, languages=['en', 'he'],
-                       output_json_f_name='json_file_2')
-    crawler2.crawl_with_thread()
-    crawler3 = Crawler(search_page('Mitzpe_Ramon', 'en'), redis_client=redis_client1, languages=['en', 'he'],
-                       output_json_f_name='json_file_3')
-    crawler3.crawl_with_thread()
-    time.sleep(600)
-    print(crawler1.stop_crawler() + "from crawler 1")
-    print(crawler2.stop_crawler() + "from crawler 2")
-    print(crawler3.stop_crawler() + "from crawler 3")
+    num_of_thread = 3
+    # pages num need to be = number of threads
+    pages_to_start = [search_page('Masada', 'en'), search_page('Ein Gedi', 'en'), search_page('Mitzpe_Ramon', 'en')]
+    languages_for_threads = [['en', 'he'], ['en', 'he'], ['en', 'he']]
+    crawlers = [None] * num_of_thread
+    for i in range(num_of_thread):
+        crawlers[i] = Crawler(pages_to_start[i], redis_client=redis_client1, languages=languages_for_threads[i]
+                              ,output_json_f_name='json_file_' + str(i))
+    for i in range(num_of_thread):
+        crawlers[i].crawl_with_thread()
+        #
+    # # # create crawler 1
+    # crawler1 = Crawler(search_page('Masada', 'en'), redis_client=redis_client1, languages=['en', 'he'],
+    #                    output_json_f_name='json_file_1')
+    # crawler1.crawl_with_thread()
+    # # # create crawler 2
+    # crawler2 = Crawler(search_page('Ein Gedi', 'en'), redis_client=redis_client1, languages=['en', 'he'],
+    #                    output_json_f_name='json_file_2')
+    # crawler2.crawl_with_thread()
+    # crawler3 = Crawler(search_page('Mitzpe_Ramon', 'en'), redis_client=redis_client1, languages=['en', 'he'],
+    #                    output_json_f_name='json_file_3')
+    # crawler3.crawl_with_thread()
+    time.sleep(10)
+    for i in range(num_of_thread):
+        crawlers[i].stop_crawler()
+
 
 def main():
     start_logic()
