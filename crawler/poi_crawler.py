@@ -8,8 +8,6 @@ import requests
 from bs4 import BeautifulSoup
 import redis
 
-crawl = True
-
 
 # return poi position, or empty position if poi doesn't have any
 def get_position(URL):
@@ -25,13 +23,13 @@ def get_position(URL):
     return position
 
 
-# languages dictionary
+# languages dictionary.
 def get_language(language):
     languages = {"english": "en", "hebrew": "he"}
     return languages[language]
 
 
-# search wikipedia page by name
+# search wikipedia page by name and returns it.
 def search_page(name_to_search, language):
     wiki_wiki = wikipediaapi.Wikipedia(language)
     page = wiki_wiki.page(name_to_search)
@@ -68,7 +66,20 @@ def is_relevant_page(wiki_page):
     return True
 
 
-# responsible on crawling and enter pois logic
+# return the title of the last crawled page with given languages
+def last_crawled_lang_title(pois, lang):
+    size = len(pois)
+    idx = size - 1
+    if size == 0:
+        return "no pois"
+    while idx >= 0:
+        if pois[idx]['language'] == lang:
+            return pois[idx]['title']
+        idx -= 1
+    return "no pois"  # if not found requested poi
+
+
+# responsible on crawling and inserting pois logic
 class Crawler:
     def __init__(self, start_wiki_page: wikipediaapi.WikipediaPage, redis_client, languages, output_json_f_name):
         self.redis_client = redis_client
@@ -77,6 +88,7 @@ class Crawler:
         self.crawler_thread = None
         self.pois = []
         self.output_json_f_name = output_json_f_name
+        self.continue_crawl = True
 
     def check_and_insert_wiki_page(self, wiki_page: wikipediaapi.WikipediaPage):
         if not wiki_page.exists():
@@ -107,56 +119,61 @@ class Crawler:
                 poi = get_poi_from_page(lang_page)
                 self.pois.append(poi)
                 self.redis_client.set(lang_page.fullurl, '1')
-                # crawled_urls[lang_page.fullurl] = '1'
                 print("this page entered to db: " + lang_page.fullurl)
 
     def crawl(self, wiki_page: wikipediaapi.WikipediaPage):
+        # if page is invalid
         self.check_and_insert_wiki_page(wiki_page=wiki_page)
         links = wiki_page.links
-        while crawl:
+        while self.continue_crawl:
             for title in sorted(links.keys()):
-                if not crawl:
+                if not self.continue_crawl:
                     break
                 wiki_page_l = links[title]  # the wikipedia page from the link
                 self.check_and_insert_wiki_page(wiki_page=wiki_page_l)
-
+            # crawling in all the links of wiki_page
             for title in sorted(links.keys()):
-                if not crawl:
+                if not self.continue_crawl:
                     break
                 wiki_page_l = links[title]  # the wikipedia page from the link
-                crawl(wiki_page=wiki_page_l)
+                self.crawl(wiki_page=wiki_page_l)
 
     def crawl_with_thread(self):
         self.crawler_thread = threading.Thread(target=self.crawl, args=(self.start_wiki_page,))
         self.crawler_thread.start()
 
     def stop_crawler(self):
-        global crawl
-        crawl = False
+        self.continue_crawl = False
         if self.crawler_thread is not None:
             self.crawler_thread.join()
-            #enters pois
+            # enters pois
             pois_file = open(self.output_json_f_name, 'w')
             json.dump(self.pois, pois_file)
             pois_file.close()
-            return True
-        return False
+            # return last url crawled
+            if len(self.pois) > 0:
+                return last_crawled_lang_title(pois=self.pois, lang=self.start_wiki_page.language)
+            return "no pois"
+        return "no thread to stop"
 
 
 def start_logic():
     redis_client1 = redis.Redis(host='localhost', port=6379, db=0)
-    # create crawler 1
-    crawler1 = Crawler(search_page('Masada', 'en'), redis_client=redis_client1, languages=['en', 'he'], output_json_f_name='json_file_1')
+    # # create crawler 1
+    crawler1 = Crawler(search_page('Masada', 'en'), redis_client=redis_client1, languages=['en', 'he'],
+                       output_json_f_name='json_file_1')
     crawler1.crawl_with_thread()
-    # create crawler 2
-    redis_client2 = redis.Redis(host='localhost', port=6379, db=0)
-    crawler2 = Crawler(search_page('Ein Gedi', 'en'), redis_client=redis_client1, languages=['en', 'he'],output_json_f_name='json_file_2')
+    # # create crawler 2
+    crawler2 = Crawler(search_page('Ein Gedi', 'en'), redis_client=redis_client1, languages=['en', 'he'],
+                       output_json_f_name='json_file_2')
     crawler2.crawl_with_thread()
-    time.sleep(100)
-    crawler1.stop_crawler()
-    crawler2.stop_crawler()
-
-
+    crawler3 = Crawler(search_page('Mitzpe_Ramon', 'en'), redis_client=redis_client1, languages=['en', 'he'],
+                       output_json_f_name='json_file_3')
+    crawler3.crawl_with_thread()
+    time.sleep(600)
+    print(crawler1.stop_crawler() + "from crawler 1")
+    print(crawler2.stop_crawler() + "from crawler 2")
+    print(crawler3.stop_crawler() + "from crawler 3")
 
 def main():
     start_logic()
