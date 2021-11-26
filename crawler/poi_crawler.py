@@ -160,9 +160,9 @@ class Crawler:
 
 def start_logic():
     redis_client1 = redis.Redis(host='localhost', port=6379, db=0)
-    num_of_thread = 3
+    num_of_thread = 1
     # pages num need to be = number of threads
-    pages_to_start = [search_page('Masada', 'en'), search_page('Ein Gedi', 'en'), search_page('Mitzpe_Ramon', 'en')]
+    pages_to_start = [search_page('Category:National parks of Israel', 'en'),search_page('Masada', 'en'), search_page('Mitzpe_Ramon', 'en')]
     languages_for_threads = [['en', 'he'], ['en', 'he'], ['en', 'he']]
     crawlers = [None] * num_of_thread
     for i in range(num_of_thread):

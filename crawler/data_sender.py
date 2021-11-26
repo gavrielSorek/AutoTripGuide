@@ -5,25 +5,22 @@
 import json
 
 
-def send():
-    # Opening JSON file
-    f = open('db_file.json')
-
-    # returns JSON object as
-    # a dictionary
-    pois = json.load(f)
-
-    # Iterating through the json
-    # list
-    for i in pois:
-        print(i)
-    poi = pois[0]
-    print(poi)
-    # print(poi['categories'])
+def send(file_to_send):
+    for name_file in file_to_send:
+        print("------------------------------------------------------------")
+        f = open(name_file)
+        pois = json.load(f)
+        f.close()
+        for p in pois:
+            print(p)
 
 
-    # Closing file
-    f.close()
 
 
-send()
+
+def main():
+    file_to_send = ['json_file_1', 'json_file_2', 'json_file_3']
+    send(file_to_send)
+
+
+main()
