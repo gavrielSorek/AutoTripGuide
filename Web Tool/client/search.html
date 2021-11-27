@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>POI searcher</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <link href="style_search.css" rel="stylesheet" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <header class="container-fluid">
+        <div class="container text-center" id="searchBox">
+          <h1>POI searcher</h1>
+          <div class="form col-xs-12"> 
+                <div class="select" tabindex="1">
+                    <input class="selectopt" name="test" type="radio" id="Name" checked>
+                    <label for="opt1" class="option">Name</label>
+                    <input class="selectopt" name="test" type="radio" id="Contributor">
+                    <label for="opt2" class="option">Contributor</label>
+                    <input class="selectopt" name="test" type="radio" id="Created Date">
+                    <label for="opt3" class="option">Created Date</label>
+                    <input class="selectopt" name="test" type="radio" id="Approved By">
+                    <label for="opt4" class="option">Approved By</label>
+                    <input class="selectopt" name="test" type="radio" id="Language">
+                    <label for="opt5" class="option">Language</label>
+                  </div> 
+              <input class="col-xs-9" id="searchBar" type="text" placeholder="search"/>
+              <span class="glyphicon glyphicon-search col-xs-1" data-toggle="tooltip" title="Search" onclick="getSearchInfo()"></span>
+              <span class="glyphicon bar col-xs-1" id="submit"><b>|</b></span>
+              <a href="https://en.wikipedia.org/wiki/Special:Random" target="_blank"><span class="glyphicon glyphicon-random col-xs-1"  data-toggle="tooltip" title="Random topic"></span></a>
+            </div>
+          </div>
+        </div>  
+      </header>
+      <div id="mainBody" class="container text-center">
+        <ul id="results">
+        </ul>
+      </div>
+      <footer class="text-center">
+        
+      </footer>
+  </body>
+  <script src="../app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</html>
