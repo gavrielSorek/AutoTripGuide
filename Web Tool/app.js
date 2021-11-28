@@ -93,16 +93,18 @@ function getPoisInfoByName(nameOfPoi) {
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
     Http.send(poiInfoJson);
-    Http.onreadystatechange = (e) => {  
-        var response = Http.responseText
-        if(response.length > 0) {
-            console.log("response from the server is recieved")
-            var poisInfo = JSON.parse(Http.responseText);
-            console.log(poisInfo);
-            showPois(poisInfo);
-        } else {
-            showNotFoundMessage();
-            console.log("not found");
+    Http.onreadystatechange = (e) => {
+        if (Http.readyState == 4) { //if the operation is complete.
+            var response = Http.responseText
+            if (response.length > 0) {
+                console.log("response from the server is recieved")
+                var poisInfo = JSON.parse(Http.responseText);
+                console.log(poisInfo);
+                showPois(poisInfo);
+            } else {
+                showNotFoundMessage();
+                console.log("not found");
+            }
         }
     }
 }
