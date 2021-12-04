@@ -157,7 +157,7 @@ class Crawler:
             return "no pois"
         return "no thread to stop"
 
-
+# write the last file where crawlers stopped
 def add_crawlers_last_title_file(file_name, last_titles):
     pois_file = open(file_name, 'w')
     json.dump(last_titles, pois_file)
@@ -173,10 +173,10 @@ def start_logic():
     crawlers = [None] * num_of_thread
     for i in range(num_of_thread):
         crawlers[i] = Crawler(pages_to_start[i], redis_client=redis_client1, languages=languages_for_threads[i]
-                              , output_json_f_name='json_file_' + str(i) + ".json")
+                              , output_json_f_name='data_sender/json_file_' + str(i) + ".json")
     for i in range(num_of_thread):
         crawlers[i].crawl_with_thread()
-    time.sleep(15)
+    time.sleep(100)
 
     # add the last page that the crawlers crawled
     crawlers_last_title = []
