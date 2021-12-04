@@ -1,9 +1,26 @@
-module.exports = { InsertPoi, findPoiByName, findPoiByContributor};
+module.exports = { InsertPoi, findPoiByName, findPoiByContributor, InsertPois};
 
 // The function insert a new poi to the db
 async function InsertPoi(client, newPoi) {
     const res = await client.db("testDb").collection("testCollection").insertOne(newPoi);
     console.log(`new poi created with the following id: ${res.insertedId}`);
+}
+
+
+// The function insert a new poiss to the db
+async function InsertPois(client, newPois) {
+    try {
+    const res = await client.db("testDb").collection("testCollection").insertMany(newPois);
+    num_of_object = 0
+    for (const id in res.insertedIds) {
+        num_of_object+=1
+        //add mor logic
+      }
+      console.log(`${num_of_object} new pois was created`);
+    } catch (e) {
+        console.log(e)
+    }
+
 }
 
 // The function find a poi by name from the db

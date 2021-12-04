@@ -40,6 +40,21 @@ async function createNewPoi(poiName, longitude, latitude, shortDesc, language,
     }
 }
 
+// Route that handles create New Pois logic
+async function createNewPois(pois) {
+    const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    const dbClient = new MongoClient(uri);
+    try {
+        await dbClient.connect();
+        console.log("Connected to DB")
+        await db.InsertPois(dbClient, pois);
+    } catch (e) {
+        console.error(e); 
+    } finally {
+       await dbClient.close();
+    }
+}
+
 async function findPoiInfoByName(nameOfPoi) {
     const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     const dbClient = new MongoClient(uri);
@@ -82,6 +97,22 @@ app.post('/createPoi', (req, res, next) =>{
      }
     createNewPoi(data._poiName, data._longitude, data._latitude, data._shortDesc, data._language,
         data._audio, data._source, data._Contributor, data._CreatedDate, data._ApprovedBy, data._UpdatedBy, data._LastUpdatedDate)
+    res.status(200);
+    res.json(json_res);
+    res.end();
+    next();
+})
+
+//Route that create new pois logic
+app.post('/createPois', (req, res, next) =>{
+    console.log("Pois info is recieved")
+    const data = req.body; 
+    var json_res = {
+        x: "1",
+        y: "2",
+        z: "3"
+     }
+    createNewPois(data)
     res.status(200);
     res.json(json_res);
     res.end();
