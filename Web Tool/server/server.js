@@ -2,8 +2,10 @@ const db = require("../db/db");
 
 const { MongoClient } = require('mongodb');
 const express = require('express')
+bodyParser = require('body-parser');
 const app = express()
-const bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(bodyParser.json({limit: '50mb'}));
 let cors = require('cors')
 app.use(cors())
 const port = 5500

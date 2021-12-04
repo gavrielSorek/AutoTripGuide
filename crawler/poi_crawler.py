@@ -176,7 +176,7 @@ def start_logic():
                               , output_json_f_name='data_sender/json_file_' + str(i) + ".json")
     for i in range(num_of_thread):
         crawlers[i].crawl_with_thread()
-    time.sleep(100)
+    time.sleep(400)
 
     # add the last page that the crawlers crawled
     crawlers_last_title = []
