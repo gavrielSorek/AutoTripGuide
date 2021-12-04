@@ -58,12 +58,12 @@ function convertFromCrawlerToServerPoi(crawlerPois) {
         var position = ParseDMS(crawlePoi['position']['latitude'] + " " + crawlePoi['position']['longitude'])
         serverPoi = {
             _poiName: crawlePoi['title'],
-            _longitude: position['lng'],
             _latitude: position['lat'],
-            _source: crawlePoi['URL'],
+            _longitude: position['lng'],
+            _shortDesc: crawlePoi['summary'],
             _language: crawlePoi['language'],
             _audio: "null",
-            _shortDesc: crawlePoi['summary'],
+            _source: crawlePoi['URL'],
             _Contributor: "crawler",
             _CreatedDate: getTodayDate(),
             _ApprovedBy: "ApprovedBy ??",
