@@ -44,9 +44,19 @@ function ConvertDMSToDD(degrees, minutes, seconds, direction) {
 
 //convert from dms coordinates to dd
 function ParseDMS(input) {
+    var lat = NaN
+    var lng = NaN
     var parts = input.split(/[^\d\w\\.]+/);
-    var lat = ConvertDMSToDD(parts[0], parts[1], parts[2], parts[3]);
-    var lng = ConvertDMSToDD(parts[4], parts[5], parts[6], parts[7]);
+    if (parts[1] == 'N' || parts[1] == 'E') { //if from the shape 31°N 35°E
+        lat = ConvertDMSToDD(parts[0], '0', '0', parts[1]);
+        lng = ConvertDMSToDD(parts[2], '0', '0', parts[3]);
+    } else if (parts[2] == 'N' || parts[2] == 'E') { //if from the shape "32°48′N 35°06′E"
+        lat = ConvertDMSToDD(parts[0], parts[1], '0', parts[2]);
+        lng = ConvertDMSToDD(parts[3], parts[4], '0', parts[5]);
+    } else {
+        lat = ConvertDMSToDD(parts[0], parts[1], parts[2], parts[3]);
+        lng = ConvertDMSToDD(parts[4], parts[5], parts[6], parts[7]);
+    }
     return { lat: lat, lng: lng }
 }
 //convert crawler poi to poi that the server can understand
@@ -79,6 +89,5 @@ function main() {
     const jsonData = require(args[0]);
     serverPois = convertFromCrawlerToServerPoi(jsonData)
     sendPoisToServer(serverPois)
-
 }
 main()
