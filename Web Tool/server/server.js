@@ -87,6 +87,21 @@ async function findPoiInfoByContributorName(nameOfContributor) {
     }
 }
 
+async function findPoiInfoByApprover(nameOfApprover) {
+    const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    const dbClient = new MongoClient(uri);
+    try {
+        await dbClient.connect();
+        console.log("Connected to DB")
+        res = await db.findPoiByApprover(dbClient, nameOfApprover);
+        return res;
+    } catch (e) {
+        console.error(e); 
+    } finally {
+       await dbClient.close();
+    }
+}
+
 //Route that create new poi logic
 app.post('/createPoi', (req, res, next) =>{
     console.log("Poi info is recieved")
@@ -123,7 +138,7 @@ app.post('/createPois', (req, res, next) =>{
 
 //Route that search poi logic
 app.post('/searchPoiByName', async function(req, res) {
-    console.log("Poi search is recieved")
+    console.log("Poi search by name is recieved")
     const data = req.body; 
     poisInfo = await findPoiInfoByName(data._poiName)
     res.status(200);
@@ -133,7 +148,7 @@ app.post('/searchPoiByName', async function(req, res) {
 
 //Route that search poi logic
 app.post('/searchPoiByContributor', async function(req, res) {
-    console.log("Poi search is recieved")
+    console.log("Poi search by contributor is recieved")
     const data = req.body; 
     poisInfo = await findPoiInfoByContributorName(data._Contributor)
     res.status(200);
@@ -141,6 +156,27 @@ app.post('/searchPoiByContributor', async function(req, res) {
     res.end();
 })
 
+//Route that search poi logic
+app.post('/searchPoiByApprover', async function(req, res) {
+    console.log("Poi search by approver is recieved")
+    const data = req.body; 
+    poisInfo = await findPoiInfoByApprover(data._ApprovedBy)
+    res.status(200);
+    res.json(poisInfo);
+    res.end();
+})
+
+//Route that search poi logic
+app.post('/searchPoiWaitingToApproval', async function(req, res) {
+    console.log("Poi search by waiting to approval is recieved")
+    const data = req.body; 
+    poisInfo = await findPoiInfoByApprover(data._ApprovedBy)
+    res.status(200);
+    res.json(poisInfo);
+    res.end();
+})
+
+//searchPoiWaitingToApproval
 
 //Start your server on a specified port
 app.listen(port, ()=>{

@@ -61,7 +61,7 @@ body {
   color: #03e9f4;
   font-size: 12px;
 }
-
+/* 
 .create-box form a {
   position: relative;
   display: inline-block;
@@ -74,6 +74,10 @@ body {
   transition: 0.5s;
   margin-top: 40px;
   letter-spacing: 4px;
+} */
+
+.create-box a {
+  color: #03e9f4;
 }
 
 .create-box a:hover {
@@ -222,4 +226,9 @@ body {
 #lng,
 #lat {
   margin-top: 2%;
+}
+
+#upload,
+#audio {
+  display: inline-block;
 }

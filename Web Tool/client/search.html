@@ -21,15 +21,15 @@
                     <label for="opt1" class="option">Name</label>
                     <input class="selectopt" name="test" type="radio" id="Contributor">
                     <label for="opt2" class="option">Contributor</label>
-                    <input class="selectopt" name="test" type="radio" id="Created Date">
-                    <label for="opt3" class="option">Created Date</label>
                     <input class="selectopt" name="test" type="radio" id="Approved By">
-                    <label for="opt4" class="option">Approved By</label>
-                    <input class="selectopt" name="test" type="radio" id="Language">
-                    <label for="opt5" class="option">Language</label>
+                    <label for="opt3" class="option">Approved By</label>
+                    <input class="selectopt" name="test" type="radio" id="Waiting for approval">
+                    <label for="opt4" class="option">Waiting to approved</label>
+                    <input class="selectopt" name="test" type="radio" id="All">
+                    <label for="opt5" class="option">All</label>
                   </div> 
               <input class="col-xs-9" id="searchBar" type="text" placeholder="search"/>
-              <span class="glyphicon glyphicon-search col-xs-1" data-toggle="tooltip" title="Search" onclick="getSearchInfo()"></span>
+              <span class="glyphicon glyphicon-search col-xs-1" id="searchicon" data-toggle="tooltip" title="Search" onclick="getSearchInfo()"></span>
               <span class="glyphicon bar col-xs-1" id="submit"><b>|</b></span>
               <a href="https://en.wikipedia.org/wiki/Special:Random" target="_blank"><span class="glyphicon glyphicon-random col-xs-1"  data-toggle="tooltip" title="Random topic"></span></a>
             </div>
@@ -37,6 +37,13 @@
         </div>  
         <div id="map"></div>
       </header>
+      <div id="mainBody" class="container text-center">
+        <ul id="results">
+        </ul>
+      </div>
+      <footer class="text-center">
+
+      </footer>
      
   </body>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"

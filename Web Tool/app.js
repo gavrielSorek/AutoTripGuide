@@ -114,7 +114,7 @@ function getPoisInfoByName(nameOfPoi) {
     }
 }
 
-// The function get the poi info according name
+// The function get the poi info according to contributor
 function getPoisInfoByContributor(nameOfContributor) {
     var poiInfo = {
         _Contributor : nameOfContributor
@@ -122,6 +122,72 @@ function getPoisInfoByContributor(nameOfContributor) {
     var poiInfoJson= JSON.stringify(poiInfo);
     const Http = new XMLHttpRequest();
     const url='http://localhost:5500/searchPoiByContributor';
+    Http.open("POST", url);
+    Http.withCredentials = false;
+    Http.setRequestHeader("Content-Type", "application/json");
+    Http.send(poiInfoJson);
+    Http.onreadystatechange = (e) => {
+        if (Http.readyState == 4) { //if the operation is complete. 
+            var response = Http.responseText
+            if(response.length > 0) {
+                console.log("response from the server is recieved")
+                var poisInfo = JSON.parse(Http.responseText);
+                if(poisInfo.length == 0) {
+                    showNotFoundMessage()
+                    console.log("not found");
+                    return
+                }
+                console.log(poisInfo);
+                showPoisOnMap(poisInfo);
+            } else {
+                showNotFoundMessage()
+                console.log("not found");
+            }
+        }  
+    }
+}
+
+// The function get the poi info according to the approver
+function getPoisInfoByApprover(nameOfApprover) {
+    var poiInfo = {
+        _ApprovedBy : nameOfApprover
+    }
+    var poiInfoJson= JSON.stringify(poiInfo);
+    const Http = new XMLHttpRequest();
+    const url='http://localhost:5500/searchPoiByApprover';
+    Http.open("POST", url);
+    Http.withCredentials = false;
+    Http.setRequestHeader("Content-Type", "application/json");
+    Http.send(poiInfoJson);
+    Http.onreadystatechange = (e) => {
+        if (Http.readyState == 4) { //if the operation is complete. 
+            var response = Http.responseText
+            if(response.length > 0) {
+                console.log("response from the server is recieved")
+                var poisInfo = JSON.parse(Http.responseText);
+                if(poisInfo.length == 0) {
+                    showNotFoundMessage()
+                    console.log("not found");
+                    return
+                }
+                console.log(poisInfo);
+                showPoisOnMap(poisInfo);
+            } else {
+                showNotFoundMessage()
+                console.log("not found");
+            }
+        }  
+    }
+}
+
+// The function get the poi info for pois that waiting for approval
+function getPoisWaitingToApproval() {
+    var poiInfo = {
+        _ApprovedBy: 'ApprovedBy ??'
+    }
+    var poiInfoJson= JSON.stringify(poiInfo);
+    const Http = new XMLHttpRequest();
+    const url='http://localhost:5500/searchPoiWaitingToApproval';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -168,69 +234,97 @@ function showPoisOnMap(poisArray) {
         var lat = item._latitude;
         var lng = item._longitude;
         var name = item._poiName;
+        var shortDesc = item._shortDesc;
         var approved = item._ApprovedBy;
         console.log(approved)
         if (approved.localeCompare("ApprovedBy ??") == 0) {
-            addCircleOnMap(lat, lng, name)
+            res =addCircleOnMap(lat, lng, name, item)
         } else {
-            addMarkerOnMap(lat,lng,name)
+            res = addMarkerOnMap(lat,lng,name)
         }
-        map.panTo(new L.LatLng(lat, lng));
+        if(res) {
+            map.panTo(new L.LatLng(lat, lng));
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something wrong with the latitude or the longtitude values of ' + name,
+              }).then((result) => {
+                
+              });
+        }
       });
 }
 
 function addMarkerOnMap(lat, lng, name) {
-    if (isNaN(lat) || isNaN(lng)) {
+    if (isNaN(lat) || isNaN(lng) || lat == null || lng == null) {
         console.log("lat or lng is NaN - for POI: " + name)
-        return
+        return false
     }
     console.log("add marker to map")
     var marker = L.marker([lat, lng]).addTo(map);
     marker.bindPopup("<b>Welcome to </b><br>" + name);
+    return true
 }
 
-function addCircleOnMap(lat, lng, name) {
-    if (isNaN(lat) || isNaN(lng)) {
+function addCircleOnMap(lat, lng, name, item) {
+    if (isNaN(lat) || isNaN(lng) || lat == null || lng == null) {
         console.log("lat or lng is NaN - for POI: " + name)
-        return
+        return false
     }
     console.log("add circle to map")
+    var circleGroup = L.featureGroup();
     var circle = L.circle([lat, lng], {
         color: 'red',
         fillColor: '#f03',
         fillOpacity: 0.5,
         radius: 500
-    }).addTo(map);
-    circle.bindPopup("<b>Welcome to </b><br>" + name);
+    }).addTo(circleGroup);
+    map.addLayer(circleGroup);
+    circle.bindPopup("<b>Welcome to </b><br>" + name)
+    circle.on('click', function(){
+        console.log("hey hey hey")
+        showPoi(item)
+    })
+    return true
 }
 
-function showPois(poisArray) {
+function showPoi(item) {
+    keyword = searchBar.val();
     resultArea.empty();
-    poisArray.forEach((item) => {
-        var elem1 = $('<a>');
-        elem1.attr("target","_blank");
-        var elem2 = $('<li>');
-        elem2.append($('<h3>').text(item._poiName));
-        elem2.append($('<p>').text("Name: " + item._poiName));
-        elem2.append($('<p>').text("Latitude: " + item._latitude));
-        elem2.append($('<p>').text("Longtitude: " + item._longitude));
-        elem2.append($('<p>').text("Short Description: " + item._shortDesc));
-        elem2.append($('<p>').text("Language: " + item._language));
-        elem2.append($('<p>').text("Source: " + item._source));
-        elem2.append($('<p>').text("Contributor: " + item._Contributor));
-        elem2.append($('<p>').text("Created Date: " + item._CreatedDate));
-        elem2.append($('<p>').text("Approved By: " + item._ApprovedBy));
-        elem2.append($('<p>').text("Updated By: " + item._UpdatedBy));
-        elem2.append($('<p>').text("Last Updated Date: " + item._LastUpdatedDate));
+    var elem0 = $('<li>');
+    elem0.append($('<h3>').text("searching..."));
+    resultArea.append(elem0);
+    $("footer").empty();
+    // displayResults(); 
+    $("#searchBox").animate({'padding-top':"30vh"}, 600);
+    $(".container-fluid").animate({height:"80vh"}, 600);
+
+    resultArea.empty();
+    var elem1 = $('<a>');
+    elem1.attr("target","_blank");
+    var elem2 = $('<li>');
+    elem2.append($('<h3>').text(item._poiName));
+    elem2.append($('<p>').text("Name: " + item._poiName));
+    elem2.append($('<p>').text("Latitude: " + item._latitude));
+    elem2.append($('<p>').text("Longtitude: " + item._longitude));
+    elem2.append($('<p>').text("Short Description: " + item._shortDesc));
+    elem2.append($('<p>').text("Language: " + item._language));
+    elem2.append($('<p>').text("Source: " + item._source));
+    elem2.append($('<p>').text("Contributor: " + item._Contributor));
+    elem2.append($('<p>').text("Created Date: " + item._CreatedDate));
+    elem2.append($('<p>').text("Approved By: " + item._ApprovedBy));
+    elem2.append($('<p>').text("Updated By: " + item._UpdatedBy));
+    elem2.append($('<p>').text("Last Updated Date: " + item._LastUpdatedDate));
     
-        elem1.append(elem2);
-        resultArea.append(elem1);  
-      });
+    elem1.append(elem2);
+    resultArea.append(elem1);  
 }
 
 
 
 function getSearchInfo() {
+    resultArea.empty();
     valueToSearch = document.getElementById('searchBar').value;
     console.log("the value to search is: " + valueToSearch)
     if(document.getElementById('Name').checked) {
@@ -241,29 +335,31 @@ function getSearchInfo() {
         //Contributor radio button is checked
         console.log("Contributor radio button is checked")
         getPoisInfoByContributor(valueToSearch);
-      }else if(document.getElementById('Created Date').checked) {
-        //Created Date radio button is checked
-        console.log("Created Date radio button is checked")
       }else if(document.getElementById('Approved By').checked) {
         //Approved By radio button is checked
         console.log("Approved By radio button is checked")
-      }else if(document.getElementById('Language').checked) {
-        //Language radio button is checked
-        console.log("Language radio button is checked")
+        getPoisInfoByApprover(valueToSearch)
+      }else if(document.getElementById('Waiting for approval').checked) {
+        //Waiting for approval radio button is checked
+        console.log("Waiting for approval radio button is checked")
+        getPoisWaitingToApproval()
+      }else if(document.getElementById('All').checked) {
+        //All radio button is checked
+        console.log("All radio button is checked")
       }
 }
 
-searchButton.click(function(){
-    keyword = searchBar.val();
-    resultArea.empty();
-    var elem0 = $('<li>');
-    elem0.append($('<h3>').text("searching..."));
-    resultArea.append(elem0);
-    $("footer").empty();
-    // displayResults(); 
-    $("#searchBox").animate({'padding-top':"0"}, 600);
-    $(".container-fluid").animate({height:"30vh"}, 600);
-  });
+// searchButton.click(function(){
+//     keyword = searchBar.val();
+//     resultArea.empty();
+//     var elem0 = $('<li>');
+//     elem0.append($('<h3>').text("searching..."));
+//     resultArea.append(elem0);
+//     $("footer").empty();
+//     // displayResults(); 
+//     $("#searchBox").animate({'padding-top':"0"}, 600);
+//     $(".container-fluid").animate({height:"30vh"}, 600);
+//   });
 
 /* -------------------------- Lat Lng Choise function -------------------- */
 
@@ -291,14 +387,23 @@ function onMapClick(e) {
 
 function updateLatLng(e) {
     var LatLng = popup.getLatLng();
-    latitude.value = LatLng.lat
-    longitude.value = LatLng.lng
+    // check if the element longitude exist
+    if (document.getElementById("longitude")) {
+        latitude.value = LatLng.lat
+        longitude.value = LatLng.lng
+    }
 }
 
 map.on('click', onMapClick);
 
 
-
+var input = document.getElementById("searchBar");
+input.addEventListener("keyup", function(event) {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("searchicon").click();
+    }
+});
 
 
 

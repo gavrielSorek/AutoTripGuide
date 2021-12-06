@@ -1,4 +1,4 @@
-module.exports = { InsertPoi, findPoiByName, findPoiByContributor, InsertPois};
+module.exports = { InsertPoi, findPoiByName, findPoiByContributor, findPoiByApprover, InsertPois};
 
 // The function insert a new poi to the db
 async function InsertPoi(client, newPoi) {
@@ -41,10 +41,23 @@ async function findPoiByContributor(client, nameOfContributor) {
     const res = await client.db("testDb").collection("testCollection").find({_Contributor: nameOfContributor});
     const results = await res.toArray();
     if(res) {
-        console.log(`found a poi in the collection with the name '${nameOfContributor}'`);
+        console.log(`found a poi in the collection with the contributor '${nameOfContributor}'`);
         console.log(results);
         return results
     } else {
-        console.log(`No poi found with the name '${nameOfContributor}'`);
+        console.log(`No poi found with the contributor '${nameOfContributor}'`);
+    }
+}
+
+// The function find a poi by name of the Approver from the db
+async function findPoiByApprover(client, nameOfApprover) {
+    const res = await client.db("testDb").collection("testCollection").find({_ApprovedBy: nameOfApprover});
+    const results = await res.toArray();
+    if(res) {
+        console.log(`found a poi in the collection with the Approver '${nameOfApprover}'`);
+        console.log(results);
+        return results
+    } else {
+        console.log(`No poi found with the Approver '${nameOfApprover}'`);
     }
 }
