@@ -105,18 +105,20 @@ class Crawler:
                 self.redis_client.set(wiki_page.fullurl, '1')
                 # crawled_urls[wiki_page.fullurl] = '1'
                 print("this page entered to db: " + wiki_page.fullurl)
-                self.add_page_lang(wiki_page)
+                self.add_page_lang(page=wiki_page, position=poi['position'])
         else:
             print("not crawling in: " + wiki_page.fullurl)
 
     # add same pages in other languages
-    def add_page_lang(self, page):
+    def add_page_lang(self, page, position):
         # lang_links = page.langlinks very expensive
         lang_links = page.langlinks_customize(languages=self.languages)
         for language in lang_links:
             lang_page = lang_links[language]
             if not self.redis_client.exists(lang_page.fullurl):
                 poi = get_poi_from_page(lang_page)
+                if not poi['position']:  # if the position doesnt appeared in this page
+                    poi['position'] = position
                 self.pois.append(poi)
                 self.redis_client.set(lang_page.fullurl, '1')
                 print("this page entered to db: " + lang_page.fullurl)
@@ -157,6 +159,7 @@ class Crawler:
             return "no pois"
         return "no thread to stop"
 
+
 # write the last file where crawlers stopped
 def add_crawlers_last_title_file(file_name, last_titles):
     pois_file = open(file_name, 'w')
@@ -168,7 +171,8 @@ def start_logic():
     redis_client1 = redis.Redis(host='localhost', port=6379, db=0)
     num_of_thread = 3
     # pages num need to be = number of threads
-    pages_to_start = [search_page('Masada', 'en'), search_page('Ein Gedi', 'en'), search_page('Mitzpe_Ramon', 'en')]
+    pages_to_start = [search_page('Masada', 'en'), search_page('Ein Gedi', 'en'),
+                      search_page('Mitzpe_Ramon', 'en')]
     languages_for_threads = [['en', 'he'], ['en', 'he'], ['en', 'he']]
     crawlers = [None] * num_of_thread
     for i in range(num_of_thread):
@@ -176,7 +180,7 @@ def start_logic():
                               , output_json_f_name='data_sender/json_file_' + str(i) + ".json")
     for i in range(num_of_thread):
         crawlers[i].crawl_with_thread()
-    time.sleep(400)
+    time.sleep(500)
 
     # add the last page that the crawlers crawled
     crawlers_last_title = []
