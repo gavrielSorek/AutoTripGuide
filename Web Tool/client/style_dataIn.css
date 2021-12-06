@@ -1,5 +1,5 @@
 html {
-  height: 120%;
+  height: 145%;
 }
 body {
   margin: 0;
@@ -10,11 +10,11 @@ body {
 
 .create-box {
   position: absolute;
-  top: 55%;
+  top: 65%;
   left: 50%;
   width: 800px;
-  padding: 40px;
-  transform: translate(-50%, -50%);
+  padding: 45px;
+  transform: translate(-60%, -45%);
   background: rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
@@ -89,7 +89,7 @@ body {
   display: block;
 }
 
-.create-box a span:nth-child(1) {
+/* .create-box a span:nth-child(1) {
   top: 0;
   left: -100%;
   width: 100%;
@@ -106,14 +106,14 @@ body {
   100% {
     left: 100%;
   }
-}
+} */
 
-.create-box a span:nth-child(2) {
+/* .create-box a span:nth-child(2) {
   top: -100%;
   right: 0;
   width: 2px;
   height: 100%;
-  background: linear-gradient(180deg, transparent, #03e9f4);
+  background: linear-gradient(180deg, transparent, #f40303);
   animation: btn-anim2 1s linear infinite;
   animation-delay: 0.25s;
 }
@@ -126,9 +126,9 @@ body {
   100% {
     top: 100%;
   }
-}
+} */
 
-.create-box a span:nth-child(3) {
+/* .create-box a span:nth-child(3) {
   bottom: 0;
   right: -100%;
   width: 100%;
@@ -146,9 +146,9 @@ body {
   100% {
     right: 100%;
   }
-}
+} */
 
-.create-box a span:nth-child(4) {
+/* .create-box a span:nth-child(4) {
   bottom: -100%;
   left: 0;
   width: 2px;
@@ -156,9 +156,9 @@ body {
   background: linear-gradient(360deg, transparent, #03e9f4);
   animation: btn-anim4 1s linear infinite;
   animation-delay: 0.75s;
-}
+} */
 
-@keyframes btn-anim4 {
+/* @keyframes btn-anim4 {
   0% {
     bottom: -100%;
   }
@@ -166,7 +166,7 @@ body {
   100% {
     bottom: 100%;
   }
-}
+} */
 
 .user-des-box input {
   width: 100%;
@@ -201,4 +201,25 @@ body {
 
 .user-des-box {
   position: relative;
+}
+
+#map {
+  height: 220px;
+  width: 100%;
+  background: white;
+}
+
+#map,
+#lng,
+#lat {
+  display: inline-block;
+}
+
+#lat {
+  margin-left: 5%;
+}
+
+#lng,
+#lat {
+  margin-top: 2%;
 }

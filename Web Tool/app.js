@@ -1,7 +1,7 @@
 /* -------------------------- insert function -------------------- */
 
 //variables definition
-var poiName = document.getElementById("PoiName");
+var poiName = document.getElementById("Name");
 var longitude = document.getElementById("longitude");
 var latitude = document.getElementById("latitude");
 var shortDesc = document.getElementById("shortDesc");
@@ -99,8 +99,13 @@ function getPoisInfoByName(nameOfPoi) {
             if (response.length > 0) {
                 console.log("response from the server is recieved")
                 var poisInfo = JSON.parse(Http.responseText);
+                if(poisInfo.length == 0) {
+                    showNotFoundMessage()
+                    console.log("not found");
+                    return
+                }
                 console.log(poisInfo);
-                showPois(poisInfo);
+                showPoisOnMap(poisInfo);
             } else {
                 showNotFoundMessage();
                 console.log("not found");
@@ -121,18 +126,30 @@ function getPoisInfoByContributor(nameOfContributor) {
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
     Http.send(poiInfoJson);
-    Http.onreadystatechange = (e) => {  
-        var response = Http.responseText
-        if(response.length > 0) {
-            console.log("response from the server is recieved")
-            var poisInfo = JSON.parse(Http.responseText);
-            console.log(poisInfo);
-            showPois(poisInfo);
-        } else {
-            showNotFoundMessage()
-            console.log("not found");
-        }
+    Http.onreadystatechange = (e) => {
+        if (Http.readyState == 4) { //if the operation is complete. 
+            var response = Http.responseText
+            if(response.length > 0) {
+                console.log("response from the server is recieved")
+                var poisInfo = JSON.parse(Http.responseText);
+                if(poisInfo.length == 0) {
+                    showNotFoundMessage()
+                    console.log("not found");
+                    return
+                }
+                console.log(poisInfo);
+                showPoisOnMap(poisInfo);
+            } else {
+                showNotFoundMessage()
+                console.log("not found");
+            }
+        }  
     }
+}
+
+function deleteEverything() {
+    localStorage.clear();
+    location.reload();
 }
 
 function showNotFoundMessage() {
@@ -141,7 +158,50 @@ function showNotFoundMessage() {
         icon: 'error',
         title: 'Oops...',
         text: 'The POI according to your request is not found',
-      })
+      }).then((result) => {
+        setTimeout(deleteEverything, 500);
+      });
+}
+
+function showPoisOnMap(poisArray) {
+    poisArray.forEach((item) => {
+        var lat = item._latitude;
+        var lng = item._longitude;
+        var name = item._poiName;
+        var approved = item._ApprovedBy;
+        console.log(approved)
+        if (approved.localeCompare("ApprovedBy ??") == 0) {
+            addCircleOnMap(lat, lng, name)
+        } else {
+            addMarkerOnMap(lat,lng,name)
+        }
+        map.panTo(new L.LatLng(lat, lng));
+      });
+}
+
+function addMarkerOnMap(lat, lng, name) {
+    if (isNaN(lat) || isNaN(lng)) {
+        console.log("lat or lng is NaN - for POI: " + name)
+        return
+    }
+    console.log("add marker to map")
+    var marker = L.marker([lat, lng]).addTo(map);
+    marker.bindPopup("<b>Welcome to </b><br>" + name);
+}
+
+function addCircleOnMap(lat, lng, name) {
+    if (isNaN(lat) || isNaN(lng)) {
+        console.log("lat or lng is NaN - for POI: " + name)
+        return
+    }
+    console.log("add circle to map")
+    var circle = L.circle([lat, lng], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: 500
+    }).addTo(map);
+    circle.bindPopup("<b>Welcome to </b><br>" + name);
 }
 
 function showPois(poisArray) {
@@ -197,13 +257,50 @@ searchButton.click(function(){
     keyword = searchBar.val();
     resultArea.empty();
     var elem0 = $('<li>');
-    elem0.append($('<h3>').text("finding..."));
+    elem0.append($('<h3>').text("searching..."));
     resultArea.append(elem0);
     $("footer").empty();
     // displayResults(); 
     $("#searchBox").animate({'padding-top':"0"}, 600);
     $(".container-fluid").animate({height:"30vh"}, 600);
   });
+
+/* -------------------------- Lat Lng Choise function -------------------- */
+
+var map = L.map('map').setView([31.83303, 34.863443], 10);
+
+var tiles = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        maxZoom: 18,
+        // attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+        //     'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        accessToken: 'pk.eyJ1Ijoic2FwaXJkYXZpZCIsImEiOiJja3dycGEwMWIwNXg4MnltaDFmcXg2eXJsIn0.SrGOND6EW7ihfxfbbWp1NA',
+        zoomOffset: -1
+}).addTo(map);
+
+var popup = L.popup();
+
+function onMapClick(e) {
+    popup
+        .setLatLng(e.latlng)
+        .setContent("You clicked the map at " + e.latlng.toString())
+        .openOn(map);
+    updateLatLng(e);
+}
+
+function updateLatLng(e) {
+    var LatLng = popup.getLatLng();
+    latitude.value = LatLng.lat
+    longitude.value = LatLng.lng
+}
+
+map.on('click', onMapClick);
+
+
+
+
+
 
 
 
