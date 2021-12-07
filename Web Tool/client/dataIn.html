@@ -42,17 +42,15 @@
                 <label>Language</label>
               </div>
               <div class="user-box">
-                <!-- <input type="text" id="audio" autocomplete="off" name="" required=""> -->
                 <label>Audio</label>
-                <div> 
-                <input type="file" id="upload" />
+                <input type="file" id="upload"/>
                 <audio id="audio" controls>
                    <source src="" id="src" />
                 </audio>
               </div>
-              </div>
               <div class="user-des-box">
-                <input type="text" id="shortDesc" autocomplete="off" name="" required="">
+                <textarea id="shortDesc" rows="4" cols="87" name="comment" form="usrform"></textarea>
+                <!-- <input type="text" id="shortDesc" autocomplete="off" name="" required=""> -->
                 <label>Short Description</label>
               </div>
               <a href="#" onclick="submitPoi()">

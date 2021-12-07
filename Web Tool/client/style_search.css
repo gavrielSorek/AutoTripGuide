@@ -216,3 +216,8 @@ input[type="radio"]:checked:after {
   transform: translate(-0%, -45%);
   background: white;
 }
+
+/* text cursor position according language */
+#searchBar {
+  unicode-bidi: plaintext;
+}

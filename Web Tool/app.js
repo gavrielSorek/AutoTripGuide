@@ -398,12 +398,15 @@ map.on('click', onMapClick);
 
 
 var input = document.getElementById("searchBar");
-input.addEventListener("keyup", function(event) {
-    if (event.keyCode === 13) {
-        event.preventDefault();
-        document.getElementById("searchicon").click();
-    }
-});
+if(input) {
+    input.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("searchicon").click();
+        }
+    });
+}
+
 
 
 

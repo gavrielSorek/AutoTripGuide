@@ -172,9 +172,9 @@ body {
   }
 } */
 
-.user-des-box input {
+.user-des-box textarea {
   width: 100%;
-  padding: 40px 0;
+  padding: 0px 5px;
   font-size: 16px;
   color: #fff;
   margin-top: 40px;
@@ -184,8 +184,7 @@ body {
   background: transparent;
 }
 
-.user-des-box input:focus ~ label,
-.user-des-box input:valid ~ label {
+.user-des-box textarea:focus ~ label {
   top: -10px;
   left: 0;
   color: #03e9f4;
@@ -231,4 +230,25 @@ body {
 #upload,
 #audio {
   display: inline-block;
+}
+
+#PoiName,
+#longitude,
+#latitude,
+#source,
+#language,
+#shortDesc {
+  unicode-bidi: plaintext;
+}
+
+#shortDesc {
+  width: 100%;
+  font-size: 16px;
+  color: #fff;
+  margin-top: 40px;
+  margin-bottom: 30px;
+  border: 1px solid #fff;
+  outline: none;
+  background: transparent;
+  font-family: "Times New Roman";
 }
