@@ -1,6 +1,9 @@
 const db = require("../db/db");
 
 const { MongoClient } = require('mongodb');
+const mongodb = require('mongodb');
+var fs = require('fs');
+
 const express = require('express')
 bodyParser = require('body-parser');
 const app = express()
@@ -178,13 +181,10 @@ app.post('/searchPoiWaitingToApproval', async function(req, res) {
 
 //searchPoiWaitingToApproval
 
-//Start your server on a specified port
+// Start your server on a specified port
 app.listen(port, ()=>{
     console.log(`Server is runing on port ${port}`)
 })
-
-
-
 
 
 
