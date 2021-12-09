@@ -1,8 +1,8 @@
 module.exports = { InsertPoi, findPoiByName, findPoiByContributor, findPoiByApprover, InsertPois };
 
-const { MongoClient } = require('mongodb');
+// const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
-var fs = require('fs');
+// var fs = require('fs');
 
 // The function insert a new poi to the db
 async function InsertPoi(client, newPoi) {
