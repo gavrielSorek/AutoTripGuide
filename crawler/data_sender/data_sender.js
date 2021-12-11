@@ -72,7 +72,7 @@ function convertFromCrawlerToServerPoi(crawlerPois) {
             _longitude: position['lng'],
             _shortDesc: crawlePoi['summary'],
             _language: crawlePoi['language'],
-            _audio: "null",
+            _audio: "no audio",
             _source: crawlePoi['URL'],
             _Contributor: "crawler",
             _CreatedDate: getTodayDate(),
