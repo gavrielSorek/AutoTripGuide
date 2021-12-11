@@ -1,12 +1,15 @@
 /* -------------------------- insert function -------------------- */
 //variables definition
-var poiName = document.getElementById("Name");
+var poiName = document.getElementById("PoiName");
 var longitude = document.getElementById("longitude");
 var latitude = document.getElementById("latitude");
 var shortDesc = document.getElementById("shortDesc");
 var language = document.getElementById("language");
 var audio = document.getElementById("audio");
 var source = document.getElementById("source");
+
+//add events
+document.getElementById("upload").addEventListener("change", handleFiles, false);
 
 // The function verifies with the client his request
 function submitPoi(){
@@ -40,14 +43,19 @@ function getTodayDate(){
 }
 
 // The function send the poi info request to the server
-function sendPoiInfoToServer() {
+async function sendPoiInfoToServer() {
+    var audioFile = document.getElementById("upload").files[0]
+    var audioData = undefined
+    if (audioFile) {
+        audioData = await readFileAsData(document.getElementById("upload").files[0])
+    }
     var poiInfo = {
         _poiName : poiName.value,
         _longitude : longitude.value,
         _latitude : latitude.value,
         _source : source.value,
         _language : language.value,
-        _audio : audio.value,
+        _audio : audioData,
         _shortDesc : shortDesc.value,
         _Contributor : "Contributor name ??",
         _CreatedDate : getTodayDate(),
@@ -413,7 +421,18 @@ function handleFiles(event) {
     document.getElementById("audio").load();
 }
 
-document.getElementById("upload").addEventListener("change", handleFiles, false);
+
+// let data = await readFileAsData(document.getElementById("upload").files[0])
+//read data from file
+async function readFileAsData(file) {
+    let result = await new Promise((resolve) => {
+        let fileReader = new FileReader();
+        fileReader.onload = (event) => resolve(event.currentTarget.result);
+        fileReader.readAsText(file);
+    });
+    return result;
+}
+
 
 
 
