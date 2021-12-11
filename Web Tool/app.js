@@ -9,7 +9,9 @@ var audio = document.getElementById("audio");
 var source = document.getElementById("source");
 
 //add events
-document.getElementById("upload").addEventListener("change", handleFiles, false);
+if(document.getElementById("upload")) {
+    document.getElementById("upload").addEventListener("change", handleFiles, false);
+}
 
 // The function verifies with the client his request
 function submitPoi(){
