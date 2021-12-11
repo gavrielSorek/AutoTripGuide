@@ -21,6 +21,12 @@ async function createNewPoi(poiName, longitude, latitude, shortDesc, language,
     audio, source, Contributor, CreatedDate, ApprovedBy, UpdatedBy, LastUpdatedDate) {
     const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     const dbClient = new MongoClient(uri);
+    var audioDbClient = undefined
+    var audioStatus = "no audio"
+    if (audio) {
+        audioDbClient = new MongoClient(uri);
+        audioStatus = "audio exist"
+    }
     try {
         await dbClient.connect();
         console.log("Connected to DB")
@@ -30,7 +36,7 @@ async function createNewPoi(poiName, longitude, latitude, shortDesc, language,
             _longitude: longitude,
             _shortDesc: shortDesc,
             _language: language,
-            _audio: audio,
+            _audio: audioStatus,
             _source: source,
             _Contributor: Contributor,
             _CreatedDate: CreatedDate,
@@ -38,10 +44,14 @@ async function createNewPoi(poiName, longitude, latitude, shortDesc, language,
             _UpdatedBy: UpdatedBy,
             _LastUpdatedDate: LastUpdatedDate
         });
+        if (audioDbClient) {
+            await audioDbClient.connect();
+            await db.insertAudio(audioDbClient, audio, poiName, "null at this point")
+        }
     } catch (e) {
         console.error(e); 
     } finally {
-       await dbClient.close();
+        await dbClient.close();
     }
 }
 
@@ -186,7 +196,9 @@ app.listen(port, ()=>{
     console.log(`Server is runing on port ${port}`)
 })
 
-
+function isConnected(client) {
+    return !!client && !!client.topology && client.topology.isConnected()
+  }
 
 
 

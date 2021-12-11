@@ -1,4 +1,4 @@
-module.exports = { InsertPoi, findPoiByName, findPoiByContributor, findPoiByApprover, InsertPois };
+module.exports = { InsertPoi, findPoiByName, findPoiByContributor, findPoiByApprover, InsertPois, insertAudio };
 
 // const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
@@ -70,8 +70,8 @@ async function insertAudio(dbClient, audio, audioName, idOfPoi) {
     const db = await dbClient.db("testDb");
     const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myCustomBucket' });
 
-    var uploadStream = bucket.openUploadStream(audioName, { chunkSizeBytes: 1048576, metadata: { field: 'myField1', value: 'myValue1' } })
-    uploadStream.write(audio, audioName);
+    var uploadStream = bucket.openUploadStream(audioName, { chunkSizeBytes: 1048576, metadata: { title: audioName, poi_id: idOfPoi } })
+    uploadStream.write(audio);
     uploadStream.end()
 }
 
