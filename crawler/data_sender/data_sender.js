@@ -47,10 +47,10 @@ function ParseDMS(input) {
     var lat = NaN
     var lng = NaN
     var parts = input.split(/[^\d\w\\.]+/);
-    if (parts[1] == 'N' || parts[1] == 'E') { //if from the shape 31°N 35°E
+    if (parts[1] == 'N' || parts[1] == 'S' || parts[1] == 'E' || parts[1] == 'W') { //if from the shape 31°N 35°E
         lat = ConvertDMSToDD(parts[0], '0', '0', parts[1]);
         lng = ConvertDMSToDD(parts[2], '0', '0', parts[3]);
-    } else if (parts[2] == 'N' || parts[2] == 'E') { //if from the shape "32°48′N 35°06′E"
+    } else if (parts[2] == 'N' || parts[2] == 'S' || parts[2] == 'E' || parts[2] == 'W') { //if from the shape "32°48′N 35°06′E"
         lat = ConvertDMSToDD(parts[0], parts[1], '0', parts[2]);
         lng = ConvertDMSToDD(parts[3], parts[4], '0', parts[5]);
     } else {
