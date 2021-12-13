@@ -202,6 +202,8 @@ app.post('/findPoiPosition', async function(req, res) {
 
 //return audio by name
 async function retAudioByName(audioName, res) {
+    console.log("the audio name: " + audioName)
+    console.log("the server try to send the audio")
     const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     const dbClient = new MongoClient(uri);
     try {
@@ -210,6 +212,7 @@ async function retAudioByName(audioName, res) {
         audioPromise = db.getAudio(dbClient, audioName)
         audioPromise.then(value => {
             res.json(value);
+            console.log("success to send audio")
             res.status(200);
             dbClient.close()}).catch(err=>{console.log("cant retrive audio file")
             res.status(400)
@@ -223,9 +226,10 @@ async function retAudioByName(audioName, res) {
 }
 
 //Route that search audio logic
-app.get('/searchPoiAudioByName', async function(req, res) {
+app.post('/searchPoiAudioByName', async function(req, res) {
     console.log("audio search by name is recieved")
     const data = req.body;
+    console.log(data)
     console.log(data._poiName)
     retAudioByName(data._poiName, res)
 })

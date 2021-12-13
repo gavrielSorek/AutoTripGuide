@@ -137,6 +137,42 @@ function getPoisWaitingToApproval() {
     }
 }
 
+// The function get the poi info for pois that waiting for approval
+function getAudioByName(nameOfPoi) {
+    var poiInfo = {
+        _poiName : nameOfPoi
+    }
+    var poiInfoJson= JSON.stringify(poiInfo);
+    const Http = new XMLHttpRequest();
+    const url='http://localhost:5500/searchPoiAudioByName';
+    Http.open("POST", url);
+    Http.withCredentials = false;
+    Http.setRequestHeader("Content-Type", "application/json");
+    Http.send(poiInfoJson);
+    Http.onreadystatechange = (e) => {
+        if (Http.readyState == 4) { //if the operation is complete. 
+            var response = Http.responseText
+            if(response.length > 0) {
+                console.log("response from the server is recieved")
+                var poisInfo = JSON.parse(Http.responseText);
+                console.log(poisInfo);
+                if(poisInfo.length == 0) {
+                    console.log("not found");
+                }
+                loadAudio(poisInfo)
+            } else {
+                console.log("not found");
+            }
+        }  
+    }
+}
+
+function loadAudio(poiAudioFromDB) {
+    console.log("inside load audio")
+    // poiAudio.src = poiAudioFromDB
+    // poiAudio.load();
+}
+
 // The function delete the data from the page
 function deleteEverything() {
     localStorage.clear();
@@ -239,6 +275,10 @@ function addRedMarkerOnMap(lat, lng, name, item) {
     return true
 }
 
+var poiAudio = document.createElement('audio');
+poiAudio.controls = 'controls';
+    //poiAudio.src = 'media/Blue Browne.mp3';
+
 // The function show the poi info
 function showPoi(item) {
     keyword = searchBar.val();
@@ -267,7 +307,18 @@ function showPoi(item) {
     elem2.append($('<p>').text("Approved By: " + item._ApprovedBy));
     elem2.append($('<p>').text("Updated By: " + item._UpdatedBy));
     elem2.append($('<p>').text("Last Updated Date: " + item._LastUpdatedDate));
-    
+    //audio
+    audio = item._audio
+    // var poiAudio = document.createElement('audio');
+    // poiAudio.controls = 'controls';
+    // //poiAudio.src = 'media/Blue Browne.mp3';
+    if (audio.localeCompare("no audio") == 0) {
+        console.log("no audio for this poi")
+    } else {
+        //elem2.append($('<audio controls>'));
+        audioFromDb = getAudioByName(item._poiName)
+        elem2.append(poiAudio);
+    }
     elem1.append(elem2);
     resultArea.append(elem1);  
 }
