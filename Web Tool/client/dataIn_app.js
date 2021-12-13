@@ -40,6 +40,53 @@ function submitPoi(){
     });
 }
 
+function findPoiPosition() {
+    var poiInfo = {
+        _poiName : poiName.value,
+        _language : language.value,
+    }
+    var poiInfoJson= JSON.stringify(poiInfo);
+    const Http = new XMLHttpRequest();
+    const url='http://localhost:5500/findPoiPosition';
+    Http.open("POST", url);
+    Http.withCredentials = false;
+    Http.setRequestHeader("Content-Type", "application/json");
+    Http.send(poiInfoJson);
+    Http.onreadystatechange = (e) => {  
+        if (Http.readyState == 4) { //if the operation is complete. 
+            var response = Http.responseText
+            if(response.length > 0) {
+                console.log("response from the server is recieved")
+                var jsonResponse = JSON.parse(Http.responseText);
+                console.log(jsonResponse);
+                lat = jsonResponse.latitude
+                lng = jsonResponse.longitude
+                latitude.value = lat
+                longitude.value = lng
+                res = addMarkerOnMap(lat,lng, poiName.value)
+                if (res){
+                    map.panTo(new L.LatLng(lat, lng));
+                } else {
+                    showNotFoundMessage()
+                }
+            } else {
+                showNotFoundMessage()
+            }
+        }
+    }
+}
+
+// The function show a not found message when the user ask for a poi that not exist
+function showNotFoundMessage() {
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'The POI according to your request is not found',
+      }).then((result) => {
+        setTimeout(deleteEverything, 500);
+      });
+}
+
 // The function returns the date of today
 function getTodayDate(){
     var today = new Date();
@@ -120,6 +167,18 @@ function updateLatLng(e) {
 
 map.on('click', onMapClick);
 
+// The function add a mraker on the map
+function addMarkerOnMap(lat, lng, name) {
+    if (isNaN(lat) || isNaN(lng) || lat == null || lng == null) {
+        console.log("lat or lng is NaN - for POI: " + name)
+        return false
+    }
+    console.log("add marker to map")
+    var marker = L.marker([lat, lng]).addTo(map);
+    marker.bindPopup("<b>Welcome to </b><br>" + name);
+    return true
+}
+
 /* -------------------------- audio function -------------------- */
 
 //when audio file added load audio to html
@@ -139,6 +198,3 @@ async function readFileAsData(file) {
     });
     return result;
 }
-
-
-

@@ -7,9 +7,11 @@ async function getPositionByName(title, language) {
     .page(title)
     .then(page => page.coordinates())
 }
-// example function how to use getPositionByName
+
+// //example function how to use getPositionByName
 // function example() {
 //   var ex = getPositionByName('masada', 'en')
+//   console.log(ex)
 //   ex.then((position)=>{console.log("lat: " + position.lat + " lng: " + position.lon)}).catch(()=>{console.log("error cant find this position")});
 // }
 // example()

@@ -1,4 +1,5 @@
 const db = require("../db/db");
+const wiki_service = require("../server/WikiServices/positionByNameWiki");
 
 const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
@@ -189,7 +190,26 @@ app.post('/searchPoiWaitingToApproval', async function(req, res) {
     res.end();
 })
 
-//searchPoiWaitingToApproval
+//Route that search poi logic
+app.post('/findPoiPosition', async function(req, res) {
+    console.log("find poi location request is recieved")
+    const data = req.body;
+    poiName = data._poiName
+    language = data._language
+    poiPosition = wiki_service.getPositionByName(poiName, language)
+    poiPosition.then((position)=>{sendPosition(position, res)}).catch(()=>{console.log("error cant find this position")});
+})
+
+function sendPosition(position, res) {
+    console.log("lat: " + position.lat + " lng: " + position.lon)
+    var json_res = {
+        latitude: position.lat,
+        longitude: position.lon,
+    }
+    res.status(200);
+    res.json(json_res);
+    res.end();
+}
 
 // Start your server on a specified port
 app.listen(port, ()=>{
