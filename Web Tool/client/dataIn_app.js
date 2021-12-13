@@ -7,6 +7,7 @@ var shortDesc = document.getElementById("shortDesc");
 var language = document.getElementById("language");
 var audio = document.getElementById("audio");
 var source = document.getElementById("source");
+var select = document.getElementById("languages");
 
 //add events
 if(document.getElementById("upload")) {
@@ -40,10 +41,11 @@ function submitPoi(){
     });
 }
 
+// The function find the poi position (lat, lng)
 function findPoiPosition() {
     var poiInfo = {
         _poiName : poiName.value,
-        _language : language.value,
+        _language : select.options[select.selectedIndex].value,
     }
     var poiInfoJson= JSON.stringify(poiInfo);
     const Http = new XMLHttpRequest();
@@ -110,7 +112,7 @@ async function sendPoiInfoToServer() {
         _longitude : longitude.value,
         _latitude : latitude.value,
         _source : source.value,
-        _language : language.value,
+        _language : select.options[select.selectedIndex].value,
         _audio : audioData,
         _shortDesc : shortDesc.value,
         _Contributor : "Contributor name ??",
@@ -167,15 +169,22 @@ function updateLatLng(e) {
 
 map.on('click', onMapClick);
 
+globalMarker = null
 // The function add a mraker on the map
 function addMarkerOnMap(lat, lng, name) {
+    //check if old marker exist, if exist - remove it
+    if(globalMarker) {
+        map.removeLayer(globalMarker)
+    }
     if (isNaN(lat) || isNaN(lng) || lat == null || lng == null) {
         console.log("lat or lng is NaN - for POI: " + name)
         return false
     }
     console.log("add marker to map")
-    var marker = L.marker([lat, lng]).addTo(map);
+    var marker = L.marker([lat, lng]);
     marker.bindPopup("<b>Welcome to </b><br>" + name);
+    globalMarker = marker
+    map.addLayer(marker);
     return true
 }
 

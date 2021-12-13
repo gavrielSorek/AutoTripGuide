@@ -164,9 +164,9 @@ function showPoisOnMap(poisArray) {
         var approved = item._ApprovedBy;
         console.log(approved)
         if (approved.localeCompare("ApprovedBy ??") == 0) {
-            res = addCircleOnMap(lat, lng, name, item)
+            res = addRedMarkerOnMap(lat, lng, name, item)
         } else {
-            res = addMarkerOnMap(lat,lng,name)
+            res = addGreenMarkerOnMap(lat,lng,name)
         }
         if(res) {
             map.panTo(new L.LatLng(lat, lng));
@@ -181,38 +181,61 @@ function showPoisOnMap(poisArray) {
         }
       });
 }
+globalMarker = null
+//icons for markers
+var redIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
 
-// The function add a mraker on the map
-function addMarkerOnMap(lat, lng, name) {
+var greenIcon = new L.Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
+// The function add a green marker on the map
+function addGreenMarkerOnMap(lat, lng, name, item) {
     if (isNaN(lat) || isNaN(lng) || lat == null || lng == null) {
         console.log("lat or lng is NaN - for POI: " + name)
         return false
     }
-    console.log("add marker to map")
-    var marker = L.marker([lat, lng]).addTo(map);
-    marker.bindPopup("<b>Welcome to </b><br>" + name);
+    console.log("add poi to map")
+    var greenMarkerGroup = L.featureGroup();
+    var greenMarker = L.marker([lat, lng], {icon: greenIcon}).addTo(greenMarkerGroup);
+    map.addLayer(greenMarkerGroup);
+    greenMarker.bindPopup("<b>Welcome to </b><br>" + name)
+    greenMarker.on('click', function(){
+        showPoi(item)
+    })
+    globalMarker = greenMarker
     return true
 }
 
-// The function add a circle on the map
-function addCircleOnMap(lat, lng, name, item) {
+var redMarkerGroup = L.featureGroup();
+
+// The function add a red marker on the map
+function addRedMarkerOnMap(lat, lng, name, item) {
     if (isNaN(lat) || isNaN(lng) || lat == null || lng == null) {
         console.log("lat or lng is NaN - for POI: " + name)
         return false
     }
-    console.log("add circle to map")
-    var circleGroup = L.featureGroup();
-    var circle = L.circle([lat, lng], {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.5,
-        radius: 500
-    }).addTo(circleGroup);
-    map.addLayer(circleGroup);
-    circle.bindPopup("<b>Welcome to </b><br>" + name)
-    circle.on('click', function(){
+    console.log("add poi to map")
+    // var redMarkerGroup = L.featureGroup();
+    var redMarker = L.marker([lat, lng], {icon: redIcon}).addTo(redMarkerGroup);
+    map.addLayer(redMarkerGroup);
+    redMarker.bindPopup("<b>Welcome to </b><br>" + name)
+    redMarker.on('click', function(){
         showPoi(item)
     })
+    globalMarker = redMarker
     return true
 }
 
@@ -249,8 +272,12 @@ function showPoi(item) {
     resultArea.append(elem1);  
 }
 
-// The function perform the serach according to the user request
+// The function perform the search according to the user request
 function getSearchInfo() {
+    if(globalMarker) {
+        map.removeLayer(redMarkerGroup)
+        redMarkerGroup = L.featureGroup();
+    }
     resultArea.empty();
     valueToSearch = document.getElementById('searchBar').value;
     console.log("the value to search is: " + valueToSearch)

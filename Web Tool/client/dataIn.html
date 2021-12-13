@@ -25,8 +25,19 @@
                 <label>POI Name</label>
               </div>
               <div class="user-box">
-                <input type="text" id="language" autocomplete="off" name="" required="">
                 <label>Language</label>
+                <!-- <input type="text" id="language" autocomplete="off" name="" required=""> -->
+                <div class="custom-select">
+                  <select id="languages" name="languages">
+                    <option>Select Language</option>
+                    <option id="option" value="am">Amharic - አማርኛ</option>
+                    <option id="option" value="ar">Arabic - العربية</option>
+                    <option id="option" value="en">English</option>
+                    <option id="option" value="he">Hebrew - עברית</option>
+                    <option id="option" value="es">Spanish - español</option>
+                    <option id="option" value="ru">Russian - русский</option>
+                  </select>
+                </div>
               </div>
               <a href="#" onclick="findPoiPosition()">
                 Find for me
