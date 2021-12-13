@@ -1,5 +1,4 @@
-module.exports = { InsertPoi, findPoiByName, findPoiByContributor, findPoiByApprover, InsertPois, insertAudio };
-
+module.exports = { InsertPoi, findPoiByName, findPoiByContributor, findPoiByApprover, InsertPois, insertAudio, getAudio };
 // const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
 // var fs = require('fs');
@@ -65,7 +64,7 @@ async function findPoiByApprover(client, nameOfApprover) {
         console.log(`No poi found with the Approver '${nameOfApprover}'`);
     }
 }
-// The function insert a audio to the db
+// The function insert audio to the db
 async function insertAudio(dbClient, audio, audioName, idOfPoi) {
     const db = await dbClient.db("testDb");
     const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myCustomBucket' });
@@ -74,7 +73,27 @@ async function insertAudio(dbClient, audio, audioName, idOfPoi) {
     uploadStream.write(audio);
     uploadStream.end()
 }
-
+// The function returns audio promise
+async function getAudio(dbClient, audioName, idOfAudio = null) {
+    const db = await dbClient.db("testDb");
+    const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myCustomBucket' });
+    var downloadStream = bucket.openDownloadStreamByName(audioName);
+    const audioPromise = new Promise((resolve, reject)=> {
+    downloadStream.on('data', (chunk) =>{
+        resolve(chunk);
+    })
+    downloadStream.on('error', ()=> {reject('error to download ' + audioName)})
+    });
+    return audioPromise
+}
+// async function example() {
+//     const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+//     const dbClient = new MongoClient(uri);
+//     await dbClient.connect()
+//     var p =getAudio(dbClient, 'audioName')
+//     p.then(value => {console.log(value)}).catch(err=>{console.log(err)})
+// }
+// example()
 // async function c() {
 //     const audioFile = fs.createReadStream("./au1.mp4");
 //     audioFile.on('data', async (chunk) => {

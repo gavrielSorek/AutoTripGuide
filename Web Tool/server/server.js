@@ -200,6 +200,36 @@ app.post('/findPoiPosition', async function(req, res) {
     poiPosition.then((position)=>{sendPosition(position, res)}).catch(()=>{console.log("error cant find this position")});
 })
 
+//return audio by name
+async function retAudioByName(audioName, res) {
+    const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    const dbClient = new MongoClient(uri);
+    try {
+        await dbClient.connect();
+        console.log("Connected to DB")
+        audioPromise = db.getAudio(dbClient, audioName)
+        audioPromise.then(value => {
+            res.json(value);
+            res.status(200);
+            dbClient.close()}).catch(err=>{console.log("cant retrive audio file")
+            res.status(400)
+            res.end();
+            dbClient.close();})
+    } catch (e) {
+        console.error(e);
+        res.status(400);
+        res.end();
+    }
+}
+
+//Route that search audio logic
+app.get('/searchPoiAudioByName', async function(req, res) {
+    console.log("audio search by name is recieved")
+    const data = req.body;
+    console.log(data._poiName)
+    retAudioByName(data._poiName, res)
+})
+
 function sendPosition(position, res) {
     console.log("lat: " + position.lat + " lng: " + position.lon)
     var json_res = {
@@ -216,9 +246,7 @@ app.listen(port, ()=>{
     console.log(`Server is runing on port ${port}`)
 })
 
-function isConnected(client) {
-    return !!client && !!client.topology && client.topology.isConnected()
-  }
+
 
 
 
