@@ -45,19 +45,35 @@ def search_page_by_url(url, language):
     return search_page(name_to_search, language)
 
 
+# return relevant categories
+def is_relevant_category(category):
+    irrelevant_key_words = ['cs1', 'articles', 'wikipedia', 'wikidata']
+    for irrelevant_key in irrelevant_key_words:
+        if re.search(irrelevant_key, category.lower()):
+            return False
+    return True
+
+
+def get_relevant_categories(categories: wikipediaapi.WikipediaPage.categories):
+    relevant_categories = []
+    for category in categories:
+        category = re.sub("Category:", "", category, count=1)  # delete the word category
+        if is_relevant_category(category):
+            relevant_categories.append(category)
+    return relevant_categories
+
+
 # return poi from given page
 def get_poi_from_page(wiki_page: wikipediaapi.WikipediaPage):
-    poi = {'title': wiki_page.title, 'summary': wiki_page.summary, 'categories': [], 'URL': wiki_page.fullurl,
-           'language': wiki_page.language}
-    for category in wiki_page.categories:
-        poi['categories'].append(category)
-    poi['position'] = get_position(wiki_page.fullurl)
+    poi = {'title': wiki_page.title, 'summary': wiki_page.summary,
+           'categories': get_relevant_categories(wiki_page.categories),
+           'URL': wiki_page.fullurl, 'language': wiki_page.language, 'position': get_position(wiki_page.fullurl)}
     return poi
 
 
 # return true if wiki_page is relevant
 def is_relevant_page(wiki_page):
-    irrelevant_key_words = ['cities', 'villages in', 'moshavim', 'district', 'countries in']
+    irrelevant_key_words = ['cities', 'villages in', 'moshavim', 'district in', 'countries in']
     categories = wiki_page.categories
     for category in categories:
         for irrelevant_key in irrelevant_key_words:
@@ -180,7 +196,7 @@ def start_logic():
                               , output_json_f_name='data_sender/json_file_' + str(i) + ".json")
     for i in range(num_of_thread):
         crawlers[i].crawl_with_thread()
-    time.sleep(200)
+    time.sleep(5)
 
     # add the last page that the crawlers crawled
     crawlers_last_title = []

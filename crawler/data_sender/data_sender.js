@@ -78,7 +78,8 @@ function convertFromCrawlerToServerPoi(crawlerPois) {
             _CreatedDate: getTodayDate(),
             _ApprovedBy: "ApprovedBy ??",
             _UpdatedBy: "UpdatedBy crawler",
-            _LastUpdatedDate: getTodayDate()
+            _LastUpdatedDate: getTodayDate(),
+            _Categories: crawlePoi['categories'].join()
         }
         serverPois.push(serverPoi)
     }
@@ -87,7 +88,7 @@ function convertFromCrawlerToServerPoi(crawlerPois) {
 function main() {
     var args = process.argv.slice(2);
     const jsonData = require(args[0]);
-    serverPois = convertFromCrawlerToServerPoi(jsonData)
+    var serverPois = convertFromCrawlerToServerPoi(jsonData)
     sendPoisToServer(serverPois)
 }
 main()
