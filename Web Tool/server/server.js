@@ -19,6 +19,26 @@ extended: false}));
 const MAX_ELEMENT_ON_MAP = 200
 
 // Route that handles create New Poi logic
+
+//init GLOBAL
+uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const dbPoiSearcherClient = new MongoClient(uri);
+
+//init
+async function init() {
+    try {
+        await dbPoiSearcherClient.connect();
+        console.log("Connected to search DB")
+    } catch (e) {
+        console.error(e); 
+    }
+}
+
+async function closeServer(){
+    await dbPoiSearcherClient.close();
+}
+
+
 async function createNewPoi(poiName, longitude, latitude, shortDesc, language,
     audio, source, Contributor, CreatedDate, ApprovedBy, UpdatedBy, LastUpdatedDate) {
     const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
@@ -73,39 +93,8 @@ async function createNewPois(pois) {
 }
 
 async function findPoisInfo(poiParam, paramVal,relevantBounds, searchOutsideTheBounds) {
-    const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-    const dbClient = new MongoClient(uri);
-    try {
-        await dbClient.connect();
-        console.log("Connected to DB")
-        res = await db.findPois(dbClient, poiParam, paramVal, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
-        console.log("---------------------------") //TODO DELETE
-        console.log(res)
-        return res;
-    } catch (e) {
-        console.error(e); 
-    } finally {
-       await dbClient.close();
-    }
+    return db.findPois(dbPoiSearcherClient, poiParam, paramVal, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
 }
-
-async function findPoiInfoByName(nameOfPoi, relevantBounds, searchOutsideTheBounds) {
-    const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-    const dbClient = new MongoClient(uri);
-    try {
-        await dbClient.connect();
-        console.log("Connected to DB")
-        res = await db.findPoiByName(dbClient, nameOfPoi, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
-        console.log("---------------------------") //TODO DELETE
-        console.log(res)
-        return res;
-    } catch (e) {
-        console.error(e); 
-    } finally {
-       await dbClient.close();
-    }
-}
-
 //Route that create new poi logic
 app.post('/createPoi', (req, res, next) =>{
     console.log("Poi info is recieved")
@@ -145,11 +134,17 @@ app.post('/searchPois', async function(req, res) {
     console.log("Pois search general")
     const data = req.body;
     const queryParam = data.poiParameter;
-    poisInfo = await findPoisInfo(queryParam, data.poiInfo.poiParameter ,data.relevantBounds, data.searchOutsideTheBounds)
-    res.status(200);
-    res.json(poisInfo);
-    res.end();
+    poisInfo = findPoisInfo(queryParam, data.poiInfo.poiParameter ,data.relevantBounds, data.searchOutsideTheBounds).then(function(pois) {
+        console.log("----------------------------")
+        res.status(200);
+        res.json(pois);
+        res.end();
+    })
+    
 })
+
+
+
 
 
 
@@ -209,7 +204,8 @@ function sendPosition(position, res) {
 }
 
 // Start your server on a specified port
-app.listen(port, ()=>{
+app.listen(port, async ()=>{
+    await init()
     console.log(`Server is runing on port ${port}`)
 })
 

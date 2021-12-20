@@ -53,7 +53,7 @@ async function findDataByParams(client, queryObject, relevantBounds, MaxCount, s
 async function findPois(client, poiParam ,paramVal, relevantBounds, MaxCount, searchOutsideTheBoundery) {
     var queryObject = {}
     queryObject[poiParam] = paramVal
-    return await findDataByParams(client, queryObject, relevantBounds, MaxCount, searchOutsideTheBoundery)
+    return findDataByParams(client, queryObject, relevantBounds, MaxCount, searchOutsideTheBoundery)
 }
 
 // The function insert audio to the db
