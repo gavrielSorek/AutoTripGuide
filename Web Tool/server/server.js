@@ -22,12 +22,13 @@ const MAX_ELEMENT_ON_MAP = 50
 
 //init GLOBAL
 uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-const dbPoiSearcherClient = new MongoClient(uri);
+const dbClient = new MongoClient(uri);
+
 
 //init
 async function init() {
     try {
-        await dbPoiSearcherClient.connect();
+        await dbClient.connect();
         console.log("Connected to search DB")
     } catch (e) {
         console.error(e); 
@@ -35,7 +36,7 @@ async function init() {
 }
 
 async function closeServer(){
-    await dbPoiSearcherClient.close();
+    await dbClient.close();
 }
 
 
@@ -93,7 +94,7 @@ async function createNewPois(pois) {
 }
 
 async function findPoisInfo(poiParam, paramVal,relevantBounds, searchOutsideTheBounds) {
-    return db.findPois(dbPoiSearcherClient, poiParam, paramVal, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
+    return db.findPois(dbClient, poiParam, paramVal, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
 }
 //Route that create new poi logic
 app.post('/createPoi', (req, res, next) =>{
@@ -139,13 +140,8 @@ app.post('/searchPois', async function(req, res) {
         res.status(200);
         res.json(pois);
         res.end();
-    })
-    
+    })  
 })
-
-
-
-
 
 
 //Route that search poi logic
@@ -203,88 +199,46 @@ function sendPosition(position, res) {
     res.end();
 }
 
+// Route that handles create new user logic
+async function createNewUser(userInfo) {
+    await db.createNewUser(dbClient, userInfo);
+}
+
+//create new user logic
+app.post('/createNewUser', async function(req, res) {
+    console.log("create new user request in the server")
+    const data = req.body;
+    createNewUser(data);
+    var json_res = {
+        x: "1",
+        y: "2",
+        z: "3"
+     }
+    res.status(200);
+    res.json(json_res);
+    res.end(); 
+})
+
+// Route that handles create new user logic
+async function login(userInfo) {
+    return await db.login(dbClient, userInfo);
+}
+
+//create new user logic
+app.post('/login', async function(req, res) {
+    console.log("login request in the server")
+    const data = req.body;
+    ret = login(data).then(function(response) {
+        console.log("----------------------------")
+        res.status(200);
+        res.json(response);
+        res.end();
+    })  
+})
+
 // Start your server on a specified port
 app.listen(port, async ()=>{
     await init()
     console.log(`Server is runing on port ${port}`)
 })
-
-
-
-
-
-// var http = require('http'); // 1 - Import Node.js core module
-
-// var server = http.createServer(function (req, res) {   // 2 - creating server
-
-//     //handle incomming requests here..
-
-// });
-
-// server.listen(5000); //3 - listen for any incoming requests
-
-// console.log('Node.js web server at port 5000 is running..')
-
-
-// const { MongoClient } = require('mongodb');
-
-// async function main() {
-//     const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-//     const client = new MongoClient(uri);
-//     try {
-//         await client.connect();
-//         await listDatabases(client)
-//         // await createPoi(client, {
-//         //     _poiName: "masada",
-//         //     _latitude: "50",
-//         //     _longitude: "50",
-//         //     _shortDesc: "test",
-//         //     _language: "test",
-//         //     _audio: "test",
-//         //     _source: "test",
-//         //     _Contributor: "test",
-//         //     _CreatedDate: "test",
-//         //     _ApprovedBy: "test",
-//         //     _UpdatedBy: "test",
-//         //     _LastUpdatedDate: "test"
-//         // });
-//         await findPoiInfoByName(client, "masada");
-
-//     } catch (e) {
-//        console.error(e); 
-//     } finally {
-//        await client.close();
-//     }
-// }
-// main().catch(console.error);
-
-// async function findPoiInfoByName(client, nameOfPoi) {
-//     const res = await client.db("testDb").collection("testCollection").find({_poiName: nameOfPoi});
-    
-//     const results = await res.toArray();
-
-//     if(res) {
-//         console.log(`found a poi in the collection with the name '${nameOfPoi}'`);
-//         console.log(results);
-//     } else {
-//         console.log(`No poi found with the name '${nameOfPoi}'`);
-//     }
-// }
-
-
-// async function createPoi(client, newPoi) {
-//    const res = await client.db("testDb").collection("testCollection").insertOne(newPoi);
-//     console.log(`new poi created with the following id: ${res.insertedId}`);
-// }
-
-
-// async function listDatabases(client) {
-//     const dbList = await client.db().admin().listDatabases();
-//     console.log("Databases: ");
-//     dbList.databases.forEach(db => {
-//         console.log(`-${db.name}`);
-        
-//     });
-// }
-
 
