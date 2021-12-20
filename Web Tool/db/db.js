@@ -1,4 +1,4 @@
-module.exports = { InsertPoi, findPoiByName, findPoiByContributor, findPoiByApprover, InsertPois, insertAudio, getAudio };
+module.exports = { InsertPoi, InsertPois, insertAudio, getAudio, findPois };
 // const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
 // var fs = require('fs');
@@ -23,47 +23,39 @@ async function InsertPois(client, newPois) {
     } catch (e) {
         console.log(e)
     }
-
 }
-
-// The function find a poi by name from the db
-async function findPoiByName(client, nameOfPoi) {
-    const res = await client.db("testDb").collection("testCollection").find({ _poiName: nameOfPoi });
-    const results = await res.toArray();
-    if (res) {
-        console.log(`found a poi in the collection with the name '${nameOfPoi}'`);
+async function findDataByParams(client, queryObject, relevantBounds, MaxCount, searchOutsideTheBoundery) {
+    var latBT = relevantBounds.southWest.lat; //latitude bigger than
+    var latST = relevantBounds.northEast.lat; //latitude smaller than
+    var lngBT = relevantBounds.southWest.lng; //longtitude bigger than
+    var lngST = relevantBounds.northEast.lng; //longtitude smaller than
+    queryObject['_latitude'] = {$gt: latBT, $lt: latST};
+    queryObject['_longitude'] = {$gt: lngBT, $lt: lngST};
+    var res = await client.db("testDb").collection("testCollection").find(queryObject).limit(MaxCount);
+    var results = await res.toArray();
+    if (results.length == 0 && searchOutsideTheBoundery) { //if can search outside the bounderies and didm't find pois in the boundery
+        delete queryObject._latitude;
+        delete queryObject._longitude;
+        res = await client.db("testDb").collection("testCollection").find(queryObject).limit(MaxCount);
+        results = await res.toArray();
+    }
+    if (results.length != 0) {
+        console.log(`found a poi in the collection with the param '${queryObject}'`);
         console.log(results);
         return results
     } else {
-        console.log(`No poi found with the name '${nameOfPoi}'`);
+        console.log(`No poi found with the param '${queryObject}'`);
     }
+
+
+}
+// The function find a pois 
+async function findPois(client, poiParam ,paramVal, relevantBounds, MaxCount, searchOutsideTheBoundery) {
+    var queryObject = {}
+    queryObject[poiParam] = paramVal
+    return await findDataByParams(client, queryObject, relevantBounds, MaxCount, searchOutsideTheBoundery)
 }
 
-// The function find a poi by name of the contributor from the db
-async function findPoiByContributor(client, nameOfContributor) {
-    const res = await client.db("testDb").collection("testCollection").find({ _Contributor: nameOfContributor });
-    const results = await res.toArray();
-    if (res) {
-        console.log(`found a poi in the collection with the contributor '${nameOfContributor}'`);
-        console.log(results);
-        return results
-    } else {
-        console.log(`No poi found with the contributor '${nameOfContributor}'`);
-    }
-}
-
-// The function find a poi by name of the Approver from the db
-async function findPoiByApprover(client, nameOfApprover) {
-    const res = await client.db("testDb").collection("testCollection").find({ _ApprovedBy: nameOfApprover });
-    const results = await res.toArray();
-    if (res) {
-        console.log(`found a poi in the collection with the Approver '${nameOfApprover}'`);
-        console.log(results);
-        return results
-    } else {
-        console.log(`No poi found with the Approver '${nameOfApprover}'`);
-    }
-}
 // The function insert audio to the db
 async function insertAudio(dbClient, audio, audioName, idOfPoi) {
     const db = await dbClient.db("testDb");
@@ -86,12 +78,19 @@ async function getAudio(dbClient, audioName, idOfAudio = null) {
     });
     return audioPromise
 }
+
 // async function example() {
 //     const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 //     const dbClient = new MongoClient(uri);
 //     await dbClient.connect()
-//     var p =getAudio(dbClient, 'audioName')
-//     p.then(value => {console.log(value)}).catch(err=>{console.log(err)})
+//     var relevantBounds = {}
+//     relevantBounds['northEast'] = {'lat': 33.09572898, 'lng' : 36.47348}
+//     relevantBounds['southWest'] = {'lat': 30.0, 'lng' : 35.9539974}
+//     // findPoiByName(dbClient, 'Masada', relevantBounds, 10, false)
+//     findPois(dbClient, '_Contributor','crawler', relevantBounds, 100, true)
+//     // var p =getAudio(dbClient, 'audioName')
+//     // p.then(value => {console.log(value)}).catch(err=>{console.log(err)})
+
 // }
 // example()
 // async function c() {

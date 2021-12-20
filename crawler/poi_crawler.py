@@ -73,7 +73,8 @@ def get_poi_from_page(wiki_page: wikipediaapi.WikipediaPage):
 
 # return true if wiki_page is relevant
 def is_relevant_page(wiki_page):
-    irrelevant_key_words = ['cities', 'villages in', 'moshavim', 'district in', 'countries in']
+    irrelevant_key_words = ['cities', 'villages in', 'moshavim', 'district in', 'countries in', "villages", "lists of roads",
+                            'district name']
     categories = wiki_page.categories
     for category in categories:
         for irrelevant_key in irrelevant_key_words:
@@ -196,7 +197,7 @@ def start_logic():
                               , output_json_f_name='data_sender/json_file_' + str(i) + ".json")
     for i in range(num_of_thread):
         crawlers[i].crawl_with_thread()
-    time.sleep(5)
+    time.sleep(400)
 
     # add the last page that the crawlers crawled
     crawlers_last_title = []

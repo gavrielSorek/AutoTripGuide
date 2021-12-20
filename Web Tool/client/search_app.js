@@ -5,18 +5,34 @@ var resultArea = $("#results");
 var searchBar = $("#searchBar");
 var searchButton = $(".glyphicon-search");
 
+//map features
+var currentMapBounds = undefined;
+var currentMapZoom = undefined;
+var lastMapCenter = undefined
+
+//user query/ last function
+var lastUserQuery = undefined
+var lastParameterSearched = undefined
+var isUserTrigeredLastFunction = false
+
 // The function get the poi info according name
-function getPoisInfoByName(nameOfPoi) {
+function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
     var poiInfo = {
-        _poiName : nameOfPoi
+        poiParameter : valueOfParameter
     }
-    var poiInfoJson= JSON.stringify(poiInfo);
+    var quaryParams = {}
+    quaryParams['poiParameter'] = poiParameter
+    quaryParams['relevantBounds'] = getRelevantBounds()
+    quaryParams['poiInfo'] = poiInfo
+    quaryParams['searchOutsideTheBounds'] = searchOutsideTheBounds
+    var quaryParamsJson= JSON.stringify(quaryParams);
     const Http = new XMLHttpRequest();
-    const url='http://localhost:5500/searchPoiByName';
+    const url='http://localhost:5500/searchPois';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
-    Http.send(poiInfoJson);
+    console.log(quaryParamsJson)
+    Http.send(quaryParamsJson);
     Http.onreadystatechange = (e) => {
         if (Http.readyState == 4) { //if the operation is complete.
             var response = Http.responseText
@@ -24,116 +40,25 @@ function getPoisInfoByName(nameOfPoi) {
                 console.log("response from the server is recieved")
                 var poisInfo = JSON.parse(Http.responseText);
                 if(poisInfo.length == 0) {
-                    showNotFoundMessage()
+                    userShowNotFoundMessage()
                     console.log("not found");
                     return
-                }
+                } else {
                 console.log(poisInfo);
                 showPoisOnMap(poisInfo);
+                }
             } else {
-                showNotFoundMessage();
+                userShowNotFoundMessage();
                 console.log("not found");
             }
         }
     }
 }
 
-// The function get the poi info according to contributor
-function getPoisInfoByContributor(nameOfContributor) {
-    var poiInfo = {
-        _Contributor : nameOfContributor
-    }
-    var poiInfoJson= JSON.stringify(poiInfo);
-    const Http = new XMLHttpRequest();
-    const url='http://localhost:5500/searchPoiByContributor';
-    Http.open("POST", url);
-    Http.withCredentials = false;
-    Http.setRequestHeader("Content-Type", "application/json");
-    Http.send(poiInfoJson);
-    Http.onreadystatechange = (e) => {
-        if (Http.readyState == 4) { //if the operation is complete. 
-            var response = Http.responseText
-            if(response.length > 0) {
-                console.log("response from the server is recieved")
-                var poisInfo = JSON.parse(Http.responseText);
-                if(poisInfo.length == 0) {
-                    showNotFoundMessage()
-                    console.log("not found");
-                    return
-                }
-                console.log(poisInfo);
-                showPoisOnMap(poisInfo);
-            } else {
-                showNotFoundMessage()
-                console.log("not found");
-            }
-        }  
-    }
-}
-
-// The function get the poi info according to the approver
-function getPoisInfoByApprover(nameOfApprover) {
-    var poiInfo = {
-        _ApprovedBy : nameOfApprover
-    }
-    var poiInfoJson= JSON.stringify(poiInfo);
-    const Http = new XMLHttpRequest();
-    const url='http://localhost:5500/searchPoiByApprover';
-    Http.open("POST", url);
-    Http.withCredentials = false;
-    Http.setRequestHeader("Content-Type", "application/json");
-    Http.send(poiInfoJson);
-    Http.onreadystatechange = (e) => {
-        if (Http.readyState == 4) { //if the operation is complete. 
-            var response = Http.responseText
-            if(response.length > 0) {
-                console.log("response from the server is recieved")
-                var poisInfo = JSON.parse(Http.responseText);
-                if(poisInfo.length == 0) {
-                    showNotFoundMessage()
-                    console.log("not found");
-                    return
-                }
-                console.log(poisInfo);
-                showPoisOnMap(poisInfo);
-            } else {
-                showNotFoundMessage()
-                console.log("not found");
-            }
-        }  
-    }
-}
-
-// The function get the poi info for pois that waiting for approval
-function getPoisWaitingToApproval() {
-    var poiInfo = {
-        _ApprovedBy: 'ApprovedBy ??'
-    }
-    var poiInfoJson= JSON.stringify(poiInfo);
-    const Http = new XMLHttpRequest();
-    const url='http://localhost:5500/searchPoiWaitingToApproval';
-    Http.open("POST", url);
-    Http.withCredentials = false;
-    Http.setRequestHeader("Content-Type", "application/json");
-    Http.send(poiInfoJson);
-    Http.onreadystatechange = (e) => {
-        if (Http.readyState == 4) { //if the operation is complete. 
-            var response = Http.responseText
-            if(response.length > 0) {
-                console.log("response from the server is recieved")
-                var poisInfo = JSON.parse(Http.responseText);
-                if(poisInfo.length == 0) {
-                    showNotFoundMessage()
-                    console.log("not found");
-                    return
-                }
-                console.log(poisInfo);
-                showPoisOnMap(poisInfo);
-            } else {
-                showNotFoundMessage()
-                console.log("not found");
-            }
-        }  
+//not showing the messaage if user doesnt trigered the request
+function userShowNotFoundMessage() {
+    if(isUserTrigeredLastFunction){
+        showNotFoundMessage()
     }
 }
 
@@ -204,6 +129,7 @@ function showPoisOnMap(poisArray) {
         } else {
             res = addGreenMarkerOnMap(lat,lng,name)
         }
+        if (!isUserTrigeredLastFunction) {return} //if not the user initiate the request dont pin/ write errors
         if(res) {
             map.panTo(new L.LatLng(lat, lng));
         } else {
@@ -325,29 +251,38 @@ function showPoi(item) {
 
 // The function perform the search according to the user request
 function getSearchInfo() {
+    isUserTrigeredLastFunction = true // indicate that the user call to search functions 
     if(globalMarker) {
         map.removeLayer(redMarkerGroup)
         redMarkerGroup = L.featureGroup();
     }
     resultArea.empty();
     valueToSearch = document.getElementById('searchBar').value;
+    lastUserQuery = valueToSearch;
     console.log("the value to search is: " + valueToSearch)
     if(document.getElementById('Name').checked) {
         //Name radio button is checked
         console.log("Name radio button is checked")
-        getPoisInfoByName(valueToSearch);
+        //save usage data
+        lastParameterSearched = '_poiName'
+        getPoisInfo('_poiName', valueToSearch, true);
+        // getPoisInfoByName(valueToSearch, true);
       }else if(document.getElementById('Contributor').checked) {
         //Contributor radio button is checked
         console.log("Contributor radio button is checked")
-        getPoisInfoByContributor(valueToSearch);
+        lastParameterSearched = '_Contributor'
+        getPoisInfo('_Contributor', valueToSearch, true);
       }else if(document.getElementById('Approved By').checked) {
         //Approved By radio button is checked
         console.log("Approved By radio button is checked")
-        getPoisInfoByApprover(valueToSearch)
+        lastParameterSearched = '_ApprovedBy'
+        getPoisInfo('_ApprovedBy', valueToSearch, true);
       }else if(document.getElementById('Waiting for approval').checked) {
         //Waiting for approval radio button is checked
         console.log("Waiting for approval radio button is checked")
-        getPoisWaitingToApproval()
+        lastParameterSearched = '_ApprovedBy'
+        lastUserQuery = 'ApprovedBy ??'
+        getPoisInfo('_ApprovedBy', 'ApprovedBy ??', true);
       }else if(document.getElementById('All').checked) {
         //All radio button is checked
         console.log("All radio button is checked")
@@ -367,8 +302,48 @@ function getSearchInfo() {
 //   });
 
 /* -------------------------- map function -------------------- */
+function getRelevantBounds() {
+    var relevantBounds = {}
+    relevantBounds['northEast'] = currentMapBounds._northEast
+    relevantBounds['southWest'] = currentMapBounds._southWest
+    return relevantBounds;
+}
+
+function updatePoisOnMap() {
+    console.log(lastUserQuery)
+
+    if (lastParameterSearched) { //if already the user searched in the map
+        getPoisInfo(lastParameterSearched,lastUserQuery, false)
+    }
+    
+    console.log(currentMapBounds)
+    console.log(currentMapZoom)
+
+}
 
 var map = L.map('map').setView([31.83303, 34.863443], 10);
+console.log(map.getCenter())
+//init
+lastMapCenter = map.getCenter()
+currentMapBounds = map.getBounds()
+currentMapZoom = map.getZoom()
+
+
+map.on('moveend', function(e) { //the map moved
+    epsilon = 0.1 //TODO FIND BETTER LOGIC
+    currentMapBounds = map.getBounds()
+    currentMapZoom = map.getZoom()
+    var currentCenter = map.getCenter()
+    console.log(currentCenter)
+    console.log(lastMapCenter)
+    if (Math.abs(lastMapCenter.lat - currentCenter.lat) >= epsilon || Math.abs(lastMapCenter.lng - currentCenter.lng) >= epsilon) {
+        isUserTrigeredLastFunction = false
+        updatePoisOnMap();
+        lastMapCenter = currentCenter
+    } else {
+        console.log("close position")
+    }
+});
 
 var tiles = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         maxZoom: 18,

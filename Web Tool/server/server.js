@@ -16,6 +16,7 @@ const port = 5500
 app.use(bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 extended: false})); 
+const MAX_ELEMENT_ON_MAP = 200
 
 // Route that handles create New Poi logic
 async function createNewPoi(poiName, longitude, latitude, shortDesc, language,
@@ -71,13 +72,15 @@ async function createNewPois(pois) {
     }
 }
 
-async function findPoiInfoByName(nameOfPoi) {
+async function findPoisInfo(poiParam, paramVal,relevantBounds, searchOutsideTheBounds) {
     const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     const dbClient = new MongoClient(uri);
     try {
         await dbClient.connect();
         console.log("Connected to DB")
-        res = await db.findPoiByName(dbClient, nameOfPoi);
+        res = await db.findPois(dbClient, poiParam, paramVal, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
+        console.log("---------------------------") //TODO DELETE
+        console.log(res)
         return res;
     } catch (e) {
         console.error(e); 
@@ -86,28 +89,15 @@ async function findPoiInfoByName(nameOfPoi) {
     }
 }
 
-async function findPoiInfoByContributorName(nameOfContributor) {
+async function findPoiInfoByName(nameOfPoi, relevantBounds, searchOutsideTheBounds) {
     const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     const dbClient = new MongoClient(uri);
     try {
         await dbClient.connect();
         console.log("Connected to DB")
-        res = await db.findPoiByContributor(dbClient, nameOfContributor);
-        return res;
-    } catch (e) {
-        console.error(e); 
-    } finally {
-       await dbClient.close();
-    }
-}
-
-async function findPoiInfoByApprover(nameOfApprover) {
-    const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-    const dbClient = new MongoClient(uri);
-    try {
-        await dbClient.connect();
-        console.log("Connected to DB")
-        res = await db.findPoiByApprover(dbClient, nameOfApprover);
+        res = await db.findPoiByName(dbClient, nameOfPoi, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
+        console.log("---------------------------") //TODO DELETE
+        console.log(res)
         return res;
     } catch (e) {
         console.error(e); 
@@ -150,45 +140,18 @@ app.post('/createPois', (req, res, next) =>{
     next();
 })
 
-//Route that search poi logic
-app.post('/searchPoiByName', async function(req, res) {
-    console.log("Poi search by name is recieved")
-    const data = req.body; 
-    poisInfo = await findPoiInfoByName(data._poiName)
+//search poi logic
+app.post('/searchPois', async function(req, res) {
+    console.log("Pois search general")
+    const data = req.body;
+    const queryParam = data.poiParameter;
+    poisInfo = await findPoisInfo(queryParam, data.poiInfo.poiParameter ,data.relevantBounds, data.searchOutsideTheBounds)
     res.status(200);
     res.json(poisInfo);
     res.end();
 })
 
-//Route that search poi logic
-app.post('/searchPoiByContributor', async function(req, res) {
-    console.log("Poi search by contributor is recieved")
-    const data = req.body; 
-    poisInfo = await findPoiInfoByContributorName(data._Contributor)
-    res.status(200);
-    res.json(poisInfo);
-    res.end();
-})
 
-//Route that search poi logic
-app.post('/searchPoiByApprover', async function(req, res) {
-    console.log("Poi search by approver is recieved")
-    const data = req.body; 
-    poisInfo = await findPoiInfoByApprover(data._ApprovedBy)
-    res.status(200);
-    res.json(poisInfo);
-    res.end();
-})
-
-//Route that search poi logic
-app.post('/searchPoiWaitingToApproval', async function(req, res) {
-    console.log("Poi search by waiting to approval is recieved")
-    const data = req.body; 
-    poisInfo = await findPoiInfoByApprover(data._ApprovedBy)
-    res.status(200);
-    res.json(poisInfo);
-    res.end();
-})
 
 //Route that search poi logic
 app.post('/findPoiPosition', async function(req, res) {
