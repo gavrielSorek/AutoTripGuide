@@ -7,13 +7,22 @@ var searchButton = $(".glyphicon-search");
 
 //map features
 var currentMapBounds = undefined;
-var currentMapZoom = undefined;
+var lastMapZoom = undefined;
 var lastMapCenter = undefined
 
 //user query/ last function
 var lastUserQuery = undefined
 var lastParameterSearched = undefined
 var isUserTrigeredLastFunction = false
+
+//init
+globalMarker = undefined
+var map = L.map('map').setView([31.83303, 34.863443], 10);
+var redMarkerGroup = L.featureGroup();
+var markerSet = new Set() 
+var greenMarkerGroup = L.featureGroup();
+const maxMarkersOnMap = 500
+const secClipRange = 0.1 //#secure clipping range (clip pois in secure distance)
 
 // The function get the poi info according name
 function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
@@ -115,35 +124,52 @@ function showNotFoundMessage() {
       });
 }
 
-// The function show the pois on the map
 function showPoisOnMap(poisArray) {
+    if (markerSet.size >= maxMarkersOnMap) {
+        markerSet.clear()
+        greenMarkerGroup.clearLayers();
+        redMarkerGroup.clearLayers();
+    }
     poisArray.forEach((item) => {
+        //TODO TO CHANGE LOGIC
+        if (markerSet.has(item._poiName)) { //continue if alredy in marker set
+            return
+        } else {
+            markerSet.add(item._poiName)
+        }
         var lat = item._latitude;
         var lng = item._longitude;
         var name = item._poiName;
-        var shortDesc = item._shortDesc;
         var approved = item._ApprovedBy;
-        console.log(approved)
+        if (isNaN(lat) || isNaN(lng) || lat == null || lng == null) {
+            console.log("lat or lng is NaN - for POI: " + name)
+            return false
+        }
+        var marker = undefined
         if (approved.localeCompare("ApprovedBy ??") == 0) {
-            res = addRedMarkerOnMap(lat, lng, name, item)
+            marker = L.marker([lat, lng], {icon: redIcon}).addTo(redMarkerGroup);
         } else {
-            res = addGreenMarkerOnMap(lat,lng,name)
+            marker = L.marker([lat, lng], {icon: greenIcon}).addTo(greenMarkerGroup);
         }
-        if (!isUserTrigeredLastFunction) {return} //if not the user initiate the request dont pin/ write errors
-        if(res) {
-            map.panTo(new L.LatLng(lat, lng));
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Something wrong with the latitude or the longtitude values of ' + name,
-              }).then((result) => {
-                
-              });
-        }
-      });
+        marker.bindPopup("<b>Welcome to </b><br>" + name)
+        marker.on('click', function(){
+            showPoi(item)
+        })
+    });   
+    //add the layers to the map
+    map.addLayer(redMarkerGroup);
+    map.addLayer(greenMarkerGroup);
+    if (!isUserTrigeredLastFunction) {return} //if not the user initiate the request dont pin/ write errors
+    arraySize = poisArray.length;
+    if(arraySize > 0) {
+        globalMarker = poisArray[arraySize - 1]
+        map.panTo(new L.LatLng(globalMarker._latitude, globalMarker._longitude));
+    }
 }
-globalMarker = null
+
+
+
+
 //icons for markers
 var redIcon = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
@@ -162,44 +188,6 @@ var greenIcon = new L.Icon({
     popupAnchor: [1, -34],
     shadowSize: [41, 41]
   });
-
-// The function add a green marker on the map
-function addGreenMarkerOnMap(lat, lng, name, item) {
-    if (isNaN(lat) || isNaN(lng) || lat == null || lng == null) {
-        console.log("lat or lng is NaN - for POI: " + name)
-        return false
-    }
-    console.log("add poi to map")
-    var greenMarkerGroup = L.featureGroup();
-    var greenMarker = L.marker([lat, lng], {icon: greenIcon}).addTo(greenMarkerGroup);
-    map.addLayer(greenMarkerGroup);
-    greenMarker.bindPopup("<b>Welcome to </b><br>" + name)
-    greenMarker.on('click', function(){
-        showPoi(item)
-    })
-    globalMarker = greenMarker
-    return true
-}
-
-var redMarkerGroup = L.featureGroup();
-
-// The function add a red marker on the map
-function addRedMarkerOnMap(lat, lng, name, item) {
-    if (isNaN(lat) || isNaN(lng) || lat == null || lng == null) {
-        console.log("lat or lng is NaN - for POI: " + name)
-        return false
-    }
-    console.log("add poi to map")
-    // var redMarkerGroup = L.featureGroup();
-    var redMarker = L.marker([lat, lng], {icon: redIcon}).addTo(redMarkerGroup);
-    map.addLayer(redMarkerGroup);
-    redMarker.bindPopup("<b>Welcome to </b><br>" + name)
-    redMarker.on('click', function(){
-        showPoi(item)
-    })
-    globalMarker = redMarker
-    return true
-}
 
 var poiAudio = document.createElement('audio');
 poiAudio.controls = 'controls';
@@ -252,9 +240,12 @@ function showPoi(item) {
 // The function perform the search according to the user request
 function getSearchInfo() {
     isUserTrigeredLastFunction = true // indicate that the user call to search functions 
+    console.log("-------------------------------------------")
+    console.log(globalMarker)
     if(globalMarker) {
-        map.removeLayer(redMarkerGroup)
-        redMarkerGroup = L.featureGroup();
+        markerSet.clear()
+        greenMarkerGroup.clearLayers();
+        redMarkerGroup.clearLayers();
     }
     resultArea.empty();
     valueToSearch = document.getElementById('searchBar').value;
@@ -306,40 +297,52 @@ function getRelevantBounds() {
     var relevantBounds = {}
     relevantBounds['northEast'] = currentMapBounds._northEast
     relevantBounds['southWest'] = currentMapBounds._southWest
+    // add secure range
+    relevantBounds['northEast'].lat += secClipRange
+    relevantBounds['northEast'].lng += secClipRange
+    relevantBounds['southWest'].lat -= secClipRange
+    relevantBounds['southWest'].lng -= secClipRange
+    console.log("======================================")
+    console.log(relevantBounds['northEast'])
     return relevantBounds;
 }
 
 function updatePoisOnMap() {
-    console.log(lastUserQuery)
 
     if (lastParameterSearched) { //if already the user searched in the map
         getPoisInfo(lastParameterSearched,lastUserQuery, false)
     }
     
     console.log(currentMapBounds)
-    console.log(currentMapZoom)
+    console.log(lastMapZoom)
 
 }
 
-var map = L.map('map').setView([31.83303, 34.863443], 10);
 console.log(map.getCenter())
 //init
 lastMapCenter = map.getCenter()
 currentMapBounds = map.getBounds()
-currentMapZoom = map.getZoom()
+lastMapZoom = map.getZoom()
 
 
 map.on('moveend', function(e) { //the map moved
-    epsilon = 0.1 //TODO FIND BETTER LOGIC
+    if (isUserTrigeredLastFunction) { //this occure when the map move to pin thats why we dont do nothing
+        isUserTrigeredLastFunction = false
+        return;
+    }
+    var epsilon = 0.01 //TODO FIND BETTER LOGIC
+    var zooRangeSightChanged = 2
     currentMapBounds = map.getBounds()
-    currentMapZoom = map.getZoom()
+    var currentZoom = map.getZoom()
     var currentCenter = map.getCenter()
     console.log(currentCenter)
     console.log(lastMapCenter)
-    if (Math.abs(lastMapCenter.lat - currentCenter.lat) >= epsilon || Math.abs(lastMapCenter.lng - currentCenter.lng) >= epsilon) {
+    if (Math.abs(lastMapCenter.lat - currentCenter.lat) >= epsilon || Math.abs(lastMapCenter.lng - currentCenter.lng) >= epsilon ||
+        Math.abs(currentZoom - lastMapZoom) >= zooRangeSightChanged) {
         isUserTrigeredLastFunction = false
         updatePoisOnMap();
         lastMapCenter = currentCenter
+        lastMapZoom = currentZoom
     } else {
         console.log("close position")
     }

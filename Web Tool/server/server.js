@@ -16,7 +16,7 @@ const port = 5500
 app.use(bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 extended: false})); 
-const MAX_ELEMENT_ON_MAP = 200
+const MAX_ELEMENT_ON_MAP = 50
 
 // Route that handles create New Poi logic
 
