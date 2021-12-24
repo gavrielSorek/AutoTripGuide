@@ -23,6 +23,7 @@ var markerSet = new Set()
 var greenMarkerGroup = L.featureGroup();
 const maxMarkersOnMap = 500
 const secClipRange = 0.1 //#secure clipping range (clip pois in secure distance)
+const uriBeginning = 'http://127.0.0.1:5500/'
 
 // The function get the poi info according name
 function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
@@ -36,7 +37,7 @@ function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
     quaryParams['searchOutsideTheBounds'] = searchOutsideTheBounds
     var quaryParamsJson= JSON.stringify(quaryParams);
     const Http = new XMLHttpRequest();
-    const url='http://localhost:5500/searchPois';
+    const url= uriBeginning + 'searchPois';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -78,7 +79,7 @@ function getAudioByName(nameOfPoi) {
     }
     var poiInfoJson= JSON.stringify(poiInfo);
     const Http = new XMLHttpRequest();
-    const url='http://localhost:5500/searchPoiAudioByName';
+    const url= uriBeginning + 'searchPoiAudioByName';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -103,9 +104,34 @@ function getAudioByName(nameOfPoi) {
 
 function loadAudio(poiAudioFromDB) {
     console.log("inside load audio")
+    console.log(poiAudioFromDB.data)
+    // const blob = new Blob([poiAudioFromDB], { type: "audio/wav" });
+    // var binaryData = [];
+    // binaryData.push(poiAudioFromDB);
+    
+    var uint8Array1 = new Uint8Array(poiAudioFromDB.data)
+    var arrayBuffer = uint8Array1.buffer; 
+    console.log(arrayBuffer)
+    poiAudio.src = window.URL.createObjectURL(new Blob([uint8Array1], {type: 'audio/ogg'}))
+    poiAudio.load();
+    // const str2blob = txt => new Blob([poiAudioFromDB]);
+    // var blobUrl = URL.createObjectURL(str2blob);
+    
+    // readAsDataURL
+    // const url = window.URL.createObjectURL(str2blob);
+    // poiAudio.src = url;
+
     // poiAudio.src = poiAudioFromDB
-    // poiAudio.load();
+
+    // playByteArray(poiAudioFromDB)
+    // $("#src").attr("src", URL.createObjectURL(url));
+    // document.getElementById("audio").load();
+    // // $("#src").attr("src", URL.createObjectURL(files[0]));
+    // // document.getElementById("audio").load();
+    // // poiAudio.src = poiAudioFromDB
+    // // poiAudio.load();
 }
+
 
 // The function delete the data from the page
 function deleteEverything() {
@@ -190,6 +216,7 @@ var greenIcon = new L.Icon({
   });
 
 var poiAudio = document.createElement('audio');
+poiAudio.id = 'audio'
 poiAudio.controls = 'controls';
     //poiAudio.src = 'media/Blue Browne.mp3';
 

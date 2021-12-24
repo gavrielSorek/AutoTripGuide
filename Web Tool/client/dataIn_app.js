@@ -203,7 +203,8 @@ async function readFileAsData(file) {
     let result = await new Promise((resolve) => {
         let fileReader = new FileReader();
         fileReader.onload = (event) => resolve(event.currentTarget.result);
-        fileReader.readAsText(file);
+        fileReader.readAsArrayBuffer(file);
     });
-    return result;
+    bytesRes = new Int8Array(result);
+    return bytesRes;
 }

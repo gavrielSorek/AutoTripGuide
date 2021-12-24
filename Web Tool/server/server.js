@@ -68,7 +68,7 @@ async function createNewPoi(poiName, longitude, latitude, shortDesc, language,
         });
         if (audioDbClient) {
             await audioDbClient.connect();
-            await db.insertAudio(audioDbClient, audio, poiName, "null at this point")
+            await db.insertAudio(audioDbClient, Object.values(audio), poiName, "null at this point")
         }
     } catch (e) {
         console.error(e); 
