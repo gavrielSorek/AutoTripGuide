@@ -1,4 +1,4 @@
-module.exports = { InsertPoi, InsertPois, insertAudio, getAudio, findPois };
+module.exports = { InsertPoi, InsertPois, insertAudio, getAudio, findPois, createNewUser, login};
 // const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
 // var fs = require('fs');
@@ -8,7 +8,6 @@ async function InsertPoi(client, newPoi) {
     const res = await client.db("testDb").collection("testCollection").insertOne(newPoi);
     console.log(`new poi created with the following id: ${res.insertedId}`);
 }
-
 
 // The function insert a new poiss to the db
 async function InsertPois(client, newPois) {
@@ -46,8 +45,6 @@ async function findDataByParams(client, queryObject, relevantBounds, MaxCount, s
     } else {
         console.log(`No poi found with the param '${queryObject}'`);
     }
-
-
 }
 // The function find a pois 
 async function findPois(client, poiParam ,paramVal, relevantBounds, MaxCount, searchOutsideTheBoundery) {
@@ -78,6 +75,26 @@ async function getAudio(dbClient, audioName, idOfAudio = null) {
     });
     return audioPromise
 }
+
+// The function insert a new user to the db
+async function createNewUser(client, newUser) {
+    const res = await client.db("testDb").collection("users").insertOne(newUser);
+    console.log(`new user created with the following id: ${res.insertedId}`);
+}
+
+// The function login user to the system according his details in the db
+async function login(client, userInfo) {
+    const res = await client.db("testDb").collection("users").find(userInfo);
+    results = await res.toArray();
+    if (results.length != 0) {
+        console.log("The user exist")
+        return("success")
+    } else {
+        console.log("The user not exist !!!!!!!")
+        return("failed")
+    }
+}
+
 
 // async function example() {
 //     const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
