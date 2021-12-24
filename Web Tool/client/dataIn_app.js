@@ -1,4 +1,5 @@
 /* -------------------------- insert function -------------------- */
+
 //variables definition
 var poiName = document.getElementById("PoiName");
 var longitude = document.getElementById("longitude");
@@ -8,7 +9,13 @@ var language = document.getElementById("language");
 var audio = document.getElementById("audio");
 var source = document.getElementById("source");
 var select = document.getElementById("languages");
+var recordButton = document.getElementById("record_button");
 
+
+//init
+var globalIsAudioReady = true;
+var globalAudioData = undefined;
+// initRecord()
 //add events
 if(document.getElementById("upload")) {
     document.getElementById("upload").addEventListener("change", handleFiles, false);
@@ -102,10 +109,9 @@ function getTodayDate(){
 
 // The function send the poi info request to the server
 async function sendPoiInfoToServer() {
-    var audioFile = document.getElementById("upload").files[0]
     var audioData = undefined
-    if (audioFile) {
-        audioData = await readFileAsData(document.getElementById("upload").files[0])
+    if (globalAudioData) {
+        audioData = globalAudioData
     }
     var poiInfo = {
         _poiName : poiName.value,
@@ -191,10 +197,13 @@ function addMarkerOnMap(lat, lng, name) {
 /* -------------------------- audio function -------------------- */
 
 //when audio file added load audio to html
-function handleFiles(event) {
+async function handleFiles(event) {
     var files = event.target.files;
     $("#src").attr("src", URL.createObjectURL(files[0]));
     document.getElementById("audio").load();
+    globalIsAudioReady = false;
+    globalAudioData = await readFileAsData(document.getElementById("upload").files[0])
+    globalIsAudioReady = true;    
 }
 
 // let data = await readFileAsData(document.getElementById("upload").files[0])
@@ -208,3 +217,63 @@ async function readFileAsData(file) {
     bytesRes = new Int8Array(result);
     return bytesRes;
 }
+
+
+var mediaRecorder = undefined
+var audioChunks = [];
+//record 
+async function initRecord() {
+    await navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(stream => {
+      mediaRecorder = new MediaRecorder(stream);
+      //store data
+      mediaRecorder.addEventListener("dataavailable", event => {
+        audioChunks.push(event.data);
+      });
+      mediaRecorder.addEventListener("stop", () => {
+          globalIsAudioReady = false;
+          const audioBlob = new Blob(audioChunks);
+          // load audio that has been collected
+          audio.src = window.URL.createObjectURL(audioBlob)
+          audio.load();
+          //assign the audio to global audio
+          blobToArrayBuffer(audioBlob).then((buff)=>{globalAudioData = new Uint8Array(buff)
+            globalIsAudioReady = true;
+        })
+
+        });
+    });
+
+
+}
+
+async function record() {
+    if (!mediaRecorder) {
+        await initRecord();
+    }
+    audioChunks = [];
+    mediaRecorder.start();
+    recordButton.style = "background-color: cyan;"
+    console.log("media recorder started")
+}
+
+function stopRecord() {
+    if(mediaRecorder) {
+        mediaRecorder.stop();
+    }
+    recordButton.style = "background-color: cornsilk;"
+}
+
+
+
+async function blobToArrayBuffer(blob) {
+    if ('arrayBuffer' in blob) return await blob.arrayBuffer();
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject;
+        reader.readAsArrayBuffer(blob);
+    });
+}
+
+//TODO ADD CONDITION TO SEND POI IF AND ONLY IF AUDIO IS READY
