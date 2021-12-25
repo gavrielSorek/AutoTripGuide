@@ -26,14 +26,14 @@ const MAX_ELEMENT_ON_MAP = 50
 //init GLOBAL
 uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const dbClientSearcher = new MongoClient(uri);
-const dbClientInserter = new MongoClient(uri);
+const dbClientInsertor = new MongoClient(uri);
 const dbClientAudio = new MongoClient(uri);
 
 //init
 async function init() {
     try {
         await dbClientSearcher.connect();
-        await dbClientInserter.connect();
+        await dbClientInsertor.connect();
         await dbClientAudio.connect();
         console.log("Connected to search DB")
     } catch (e) {
@@ -43,7 +43,7 @@ async function init() {
 
 async function closeServer(){
     await dbClientSearcher.close();
-    await dbClientInserter.close();
+    await dbClientInsertor.close();
     await dbClientAudio.close()
 }
 
@@ -52,7 +52,7 @@ async function closeServer(){
 async function createNewPois(pois) {
     try {
         pois.every(poiHandler)
-        await db.InsertPois(dbClientInserter, pois);
+        await db.InsertPois(dbClientInsertor, pois);
     } catch (e) {
         console.error(e); 
     } 
@@ -114,10 +114,9 @@ async function retAudioByName(audioName, res) {
             res.json(value);
             console.log("success to send audio")
             res.status(200);
-            dbClient.close()}).catch(err=>{console.log("cant retrive audio file: " + err)
+            }).catch(err=>{console.log("cant retrive audio file: " + err)
             res.status(400)
-            res.end();
-            dbClient.close();})
+            res.end();})
     } catch (e) {
         console.error(e);
         res.status(400);
@@ -176,7 +175,7 @@ function comparePass(pass, encryptPass) {
 
 // Route that handles create new user logic
 async function createNewUser(userInfo) {
-    return await db.createNewUser(dbClient, userInfo);
+    return await db.createNewUser(dbClientInsertor, userInfo);
 }
 
 //create new user logic
@@ -195,7 +194,7 @@ app.post('/createNewUser', async function(req, res) {
 
 // Route that handles login logic
 async function login(userInfo) {
-    return await db.login(dbClient, userInfo);
+    return await db.login(dbClientInsertor, userInfo);
 }
 
 // login logic
