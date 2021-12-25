@@ -1,4 +1,5 @@
 const db = require("../db/db");
+var geo = require("./services/countryByPosition");
 const wiki_service = require("../server/WikiServices/positionByNameWiki");
 var CryptoJS = require("crypto-js");
 var key = "123"
@@ -62,8 +63,12 @@ async function findPoisInfo(poiParam, paramVal,relevantBounds, searchOutsideTheB
     return db.findPois(dbClientSearcher, poiParam, paramVal, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
 }
 async function poiHandler(poi) {
-    if(poi._audio == "no audio") {return} //do nothing
-    db.insertAudio(dbClientAudio, Object.values(poi._audio), poi._poiName, "null at this point");
+    if(poi._audio != "no audio") {
+        db.insertAudio(dbClientAudio, Object.values(poi._audio), poi._poiName, "null at this point");
+    } 
+    if(!poi._country) {
+        poi._country = geo.getCountry(parseFloat(poi._latitude), parseFloat(poi._longitude));
+    }
 }
 
 //Route that create new pois logic
