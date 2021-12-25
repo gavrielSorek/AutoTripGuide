@@ -1,5 +1,7 @@
 const db = require("../db/db");
 const wiki_service = require("../server/WikiServices/positionByNameWiki");
+var CryptoJS = require("crypto-js");
+var key = "123"
 
 const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
@@ -202,6 +204,32 @@ function sendPosition(position, res) {
 
 /************************  login + signup functions ************************/
 
+function encrypt(password) {
+    // Encrypt
+    var ciphertext = CryptoJS.AES.encrypt(password, key).toString();
+    console.log("ciphertext: " + ciphertext); // 'my message'
+    return ciphertext
+}
+
+function decrypt(ciphertext) {
+    // Decrypt
+    var bytes  = CryptoJS.AES.decrypt(ciphertext, key);
+    var originalText = bytes.toString(CryptoJS.enc.Utf8);
+    return originalText
+}
+
+// The function compare between passwords - when one of them encrypted
+function comparePass(pass, encryptPass) {
+    originalPass = decrypt(encryptPass);
+    if(pass.localeCompare(originalPass) == 0) {
+        console.log("the password identical")
+        return true;
+    } else {
+        console.log("the password are not identical!!!!")
+        return false;
+    }
+}
+
 // Route that handles create new user logic
 async function createNewUser(userInfo) {
     return await db.createNewUser(dbClient, userInfo);
@@ -210,7 +238,9 @@ async function createNewUser(userInfo) {
 //create new user logic
 app.post('/createNewUser', async function(req, res) {
     console.log("create new user request in the server")
-    const data = req.body;
+    var data = req.body;
+    pass = data.password;
+    data.password = encrypt(pass)
     ret = createNewUser(data).then(function(response) {
         console.log("----------------------------")
         res.status(200);
@@ -219,19 +249,31 @@ app.post('/createNewUser', async function(req, res) {
     }); 
 });
 
-// Route that handles create new user logic
+// Route that handles login logic
 async function login(userInfo) {
     return await db.login(dbClient, userInfo);
 }
 
-//create new user logic
+// login logic
 app.post('/login', async function(req, res) {
     console.log("login request in the server")
     const data = req.body;
+    var pass = data.password
     ret = login(data).then(function(response) {
+        var jsonResponse = JSON.stringify(response);
+        if(response.length == 0) {
+            newResponse = 0     // The user's name or email not exist - so the user not exist
+        } else {                // The user's name or email exist
+            var encryptPass = response[0].password
+            if(comparePass(pass, encryptPass)) {    //check of the password
+                newResponse = 2    // The user's name or email + password are correct
+            } else {
+                newResponse = 1    // The password are not correct
+            }
+        }
         console.log("----------------------------")
         res.status(200);
-        res.json(response);
+        res.json(newResponse);
         res.end();
     });  
 });
@@ -241,4 +283,6 @@ app.listen(port, async ()=>{
     await init()
     console.log(`Server is runing on port ${port}`)
 })
+
+
 

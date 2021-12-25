@@ -117,55 +117,19 @@ async function createNewUser(client, newUserInfo) {
 async function login(client, userInfo) {
     var userNameVal = userInfo.userName
     var emailAddrVal = userInfo.emailAddr
-    var passwordVal = userInfo.password
-    var resultsLen = 0
-    checkCode = await checkInfo(client, userInfo);
-    if(checkCode == 0) {    //The user's name or email not exist - so the user not exist
-        console.log("The user not exist")
-        return 0;
-    } else if(checkCode == 1 || checkCode == 2) {  //The user's name exist
-        var resUserName = await client.db("testDb").collection("users").find({userName: userNameVal, password: passwordVal});
-        results = await resUserName.toArray();
-        resultsLen = results.length
-    } else {    //The user's email address exist
-        var resEmailAddr = await client.db("testDb").collection("users").find({emailAddr: emailAddrVal, password: passwordVal});
-        results = await resEmailAddr.toArray();
-        resultsLen = results.length
-    }
-    if(resultsLen == 0) {
-        console.log("The password wrong");
-        return 1;
+    var resUserName = await client.db("testDb").collection("users").find({userName: userNameVal});
+    var resEmailAddr = await client.db("testDb").collection("users").find({emailAddr: emailAddrVal});
+    var resUserNameArr = await resUserName.toArray();
+    var resEmailAddrArr = await resEmailAddr.toArray();
+    var resUserNameLen = resUserNameArr.length;
+    var resEmailAddrLen = resEmailAddrArr.length;
+
+    if(resUserNameLen) {
+        return resUserNameArr;
+    } else if(resEmailAddrLen) {
+        return resEmailAddrArr;
     } else {
-        console.log("The user exist")
-        return 2;
+        console.log("The user not exist")
+        return [];
     }
 }
-
-
-// async function example() {
-//     const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-//     const dbClient = new MongoClient(uri);
-//     await dbClient.connect()
-//     var relevantBounds = {}
-//     relevantBounds['northEast'] = {'lat': 33.09572898, 'lng' : 36.47348}
-//     relevantBounds['southWest'] = {'lat': 30.0, 'lng' : 35.9539974}
-//     // findPoiByName(dbClient, 'Masada', relevantBounds, 10, false)
-//     findPois(dbClient, '_Contributor','crawler', relevantBounds, 100, true)
-//     // var p =getAudio(dbClient, 'audioName')
-//     // p.then(value => {console.log(value)}).catch(err=>{console.log(err)})
-
-// }
-// example()
-// async function c() {
-//     const audioFile = fs.createReadStream("./au1.mp4");
-//     audioFile.on('data', async (chunk) => {
-//         const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-//         const dbClient = new MongoClient(uri);
-//         await dbClient.connect();
-//         // await dbClient.connect();
-
-//         // Send chunk to client
-//         insertAudio(dbClient, chunk, 'my audio123', '1'); // May be?
-//     });
-// }
-// c()
