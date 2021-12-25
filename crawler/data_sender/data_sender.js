@@ -68,7 +68,6 @@ function convertFromCrawlerToServerPoi(crawlerPois) {
         var position = ParseDMS(crawlePoi['position']['latitude'] + " " + crawlePoi['position']['longitude'])
         serverPoi = {
             _poiName: crawlePoi['title'],
-            _country: geo.getCountry(position['lat'], position['lng']),
             _latitude: position['lat'],
             _longitude: position['lng'],
             _shortDesc: crawlePoi['summary'],
@@ -80,6 +79,7 @@ function convertFromCrawlerToServerPoi(crawlerPois) {
             _ApprovedBy: "ApprovedBy ??",
             _UpdatedBy: "UpdatedBy crawler",
             _LastUpdatedDate: getTodayDate(),
+            _country: geo.getCountry(position['lat'], position['lng']),
             _Categories: crawlePoi['categories'].join()
         }
         serverPois.push(serverPoi)
