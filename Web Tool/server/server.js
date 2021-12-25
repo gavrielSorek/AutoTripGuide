@@ -12,7 +12,8 @@ bodyParser = require('body-parser');
 const app = express()
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(bodyParser.json({limit: '50mb'}));
-let cors = require('cors')
+let cors = require('cors');
+const { data } = require("jquery");
 app.use(cors())
 const port = 5500
 app.use(bodyParser.json() );       // to support JSON-encoded bodies
@@ -24,13 +25,16 @@ const MAX_ELEMENT_ON_MAP = 50
 
 //init GLOBAL
 uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-const dbClient = new MongoClient(uri);
-
+const dbClientSearcher = new MongoClient(uri);
+const dbClientInserter = new MongoClient(uri);
+const dbClientAudio = new MongoClient(uri);
 
 //init
 async function init() {
     try {
-        await dbClient.connect();
+        await dbClientSearcher.connect();
+        await dbClientInserter.connect();
+        await dbClientAudio.connect();
         console.log("Connected to search DB")
     } catch (e) {
         console.error(e); 
@@ -38,83 +42,29 @@ async function init() {
 }
 
 async function closeServer(){
-    await dbClient.close();
+    await dbClientSearcher.close();
+    await dbClientInserter.close();
+    await dbClientAudio.close()
 }
 
-
-async function createNewPoi(poiName, longitude, latitude, shortDesc, language,
-    audio, source, Contributor, CreatedDate, ApprovedBy, UpdatedBy, LastUpdatedDate) {
-    const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-    const dbClient = new MongoClient(uri);
-    var audioDbClient = undefined
-    var audioStatus = "no audio"
-    if (audio) {
-        audioDbClient = new MongoClient(uri);
-        audioStatus = "audio exist"
-    }
-    try {
-        await dbClient.connect();
-        console.log("Connected to DB")
-        await db.InsertPoi(dbClient, {
-            _poiName: poiName,
-            _latitude: latitude,
-            _longitude: longitude,
-            _shortDesc: shortDesc,
-            _language: language,
-            _audio: audioStatus,
-            _source: source,
-            _Contributor: Contributor,
-            _CreatedDate: CreatedDate,
-            _ApprovedBy: ApprovedBy,
-            _UpdatedBy: UpdatedBy,
-            _LastUpdatedDate: LastUpdatedDate
-        });
-        if (audioDbClient) {
-            await audioDbClient.connect();
-            await db.insertAudio(audioDbClient, Object.values(audio), poiName, "null at this point")
-        }
-    } catch (e) {
-        console.error(e); 
-    } finally {
-        await dbClient.close();
-    }
-}
 
 // Route that handles create New Pois logic
 async function createNewPois(pois) {
-    const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-    const dbClient = new MongoClient(uri);
     try {
-        await dbClient.connect();
-        console.log("Connected to DB")
-        await db.InsertPois(dbClient, pois);
+        pois.every(poiHandler)
+        await db.InsertPois(dbClientInserter, pois);
     } catch (e) {
         console.error(e); 
-    } finally {
-       await dbClient.close();
-    }
+    } 
 }
 
 async function findPoisInfo(poiParam, paramVal,relevantBounds, searchOutsideTheBounds) {
-    return db.findPois(dbClient, poiParam, paramVal, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
+    return db.findPois(dbClientSearcher, poiParam, paramVal, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
 }
-//Route that create new poi logic
-app.post('/createPoi', (req, res, next) =>{
-    console.log("Poi info is recieved")
-    const data = req.body; 
-    console.log(data._poiName)
-    var json_res = {
-        x: "1",
-        y: "2",
-        z: "3"
-     }
-    createNewPoi(data._poiName, data._longitude, data._latitude, data._shortDesc, data._language,
-        data._audio, data._source, data._Contributor, data._CreatedDate, data._ApprovedBy, data._UpdatedBy, data._LastUpdatedDate)
-    res.status(200);
-    res.json(json_res);
-    res.end();
-    next();
-})
+async function poiHandler(poi) {
+    if(poi._audio == "no audio") {return} //do nothing
+    db.insertAudio(dbClientAudio, Object.values(poi._audio), poi._poiName, "null at this point");
+}
 
 //Route that create new pois logic
 app.post('/createPois', (req, res, next) =>{
@@ -158,19 +108,13 @@ app.post('/findPoiPosition', async function(req, res) {
 
 //return audio by name
 async function retAudioByName(audioName, res) {
-    console.log("the audio name: " + audioName)
-    console.log("the server try to send the audio")
-    const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-    const dbClient = new MongoClient(uri);
     try {
-        await dbClient.connect();
-        console.log("Connected to DB")
-        audioPromise = db.getAudio(dbClient, audioName)
+        audioPromise = db.getAudio(dbClientAudio, audioName)
         audioPromise.then(value => {
             res.json(value);
             console.log("success to send audio")
             res.status(200);
-            dbClient.close()}).catch(err=>{console.log("cant retrive audio file")
+            dbClient.close()}).catch(err=>{console.log("cant retrive audio file: " + err)
             res.status(400)
             res.end();
             dbClient.close();})

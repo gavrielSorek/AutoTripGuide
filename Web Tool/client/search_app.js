@@ -253,7 +253,7 @@ function showPoi(item) {
     // var poiAudio = document.createElement('audio');
     // poiAudio.controls = 'controls';
     // //poiAudio.src = 'media/Blue Browne.mp3';
-    if (audio.localeCompare("no audio") == 0) {
+    if (audio == "no audio") {
         console.log("no audio for this poi")
     } else {
         //elem2.append($('<audio controls>'));

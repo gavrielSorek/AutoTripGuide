@@ -1,13 +1,7 @@
-module.exports = { InsertPoi, InsertPois, insertAudio, getAudio, findPois, createNewUser, login};
+module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login};
 // const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
 // var fs = require('fs');
-
-// The function insert a new poi to the db
-async function InsertPoi(client, newPoi) {
-    const res = await client.db("testDb").collection("testCollection").insertOne(newPoi);
-    console.log(`new poi created with the following id: ${res.insertedId}`);
-}
 
 // The function insert a new poiss to the db
 async function InsertPois(client, newPois) {
