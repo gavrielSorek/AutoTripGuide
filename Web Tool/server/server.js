@@ -199,25 +199,25 @@ function sendPosition(position, res) {
     res.end();
 }
 
+
+/************************  login + signup functions ************************/
+
 // Route that handles create new user logic
 async function createNewUser(userInfo) {
-    await db.createNewUser(dbClient, userInfo);
+    return await db.createNewUser(dbClient, userInfo);
 }
 
 //create new user logic
 app.post('/createNewUser', async function(req, res) {
     console.log("create new user request in the server")
     const data = req.body;
-    createNewUser(data);
-    var json_res = {
-        x: "1",
-        y: "2",
-        z: "3"
-     }
-    res.status(200);
-    res.json(json_res);
-    res.end(); 
-})
+    ret = createNewUser(data).then(function(response) {
+        console.log("----------------------------")
+        res.status(200);
+        res.json(response);
+        res.end();
+    }); 
+});
 
 // Route that handles create new user logic
 async function login(userInfo) {
@@ -233,8 +233,8 @@ app.post('/login', async function(req, res) {
         res.status(200);
         res.json(response);
         res.end();
-    })  
-})
+    });  
+});
 
 // Start your server on a specified port
 app.listen(port, async ()=>{

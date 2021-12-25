@@ -5,35 +5,81 @@ var signupUsername = document.getElementById("signupUsername");
 var signupEmailAddr = document.getElementById("signupEmailAddr");
 var signupPassword = document.getElementById("signupPassword");
 var signupConfirmPassword = document.getElementById("signupConfirmPassword");
-var signinUsername = document.getElementById("signinUsername");
+var signinUserNameOrEmail = document.getElementById("signinUsername");
 var signinPassword = document.getElementById("signinPassword");
+var continueButton = document.getElementById("continueButton");
+var loginButton = document.getElementById("loginButton");
+continueButton.disabled = true;
+loginButton.disabled = true
+
+var defaultPermission = 4   //Viewer 
+
+// The function enable to continue in the signUp process - means all the info is valid
+function enableContinue() {
+    continueButton.style.background = '#2a7099';
+    continueButton.disabled = false
+}
+
+// The function disable to continue in the signUp process - means not all the info is valid
+function disableContinue() {
+    continueButton.style.background = '#4e88aa';
+    continueButton.disabled = true;
+}
+
+// The function enable to login in the login process - means all the info is valid
+function enableLogin() {
+    loginButton.style.background = '#2a7099';
+    loginButton.disabled = false
+}
+
+// The function disable to continue in the login process - means not all the info is valid
+function disableLogin() {
+    loginButton.style.background = '#4e88aa';
+    loginButton.disabled = true;
+}
 
 //query selector
 document.querySelectorAll(".form__input").forEach(inputElement => {
     inputElement.addEventListener("blur", e => {
+        // Integrity check for signUp user name
         if (e.target.id === "signupUsername" && e.target.value.length > 0 && e.target.value.length < 10) {
             setInputError(inputElement, "Username must be at least 10 characters in length");
-        }
+            disableContinue();
+        } 
+        // Integrity check for signUp password
         if (e.target.id === "signupConfirmPassword" && e.target.value != signupPassword.value) {
             setInputError(inputElement, "The passwords do not match");
+            disableContinue();
+        }
+        if(signupUsername.value.length > 9 && signupPassword.value.length !=0 && signupPassword.value == signupConfirmPassword.value) {
+            enableContinue();
+        }
+        if(signinUserNameOrEmail.value.length == 0 || signinPassword.value.length == 0) {
+            disableLogin();
+        }
+        if(signinUserNameOrEmail.value.length > 0 && signinPassword.value.length > 0) {
+            enableLogin();
         }
     });
     inputElement.addEventListener("input", e => {
         clearInputError(inputElement);
+        disableContinue();
+        disableLogin();
     });
 });
 
 
 function login(){
-    console.log("signinUsername: " + signinUsername.value + "signinPassword: " + signinPassword.value)
-    signinUsernameVal = signinUsername.value
+    console.log("signinUserNameOrEmail: " + signinUserNameOrEmail.value + "signinPassword: " + signinPassword.value)
+    signinUserNameOrEmailVal = signinUserNameOrEmail.value
     signinPasswordVal = signinPassword.value
-    if(signinUsernameVal.length == 0 || signinPasswordVal == 0) {
+    if(signinUserNameOrEmailVal.length == 0 || signinPasswordVal == 0) {
         setFormMessage(loginForm, "error", "Invalid username/password combination");
         return
     }
     var userInfo = {
-        userName  : signinUsernameVal,
+        userName  : signinUserNameOrEmailVal,
+        emailAddr : signinUserNameOrEmailVal, 
         password  : signinPasswordVal
     }
     var userInfoJson= JSON.stringify(userInfo);
@@ -49,13 +95,17 @@ function login(){
             if(response.length > 0) {
                 console.log("response from the server is recieved")
                 var jsonResponse = JSON.parse(Http.responseText);
-                if (jsonResponse.localeCompare("success") == 0) {
-                console.log("The user exist - login success");
-            } else {
-                console.log("The user not exist - login failed");
+                if (jsonResponse == 0) {
+                    setFormMessage(loginForm, "error", "The username you entered doesn't belong to an account. Please check your username and try again.");
+                    console.log("The username you entered doesn't belong to an account. Please check your username and try again.");
+                } else if (jsonResponse == 1) {
+                    setFormMessage(loginForm, "error", "Sorry, your password was incorrect. Please double-check your password.");
+                    console.log("Sorry, your password was incorrect. Please double-check your password.");
+                } else {
+                    console.log("The user exist :) :) :).");
+                }
             }
         }
-    }
     }
 }
 
@@ -73,7 +123,8 @@ function createAccount() {
     var userInfo = {
         userName  : signupUsernameVal,
         emailAddr : signupEmailAddrVal,
-        password  : signupPasswordVal
+        password  : signupPasswordVal,
+        permission : defaultPermission
     }
     var userInfoJson= JSON.stringify(userInfo);
     const Http = new XMLHttpRequest();
@@ -88,8 +139,18 @@ function createAccount() {
             if(response.length > 0) {
                 console.log("response from the server is recieved")
                 var jsonResponse = JSON.parse(Http.responseText);
-                console.log(jsonResponse);
-            } else {
+                if (jsonResponse == 0) {
+                    console.log("The user created");
+                } else if (jsonResponse == 1) {
+                    console.log("The user name and the email address exist in the system");
+                    setFormMessage(createAccountForm, "error", "The user name and the email address exist in the system");
+                } else if (jsonResponse == 2) {
+                    console.log("The user name exist in the system");
+                    setFormMessage(createAccountForm, "error", "The user name exist in the system");
+                } else {
+                    console.log("The email address exist in the system");
+                    setFormMessage(createAccountForm, "error", "The email address exist in the system");
+                }
             }
         }
     }

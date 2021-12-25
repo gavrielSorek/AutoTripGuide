@@ -76,22 +76,68 @@ async function getAudio(dbClient, audioName, idOfAudio = null) {
     return audioPromise
 }
 
+// The function check if the name or email exist in the db
+async function checkInfo(client, userInfo) {
+    var userNameVal = userInfo.userName;
+    var emailAddrVal = userInfo.emailAddr;
+    var resUserName = await client.db("testDb").collection("users").find({userName: userNameVal});
+    var resEmailAddr = await client.db("testDb").collection("users").find({emailAddr: emailAddrVal});
+    var resUserNameArr = await resUserName.toArray();
+    var resEmailAddrArr = await resEmailAddr.toArray();
+    var resUserNameLen = resUserNameArr.length;
+    var resEmailAddrLen = resEmailAddrArr.length;
+
+     if(!resUserNameLen && !resEmailAddrLen) {    //user with the given name or email is not exist
+         console.log(`not found a user with the details: '${userNameVal}' , '${emailAddrVal}'`);
+         return 0;
+     } else if(resUserNameLen && resEmailAddrLen) {    //user with the given name and email is xist
+         console.log(`Found a user with the user name and the email: '${userNameVal}' , '${emailAddrVal}'`);
+         return 1;
+     } else if(resUserNameLen) {    //user with the given name is exist
+        console.log(`Found a user with the user name: '${userNameVal}'`);
+        return 2;
+     } else {    //user with the given email is xist
+        console.log(`Found a user with the email: '${emailAddrVal}'`);
+        return 3;
+     }
+}
+
+
 // The function insert a new user to the db
-async function createNewUser(client, newUser) {
-    const res = await client.db("testDb").collection("users").insertOne(newUser);
-    console.log(`new user created with the following id: ${res.insertedId}`);
+async function createNewUser(client, newUserInfo) {
+    checkCode = await checkInfo(client, newUserInfo);
+    if(checkCode == 0) {    //the user's info not exist in the db
+        const res = await client.db("testDb").collection("users").insertOne(newUserInfo);
+        console.log(`new user created with the following id: ${res.insertedId}`);
+    }
+    return checkCode;
 }
 
 // The function login user to the system according his details in the db
 async function login(client, userInfo) {
-    const res = await client.db("testDb").collection("users").find(userInfo);
-    results = await res.toArray();
-    if (results.length != 0) {
-        console.log("The user exist")
-        return("success")
+    var userNameVal = userInfo.userName
+    var emailAddrVal = userInfo.emailAddr
+    var passwordVal = userInfo.password
+    var resultsLen = 0
+    checkCode = await checkInfo(client, userInfo);
+    if(checkCode == 0) {    //The user's name or email not exist - so the user not exist
+        console.log("The user not exist")
+        return 0;
+    } else if(checkCode == 1 || checkCode == 2) {  //The user's name exist
+        var resUserName = await client.db("testDb").collection("users").find({userName: userNameVal, password: passwordVal});
+        results = await resUserName.toArray();
+        resultsLen = results.length
+    } else {    //The user's email address exist
+        var resEmailAddr = await client.db("testDb").collection("users").find({emailAddr: emailAddrVal, password: passwordVal});
+        results = await resEmailAddr.toArray();
+        resultsLen = results.length
+    }
+    if(resultsLen == 0) {
+        console.log("The password wrong");
+        return 1;
     } else {
-        console.log("The user not exist !!!!!!!")
-        return("failed")
+        console.log("The user exist")
+        return 2;
     }
 }
 

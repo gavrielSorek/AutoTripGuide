@@ -104,12 +104,12 @@ body {
   border-radius: var(--border-radius);
   outline: none;
   cursor: pointer;
-  background: var(--color-primary);
-}
-
-.form__button:hover {
   background: var(--color-primary-dark);
 }
+
+/* .form__button:hover {
+  background: var(--color-primary-dark);
+} */
 
 .form__button:active {
   transform: scale(0.98);
