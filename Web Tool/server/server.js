@@ -260,7 +260,6 @@ app.post('/login', async function(req, res) {
     const data = req.body;
     var pass = data.password
     ret = login(data).then(function(response) {
-        var jsonResponse = JSON.stringify(response);
         if(response.length == 0) {
             newResponse = 0     // The user's name or email not exist - so the user not exist
         } else {                // The user's name or email exist

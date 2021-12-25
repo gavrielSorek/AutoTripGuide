@@ -109,7 +109,7 @@ function getTodayDate(){
 
 // The function send the poi info request to the server
 async function sendPoiInfoToServer() {
-    var audioData = undefined
+    var audioData = "no audio"
     if (globalAudioData) {
         audioData = globalAudioData
     }
@@ -127,9 +127,10 @@ async function sendPoiInfoToServer() {
         _UpdatedBy : "UpdatedBy ??",
         _LastUpdatedDate : getTodayDate()
     }
-    var poiInfoJson= JSON.stringify(poiInfo);
+    poiArray = [poiInfo] //thats what the server expected
+    var poiInfoJson= JSON.stringify(poiArray);
     const Http = new XMLHttpRequest();
-    const url='http://localhost:5500/createPoi';
+    const url='http://localhost:5500/createPois';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
