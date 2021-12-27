@@ -2,6 +2,8 @@ const db = require("../db/db");
 var geo = require("./services/countryByPosition");
 const wiki_service = require("../server/WikiServices/positionByNameWiki");
 var CryptoJS = require("crypto-js");
+var nodemailer = require('nodemailer');
+dotenv = require('dotenv').config();
 var key = "123"
 
 const { MongoClient } = require('mongodb');
@@ -152,18 +154,47 @@ function sendPosition(position, res) {
 
 /************************  login + signup functions ************************/
 
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        type: 'OAuth2',
+        user: process.env.MAIL_USERNAME,
+        pass: process.env.MAIL_PASSWORD,
+        clientId: process.env.OAUTH_CLIENTID,
+        clientSecret: process.env.OAUTH_CLIENT_SECRET,
+        refreshToken: process.env.OAUTH_REFRESH_TOKEN
+    }
+  });
+  
+// The function send signup email to new user that sign up
+function sendSignUpMail(emailAddr){
+    var mailOptions = {
+        from: 'autotripguide@gmail.com',
+        to: emailAddr,
+        subject: 'Welcome to Auto trip guide',
+        text: 'Hi! \n Thanks for signing up to Auto trip guide!'
+    };
+    
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email signUp sent: ' + info.response);
+        }
+      });
+}
+  
 function encrypt(password) {
     // Encrypt
-    var ciphertext = CryptoJS.AES.encrypt(password, key).toString();
-    console.log("ciphertext: " + ciphertext); // 'my message'
-    return ciphertext
+    var cipherPassword = CryptoJS.AES.encrypt(password, key).toString();
+    return cipherPassword
 }
 
-function decrypt(ciphertext) {
+function decrypt(cipherPassword) {
     // Decrypt
-    var bytes  = CryptoJS.AES.decrypt(ciphertext, key);
-    var originalText = bytes.toString(CryptoJS.enc.Utf8);
-    return originalText
+    var bytes  = CryptoJS.AES.decrypt(cipherPassword, key);
+    var originalPassword = bytes.toString(CryptoJS.enc.Utf8);
+    return originalPassword
 }
 
 // The function compare between passwords - when one of them encrypted
@@ -191,6 +222,9 @@ app.post('/createNewUser', async function(req, res) {
     data.password = encrypt(pass)
     ret = createNewUser(data).then(function(response) {
         console.log("----------------------------")
+        if(response == 0) {   // new user created
+            sendSignUpMail(data.emailAddr);
+        }
         res.status(200);
         res.json(response);
         res.end();
