@@ -1,9 +1,11 @@
 module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login};
+var ObjectID = require('bson').ObjectID;
+var mongoose = require('mongoose');
 // const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
 // var fs = require('fs');
 
-// The function insert a new poiss to the db
+// The function insert a new pois to the db
 async function InsertPois(client, newPois) {
     try {
         const res = await client.db("testDb").collection("testCollection").insertMany(newPois);
@@ -52,20 +54,20 @@ async function insertAudio(dbClient, audio, audioName, idOfPoi) {
     const db = await dbClient.db("testDb");
     const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myCustomBucket' });
 
-    var uploadStream = bucket.openUploadStream(audioName, { chunkSizeBytes: 1048576, metadata: { title: audioName, poi_id: idOfPoi } })
+    var uploadStream = bucket.openUploadStream(idOfPoi, { chunkSizeBytes: 1048576, metadata: { _poiName: audioName} })
     uploadStream.write(audio);
     uploadStream.end()
 }
 // The function returns audio promise
-async function getAudio(dbClient, audioName, idOfAudio = null) {
+async function getAudio(dbClient, audioId) {
     const db = await dbClient.db("testDb");
     const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myCustomBucket' });
-    var downloadStream = bucket.openDownloadStreamByName(audioName);
+    var downloadStream = bucket.openDownloadStreamByName(audioId);
     const audioPromise = new Promise((resolve, reject)=> {
     downloadStream.on('data', (chunk) =>{
         resolve(chunk);
     })
-    downloadStream.on('error', ()=> {reject('error to download ' + audioName)})
+    downloadStream.on('error', ()=> {reject('error to download ' + audioId)})
     });
     return audioPromise
 }

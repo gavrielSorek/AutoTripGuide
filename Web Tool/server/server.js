@@ -1,3 +1,4 @@
+var ObjectID = require('bson').ObjectID;
 const db = require("../db/db");
 var geo = require("./services/countryByPosition");
 const wiki_service = require("../server/WikiServices/positionByNameWiki");
@@ -68,15 +69,15 @@ async function findPoisInfo(poiParam, paramVal,relevantBounds, searchOutsideTheB
     return db.findPois(dbClientSearcher, poiParam, paramVal, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
 }
 async function poiHandler(poi) {
-    if(poi._audio != "no audio") {
-        db.insertAudio(dbClientAudio, Object.values(poi._audio), poi._poiName, "null at this point");
-    } 
     if(!poi._country) {
         poi._country = geo.getCountry(parseFloat(poi._latitude), parseFloat(poi._longitude));
     }
     if(!poi._id) {
         poi._id = uuidv1()
     }
+    if(poi._audio != "no audio") {
+        db.insertAudio(dbClientAudio, Object.values(poi._audio), poi._poiName, poi._id);
+    } 
 }
 
 //Route that create new pois logic
@@ -120,9 +121,9 @@ app.post('/findPoiPosition', async function(req, res) {
 })
 
 //return audio by name
-async function retAudioByName(audioName, res) {
+async function retAudioById(audioId, res) {
     try {
-        audioPromise = db.getAudio(dbClientAudio, audioName)
+        audioPromise = db.getAudio(dbClientAudio, audioId)
         audioPromise.then(value => {
             res.json(value);
             console.log("success to send audio")
@@ -138,12 +139,11 @@ async function retAudioByName(audioName, res) {
 }
 
 //Route that search audio logic
-app.post('/searchPoiAudioByName', async function(req, res) {
+app.post('/searchPoiAudioById', async function(req, res) {
     console.log("audio search by name is recieved")
     const data = req.body;
     console.log(data)
-    console.log(data._poiName)
-    retAudioByName(data._poiName, res)
+    retAudioById(data._id, res)
 })
 
 function sendPosition(position, res) {

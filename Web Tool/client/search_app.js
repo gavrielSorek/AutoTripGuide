@@ -73,13 +73,13 @@ function userShowNotFoundMessage() {
 }
 
 // The function get the poi info for pois that waiting for approval
-function getAudioByName(nameOfPoi) {
+function getAudioById(id) {
     var poiInfo = {
-        _poiName : nameOfPoi
+        _id : id
     }
     var poiInfoJson= JSON.stringify(poiInfo);
     const Http = new XMLHttpRequest();
-    const url= uriBeginning + 'searchPoiAudioByName';
+    const url= uriBeginning + 'searchPoiAudioById';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -257,7 +257,7 @@ function showPoi(item) {
         console.log("no audio for this poi")
     } else {
         //elem2.append($('<audio controls>'));
-        audioFromDb = getAudioByName(item._poiName)
+        audioFromDb = getAudioById(item._id)
         elem2.append(poiAudio);
     }
     elem1.append(elem2);
