@@ -3,7 +3,10 @@ var geo = require("./services/countryByPosition");
 const wiki_service = require("../server/WikiServices/positionByNameWiki");
 var CryptoJS = require("crypto-js");
 var nodemailer = require('nodemailer');
-dotenv = require('dotenv').config();
+const { 
+    v1: uuidv1,
+    v4: uuidv4,
+  } = require('uuid');dotenv = require('dotenv').config();
 var key = "123"
 
 const { MongoClient } = require('mongodb');
@@ -70,6 +73,9 @@ async function poiHandler(poi) {
     } 
     if(!poi._country) {
         poi._country = geo.getCountry(parseFloat(poi._latitude), parseFloat(poi._longitude));
+    }
+    if(!poi._id) {
+        poi._id = uuidv1()
     }
 }
 
@@ -264,6 +270,7 @@ app.listen(port, async ()=>{
     await init()
     console.log(`Server is runing on port ${port}`)
 })
+
 
 
 
