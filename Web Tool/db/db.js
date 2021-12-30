@@ -69,6 +69,17 @@ async function getAudio(dbClient, audioName, idOfAudio = null) {
     });
     return audioPromise
 }
+//update poi in db
+async function updatePoi(client, searchQuery, updatedPoi) {
+    client.db("testDb").collection("testCollection").updateOne(searchQuery, updatedPoi, function(err, res){
+        if(err) {
+            console.log("problem in update function-db")
+        }
+        else {
+            console.log("poi updated")
+        }
+    })
+}
 
 // The function check if the name or email exist in the db
 async function checkInfo(client, userInfo) {
