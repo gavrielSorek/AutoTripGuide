@@ -1,4 +1,5 @@
 var ObjectID = require('bson').ObjectID;
+const path = require('path');
 const db = require("../db/db");
 var geo = require("./services/countryByPosition");
 const wiki_service = require("../server/WikiServices/positionByNameWiki");
@@ -6,7 +7,6 @@ var CryptoJS = require("crypto-js");
 var nodemailer = require('nodemailer');
 const { 
     v1: uuidv1,
-    v4: uuidv4,
   } = require('uuid');dotenv = require('dotenv').config();
 var key = "123"
 
@@ -25,10 +25,10 @@ app.use(cors())
 const port = 5500
 app.use(bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-extended: false})); 
+extended: false}));
+app.use(express.static(path.resolve(__dirname, '../client')));
 const MAX_ELEMENT_ON_MAP = 50
 
-// Route that handles create New Poi logic
 
 //init GLOBAL
 uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
@@ -79,6 +79,23 @@ async function poiHandler(poi) {
         db.insertAudio(dbClientAudio, Object.values(poi._audio), poi._poiName, poi._id);
     } 
 }
+
+// get home page
+app.get("/", function (req, res, next) { //next requrie (the function will not stop the program)
+    res.sendFile(path.resolve(__dirname, '../client/search.html'), function(err) {
+        if (err) {
+            res.status(err.status).end();
+        }
+    });
+ })
+ // get insert page
+app.get("/insert", function (req, res, next) { //next requrie (the function will not stop the program)
+    res.sendFile(path.resolve(__dirname, '../client/dataIn.html'), function(err) {
+        if (err) {
+            res.status(err.status).end();
+        }
+    });
+ })
 
 //Route that create new pois logic
 app.post('/createPois', (req, res, next) =>{
