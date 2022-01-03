@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auto trip guide - About</title>
+    <link href='contact.css' rel="stylesheet" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div class="w3-bar w3-black">
+        <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
+          <i class="fa fa-bars"></i>
+        </a>
+        <a onclick="openHomePage()" class="w3-bar-item w3-button"><i class="fa fa-home"></i> HOME</a>
+        <a onclick="openDataInPage()" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> CONTRIBUTION </a>
+        <a onclick="openAboutPage()" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-user"></i> ABOUT</a>
+        <a onclick="openContactPage()" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
+      </div>
+
+<div class="bgimg-3 w3-display-container w3-opacity-min">
+    <div class="w3-display-middle">
+       <h2 class="w3-xxlarge w3-text-white w3-wide">CONTACT</h2>
+    </div>
+  </div>
+  <p class="w3-center"><em>Some text about who we are and what we do.</em></p>
+  
+  </body>
+  <script>
+
+    function openHomePage(){
+        window.location.href = "search.html";
+    }
+    
+    function openDataInPage(){
+        window.location.href = "dataIn.html";
+    }
+    
+    function openAboutPage(){
+        window.location.href = "about.html";
+    }
+    
+    function openContactPage(){
+        window.location.href = "contact.html";
+    }
+    
+      </script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</html>
