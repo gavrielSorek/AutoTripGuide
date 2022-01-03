@@ -64,6 +64,16 @@ async function createNewPois(pois) {
         console.error(e); 
     } 
 }
+// Route that handles edit poi logic
+async function editPoi(poi, id) {
+    try {
+        poiHandler(poi)
+        //db.editPoi(dbClientSearcher, {_m: 'm', _poiName: 'aa'}, "fb657bc0-6bfe-11ec-88c0-9933c3403c32")
+        await db.editPoi(dbClientInsertor, poi, id);
+    } catch (e) {
+        console.error(e); 
+    } 
+}
 
 async function findPoisInfo(poiParam, paramVal,relevantBounds, searchOutsideTheBounds) {
     return db.findPois(dbClientSearcher, poiParam, paramVal, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
@@ -96,6 +106,16 @@ app.get("/insert", function (req, res, next) { //next requrie (the function will
         }
     });
  })
+//Route get edit pois logic
+app.get("/editPoi", function (req, res, next) { //next requrie (the function will not stop the program)
+    console.log("in get edit poi")
+    console.log(req.query.id)
+    res.sendFile(path.resolve(__dirname, '../client/dataIn.html'), function(err) {
+        if (err) {
+            res.status(err.status).end();
+        }
+    });
+ })
 
 //Route that create new pois logic
 app.post('/createPois', (req, res, next) =>{
@@ -107,6 +127,22 @@ app.post('/createPois', (req, res, next) =>{
         z: "3"
      }
     createNewPois(data)
+    res.status(200);
+    res.json(json_res);
+    res.end();
+    next();
+})
+
+//Route edit pois logic
+app.post('/editPois', (req, res, next) =>{
+    console.log("Pois info is recieved")
+    const data = req.body; 
+    var json_res = {
+        x: "1",
+        y: "2",
+        z: "3"
+     }
+    editPoi(data, req.query.id)
     res.status(200);
     res.json(json_res);
     res.end();

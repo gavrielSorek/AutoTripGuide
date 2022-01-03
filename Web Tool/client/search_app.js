@@ -17,6 +17,7 @@ var isUserTrigeredLastFunction = false
 
 //init
 globalMarker = undefined
+lastShownPoi = undefined
 var map = L.map('map').setView([31.83303, 34.863443], 10);
 var redMarkerGroup = L.featureGroup();
 var markerSet = new Set() 
@@ -37,7 +38,7 @@ function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
     quaryParams['searchOutsideTheBounds'] = searchOutsideTheBounds
     var quaryParamsJson= JSON.stringify(quaryParams);
     const Http = new XMLHttpRequest();
-    const url= uriBeginning + 'searchPois';
+    const url = uriBeginning + 'searchPois';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -222,6 +223,7 @@ poiAudio.controls = 'controls';
 
 // The function show the poi info
 function showPoi(item) {
+    lastShownPoi = item
     keyword = searchBar.val();
     resultArea.empty();
     var elem0 = $('<li>');
@@ -248,6 +250,8 @@ function showPoi(item) {
     elem2.append($('<p>').text("Approved By: " + item._ApprovedBy));
     elem2.append($('<p>').text("Updated By: " + item._UpdatedBy));
     elem2.append($('<p>').text("Last Updated Date: " + item._LastUpdatedDate));
+    elem2.append($('<button id="edit_button">').text("Edit: " + item._poiName));
+    
     //audio
     audio = item._audio
     // var poiAudio = document.createElement('audio');
@@ -261,7 +265,19 @@ function showPoi(item) {
         elem2.append(poiAudio);
     }
     elem1.append(elem2);
-    resultArea.append(elem1);  
+    resultArea.append(elem1); 
+    //add edit button listener
+    $('button').click(editButtonClicked)
+}
+// edit button clicked
+function editButtonClicked() {
+    if (!lastShownPoi) {return}
+    basicUrl = uriBeginning + 'editPoi';
+    let url = new URL(basicUrl);
+    url.searchParams.append('id', lastShownPoi._id)
+    console.log(url.href)
+    location.href = url.href;
+    console.log("not supposed to be writen")
 }
 
 // The function perform the search according to the user request
