@@ -409,3 +409,19 @@ if(input) {
         }
     });
 }
+
+function openHomePage(){
+    window.location.href = "search.html";
+}
+
+function openDataInPage(){
+    window.location.href = "dataIn.html";
+}
+
+function openAboutPage(){
+    window.location.href = "about.html";
+}
+
+function openContactPage(){
+    window.location.href = "contact.html";
+}

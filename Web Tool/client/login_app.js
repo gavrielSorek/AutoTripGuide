@@ -68,6 +68,39 @@ document.querySelectorAll(".form__input").forEach(inputElement => {
     });
 });
 
+function onGoogleSignIn(googleUser) {
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.disconnect();
+    var profile = googleUser.getBasicProfile();
+    // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    // console.log('Name: ' + profile.getName());
+    // console.log('Image URL: ' + profile.getImageUrl());
+    // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    var id_token = googleUser.getAuthResponse().id_token;
+
+    const Http = new XMLHttpRequest();
+    const url='http://localhost:5500/googlelogin';
+    Http.open("POST", url);
+    Http.withCredentials = false;
+    Http.setRequestHeader("Content-Type", "application/json");
+    Http.send(JSON.stringify({token : id_token}));
+
+    Http.onreadystatechange = (e) => {  
+        if (Http.readyState == 4) { //if the operation is complete.
+            var response = Http.responseText
+            if(response.length > 0) {
+                if (response == "success") {
+                    console.log("the user login with google auth");
+                    window.location.href = "search.html";
+                } else {
+                    console.log("the user not login with google auth");
+                }
+            }
+        }
+    }
+}
+
+
 
 function login(){
     console.log("signinUserNameOrEmail: " + signinUserNameOrEmail.value + "signinPassword: " + signinPassword.value)
@@ -94,6 +127,7 @@ function login(){
             var response = Http.responseText
             if(response.length > 0) {
                 console.log("response from the server is recieved")
+                console.log(response)
                 var jsonResponse = JSON.parse(Http.responseText);
                 if (jsonResponse == 0) {
                     setFormMessage(loginForm, "error", "The username you entered doesn't belong to an account. Please check your username and try again.");
@@ -103,6 +137,7 @@ function login(){
                     console.log("Sorry, your password was incorrect. Please double-check your password.");
                 } else {
                     console.log("The user exist :) :) :).");
+                    window.location.href = "search.html";
                 }
             }
         }

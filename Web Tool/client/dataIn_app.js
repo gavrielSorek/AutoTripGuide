@@ -277,4 +277,22 @@ async function blobToArrayBuffer(blob) {
     });
 }
 
+
+function openHomePage(){
+    window.location.href = "search.html";
+}
+
+function openDataInPage(){
+    window.location.href = "dataIn.html";
+}
+
+function openAboutPage(){
+    window.location.href = "about.html";
+}
+
+function openContactPage(){
+    window.location.href = "contact.html";
+}
+
+
 //TODO ADD CONDITION TO SEND POI IF AND ONLY IF AUDIO IS READY

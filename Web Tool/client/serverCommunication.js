@@ -1,5 +1,5 @@
 // module.exports = {getPoisInfo, getAudioById};
-// // The function get the poi info according name
+// The function get the poi info according name
 // function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
 //     const myPromise = new Promise((resolve, reject) => {
 //     var poiInfo = {

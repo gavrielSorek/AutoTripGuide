@@ -30,6 +30,10 @@ extended: false}));
 app.use(express.static(path.resolve(__dirname, '../client')));
 const MAX_ELEMENT_ON_MAP = 50
 
+// Google Auth
+const {OAuth2Client} = require('google-auth-library');
+const CLIENT_ID = process.env.OAUTH_CLIENTID;
+const client = new OAuth2Client(CLIENT_ID)
 
 //init GLOBAL
 const jsdom = require("jsdom")
@@ -98,7 +102,7 @@ async function poiHandler(poi) {
 
 // get home page
 app.get("/", function (req, res, next) { //next requrie (the function will not stop the program)
-    res.sendFile(path.resolve(__dirname, '../client/search.html'), function(err) {
+    res.sendFile(path.resolve(__dirname, '../client/login_app.html'), function(err) {
         if (err) {
             res.status(err.status).end();
         }
@@ -350,11 +354,43 @@ app.post('/login', async function(req, res) {
                 newResponse = 1    // The password are not correct
             }
         }
-        console.log("----------------------------")
         res.status(200);
         res.json(newResponse);
         res.end();
     });  
+});
+
+// google login logic
+app.post('/googlelogin', async function(req, res) {
+    console.log("google login request in the server")
+    let token = req.body.token;
+    var name = null
+    var email = null
+    async function verify() {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: CLIENT_ID,  
+        });
+        const payload = ticket.getPayload();
+        const userid = payload['sub'];
+        name = payload.name;
+        email = payload.email;
+    }
+      verify().then(() => {
+        var userInfo = {
+            userName  : name,
+            emailAddr : email,
+            permission: 4
+        }
+        ret = createNewUser(userInfo).then(function(response) {
+            if(response == 0) {   // new user created
+                sendSignUpMail(email);
+            }
+            res.status(200);
+            res.send('success')
+            res.end();
+        }); 
+      }).catch(console.error);
 });
 
 // Start your server on a specified port
