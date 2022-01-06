@@ -119,6 +119,7 @@ async function sendPoiInfoToServer() {
         audioData = globalAudioData
     }
     var poiInfo = {
+        _id : poiName.name,
         _poiName : poiName.value,
         _longitude : longitude.value,
         _latitude : latitude.value,

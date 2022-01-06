@@ -74,11 +74,11 @@ async function createNewPois(pois) {
     } 
 }
 // Route that handles edit poi logic
-async function editPoi(poi, id) {
+async function editPoi(poi) {
     try {
         poiHandler(poi)
         //db.editPoi(dbClientSearcher, {_m: 'm', _poiName: 'aa'}, "fb657bc0-6bfe-11ec-88c0-9933c3403c32")
-        await db.editPoi(dbClientInsertor, poi, id);
+        await db.editPoi(dbClientInsertor, poi, poi._id);
     } catch (e) {
         console.error(e); 
     } 
@@ -149,8 +149,8 @@ app.post('/editPois', (req, res, next) =>{
         x: "1",
         y: "2",
         z: "3"
-     }
-    editPoi(data, req.query.id)
+     } 
+    editPoi(data[0])
     res.status(200);
     res.json(json_res);
     res.end();
@@ -188,7 +188,7 @@ app.post('/findPoiPosition', async function(req, res) {
     htmlDoc.getElementById("operation_type").innerHTML = "Edit poi: " + poi[0]._poiName;
     htmlDoc.getElementById("app_script").src = "bundleCommunicationEdit.js"
     htmlDoc.getElementById("PoiName").name = poiId
-    
+
      return htmlDoc.documentElement.innerHTML;;
  }
 
