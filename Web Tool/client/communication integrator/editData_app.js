@@ -1,5 +1,7 @@
+const communication = require("./Modules/serverCommunication")
+const homeUrl = 'http://localhost:5500/search.html'
 /* -------------------------- insert function -------------------- */
-
+// const db = require("./serverCommunication");
 //variables definition
 var poiName = document.getElementById("PoiName");
 var longitude = document.getElementById("longitude");
@@ -15,6 +17,9 @@ var recordButton = document.getElementById("record_button");
 //init
 var globalIsAudioReady = true;
 var globalAudioData = undefined;
+document.getElementById("submit_button").addEventListener("click",submitPoi);
+
+
 // initRecord()
 //add events
 if(document.getElementById("upload")) {
@@ -40,10 +45,10 @@ function submitPoi(){
     }).then((result) => {
         if (result.value) {
             sendPoiInfoToServer();
-            Swal.fire("Created!", "Your request to create new poi has been sent.", "success");
-            setTimeout(deleteEverything, 1000);
+            Swal.fire("Poi was edited!", "Your request to edit poi has been sent.", "success");
+            setTimeout(returnToHomePage, 1500);
         } else {
-            Swal.fire("Cancelled", "Your request to create new poi has not been sent", "error");
+            Swal.fire("Cancelled", "Your request to edit poi has not been sent", "error");
         }
     });
 }
@@ -130,7 +135,7 @@ async function sendPoiInfoToServer() {
     poiArray = [poiInfo] //thats what the server expected
     var poiInfoJson= JSON.stringify(poiArray);
     const Http = new XMLHttpRequest();
-    const url='http://localhost:5500/createPois';
+    const url='http://localhost:5500/editPois';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -277,71 +282,82 @@ async function blobToArrayBuffer(blob) {
     });
 }
 
-//TODO ADD CONDITION TO SEND POI IF AND ONLY IF AUDIO IS READY
 
-// hendeling get pois info
-function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
-    var poiInfo = {
-        poiParameter : valueOfParameter
+function openHomePage(){
+    window.location.href = "search.html";
+}
+
+function openDataInPage(){
+    window.location.href = "dataIn.html";
+}
+
+function openAboutPage(){
+    window.location.href = "about.html";
+}
+
+function openContactPage(){
+    window.location.href = "contact.html";
+}
+
+function dataUploadingFinished() {
+    swal.close()
+}
+//TODO ADD CONDITION TO SEND POI IF AND ONLY IF AUDIO IS READY
+function setPoiDataOnPage(poi) {
+    if(!poi) {
+        console.log('error in setPoiDataOnPage')
     }
-    var quaryParams = {}
-    quaryParams['poiParameter'] = poiParameter
-    quaryParams['relevantBounds'] = getRelevantBounds()
-    quaryParams['poiInfo'] = poiInfo
-    quaryParams['searchOutsideTheBounds'] = searchOutsideTheBounds
-    var quaryParamsJson= JSON.stringify(quaryParams);
-    const Http = new XMLHttpRequest();
-    const url = uriBeginning + 'searchPois';
-    Http.open("POST", url);
-    Http.withCredentials = false;
-    Http.setRequestHeader("Content-Type", "application/json");
-    console.log(quaryParamsJson)
-    Http.send(quaryParamsJson);
-    Http.onreadystatechange = (e) => {
-        if (Http.readyState == 4) { //if the operation is complete.
-            var response = Http.responseText
-            if (response.length > 0) {
-                console.log("response from the server is recieved")
-                var poisInfo = JSON.parse(Http.responseText);
-                if(poisInfo.length == 0) {
-                    console.log("not found");
-                    return
-                } else {
-                console.log(poisInfo);
-                }
-            } else {
-                console.log("not found");
-            }
+    // console.log(poi)
+    if (poi[0]) {
+        console.log(poi[0])
+        document.getElementById("PoiName").defaultValue =  poi[0]._poiName;
+        document.getElementById("latitude").defaultValue =  poi[0]._latitude;
+        document.getElementById("longitude").defaultValue =  poi[0]._longitude;
+        document.getElementById("source").defaultValue =  poi[0]._source;
+        document.getElementById("shortDesc").defaultValue =  poi[0]._shortDesc;
+        if (poi[0]._audio != "no audio") {
+            communication.getAudioById(poiId, setAudio, undefined)
+        } else {
+            dataUploadingFinished()
         }
     }
+
+}
+function setAudio(audioData) {
+    console.log("inside set audio")
+    console.log(audioData.data)
+    var uint8Array1 = new Uint8Array(audioData.data)
+    var arrayBuffer = uint8Array1.buffer; 
+    console.log(arrayBuffer)
+    audio.src = window.URL.createObjectURL(new Blob([uint8Array1], {type: 'audio/ogg'}))
+    audio.load();
+    dataUploadingFinished()
+
+}
+function startEditLogic() {
+    showLoadingMessage();
+    uriBeginning = 'http://127.0.0.1:5500/'
+    poiId = document.getElementById("PoiName").name
+    communication.getPoisInfo('_id', poiId, undefined ,true, setPoiDataOnPage, undefined);    
+
+}
+// The function show a Loading message.
+function showLoadingMessage() {
+    Swal.fire({
+        title: 'Please Wait !',
+        html: 'data uploading',// add html attribute if you want or remove
+        allowOutsideClick: false,
+        onBeforeOpen: () => {
+            Swal.showLoading()
+        },
+    });
+}
+startEditLogic();
+
+function returnToHomePage() {
+    window.location.href = homeUrl;
 }
 
-// The function get the poi info for pois that waiting for approval
-function getAudioById(id) {
-    var poiInfo = {
-        _id : id
-    }
-    var poiInfoJson= JSON.stringify(poiInfo);
-    const Http = new XMLHttpRequest();
-    const url= uriBeginning + 'searchPoiAudioById';
-    Http.open("POST", url);
-    Http.withCredentials = false;
-    Http.setRequestHeader("Content-Type", "application/json");
-    Http.send(poiInfoJson);
-    Http.onreadystatechange = (e) => {
-        if (Http.readyState == 4) { //if the operation is complete. 
-            var response = Http.responseText
-            if(response.length > 0) {
-                console.log("response from the server is recieved")
-                var poisInfo = JSON.parse(Http.responseText);
-                console.log(poisInfo);
-                if(poisInfo.length == 0) {
-                    console.log("not found");
-                }
-                loadAudio(poisInfo)
-            } else {
-                console.log("not found");
-            }
-        }  
-    }
-}
+
+
+

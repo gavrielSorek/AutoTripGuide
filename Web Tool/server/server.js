@@ -1,4 +1,3 @@
-const Blob = require('node-blob');
 const fs = require('fs')
 const Readable = require('stream').Readable;
 const path = require('path');
@@ -126,41 +125,6 @@ app.get("/editPoi",async function (req, res, next) { //next requrie (the functio
     res.end()
  })
 
- // create edit page
-async function createEditHtmlFile(poiId) {
-    var poi = await db.findPois(dbClientSearcher, '_id' ,poiId, getDefaultBounds(), 10, true);
-    var audio = undefined;
-    if (poi[0]._audio != "no audio") {
-        audio = await db.getAudio(dbClientAudio, poiId);
-    }
-    console.log(poi)
-    var editPoiHtml = dataInHtml.repeat(1);
-    const parser = new DOMParser();
-    var htmlDoc = parser.parseFromString(editPoiHtml, 'text/html');
-    htmlDoc.getElementById("operation_type").innerHTML = "Edit poi: " + poi[0]._poiName;
-    htmlDoc.getElementById("app_script").src = "editData_app.js"
-    
-    htmlDoc.getElementById("PoiName").name = poiId
-    htmlDoc.getElementById("PoiName").defaultValue =  poi[0]._poiName;
-    htmlDoc.getElementById("latitude").defaultValue =  poi[0]._latitude;
-    htmlDoc.getElementById("longitude").defaultValue =  poi[0]._longitude;
-    htmlDoc.getElementById("source").defaultValue =  poi[0]._source;
-    htmlDoc.getElementById("shortDesc").defaultValue =  poi[0]._shortDesc;
-    audioElement = htmlDoc.getElementById("audio");
-    
-    // // add audio
-    // var uint8Array1 = new Uint8Array(audio)
-    // var arrayBuffer = uint8Array1.buffer; 
-    // console.log(arrayBuffer)
-    // audioElement.src = createObjectURL(new Blob([uint8Array1], {type: 'audio/ogg'}))
-    // audioElement.load();
-
-    var markup = htmlDoc.documentElement.innerHTML;
-    console.log(markup);
-    console.log(audio)
-     //console.log(htmlDoc.rawHTML)
-     return markup;
- }
 //Route that create new pois logic
 app.post('/createPois', (req, res, next) =>{
     console.log("Pois info is recieved")
@@ -215,6 +179,18 @@ app.post('/findPoiPosition', async function(req, res) {
     poiPosition = wiki_service.getPositionByName(poiName, language)
     poiPosition.then((position)=>{sendPosition(position, res)}).catch(()=>{console.log("error cant find this position")});
 })
+ // create edit page
+ async function createEditHtmlFile(poiId) {
+    var poi = await db.findPois(dbClientSearcher, '_id' ,poiId, getDefaultBounds(), 10, true);
+    var editPoiHtml = dataInHtml.repeat(1);
+    const parser = new DOMParser();
+    var htmlDoc = parser.parseFromString(editPoiHtml, 'text/html');
+    htmlDoc.getElementById("operation_type").innerHTML = "Edit poi: " + poi[0]._poiName;
+    htmlDoc.getElementById("app_script").src = "bundleCommunicationEdit.js"
+    htmlDoc.getElementById("PoiName").name = poiId
+    
+     return htmlDoc.documentElement.innerHTML;;
+ }
 
 //return audio by name
 async function retAudioById(audioId, res) {
