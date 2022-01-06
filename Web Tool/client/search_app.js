@@ -86,7 +86,7 @@ function getAudioById(id) {
     Http.setRequestHeader("Content-Type", "application/json");
     Http.send(poiInfoJson);
     Http.onreadystatechange = (e) => {
-        if (Http.readyState == 4) { //if the operation is complete. 
+        if (Http.readyState == 4) { //if the operation is completed. 
             var response = Http.responseText
             if(response.length > 0) {
                 console.log("response from the server is recieved")

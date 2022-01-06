@@ -41,11 +41,13 @@ function submitPoi(){
         confirmButtonText: "Yes, create it!",
     }).then((result) => {
         if (result.value) {
+            Swal.close()
             sendPoiInfoToServer();
-            Swal.fire("Created!", "Your request to create new poi has been sent.", "success");
-            setTimeout(deleteEverything, 1000);
+            // Swal.fire("Created!", "Your request to create new poi has been sent.", "success");
+            // setTimeout(deleteEverything, 1000);
         } else {
             Swal.fire("Cancelled", "Your request to create new poi has not been sent", "error");
+            // Swal.close()
         }
     });
 }
@@ -64,7 +66,7 @@ function findPoiPosition() {
     Http.setRequestHeader("Content-Type", "application/json");
     Http.send(poiInfoJson);
     Http.onreadystatechange = (e) => {  
-        if (Http.readyState == 4) { //if the operation is complete. 
+        if (Http.readyState == 4) { //if the operation is completed. 
             var response = Http.responseText
             if(response.length > 0) {
                 console.log("response from the server is recieved")
@@ -95,6 +97,16 @@ function showNotFoundMessage() {
         text: 'The POI according to your request is not found',
       }).then((result) => {
         setTimeout(deleteEverything, 500);
+      });
+}
+// The function show a not found message when the user ask for a poi that not exist
+function showServerNotAccissableMessage() {
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Communication Problem',
+      }).then((result) => {
+        setTimeout(deleteEverything, 1000);
       });
 }
 
@@ -132,19 +144,46 @@ async function sendPoiInfoToServer() {
     poiArray = [poiInfo] //thats what the server expected
     var poiInfoJson= JSON.stringify(poiArray);
     const Http = new XMLHttpRequest();
+    
     const url='http://localhost:5500/createPois';
-    Http.open("POST", url);
+    Http.open("POST", url, true);
+    Http.onerror = function(e){
+        showServerNotAccissableMessage();
+    };
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
     Http.send(poiInfoJson);
+    showLoadingMessage();
     Http.onreadystatechange = (e) => {  
-        var response = Http.responseText;
-        if(response.length > 0) {
-            console.log("response from the server is recieved")
-            var jsonResponse = JSON.parse(Http.responseText);
-            console.log(jsonResponse);
+        if (Http.readyState == 4) {
+            dataUploadingFinished();
+            var response = Http.responseText;
+            if(response.length > 0) {
+                console.log("response from the server is recieved")
+                var jsonResponse = JSON.parse(Http.responseText);
+                console.log(jsonResponse);
+            }
         }
     }
+    
+}
+
+// The function show a Loading message.
+function showLoadingMessage() {
+    Swal.fire({
+        title: 'Please Wait !',
+        html: 'data uploading',
+        allowOutsideClick: false,
+        onBeforeOpen: () => {
+            Swal.showLoading()
+        },
+    });
+}
+
+function dataUploadingFinished() {
+    swal.close()
+    deleteEverything()
+    
 }
 
 /* -------------------------- map function -------------------- */
