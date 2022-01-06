@@ -16,6 +16,8 @@ var recordButton = document.getElementById("record_button");
 var globalIsAudioReady = true;
 var globalAudioData = undefined;
 document.getElementById("submit_button").addEventListener("click",submitPoi);
+recordButton.addEventListener("mousedown", record);
+recordButton.addEventListener("mouseup", stopRecord);
 
 // initRecord()
 //add events
