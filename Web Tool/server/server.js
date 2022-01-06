@@ -1,4 +1,6 @@
-var ObjectID = require('bson').ObjectID;
+const Blob = require('node-blob');
+const fs = require('fs')
+const Readable = require('stream').Readable;
 const path = require('path');
 const db = require("../db/db");
 var geo = require("./services/countryByPosition");
@@ -12,7 +14,6 @@ var key = "123"
 
 const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
-var fs = require('fs');
 
 const express = require('express')
 bodyParser = require('body-parser');
@@ -31,6 +32,10 @@ const MAX_ELEMENT_ON_MAP = 50
 
 
 //init GLOBAL
+const jsdom = require("jsdom")
+const { JSDOM } = jsdom
+global.DOMParser = new JSDOM().window.DOMParser
+var dataInHtml = undefined
 uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const dbClientSearcher = new MongoClient(uri);
 const dbClientInsertor = new MongoClient(uri);
@@ -46,6 +51,7 @@ async function init() {
     } catch (e) {
         console.error(e); 
     }
+    dataInHtml = fs.readFileSync(path.resolve(__dirname, '../client/dataIn.html'), 'utf8')
 }
 
 async function closeServer(){
@@ -107,16 +113,50 @@ app.get("/insert", function (req, res, next) { //next requrie (the function will
     });
  })
 //Route get edit pois logic
-app.get("/editPoi", function (req, res, next) { //next requrie (the function will not stop the program)
+app.get("/editPoi",async function (req, res, next) { //next requrie (the function will not stop the program)
     console.log("in get edit poi")
     console.log(req.query.id)
-    res.sendFile(path.resolve(__dirname, '../client/dataIn.html'), function(err) {
-        if (err) {
-            res.status(err.status).end();
-        }
-    });
+    var updatedFile = await createEditHtmlFile(req.query.id)
+    console.log(typeof updatedFile)
+    res.write(updatedFile,'utf8')
+    res.end()
  })
 
+ // create edit page
+async function createEditHtmlFile(poiId) {
+    var poi = await db.findPois(dbClientSearcher, '_id' ,poiId, getDefaultBounds(), 10, true);
+    var audio = undefined;
+    if (poi[0]._audio != "no audio") {
+        audio = await db.getAudio(dbClientAudio, poiId);
+    }
+    console.log(poi)
+    var editPoiHtml = dataInHtml.repeat(1);
+    const parser = new DOMParser();
+    var htmlDoc = parser.parseFromString(editPoiHtml, 'text/html');
+    htmlDoc.getElementById("operation_type").innerHTML = "Edit poi: " + poi[0]._poiName;
+    htmlDoc.getElementById("app_script").src = "editData_app.js"
+    
+    htmlDoc.getElementById("PoiName").name = poiId
+    htmlDoc.getElementById("PoiName").defaultValue =  poi[0]._poiName;
+    htmlDoc.getElementById("latitude").defaultValue =  poi[0]._latitude;
+    htmlDoc.getElementById("longitude").defaultValue =  poi[0]._longitude;
+    htmlDoc.getElementById("source").defaultValue =  poi[0]._source;
+    htmlDoc.getElementById("shortDesc").defaultValue =  poi[0]._shortDesc;
+    audioElement = htmlDoc.getElementById("audio");
+    
+    // // add audio
+    // var uint8Array1 = new Uint8Array(audio)
+    // var arrayBuffer = uint8Array1.buffer; 
+    // console.log(arrayBuffer)
+    // audioElement.src = createObjectURL(new Blob([uint8Array1], {type: 'audio/ogg'}))
+    // audioElement.load();
+
+    var markup = htmlDoc.documentElement.innerHTML;
+    console.log(markup);
+    console.log(audio)
+     //console.log(htmlDoc.rawHTML)
+     return markup;
+ }
 //Route that create new pois logic
 app.post('/createPois', (req, res, next) =>{
     console.log("Pois info is recieved")
@@ -155,7 +195,6 @@ app.post('/searchPois', async function(req, res) {
     const data = req.body;
     const queryParam = data.poiParameter;
     poisInfo = findPoisInfo(queryParam, data.poiInfo.poiParameter ,data.relevantBounds, data.searchOutsideTheBounds).then(function(pois) {
-        console.log("----------------------------")
         res.status(200);
         res.json(pois);
         res.end();
@@ -324,6 +363,9 @@ app.listen(port, async ()=>{
     console.log(`Server is runing on port ${port}`)
 })
 
-
-
-
+function getDefaultBounds(){
+    var relevantBounds = {}
+    relevantBounds['southWest'] = {lat : 31.31610138349565, lng : 35.35400390625001}
+    relevantBounds['northEast'] = {lat : 31.83303, lng : 36.35400390625001}
+    return relevantBounds;
+}

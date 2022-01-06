@@ -10,9 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@jest/globals": "^27.4.6",
     "body-parser": "^1.19.0",
     "bson": "^4.6.0",
     "cors": "^2.8.5",
+    "create-object-url": "^1.0.2",
     "crypto-js": "^4.1.1",
     "csv-parser": "^3.0.0",
     "csv-writer": "^1.6.0",
@@ -20,8 +22,11 @@
     "express": "^4.17.1",
     "gridfs-bucket": "^0.7.4",
     "jquery": "^3.6.0",
+    "jsdom": "^19.0.0",
     "mongodb": "^4.2.0",
+    "node-blob": "^0.0.2",
     "nodemailer": "^6.7.2",
+    "nodemon": "^2.0.15",
     "uuid": "^8.3.2",
     "wikijs": "^6.3.2"
   }

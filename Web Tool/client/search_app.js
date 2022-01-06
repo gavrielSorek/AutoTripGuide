@@ -275,9 +275,7 @@ function editButtonClicked() {
     basicUrl = uriBeginning + 'editPoi';
     let url = new URL(basicUrl);
     url.searchParams.append('id', lastShownPoi._id)
-    console.log(url.href)
     location.href = url.href;
-    console.log("not supposed to be writen")
 }
 
 // The function perform the search according to the user request

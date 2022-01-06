@@ -1,9 +1,8 @@
 module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi};
-var ObjectID = require('bson').ObjectID;
+// var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
-// const { MongoClient } = require('mongodb');
+const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
-// var fs = require('fs');
 
 // The function insert a new pois to the db
 async function InsertPois(client, newPois) {
@@ -42,13 +41,13 @@ async function findDataByParams(client, queryObject, relevantBounds, MaxCount, s
         console.log(`No poi found with the param '${queryObject}'`);
     }
 }
+
 // The function find a pois 
 async function findPois(client, poiParam ,paramVal, relevantBounds, MaxCount, searchOutsideTheBoundery) {
     var queryObject = {}
     queryObject[poiParam] = paramVal
     return findDataByParams(client, queryObject, relevantBounds, MaxCount, searchOutsideTheBoundery)
 }
-
 // The function insert audio to the db
 async function insertAudio(dbClient, audio, audioName, idOfPoi) {
     const db = await dbClient.db("testDb");
@@ -141,3 +140,30 @@ async function login(client, userInfo) {
         return [];
     }
 }
+
+
+
+
+
+
+
+
+// //init
+// async function init() {
+//     try {
+//         const dbClientAudio = new MongoClient('mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority');
+//         await dbClientAudio.connect();
+//         // ppp = await findDataByParams(dbClientAudio, {_poiName: 'Masada'}, getDefaultBounds(), 10, true)
+//         mmm = await findPois(dbClientAudio, '_poiName' ,'Masada', getDefaultBounds(), 10, true)
+//         console.log(mmm)
+//     } catch (e) {
+//         console.error(e); 
+//     }
+// }
+// init()
+// function getDefaultBounds(){
+//     var relevantBounds = {}
+//     relevantBounds['southWest'] = {lat : 31.31610138349565, lng : 35.35400390625001}
+//     relevantBounds['northEast'] = {lat : 31.83303, lng : 36.35400390625001}
+//     return relevantBounds;
+// }

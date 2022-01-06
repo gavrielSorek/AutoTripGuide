@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Auto trip guide - Data Inserter</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin=""/>
+   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+        <link rel="stylesheet" href="style_dataIn.css"/>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
+
+    </head>
+
+    <body>
+        <div class="create-box">
+            <h2 id="operation_type">Edit POI</h2>
+            <form>
+              <div class="user-box">
+                <input type="text" id="PoiName" autocomplete="off" name="a0ba02e0-6e65-11ec-b851-65b3f4e6890d" required="" value="">
+                <label>POI Name</label>
+              </div>
+              <div class="user-box">
+                <label>Language</label>
+                <!-- <input type="text" id="language" autocomplete="off" name="" required=""> -->
+                <div class="custom-select">
+                  <select id="languages" name="languages">
+                    <option>Select Language</option>
+                    <option id="option" value="am">Amharic - አማርኛ</option>
+                    <option id="option" value="ar">Arabic - العربية</option>
+                    <option id="option" value="en">English</option>
+                    <option id="option" value="he">Hebrew - עברית</option>
+                    <option id="option" value="es">Spanish - español</option>
+                    <option id="option" value="ru">Russian - русский</option>
+                  </select>
+                </div>
+              </div>
+              <a href="#" onclick="findPoiPosition()">
+                Find for me
+              </a>
+              <div id="map"></div>
+              <div id="lng" class="user-box">
+                <input type="text" id="longitude" autocomplete="off" name="" required="" value="">
+                <label>Longitude</label>
+              </div>
+              <div id="lat" class="user-box">
+                <input type="text" id="latitude" autocomplete="off" name="" required="" value="">
+                <label>Latitude</label>
+              </div>
+              <div class="user-box">
+                <input type="text" id="source" autocomplete="off" name="" required="" value="">
+                <label>Source</label>
+              </div>
+              <div class="user-box">
+                <label>Audio</label>
+                <input type="file" id="upload" />
+                <button type = "button" id="record_button" onmousedown="record()" onmouseup="stopRecord()" style="background-color: cornsilk;"><img src="./images/recorder.png" height ="50" width="50"/></button>
+                <audio id="audio" controls>
+                  <source src="" id="src" />
+                </audio>
+              </div>
+              <div class="user-des-box">
+                <textarea id="shortDesc" rows="4" cols="87" name="comment" form="usrform" value=""></textarea>
+                <!-- <input type="text" id="shortDesc" autocomplete="off" name="" required=""> -->
+                <label>Short Description</label>
+              </div>
+              <a href="#" onclick="submitPoi()">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                Submit
+              </a>
+            </form>
+          </div>
+    </body>
+
+    <script id="app_script" src="editData_app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</html>

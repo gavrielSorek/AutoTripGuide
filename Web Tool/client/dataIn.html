@@ -18,10 +18,10 @@
 
     <body>
         <div class="create-box">
-            <h2>Create New POI</h2>
+            <h2 id="operation_type">Create New POI</h2>
             <form>
               <div class="user-box">
-                <input type="text" id="PoiName" autocomplete="off" name="" required="">
+                <input type="text" id="PoiName" autocomplete="off" name="" required="" value="">
                 <label>POI Name</label>
               </div>
               <div class="user-box">
@@ -44,15 +44,15 @@
               </a>
               <div id="map"></div>
               <div id="lng" class="user-box">
-                <input type="text" id="longitude" autocomplete="off" name="" required="">
+                <input type="text" id="longitude" autocomplete="off" name="" required="" value="">
                 <label>Longitude</label>
               </div>
               <div id="lat" class="user-box">
-                <input type="text" id="latitude" autocomplete="off" name="" required="">
+                <input type="text" id="latitude" autocomplete="off" name="" required="" value="">
                 <label>Latitude</label>
               </div>
               <div class="user-box">
-                <input type="text" id="source" autocomplete="off" name="" required="">
+                <input type="text" id="source" autocomplete="off" name="" required="" value="">
                 <label>Source</label>
               </div>
               <div class="user-box">
@@ -64,7 +64,7 @@
                 </audio>
               </div>
               <div class="user-des-box">
-                <textarea id="shortDesc" rows="4" cols="87" name="comment" form="usrform"></textarea>
+                <textarea id="shortDesc" rows="4" cols="87" name="comment" form="usrform" value=""></textarea>
                 <!-- <input type="text" id="shortDesc" autocomplete="off" name="" required=""> -->
                 <label>Short Description</label>
               </div>
@@ -79,7 +79,7 @@
           </div>
     </body>
 
-    <script src="dataIn_app.js"></script>
+    <script id="app_script" src="dataIn_app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </html>
