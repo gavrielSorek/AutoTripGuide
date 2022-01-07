@@ -25,11 +25,6 @@ if(document.getElementById("upload")) {
     document.getElementById("upload").addEventListener("change", handleFiles, false);
 }
 
-// The function delete the data from the page
-function deleteEverything() {
-    localStorage.clear();
-    location.reload();
-}
 
 // The function verifies with the client his request
 function submitPoi(){
@@ -45,8 +40,6 @@ function submitPoi(){
         if (result.value) {
             Swal.close()
             sendPoiInfoToServer();
-            // Swal.fire("Created!", "Your request to create new poi has been sent.", "success");
-            // setTimeout(deleteEverything, 1000);
         } else {
             Swal.fire("Cancelled", "Your request to create new poi has not been sent", "error");
             // Swal.close()
@@ -82,34 +75,13 @@ function findPoiPosition() {
                 if (res){
                     map.panTo(new L.LatLng(lat, lng));
                 } else {
-                    showNotFoundMessage()
+                    messages.showNotFoundMessage()
                 }
             } else {
-                showNotFoundMessage()
+                messages.showNotFoundMessage()
             }
         }
     }
-}
-
-// The function show a not found message when the user ask for a poi that not exist
-function showNotFoundMessage() {
-    Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'The POI according to your request is not found',
-      }).then((result) => {
-        setTimeout(deleteEverything, 500);
-      });
-}
-// The function show a not found message when the user ask for a poi that not exist
-function showServerNotAccissableMessage() {
-    Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Communication Problem',
-      }).then((result) => {
-        setTimeout(deleteEverything, 1000);
-      });
 }
 
 // The function returns the date of today
@@ -150,14 +122,14 @@ async function sendPoiInfoToServer() {
     const url='http://localhost:5500/createPois';
     Http.open("POST", url, true);
     Http.onerror = function(e){
-        showServerNotAccissableMessage();
+        messages.showServerNotAccissableMessage();
     };
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
     Http.send(poiInfoJson);
-    showLoadingMessage();
+    messages.showLoadingMessage();
     Http.onreadystatechange = (e) => {  
-        if (Http.readyState == 4) {
+        if (Http.readyState == 4 && Http.status == 200) {
             dataUploadingFinished();
             var response = Http.responseText;
             if(response.length > 0) {
@@ -170,22 +142,10 @@ async function sendPoiInfoToServer() {
     
 }
 
-// The function show a Loading message.
-function showLoadingMessage() {
-    Swal.fire({
-        title: 'Please Wait !',
-        html: 'data uploading',
-        allowOutsideClick: false,
-        onBeforeOpen: () => {
-            Swal.showLoading()
-        },
-    });
-}
 
 function dataUploadingFinished() {
-    swal.close()
-    deleteEverything()
-    
+    messages.createPoiSeccess()
+    setTimeout(messages.deleteEverything, 1500);
 }
 
 /* -------------------------- map function -------------------- */
