@@ -106,31 +106,11 @@ function getAudioById(id) {
 function loadAudio(poiAudioFromDB) {
     console.log("inside load audio")
     console.log(poiAudioFromDB.data)
-    // const blob = new Blob([poiAudioFromDB], { type: "audio/wav" });
-    // var binaryData = [];
-    // binaryData.push(poiAudioFromDB);
-    
     var uint8Array1 = new Uint8Array(poiAudioFromDB.data)
     var arrayBuffer = uint8Array1.buffer; 
     console.log(arrayBuffer)
     poiAudio.src = window.URL.createObjectURL(new Blob([uint8Array1], {type: 'audio/ogg'}))
     poiAudio.load();
-    // const str2blob = txt => new Blob([poiAudioFromDB]);
-    // var blobUrl = URL.createObjectURL(str2blob);
-    
-    // readAsDataURL
-    // const url = window.URL.createObjectURL(str2blob);
-    // poiAudio.src = url;
-
-    // poiAudio.src = poiAudioFromDB
-
-    // playByteArray(poiAudioFromDB)
-    // $("#src").attr("src", URL.createObjectURL(url));
-    // document.getElementById("audio").load();
-    // // $("#src").attr("src", URL.createObjectURL(files[0]));
-    // // document.getElementById("audio").load();
-    // // poiAudio.src = poiAudioFromDB
-    // // poiAudio.load();
 }
 
 
@@ -250,13 +230,8 @@ function showPoi(item) {
     elem2.append($('<p>').text("Approved By: " + item._ApprovedBy));
     elem2.append($('<p>').text("Updated By: " + item._UpdatedBy));
     elem2.append($('<p>').text("Last Updated Date: " + item._LastUpdatedDate));
-    elem2.append($('<button id="edit_button">').text("Edit: " + item._poiName));
-    
     //audio
     audio = item._audio
-    // var poiAudio = document.createElement('audio');
-    // poiAudio.controls = 'controls';
-    // //poiAudio.src = 'media/Blue Browne.mp3';
     if (audio == "no audio") {
         console.log("no audio for this poi")
     } else {
@@ -264,6 +239,8 @@ function showPoi(item) {
         audioFromDb = getAudioById(item._id)
         elem2.append(poiAudio);
     }
+    elem2.append($('<div style="white-space: pre">>'));
+    elem2.append($('<button id="edit_button" class="button button1">').text("Edit: " + item._poiName));
     elem1.append(elem2);
     resultArea.append(elem1); 
     //add edit button listener

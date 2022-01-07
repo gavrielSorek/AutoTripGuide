@@ -83,7 +83,7 @@ async function editPoi(client, updatedPoi, id) {
     })
 }
 
-// The function check if the name or email exist in the db
+// The function checks if the name or email exist in the db
 async function checkInfo(client, userInfo) {
     var userNameVal = userInfo.userName;
     var emailAddrVal = userInfo.emailAddr;
@@ -110,7 +110,7 @@ async function checkInfo(client, userInfo) {
 }
 
 
-// The function insert a new user to the db
+// The function inserts a new user to the db
 async function createNewUser(client, newUserInfo) {
     checkCode = await checkInfo(client, newUserInfo);
     if(checkCode == 0) {    //the user's info not exist in the db
