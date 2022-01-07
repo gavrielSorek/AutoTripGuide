@@ -1,4 +1,3 @@
-const communication = require("./Modules/serverCommunication")
 const homeUrl = 'http://localhost:5500/search.html'
 /* -------------------------- insert function -------------------- */
 // const db = require("./serverCommunication");
@@ -200,6 +199,7 @@ function addMarkerOnMap(lat, lng, name) {
     marker.bindPopup("<b>Welcome to </b><br>" + name);
     globalMarker = marker
     map.addLayer(marker);
+    map.panTo(new L.LatLng(lat, lng));
     return true
 }
 
@@ -318,6 +318,9 @@ function setPoiDataOnPage(poi) {
         document.getElementById("longitude").defaultValue =  poi[0]._longitude;
         document.getElementById("source").defaultValue =  poi[0]._source;
         document.getElementById("shortDesc").defaultValue =  poi[0]._shortDesc;
+        document.getElementById('languages').value=poi[0]._language;
+        addMarkerOnMap(poi[0]._latitude, poi[0]._longitude, poi[0]._poiName)
+
         if (poi[0]._audio != "no audio") {
             communication.getAudioById(poiId, setAudio, undefined)
         } else {
@@ -330,7 +333,7 @@ function setAudio(audioData) {
     console.log("inside set audio")
     console.log(audioData.data)
     var uint8Array1 = new Uint8Array(audioData.data)
-    var arrayBuffer = uint8Array1.buffer; 
+    var arrayBuffer = uint8Array1.buffer;
     console.log(arrayBuffer)
     audio.src = window.URL.createObjectURL(new Blob([uint8Array1], {type: 'audio/ogg'}))
     audio.load();
@@ -339,9 +342,9 @@ function setAudio(audioData) {
 }
 function startEditLogic() {
     showLoadingMessage();
-    uriBeginning = 'http://127.0.0.1:5500/'
     poiId = document.getElementById("PoiName").name
-    communication.getPoisInfo('_id', poiId, undefined ,true, setPoiDataOnPage, undefined);    
+    communication.getPoisInfo('_id', poiId, undefined ,true, setPoiDataOnPage, undefined);
+    console.log(communication)
 
 }
 // The function show a Loading message.

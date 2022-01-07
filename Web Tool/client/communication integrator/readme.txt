@@ -1,1 +1,0 @@
-https://medium.com/swlh/browersify-use-require-in-client-side-javascript-7414b229a4ad - create one file from dependencies js
