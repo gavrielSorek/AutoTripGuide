@@ -11,6 +11,7 @@ var audio = document.getElementById("audio");
 var source = document.getElementById("source");
 var select = document.getElementById("languages");
 var recordButton = document.getElementById("record_button");
+var deleteCheckbox = document.getElementById('deletePoi')
 
 
 //init
@@ -131,6 +132,9 @@ async function sendPoiInfoToServer() {
         _ApprovedBy: "ApprovedBy ??",
         _UpdatedBy: "UpdatedBy ??",
         _LastUpdatedDate: getTodayDate()
+    }
+    if (deleteCheckbox.checked) { // if user wants to delete the poi
+        poiInfo['_delete'] = 'true'
     }
     poiArray = [poiInfo] //thats what the server expected
     var poiInfoJson = JSON.stringify(poiArray);

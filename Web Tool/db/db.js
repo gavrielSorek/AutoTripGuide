@@ -1,4 +1,4 @@
-module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi};
+module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi, deletePoi};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -71,6 +71,19 @@ async function getAudio(dbClient, audioId) {
     return audioPromise
 }
 //update poi in db
+async function deletePoi(client, updatedPoi, id) {
+    var queryObject = {_id: id}
+    client.db("testDb").collection("testCollection").deleteOne(queryObject, updatedPoi, function(err, res){
+        if(err) {
+            console.log("problem in update function-db")
+        }
+        else {
+            console.log("poi updated")
+        }
+    })
+}
+
+//delete poi
 async function editPoi(client, updatedPoi, id) {
     var queryObject = {_id: id}
     client.db("testDb").collection("testCollection").replaceOne(queryObject, updatedPoi, function(err, res){

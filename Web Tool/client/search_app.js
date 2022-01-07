@@ -239,7 +239,7 @@ function showPoi(item) {
         audioFromDb = getAudioById(item._id)
         elem2.append(poiAudio);
     }
-    elem2.append($('<div style="white-space: pre">>'));
+    elem2.append($('<div style="white-space: pre">'));
     elem2.append($('<button id="edit_button" class="button button1">').text("Edit: " + item._poiName));
     elem1.append(elem2);
     resultArea.append(elem1); 

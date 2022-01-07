@@ -38,11 +38,12 @@ const client = new OAuth2Client(CLIENT_ID)
 const jsdom = require("jsdom")
 const { JSDOM } = jsdom
 global.DOMParser = new JSDOM().window.DOMParser
-var dataInHtml = undefined
+const dataInHtml = fs.readFileSync(path.resolve(__dirname, '../client/dataIn.html'), 'utf8')
 uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const dbClientSearcher = new MongoClient(uri);
 const dbClientInsertor = new MongoClient(uri);
 const dbClientAudio = new MongoClient(uri);
+const generalEditFile = getGeneralEditFile()
 
 //init
 async function init() {
@@ -54,7 +55,6 @@ async function init() {
     } catch (e) {
         console.error(e); 
     }
-    dataInHtml = fs.readFileSync(path.resolve(__dirname, '../client/dataIn.html'), 'utf8')
 }
 
 async function closeServer(){
@@ -78,7 +78,11 @@ async function editPoi(poi) {
     try {
         poiHandler(poi)
         //db.editPoi(dbClientSearcher, {_m: 'm', _poiName: 'aa'}, "fb657bc0-6bfe-11ec-88c0-9933c3403c32")
-        await db.editPoi(dbClientInsertor, poi, poi._id);
+        if (poi._delete) {
+            await db.deletePoi(dbClientInsertor, poi, poi._id);
+        } else {
+            await db.editPoi(dbClientInsertor, poi, poi._id);
+        }
     } catch (e) {
         console.error(e); 
     } 
@@ -179,17 +183,30 @@ app.post('/findPoiPosition', async function(req, res) {
     poiPosition = wiki_service.getPositionByName(poiName, language)
     poiPosition.then((position)=>{sendPosition(position, res)}).catch(()=>{console.log("error cant find this position")});
 })
- // create edit page
- async function createEditHtmlFile(poiId) {
-    var poi = await db.findPois(dbClientSearcher, '_id' ,poiId, getDefaultBounds(), 10, true);
+// generate general edit file
+function getGeneralEditFile() {
     var editPoiHtml = dataInHtml.repeat(1);
     const parser = new DOMParser();
     var htmlDoc = parser.parseFromString(editPoiHtml, 'text/html');
-    htmlDoc.getElementById("operation_type").innerHTML = "Edit poi: " + poi[0]._poiName;
+    htmlDoc.getElementById("operation_type").innerHTML = "Edit poi: ";
     htmlDoc.getElementById("app_script").src = "editData_app.js"
-    htmlDoc.getElementById("PoiName").name = poiId
 
-     return htmlDoc.documentElement.innerHTML;;
+    var lastDiv = htmlDoc.getElementById("divBeforeSubmit");
+    var deleteCheckbox = '<input type="checkbox" id="deletePoi" name="deletePoi">' + '<label for="deletePoi" style="color:red;" id = "deleteLabel">Delete poi</label>'
+    lastDiv.insertAdjacentHTML('afterend', deleteCheckbox);
+    var deleteLabel = htmlDoc.getElementById("deleteLabel");
+    deleteLabel.insertAdjacentHTML('afterend', '<br><br>');
+    return htmlDoc.documentElement.innerHTML;
+}
+ // create edit page for spacific poi
+ async function createEditHtmlFile(poiId) {
+    var poi = await db.findPois(dbClientSearcher, '_id' ,poiId, getDefaultBounds(), 10, true);
+    var editPoiHtml = generalEditFile.repeat(1);
+    const parser = new DOMParser();
+    var htmlDoc = parser.parseFromString(editPoiHtml, 'text/html');
+    htmlDoc.getElementById("operation_type").innerHTML = "Edit poi: " + poi[0]._poiName;
+    htmlDoc.getElementById("PoiName").name = poiId
+    return htmlDoc.documentElement.innerHTML;
  }
 
 //return audio by name
