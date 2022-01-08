@@ -126,6 +126,7 @@ app.get("/editPoi",async function (req, res, next) { //next requrie (the functio
     var updatedFile = await createEditHtmlFile(req.query.id)
     console.log(typeof updatedFile)
     res.write(updatedFile,'utf8')
+    res.status(200)
     res.end()
  })
 

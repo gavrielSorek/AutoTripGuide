@@ -38,7 +38,7 @@ function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
     quaryParams['searchOutsideTheBounds'] = searchOutsideTheBounds
     var quaryParamsJson= JSON.stringify(quaryParams);
     const Http = new XMLHttpRequest();
-    const url = uriBeginning + '/searchPois';
+    const url = '/searchPois';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -80,7 +80,7 @@ function getAudioById(id) {
     }
     var poiInfoJson= JSON.stringify(poiInfo);
     const Http = new XMLHttpRequest();
-    const url= uriBeginning + '/searchPoiAudioById';
+    const url= '/searchPoiAudioById';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
