@@ -1,4 +1,3 @@
-const homeUrl = 'http://localhost:5500/search.html'
 /* -------------------------- insert function -------------------- */
 // const db = require("./serverCommunication");
 //variables definition
@@ -61,7 +60,7 @@ function findPoiPosition() {
     }
     var poiInfoJson = JSON.stringify(poiInfo);
     const Http = new XMLHttpRequest();
-    const url = 'http://localhost:5500/findPoiPosition';
+    const url = communication.uriBeginning + '/findPoiPosition';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -142,7 +141,7 @@ async function sendPoiInfoToServer() {
     Http.onerror = function (e) {
         messages.showServerNotAccissableMessage();
     };
-    const url = 'http://localhost:5500/editPois';
+    const url = communication.uriBeginning + '/editPois';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -321,6 +320,7 @@ function dataUploadingFinished() {
 }
 //TODO ADD CONDITION TO SEND POI IF AND ONLY IF AUDIO IS READY
 function setPoiDataOnPage(poi) {
+    messages.closeMessages(); //close loading data
     if (!poi) {
         console.log('error in setPoiDataOnPage')
     }
@@ -343,6 +343,10 @@ function setPoiDataOnPage(poi) {
     }
 
 }
+function faiedToGetData() {
+    messages.showServerNotAccissableMessage();
+
+}
 function setAudio(audioData) {
     console.log("inside set audio")
     console.log(audioData.data)
@@ -357,7 +361,9 @@ function setAudio(audioData) {
 function startEditLogic() {
     messages.showLoadingMessage();
     poiId = document.getElementById("PoiName").name
-    communication.getPoisInfo('_id', poiId, undefined, true, setPoiDataOnPage, undefined);
+    communication.getPoisInfo('_id', poiId, undefined, true, setPoiDataOnPage, faiedToGetData);
+    messages.showLoadingMessage();
+
     console.log(communication)
 
 }
@@ -365,7 +371,7 @@ function startEditLogic() {
 startEditLogic();
 
 function returnToHomePage() {
-    window.location.href = homeUrl;
+    window.location.href = communication.uriBeginning+'/search.html';
 }
 
 

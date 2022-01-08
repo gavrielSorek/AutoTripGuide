@@ -55,7 +55,7 @@ function findPoiPosition() {
     }
     var poiInfoJson= JSON.stringify(poiInfo);
     const Http = new XMLHttpRequest();
-    const url='http://localhost:5500/findPoiPosition';
+    const url=communication.uriBeginning + '/findPoiPosition';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -119,7 +119,7 @@ async function sendPoiInfoToServer() {
     var poiInfoJson= JSON.stringify(poiArray);
     const Http = new XMLHttpRequest();
     
-    const url='http://localhost:5500/createPois';
+    const url= communication.uriBeginning + '/createPois';
     Http.open("POST", url, true);
     Http.onerror = function(e){
         messages.showServerNotAccissableMessage();

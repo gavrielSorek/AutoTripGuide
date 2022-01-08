@@ -1,8 +1,9 @@
-const uriBeginning = 'http://127.0.0.1:5500/';
 
 (function (global) {
+    const uriBeginningTemp = 'http://127.0.0.1:5500';
     global.communication = {}
-    //need to delete
+    global.communication.uriBeginning = uriBeginningTemp
+
     // This function get the poi info according name
     global.communication.getPoisInfo = function (poiParameter, valueOfParameter, relevantBounds = undefined, searchOutsideTheBounds, successCallbackFunc, failureCallbackFunc = undefined) {
         if (!relevantBounds) {
@@ -18,14 +19,17 @@ const uriBeginning = 'http://127.0.0.1:5500/';
         quaryParams['searchOutsideTheBounds'] = searchOutsideTheBounds
         var quaryParamsJson = JSON.stringify(quaryParams);
         const Http = new XMLHttpRequest();
-        const url = uriBeginning + 'searchPois';
+        const url = communication.uriBeginning + '/searchPois';
+        Http.onerror = function(e){
+            failureCallbackFunc();
+        };
         Http.open("POST", url);
         Http.withCredentials = false;
         Http.setRequestHeader("Content-Type", "application/json");
         console.log(quaryParamsJson)
         Http.send(quaryParamsJson);
         Http.onreadystatechange = (e) => {
-            if (Http.readyState == 4) { //if the operation is complete.
+            if (Http.readyState == 4 && Http.status == 200) { //if the operation is complete.
                 var response = Http.responseText
                 if (response.length > 0) {
                     successCallbackFunc(JSON.parse(Http.responseText));
@@ -43,13 +47,13 @@ const uriBeginning = 'http://127.0.0.1:5500/';
         }
         var poiInfoJson = JSON.stringify(poiInfo);
         const Http = new XMLHttpRequest();
-        const url = uriBeginning + 'searchPoiAudioById';
+        const url = communication.uriBeginning + '/searchPoiAudioById';
         Http.open("POST", url);
         Http.withCredentials = false;
         Http.setRequestHeader("Content-Type", "application/json");
         Http.send(poiInfoJson);
         Http.onreadystatechange = (e) => {
-            if (Http.readyState == 4) { //if the operation is complete. 
+            if (Http.readyState == 4 && Http.status == 200) { //if the operation is complete. 
                 var response = Http.responseText
                 if (response.length > 0) {
                     console.log("response from the server is recieved")

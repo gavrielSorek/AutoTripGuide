@@ -12,7 +12,9 @@ var loginButton = document.getElementById("loginButton");
 continueButton.disabled = true;
 loginButton.disabled = true
 
+//init
 var defaultPermission = 4   //Viewer 
+const basicUrl = "http://localhost:5500"
 
 // The function enable to continue in the signUp process - means all the info is valid
 function enableContinue() {
@@ -79,7 +81,7 @@ function onGoogleSignIn(googleUser) {
     var id_token = googleUser.getAuthResponse().id_token;
 
     const Http = new XMLHttpRequest();
-    const url='http://localhost:5500/googlelogin';
+    const url=basicUrl +'/googlelogin';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -117,7 +119,7 @@ function login(){
     }
     var userInfoJson= JSON.stringify(userInfo);
     const Http = new XMLHttpRequest();
-    const url='http://localhost:5500/login';
+    const url= basicUrl + '/login';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -163,7 +165,7 @@ function createAccount() {
     }
     var userInfoJson= JSON.stringify(userInfo);
     const Http = new XMLHttpRequest();
-    const url='http://localhost:5500/createNewUser';
+    const url=basicUrl + '/createNewUser';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");

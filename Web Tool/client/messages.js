@@ -20,6 +20,15 @@
         }).then((result) => {
         });
     }
+    // The function show a general error
+    global.messages.showServerNotAccissableMessage = function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Error Has Occurred',
+        }).then((result) => {
+        });
+    }
     // The function show a Loading message.
     global.messages.showLoadingMessage = function () {
         Swal.fire({

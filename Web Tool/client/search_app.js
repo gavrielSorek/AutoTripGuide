@@ -24,7 +24,7 @@ var markerSet = new Set()
 var greenMarkerGroup = L.featureGroup();
 const maxMarkersOnMap = 500
 const secClipRange = 0.1 //#secure clipping range (clip pois in secure distance)
-const uriBeginning = 'http://127.0.0.1:5500/'
+const uriBeginning = 'http://127.0.0.1:5500'
 
 // The function get the poi info according name
 function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
@@ -38,7 +38,7 @@ function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
     quaryParams['searchOutsideTheBounds'] = searchOutsideTheBounds
     var quaryParamsJson= JSON.stringify(quaryParams);
     const Http = new XMLHttpRequest();
-    const url = uriBeginning + 'searchPois';
+    const url = uriBeginning + '/searchPois';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -80,7 +80,7 @@ function getAudioById(id) {
     }
     var poiInfoJson= JSON.stringify(poiInfo);
     const Http = new XMLHttpRequest();
-    const url= uriBeginning + 'searchPoiAudioById';
+    const url= uriBeginning + '/searchPoiAudioById';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -249,7 +249,7 @@ function showPoi(item) {
 // edit button clicked
 function editButtonClicked() {
     if (!lastShownPoi) {return}
-    basicUrl = uriBeginning + 'editPoi';
+    basicUrl = uriBeginning + '/editPoi';
     let url = new URL(basicUrl);
     url.searchParams.append('id', lastShownPoi._id)
     location.href = url.href;
