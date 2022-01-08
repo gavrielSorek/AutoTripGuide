@@ -42,7 +42,7 @@ function submitPoi() {
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, create it!",
+        confirmButtonText: "Yes, edit it!",
     }).then((result) => {
         if (result.value) {
             sendPoiInfoToServer();
