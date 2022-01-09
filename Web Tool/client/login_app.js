@@ -14,7 +14,7 @@ loginButton.disabled = true
 
 //init
 var defaultPermission = 4   //Viewer 
-const basicUrl = "http://localhost:5500"
+localStorage.clear();
 
 // The function enable to continue in the signUp process - means all the info is valid
 function enableContinue() {
@@ -42,6 +42,7 @@ function disableLogin() {
 
 //query selector
 document.querySelectorAll(".form__input").forEach(inputElement => {
+    console.log(inputElement)
     inputElement.addEventListener("blur", e => {
         // Integrity check for signUp user name
         if (e.target.id === "signupUsername" && e.target.value.length > 0 && e.target.value.length < 10) {
@@ -66,7 +67,7 @@ document.querySelectorAll(".form__input").forEach(inputElement => {
     inputElement.addEventListener("input", e => {
         clearInputError(inputElement);
         disableContinue();
-        disableLogin();
+        // disableLogin();
     });
 });
 
@@ -79,9 +80,13 @@ function onGoogleSignIn(googleUser) {
     // console.log('Image URL: ' + profile.getImageUrl());
     // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
     var id_token = googleUser.getAuthResponse().id_token;
+    // save token in local storage
+    // localStorage["google_token"] = id_token;
+
+
 
     const Http = new XMLHttpRequest();
-    const url=basicUrl +'/googlelogin';
+    const url=communication.uriBeginning +'/googlelogin';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -93,7 +98,7 @@ function onGoogleSignIn(googleUser) {
             if(response.length > 0) {
                 if (response == "success") {
                     console.log("the user login with google auth");
-                    window.location.href = "search.html";
+                    window.location.href = "searchPoisPage";
                 } else {
                     console.log("the user not login with google auth");
                 }
@@ -117,35 +122,57 @@ function login(){
         emailAddr : signinUserNameOrEmailVal, 
         password  : signinPasswordVal
     }
+    //save the data in local storage
+    // localStorage["userName"] = signinUserNameOrEmailVal;
+    // localStorage["emailAddr"] = signinUserNameOrEmailVal;
+    // localStorage["password"] = signinPasswordVal;
     var userInfoJson= JSON.stringify(userInfo);
     const Http = new XMLHttpRequest();
-    const url= basicUrl + '/login';
-    Http.open("POST", url);
+    Http.HTTPS=true
+
+    const url= '/login';
+    console.log(url)
+    Http.open("POST",  '/login');
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
     Http.send(userInfoJson);
     Http.onreadystatechange = (e) => {  
-        if (Http.readyState == 4) { //if the operation is complete. 
+        if (Http.readyState == 4 && Http.status == 200) { //if the operation is complete. 
             var response = Http.responseText
             if(response.length > 0) {
                 console.log("response from the server is recieved")
                 console.log(response)
                 var jsonResponse = JSON.parse(Http.responseText);
-                if (jsonResponse == 0) {
+                if (jsonResponse['loginStatus'] == 0) {
                     setFormMessage(loginForm, "error", "The username you entered doesn't belong to an account. Please check your username and try again.");
                     console.log("The username you entered doesn't belong to an account. Please check your username and try again.");
-                } else if (jsonResponse == 1) {
+                } else if (jsonResponse['loginStatus'] == 1) {
                     setFormMessage(loginForm, "error", "Sorry, your password was incorrect. Please double-check your password.");
                     console.log("Sorry, your password was incorrect. Please double-check your password.");
                 } else {
                     console.log("The user exist :) :) :).");
-                    window.location.href = "search.html";
+                    setServerTokens(jsonResponse)
+                    var newUrl = communication.addTokensToUrl(communication.uriBeginning + '/searchPoisPage')
+                    window.location.href = newUrl.href;
                 }
             }
         }
     }
 }
 
+function addTokensToUrl(url) {
+    console.log(url)
+
+    let newUrl = new URL(url);
+    newUrl.searchParams.append('PermissionToken', localStorage['PermissionToken'])
+    newUrl.searchParams.append('permissionStatus', localStorage['permissionStatus'])
+    return newUrl;
+}
+
+function setServerTokens(serverRes){
+    localStorage['permissionStatus'] = serverRes['permissionStatus'];
+    localStorage['PermissionToken'] = serverRes['PermissionToken'];
+}
 
 function createAccount() {
     console.log("inside createAccount function")
@@ -165,7 +192,7 @@ function createAccount() {
     }
     var userInfoJson= JSON.stringify(userInfo);
     const Http = new XMLHttpRequest();
-    const url=basicUrl + '/createNewUser';
+    const url=communication.uriBeginning + '/createNewUser';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");

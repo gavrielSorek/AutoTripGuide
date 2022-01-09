@@ -116,10 +116,14 @@ async function sendPoiInfoToServer() {
         _LastUpdatedDate : getTodayDate()
     }
     poiArray = [poiInfo] //thats what the server expected
-    var poiInfoJson= JSON.stringify(poiArray);
+    objectToSend = {}
+    objectToSend['poisArray'] = poiArray;
+    communication.addTokensToObject(objectToSend);
+
+    var poiInfoJson= JSON.stringify(objectToSend);
     const Http = new XMLHttpRequest();
     
-    const url= communication.uriBeginning + '/createPois';
+    const url= '/createPois';
     Http.open("POST", url, true);
     Http.onerror = function(e){
         messages.showServerNotAccissableMessage();
@@ -134,6 +138,7 @@ async function sendPoiInfoToServer() {
             var response = Http.responseText;
             if(response.length > 0) {
                 console.log("response from the server is recieved")
+                console.log(jsonResponse)
                 var jsonResponse = JSON.parse(Http.responseText);
                 console.log(jsonResponse);
             }
@@ -280,22 +285,6 @@ async function blobToArrayBuffer(blob) {
     });
 }
 
-
-function openHomePage(){
-    window.location.href = "search.html";
-}
-
-function openDataInPage(){
-    window.location.href = "dataIn.html";
-}
-
-function openAboutPage(){
-    window.location.href = "about.html";
-}
-
-function openContactPage(){
-    window.location.href = "contact.html";
-}
 
 
 //TODO ADD CONDITION TO SEND POI IF AND ONLY IF AUDIO IS READY

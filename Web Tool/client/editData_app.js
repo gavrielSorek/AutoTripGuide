@@ -136,7 +136,10 @@ async function sendPoiInfoToServer() {
         poiInfo['_delete'] = 'true'
     }
     poiArray = [poiInfo] //thats what the server expected
-    var poiInfoJson = JSON.stringify(poiArray);
+    objectToSend = {}
+    objectToSend['poisArray'] = poiArray;
+    communication.addTokensToObject(objectToSend);
+    var poiInfoJson= JSON.stringify(objectToSend);
     const Http = new XMLHttpRequest();
     Http.onerror = function (e) {
         messages.showServerNotAccissableMessage();
@@ -294,29 +297,12 @@ async function blobToArrayBuffer(blob) {
     });
 }
 
-
-function openHomePage() {
-    window.location.href = "search.html";
-}
-
-function openDataInPage() {
-    window.location.href = "dataIn.html";
-}
-
-function openAboutPage() {
-    window.location.href = "about.html";
-}
-
-function openContactPage() {
-    window.location.href = "contact.html";
-}
-
 function dataDownloadingFinished() {
     messages.closeMessages()
 }
 function dataUploadingFinished() {
     messages.editPoiSeccess()
-    setTimeout(returnToHomePage, 1000);
+    setTimeout(communication.openHomePage, 1000);
 }
 //TODO ADD CONDITION TO SEND POI IF AND ONLY IF AUDIO IS READY
 function setPoiDataOnPage(poi) {
@@ -369,11 +355,6 @@ function startEditLogic() {
 }
 
 startEditLogic();
-
-function returnToHomePage() {
-    window.location.href = communication.uriBeginning+'/search.html';
-}
-
 
 
 

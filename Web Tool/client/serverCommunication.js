@@ -1,6 +1,7 @@
 
 (function (global) {
-    const uriBeginningTemp = 'http://127.0.0.1:5500';
+    console.log(localStorage)
+    const uriBeginningTemp = 'http:127.0.0.1:5500';
     global.communication = {}
     global.communication.uriBeginning = uriBeginningTemp
 
@@ -17,9 +18,11 @@
         quaryParams['relevantBounds'] = relevantBounds
         quaryParams['poiInfo'] = poiInfo
         quaryParams['searchOutsideTheBounds'] = searchOutsideTheBounds
+        communication.addTokensToObject(quaryParams)
+        // communication.addTokensToObject(quaryParams) //add tokens
         var quaryParamsJson = JSON.stringify(quaryParams);
         const Http = new XMLHttpRequest();
-        const url = communication.uriBeginning + '/searchPois';
+        const url = '/searchPois';
         Http.onerror = function(e){
             failureCallbackFunc();
         };
@@ -45,9 +48,10 @@
         var poiInfo = {
             _id: id
         }
+        communication.addTokensToObject(poiInfo)
         var poiInfoJson = JSON.stringify(poiInfo);
         const Http = new XMLHttpRequest();
-        const url = communication.uriBeginning + '/searchPoiAudioById';
+        const url = '/searchPoiAudioById';
         Http.open("POST", url);
         Http.withCredentials = false;
         Http.setRequestHeader("Content-Type", "application/json");
@@ -70,6 +74,77 @@
         }
     }
 
+     // The function get the poi info for pois that waiting for approval
+     global.communication.openEditPage = function (poiId, successCallbackFunc, failureCallbackFunc = undefined) {
+        var url = communication.uriBeginning + '/editPoi';
+        var params = "id=" + poiId;
+        var params = {}
+        communication.addTokensToObject(params)
+        params = JSON.stringify(params);
+        var http = new XMLHttpRequest();
+        http.open("GET", url+"?"+params, true);
+        http.onreadystatechange = function()
+        {
+            if(http.readyState == 4 && http.status == 200) {
+                successCallbackFunc(http.responseText);
+            }
+        }
+        http.send(params);
+    }
+
+    // login page
+    global.communication.openSearchPage = function (successCallbackFunc, failureCallbackFunc = undefined) {
+        var url = communication.uriBeginning + '/searchPage';
+        var params = {}
+        communication.addTokensToObject(params)
+        params = JSON.stringify(params);
+        var http = new XMLHttpRequest();
+        http.open("GET", url, true);
+        http.onreadystatechange = function()
+        {
+            if(http.readyState == 4 && http.status == 200) {
+                successCallbackFunc(http.responseText);
+            }
+        }
+        http.send(params);
+    }
+
+    
+    global.communication.addTokensToObject = function (object) {
+        query = {}
+        object['PermissionToken'] = localStorage['PermissionToken'];
+        object['permissionStatus'] = localStorage['permissionStatus'];
+    }
+    global.communication.addTokensToUrl = function (url) {
+        let newUrl = new URL(url);
+        newUrl.searchParams.append('PermissionToken', localStorage['PermissionToken'])
+        newUrl.searchParams.append('permissionStatus', localStorage['permissionStatus'])
+        return newUrl;
+    }
+    global.communication.createUrl = function (url) {
+        let newUrl = new URL(url);
+        return newUrl;
+    }
+    global.communication.openHomePage = function(){
+
+        var newUrl = communication.addTokensToUrl(communication.uriBeginning + '/searchPoisPage')
+        window.location.href = newUrl.href;
+    }
+    
+    global.communication.openDataInPage = function openDataInPage(){
+        var newUrl = communication.addTokensToUrl(communication.uriBeginning + '/dataInPage')
+        window.location.href = newUrl.href;
+    }
+    
+    global.communication.openAboutPage = function openAboutPage(){
+        var newUrl = communication.createUrl(communication.uriBeginning + '/aboutUsPage')
+        window.location.href = newUrl.href;
+    }
+    
+    global.communication.openContactPage = function openContactPage(){
+        var newUrl = communication.createUrl(communication.uriBeginning + '/contactPage')
+        window.location.href = newUrl.href;
+    }
     // default bounds
     function getDefaultBounds() {
         var relevantBounds = {}
@@ -77,4 +152,5 @@
         relevantBounds['northEast'] = { lat: 31.83303, lng: 36.35400390625001 }
         return relevantBounds;
     }
+
 }(window))

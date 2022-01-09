@@ -47,7 +47,7 @@
 
     // The function delete the data from the page
     global.messages.deleteEverything = function () {
-        localStorage.clear();
+        // localStorage.clear();
         location.reload();
     }
     global.messages.createPoiSeccess = function() {

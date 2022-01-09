@@ -19,10 +19,10 @@
         <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
           <i class="fa fa-bars"></i>
         </a>
-        <a onclick="openHomePage()" class="w3-bar-item w3-button"><i class="fa fa-home"></i> HOME</a>
-        <a onclick="openDataInPage()" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> CONTRIBUTION </a>
-        <a onclick="openAboutPage()" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-user"></i> ABOUT</a>
-        <a onclick="openContactPage()" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
+        <a onclick="communication.openHomePage()" class="w3-bar-item w3-button"><i class="fa fa-home"></i> HOME</a>
+        <a onclick="communication.openDataInPage()" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> CONTRIBUTION </a>
+        <a onclick="communication.openAboutPage()" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-user"></i> ABOUT</a>
+        <a onclick="communication.openContactPage()" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
       </div>
         <div class="container text-center" id="searchBox">
           <h1>POI searcher</h1>
@@ -60,6 +60,7 @@
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
    crossorigin=""></script>
+   <script src="serverCommunication.js"></script>
   <script src="search_app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

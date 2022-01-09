@@ -1,4 +1,5 @@
 const fs = require('fs')
+const permissions = require('./permissions')
 const Readable = require('stream').Readable;
 const path = require('path');
 const db = require("../db/db");
@@ -51,6 +52,7 @@ async function init() {
         await dbClientSearcher.connect();
         await dbClientInsertor.connect();
         await dbClientAudio.connect();
+        permissions.initAccessTokens()
         console.log("Connected to search DB")
     } catch (e) {
         console.error(e); 
@@ -111,8 +113,17 @@ app.get("/", function (req, res, next) { //next requrie (the function will not s
         }
     });
  })
- // get insert page
-app.get("/insert", function (req, res, next) { //next requrie (the function will not stop the program)
+ 
+ // get searchPage page
+app.get("/searchPoisPage",permissions.authContributor, function (req, res) { //next requrie (the function will not stop the program)
+    res.sendFile(path.resolve(__dirname, '../client/search.html'), function(err) {
+        if (err) {
+            res.status(err.status).end();
+        }
+    });
+ })
+  // get data in page
+app.get("/dataInPage",permissions.authContributor, function (req, res) { //next requrie (the function will not stop the program)
     res.sendFile(path.resolve(__dirname, '../client/dataIn.html'), function(err) {
         if (err) {
             res.status(err.status).end();
@@ -120,7 +131,7 @@ app.get("/insert", function (req, res, next) { //next requrie (the function will
     });
  })
 //Route get edit pois logic
-app.get("/editPoi",async function (req, res, next) { //next requrie (the function will not stop the program)
+app.get("/editPoi", permissions.authApprover,async function (req, res, next) { //next requrie (the function will not stop the program)
     console.log("in get edit poi")
     console.log(req.query.id)
     var updatedFile = await createEditHtmlFile(req.query.id)
@@ -130,8 +141,26 @@ app.get("/editPoi",async function (req, res, next) { //next requrie (the functio
     res.end()
  })
 
+// get about page
+app.get("/aboutUsPage", function (req, res) { //next requrie (the function will not stop the program)
+    res.sendFile(path.resolve(__dirname, '../client/about.html'), function(err) {
+        if (err) {
+            res.status(err.status).end();
+        }
+    });
+ })
+
+ // get contact page
+app.get("/contactPage", function (req, res) { //next requrie (the function will not stop the program)
+    res.sendFile(path.resolve(__dirname, '../client/about.html'), function(err) {
+        if (err) {
+            res.status(err.status).end();
+        }
+    });
+ })
+
 //Route that create new pois logic
-app.post('/createPois', (req, res, next) =>{
+app.post('/createPois', permissions.authContributor, (req, res, next) =>{
     console.log("Pois info is recieved")
     const data = req.body; 
     var json_res = {
@@ -139,7 +168,7 @@ app.post('/createPois', (req, res, next) =>{
         y: "2",
         z: "3"
      }
-    createNewPois(data)
+    createNewPois(data['poisArray'])
     res.status(200);
     res.json(json_res);
     res.end();
@@ -147,7 +176,7 @@ app.post('/createPois', (req, res, next) =>{
 })
 
 //Route edit pois logic
-app.post('/editPois', (req, res, next) =>{
+app.post('/editPois', permissions.authApprover, (req, res, next) =>{
     console.log("Pois info is recieved")
     const data = req.body; 
     var json_res = {
@@ -155,7 +184,7 @@ app.post('/editPois', (req, res, next) =>{
         y: "2",
         z: "3"
      } 
-    editPoi(data[0])
+    editPoi(data['poisArray'][0])
     res.status(200);
     res.json(json_res);
     res.end();
@@ -163,7 +192,7 @@ app.post('/editPois', (req, res, next) =>{
 })
 
 //search poi logic
-app.post('/searchPois', async function(req, res) {
+app.post('/searchPois', permissions.authContributor,async function(req, res) {
     console.log("Pois search general")
     const data = req.body;
     const queryParam = data.poiParameter;
@@ -229,7 +258,7 @@ async function retAudioById(audioId, res) {
 }
 
 //Route that search audio logic
-app.post('/searchPoiAudioById', async function(req, res) {
+app.post('/searchPoiAudioById', permissions.authContributor,async function(req, res) {
     console.log("audio search by name is recieved")
     const data = req.body;
     console.log(data)
@@ -339,14 +368,17 @@ app.post('/login', async function(req, res) {
     var pass = data.password
     ret = login(data).then(function(response) {
         if(response.length == 0) {
-            newResponse = 0     // The user's name or email not exist - so the user not exist
+            newResponse = {'loginStatus' :0}     // The user's name or email not exist - so the user not exist
         } else {                // The user's name or email exist
             var encryptPass = response[0].password
             if(comparePass(pass, encryptPass)) {    //check of the password
-                newResponse = 2    // The user's name or email + password are correct
+                newResponse = {'loginStatus' :2}    // The user's name or email + password are correct
             } else {
-                newResponse = 1    // The password are not correct
+                newResponse = {'loginStatus' :1}    // The password are not correct
             }
+        }
+        if(newResponse['loginStatus'] == 2) {
+            permissions.getUserTokens(response, newResponse);
         }
         res.status(200);
         res.json(newResponse);

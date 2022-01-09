@@ -1,5 +1,4 @@
 /* -------------------------- search function -------------------- */
-
 //variables definition
 var resultArea = $("#results");
 var searchBar = $("#searchBar");
@@ -24,7 +23,6 @@ var markerSet = new Set()
 var greenMarkerGroup = L.featureGroup();
 const maxMarkersOnMap = 500
 const secClipRange = 0.1 //#secure clipping range (clip pois in secure distance)
-const uriBeginning = 'http://127.0.0.1:5500'
 
 // The function get the poi info according name
 function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
@@ -36,6 +34,7 @@ function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
     quaryParams['relevantBounds'] = getRelevantBounds()
     quaryParams['poiInfo'] = poiInfo
     quaryParams['searchOutsideTheBounds'] = searchOutsideTheBounds
+    communication.addTokensToObject(quaryParams)
     var quaryParamsJson= JSON.stringify(quaryParams);
     const Http = new XMLHttpRequest();
     const url = '/searchPois';
@@ -73,35 +72,6 @@ function userShowNotFoundMessage() {
     }
 }
 
-// The function get the poi info for pois that waiting for approval
-function getAudioById(id) {
-    var poiInfo = {
-        _id : id
-    }
-    var poiInfoJson= JSON.stringify(poiInfo);
-    const Http = new XMLHttpRequest();
-    const url= '/searchPoiAudioById';
-    Http.open("POST", url);
-    Http.withCredentials = false;
-    Http.setRequestHeader("Content-Type", "application/json");
-    Http.send(poiInfoJson);
-    Http.onreadystatechange = (e) => {
-        if (Http.readyState == 4) { //if the operation is completed. 
-            var response = Http.responseText
-            if(response.length > 0) {
-                console.log("response from the server is recieved")
-                var poisInfo = JSON.parse(Http.responseText);
-                console.log(poisInfo);
-                if(poisInfo.length == 0) {
-                    console.log("not found");
-                }
-                loadAudio(poisInfo)
-            } else {
-                console.log("not found");
-            }
-        }
-    }
-}
 
 function loadAudio(poiAudioFromDB) {
     console.log("inside load audio")
@@ -116,8 +86,7 @@ function loadAudio(poiAudioFromDB) {
 
 // The function delete the data from the page
 function deleteEverything() {
-    localStorage.clear();
-    location.reload();
+    // location.reload();
 }
 
 // The function show a not found message when the user ask for a poi that not exist
@@ -236,7 +205,9 @@ function showPoi(item) {
         console.log("no audio for this poi")
     } else {
         //elem2.append($('<audio controls>'));
-        audioFromDb = getAudioById(item._id)
+        // audioFromDb = getAudioById(item._id)
+        communication.getAudioById(item._id, loadAudio, undefined)
+        
         elem2.append(poiAudio);
     }
     elem2.append($('<div style="white-space: pre">'));
@@ -246,14 +217,24 @@ function showPoi(item) {
     //add edit button listener
     $('button').click(editButtonClicked)
 }
+
 // edit button clicked
 function editButtonClicked() {
     if (!lastShownPoi) {return}
-    basicUrl = uriBeginning + '/editPoi';
-    let url = new URL(basicUrl);
+    basicUrl = communication.uriBeginning + '/editPoi';
+    var url = communication.addTokensToUrl(basicUrl)
     url.searchParams.append('id', lastShownPoi._id)
+    // communication.getEditPage();
+    console.log(url);
     location.href = url.href;
 }
+// // add tokens to url
+// function addTokensToUrl(url) {
+//     let newUrl = new URL(url);
+//     newUrl.searchParams.append('PermissionToken', localStorage['PermissionToken'])
+//     newUrl.searchParams.append('permissionStatus', localStorage['permissionStatus'])
+//     return newUrl;
+// }
 
 // The function perform the search according to the user request
 function getSearchInfo() {
@@ -387,18 +368,3 @@ if(input) {
     });
 }
 
-function openHomePage(){
-    window.location.href = "search.html";
-}
-
-function openDataInPage(){
-    window.location.href = "dataIn.html";
-}
-
-function openAboutPage(){
-    window.location.href = "about.html";
-}
-
-function openContactPage(){
-    window.location.href = "contact.html";
-}
