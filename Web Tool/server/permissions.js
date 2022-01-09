@@ -24,15 +24,15 @@ var oldTokens = {}
 // init tokens 
 function initAccessTokens () {
     oldTokens = Object.assign({}, tokens);
-    tokens['contributor'] = gerRandomToken();
-    tokens['approver'] = gerRandomToken();
-    tokens['all'] = gerRandomToken();
+    tokens['contributor'] = getRandomToken();
+    tokens['approver'] = getRandomToken();
+    tokens['all'] = getRandomToken();
     if (!oldTokens['contributor']) { //if old tokens are empty
         oldTokens = Object.assign({}, tokens);
     }
 }
 // generate token
-function gerRandomToken() {
+function getRandomToken() {
     return Array(50).fill("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz").map(function(x) { return x[Math.floor(Math.random() * x.length)] }).join('');
 }
 function generatTokensPeriodly() {
