@@ -22,6 +22,9 @@ function sendPoisToServer(pois) {
     Http.setRequestHeader("Content-Type", "application/json");
     var objectToSend = {}
     objectToSend["poisArray"] = pois
+    objectToSend["permissionStatus"] = "all"
+    objectToSend["PermissionToken"] = "UdJRlHxCoVzCcA6dQ79nkX8dWg8EaCvx0fKHyXRkaQ3FClY8py"
+
     var poisInfoJson = JSON.stringify(objectToSend);
     Http.send(poisInfoJson);
     Http.onreadystatechange = (e) => {  
