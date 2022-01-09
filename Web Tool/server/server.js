@@ -417,6 +417,28 @@ app.post('/googlelogin', async function(req, res) {
       }).catch(console.error);
 });
 
+// Route that handles change user permission
+async function changePermission(userInfo) {
+    return await db.changePermission(dbClientInsertor, userInfo);
+}
+
+//create new user logic
+app.post('/changePermission', async function(req, res) {
+    console.log("changePermission request in the server")
+    var data = req.body;
+    ret = changePermission(data).then(function(response) {
+        console.log("----------------------------")
+        if(response == 0) {   // new user created
+            console.log("the user dont exist")
+        } else {
+            console.log("the user permission change successfuly")
+        }
+        res.status(200);
+        res.json(response);
+        res.end();
+    }); 
+});
+
 // Start your server on a specified port
 app.listen(port, async ()=>{
     await init()

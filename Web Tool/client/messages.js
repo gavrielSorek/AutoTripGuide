@@ -56,4 +56,17 @@
     global.messages.editPoiSeccess = function() {
         Swal.fire("Poi was edited!",  "Your request to edit poi has been sent.", "success");
     }
+    // The function show a not found message when the user not exist
+    global.messages.showNotFoundUser = function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'The user according to your request is not found',
+        }).then((result) => {
+        });
+    }
+    // The function show a not found message when the user not exist
+    global.messages.changePermissionSuccess = function () {
+        Swal.fire("Changed!", "Your request to change the permission has been sent.", "success");
+    }
 }(window))

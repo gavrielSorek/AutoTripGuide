@@ -1,4 +1,4 @@
-module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi, deletePoi};
+module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi, deletePoi, changePermission};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -177,6 +177,24 @@ async function login(client, userInfo) {
         console.log("The user not exist")
         return [];
     }
+}
+
+// The function inserts a new user to the db
+async function changePermission(client, userInfo) {
+    var userEmailAddr = userInfo.emailAddr;
+    var newPermission = userInfo.newPermission;
+    checkCode = await checkInfo(client, userInfo);
+    if(checkCode == 0) {    //the user's info not exist in the db
+        return checkCode;
+    } else {
+        var user = await client.db("testDb").collection("users").findOne({emailAddr: userEmailAddr});
+        var user_id = user._id 
+        const res = await client.db("testDb").collection("users").updateOne({_id: user_id}, { $set: {
+            permission: newPermission
+        }});
+        return 1;
+    }
+    
 }
 
 

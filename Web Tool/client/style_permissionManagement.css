@@ -1,0 +1,127 @@
+html {
+  height: 100%;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: linear-gradient(#141e30, #243b55);
+}
+
+.create-box {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 800px;
+  padding: 45px;
+  transform: translate(-60%, -45%);
+  background: rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+}
+
+.create-box h2 {
+  margin: 0 0 30px;
+  padding: 0;
+  color: #fff;
+  text-align: center;
+}
+
+.create-box .user-box {
+  position: relative;
+}
+
+.create-box .user-box input {
+  width: 100%;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 30px;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  background: transparent;
+}
+.create-box .user-box label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  pointer-events: none;
+  transition: 0.5s;
+}
+
+.create-box .user-box input:focus ~ label,
+.create-box .user-box input:valid ~ label {
+  top: -20px;
+  left: 0;
+  color: #03e9f4;
+  font-size: 12px;
+}
+
+.create-box a {
+  color: #03e9f4;
+}
+
+.create-box a:hover {
+  background: #03e9f4;
+  color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #03e9f4, 0 0 25px #03e9f4, 0 0 50px #03e9f4,
+    0 0 100px #03e9f4;
+}
+
+.create-box a span {
+  position: absolute;
+  display: block;
+}
+
+.user-des-box textarea {
+  width: 100%;
+  padding: 0px 5px;
+  font-size: 16px;
+  color: #fff;
+  margin-top: 40px;
+  margin-bottom: 30px;
+  border: 1px solid #fff;
+  outline: none;
+  background: transparent;
+}
+
+.user-des-box textarea:focus ~ label {
+  top: -10px;
+  left: 0;
+  color: #03e9f4;
+  font-size: 12px;
+}
+
+.user-des-box label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  pointer-events: none;
+  transition: 0.5s;
+}
+
+.user-des-box {
+  position: relative;
+}
+
+#userEmailAddr {
+  unicode-bidi: plaintext;
+}
+
+#permission {
+  margin-top: 40px;
+  margin-bottom: 20px;
+  border: 1px solid #fff;
+  width: 100%;
+  background-color: transparent;
+  color: #fff;
+}
