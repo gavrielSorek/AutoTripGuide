@@ -37,7 +37,7 @@ function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
     communication.addTokensToObject(quaryParams)
     var quaryParamsJson= JSON.stringify(quaryParams);
     const Http = new XMLHttpRequest();
-    const url = '/searchPois';
+    const url = communication.uriBeginning + 'searchPois';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -226,20 +226,12 @@ function showPoi(item) {
 // edit button clicked
 function editButtonClicked() {
     if (!lastShownPoi) {return}
-    basicUrl = communication.uriBeginning + '/editPoi';
+    basicUrl = communication.uriBeginning + 'editPoi';
     var url = communication.addTokensToUrl(basicUrl)
     url.searchParams.append('id', lastShownPoi._id)
-    // communication.getEditPage();
     console.log(url);
     location.href = url.href;
 }
-// // add tokens to url
-// function addTokensToUrl(url) {
-//     let newUrl = new URL(url);
-//     newUrl.searchParams.append('PermissionToken', localStorage['PermissionToken'])
-//     newUrl.searchParams.append('permissionStatus', localStorage['permissionStatus'])
-//     return newUrl;
-// }
 
 // The function perform the search according to the user request
 function getSearchInfo() {

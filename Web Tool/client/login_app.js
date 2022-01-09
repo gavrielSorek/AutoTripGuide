@@ -98,7 +98,7 @@ function onGoogleSignIn(googleUser) {
             if(response.length > 0) {
                 if (response == "success") {
                     console.log("the user login with google auth");
-                    window.location.href = "searchPoisPage";
+                    window.location.href = communication.uriBeginning + "searchPoisPage";
                 } else {
                     console.log("the user not login with google auth");
                 }
@@ -152,7 +152,7 @@ function login(){
                 } else {
                     console.log("The user exist :) :) :).");
                     setServerTokens(jsonResponse)
-                    var newUrl = communication.addTokensToUrl(communication.uriBeginning + '/searchPoisPage')
+                    var newUrl = communication.addTokensToUrl(communication.uriBeginning + 'searchPoisPage')
                     window.location.href = newUrl.href;
                 }
             }

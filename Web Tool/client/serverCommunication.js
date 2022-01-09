@@ -1,7 +1,7 @@
 
 (function (global) {
     console.log(localStorage)
-    const uriBeginningTemp = 'http:127.0.0.1:5500';
+    const uriBeginningTemp = 'http://127.0.0.1:5500/';
     global.communication = {}
     global.communication.uriBeginning = uriBeginningTemp
 
@@ -51,7 +51,7 @@
         communication.addTokensToObject(poiInfo)
         var poiInfoJson = JSON.stringify(poiInfo);
         const Http = new XMLHttpRequest();
-        const url = '/searchPoiAudioById';
+        const url = 'searchPoiAudioById';
         Http.open("POST", url);
         Http.withCredentials = false;
         Http.setRequestHeader("Content-Type", "application/json");
@@ -76,7 +76,7 @@
 
      // The function get the poi info for pois that waiting for approval
      global.communication.openEditPage = function (poiId, successCallbackFunc, failureCallbackFunc = undefined) {
-        var url = communication.uriBeginning + '/editPoi';
+        var url = communication.uriBeginning + 'editPoi';
         var params = "id=" + poiId;
         var params = {}
         communication.addTokensToObject(params)
@@ -94,7 +94,7 @@
 
     // login page
     global.communication.openSearchPage = function (successCallbackFunc, failureCallbackFunc = undefined) {
-        var url = communication.uriBeginning + '/searchPage';
+        var url = communication.uriBeginning + 'searchPage';
         var params = {}
         communication.addTokensToObject(params)
         params = JSON.stringify(params);
@@ -127,22 +127,22 @@
     }
     global.communication.openHomePage = function(){
 
-        var newUrl = communication.addTokensToUrl(communication.uriBeginning + '/searchPoisPage')
+        var newUrl = communication.addTokensToUrl(communication.uriBeginning + 'searchPoisPage')
         window.location.href = newUrl.href;
     }
     
     global.communication.openDataInPage = function openDataInPage(){
-        var newUrl = communication.addTokensToUrl(communication.uriBeginning + '/dataInPage')
+        var newUrl = communication.addTokensToUrl(communication.uriBeginning + 'dataInPage')
         window.location.href = newUrl.href;
     }
     
     global.communication.openAboutPage = function openAboutPage(){
-        var newUrl = communication.createUrl(communication.uriBeginning + '/aboutUsPage')
+        var newUrl = communication.createUrl(communication.uriBeginning + 'aboutUsPage')
         window.location.href = newUrl.href;
     }
     
     global.communication.openContactPage = function openContactPage(){
-        var newUrl = communication.createUrl(communication.uriBeginning + '/contactPage')
+        var newUrl = communication.createUrl(communication.uriBeginning + 'contactPage')
         window.location.href = newUrl.href;
     }
     // default bounds
