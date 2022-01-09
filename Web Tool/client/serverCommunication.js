@@ -39,6 +39,8 @@
                 } else {
                     if (failureCallbackFunc) { failureCallbackFunc() }
                 }
+            } else if(Http.readyState == 4 && Http.status == 553) {
+                communication.openLoginPage()
             }
         }
     }
@@ -70,6 +72,8 @@
                 } else {
                     failureCallbackFunc();
                 }
+            } else if(Http.readyState == 4 && Http.status == 553) { //if no permission
+                communication.openLoginPage()
             }
         }
     }
@@ -87,6 +91,8 @@
         {
             if(http.readyState == 4 && http.status == 200) {
                 successCallbackFunc(http.responseText);
+            } else if(Http.readyState == 4 && Http.status == 553) { //if no permission
+                communication.openLoginPage()
             }
         }
         http.send(params);
@@ -104,6 +110,8 @@
         {
             if(http.readyState == 4 && http.status == 200) {
                 successCallbackFunc(http.responseText);
+            } else if(Http.readyState == 4 && Http.status == 553) { //if no permission
+                communication.openLoginPage()
             }
         }
         http.send(params);
@@ -124,6 +132,11 @@
     global.communication.createUrl = function (url) {
         let newUrl = new URL(url);
         return newUrl;
+    }
+    global.communication.openLoginPage = function(){
+
+        var newUrl = communication.addTokensToUrl(communication.uriBeginning)
+        window.location.href = newUrl.href;
     }
     global.communication.openHomePage = function(){
 

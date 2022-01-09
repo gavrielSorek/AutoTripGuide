@@ -159,6 +159,8 @@ async function sendPoiInfoToServer() {
                 var jsonResponse = JSON.parse(Http.responseText);
                 console.log(jsonResponse);
             }
+        } else if(Http.readyState == 4 && Http.status == 553) { //if no permission
+            communication.openLoginPage()
         }
     }
 }

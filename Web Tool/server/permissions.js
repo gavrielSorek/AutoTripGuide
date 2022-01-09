@@ -19,20 +19,25 @@ const PERMISSIONS_TO_NUMBER = {
 }
 //INIT
 var tokens = {}
-initAccessTokens();
+var oldTokens = {}
 
 // init tokens 
 function initAccessTokens () {
+    oldTokens = Object.assign({}, tokens);
     tokens['contributor'] = gerRandomToken();
     tokens['approver'] = gerRandomToken();
     tokens['all'] = gerRandomToken();
+    if (!oldTokens['contributor']) { //if old tokens are empty
+        oldTokens = Object.assign({}, tokens);
+    }
 }
+// generate token
 function gerRandomToken() {
     return Array(50).fill("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz").map(function(x) { return x[Math.floor(Math.random() * x.length)] }).join('');
 }
 function generatTokensPeriodly() {
     initAccessTokens()
-    setTimeout(generatTokensPeriodly, 100000);
+    setTimeout(generatTokensPeriodly, 1000 * 60 * 60 * 24);
 }
 
 function getUserTokens(user, result) {
@@ -51,14 +56,16 @@ function authPermission(req, res, next , requirePermission) {
             permissionStatus = req.query.permissionStatus;
             permissionToken = req.query.PermissionToken;
         } else {
-            sendLoginPage(req, res, next);
+            res.status(553);
+            res.send('you dont have permission to this page')
+            res.end();
         }
     }
 
-    if (tokens[permissionStatus] == permissionToken && PERMISSIONS_TO_NUMBER[permissionStatus] != undefined) {
+    if ((tokens[permissionStatus] == permissionToken ||  oldTokens[permissionStatus] == permissionToken) && PERMISSIONS_TO_NUMBER[permissionStatus] != undefined) {
         if(PERMISSIONS_TO_NUMBER[permissionStatus] <= requirePermission) {next()} //all good
         else {
-            res.status(403);
+            res.status(553);
             res.send('you dont have permission to this page')
             res.end();
         }

@@ -156,6 +156,8 @@ function login(){
                     window.location.href = newUrl.href;
                 }
             }
+        } else if(Http.readyState == 4 && Http.status == 553) { //if no permission
+            communication.openLoginPage()
         }
     }
 }

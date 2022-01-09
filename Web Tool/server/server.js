@@ -52,7 +52,7 @@ async function init() {
         await dbClientSearcher.connect();
         await dbClientInsertor.connect();
         await dbClientAudio.connect();
-        permissions.initAccessTokens()
+        permissions.generatTokensPeriodly()
         console.log("Connected to search DB")
     } catch (e) {
         console.error(e); 
@@ -152,7 +152,7 @@ app.get("/aboutUsPage", function (req, res) { //next requrie (the function will 
 
  // get contact page
 app.get("/contactPage", function (req, res) { //next requrie (the function will not stop the program)
-    res.sendFile(path.resolve(__dirname, '../client/about.html'), function(err) {
+    res.sendFile(path.resolve(__dirname, '../client/contact.html'), function(err) {
         if (err) {
             res.status(err.status).end();
         }

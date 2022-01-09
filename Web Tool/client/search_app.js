@@ -25,7 +25,7 @@ const maxMarkersOnMap = 500
 const secClipRange = 0.1 //#secure clipping range (clip pois in secure distance)
 
 // The function get the poi info according name
-function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
+function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) { //TODO use in communication method instead
     var poiInfo = {
         poiParameter : valueOfParameter
     }
@@ -44,7 +44,9 @@ function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
     console.log(quaryParamsJson)
     Http.send(quaryParamsJson);
     Http.onreadystatechange = (e) => {
-        if (Http.readyState == 4) { //if the operation is complete.
+        if(Http.readyState == 4 && Http.status == 553) { //if no permission
+            communication.openLoginPage()
+        } else if (Http.readyState == 4) { //if the operation is complete.
             var response = Http.responseText
             if (response.length > 0) {
                 console.log("response from the server is recieved")
@@ -61,7 +63,7 @@ function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) {
                 userShowNotFoundMessage();
                 console.log("not found");
             }
-        }
+        } 
     }
 }
 
