@@ -78,11 +78,10 @@ async function createNewPois(pois) {
 // Route that handles edit poi logic
 async function editPoi(poi) {
     try {
-        poiHandler(poi)
-        //db.editPoi(dbClientSearcher, {_m: 'm', _poiName: 'aa'}, "fb657bc0-6bfe-11ec-88c0-9933c3403c32")
         if (poi._delete) {
             await db.deletePoi(dbClientInsertor, poi, poi._id);
         } else {
+            poiHandler(poi)
             await db.editPoi(dbClientInsertor, poi, poi._id);
         }
     } catch (e) {

@@ -70,10 +70,11 @@ async function getAudio(dbClient, audioId) {
     });
     return audioPromise
 }
-//update poi in db
+//delete poi audio
 async function deletePoi(client, updatedPoi, id) {
+    deleteAudio(client, id);
     var queryObject = {_id: id}
-    client.db("testDb").collection("testCollection").deleteOne(queryObject, updatedPoi, function(err, res){
+    client.db("testDb").collection("testCollection").deleteOne(queryObject, function(err, res){
         if(err) {
             console.log("problem in update function-db")
         }
@@ -82,18 +83,42 @@ async function deletePoi(client, updatedPoi, id) {
         }
     })
 }
+//update audio in db
+async function deleteAudio(client, id) {
+    var audioFile = await client.db("testDb").collection("myCustomBucket.files").findOne({'filename': id});
+    if (audioFile != null) { //if the poi has audio
+        console.log(audioFile);
+        // const obj_id = new mongoose.Types.ObjectId(audioFile);
+        const db = await client.db("testDb");
+        const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myCustomBucket' });
+        console.log(typeof audioFile._id)
+        try  {
+            bucket.delete(audioFile._id, ()=>{console.log("audio was deleted")})
+        } catch {
+            console.log("error to delete audio")
+        }
+    }
+    console.log(audioFile);
+
+}
 
 //delete poi
 async function editPoi(client, updatedPoi, id) {
     var queryObject = {_id: id}
-    client.db("testDb").collection("testCollection").replaceOne(queryObject, updatedPoi, function(err, res){
-        if(err) {
-            console.log("problem in update function-db")
-        }
-        else {
-            console.log("poi updated")
-        }
-    })
+    client.db("testDb").collection("testCollection").replaceOne(queryObject, updatedPoi, mongoHandler)
+    await deleteAudio(client, id);
+    if (updatedPoi._audio != 'no audio') {
+        insertAudio(client, Object.values(updatedPoi._audio), updatedPoi._poiName, updatedPoi._id)
+    }
+}
+// mongo ans handler
+function mongoHandler(err, res) {
+    if(err) {
+        console.log("problem in update function-db")
+    }
+    else {
+        console.log("poi updated")
+    }
 }
 
 // The function checks if the name or email exist in the db
