@@ -109,10 +109,10 @@ async function sendPoiInfoToServer() {
         _language : select.options[select.selectedIndex].value,
         _audio : audioData,
         _shortDesc : shortDesc.value,
-        _Contributor : "Contributor name ??",
+        _Contributor : localStorage['userName'],
         _CreatedDate : getTodayDate(),
         _ApprovedBy : "ApprovedBy ??",
-        _UpdatedBy : "UpdatedBy ??",
+        _UpdatedBy : localStorage['userName'],
         _LastUpdatedDate : getTodayDate()
     }
     poiArray = [poiInfo] //thats what the server expected

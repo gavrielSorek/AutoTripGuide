@@ -43,6 +43,7 @@ function generatTokensPeriodly() {
 function getUserTokens(user, result) {
     result['permissionStatus'] = PERMISSIONS[user[0].permission.toString()] //result[permissionStatus] = contributor for example
     result['PermissionToken'] = tokens[result['permissionStatus']]; //get permission token
+    result['userName'] = user[0].userName;
 }
 function authPermission(req, res, next , requirePermission) {
     var permissionStatus = undefined;

@@ -174,6 +174,7 @@ function addTokensToUrl(url) {
 function setServerTokens(serverRes){
     localStorage['permissionStatus'] = serverRes['permissionStatus'];
     localStorage['PermissionToken'] = serverRes['PermissionToken'];
+    localStorage['userName'] = serverRes['userName']
 }
 
 function createAccount() {
