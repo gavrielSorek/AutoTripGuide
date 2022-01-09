@@ -211,11 +211,16 @@ function showPoi(item) {
         elem2.append(poiAudio);
     }
     elem2.append($('<div style="white-space: pre">'));
-    elem2.append($('<button id="edit_button" class="button button1">').text("Edit: " + item._poiName));
+    if (permissions.isPermitted('approver')) {
+        elem2.append($('<button id="edit_button" class="button button1">').text("Edit: " + item._poiName));
+        //add edit button listener
+    }
     elem1.append(elem2);
     resultArea.append(elem1); 
-    //add edit button listener
-    $('button').click(editButtonClicked)
+    if (permissions.isPermitted('approver')) {
+        $('button').click(editButtonClicked)
+    }
+
 }
 
 // edit button clicked

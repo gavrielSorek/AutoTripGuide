@@ -20,7 +20,9 @@ function sendPoisToServer(pois) {
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
-    var poisInfoJson = JSON.stringify(pois);
+    var objectToSend = {}
+    objectToSend["poisArray"] = pois
+    var poisInfoJson = JSON.stringify(objectToSend);
     Http.send(poisInfoJson);
     Http.onreadystatechange = (e) => {  
         var response = Http.responseText;
