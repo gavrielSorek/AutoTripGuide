@@ -274,8 +274,6 @@ async function initRecord() {
 
             });
         });
-
-
 }
 
 async function record() {
