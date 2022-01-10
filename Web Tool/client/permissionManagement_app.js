@@ -15,11 +15,10 @@ async function changePermission() {
         emailAddr : userEmailAddrVal, 
         newPermission : permissionVal
     }
-    
+    communication.addTokensToObject(userInfo)
     var userInfoJson= JSON.stringify(userInfo);
     const Http = new XMLHttpRequest();
-    
-    const url= 'http://localhost:5500/changePermission';
+    const url=communication.uriBeginning + 'changePermission';
     Http.open("POST", url, true);
     Http.onerror = function(e){
         messages.showServerNotAccissableMessage();
