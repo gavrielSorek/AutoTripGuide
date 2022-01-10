@@ -1,6 +1,5 @@
 
 (function (global) {
-    console.log(localStorage)
     const uriBeginningTemp = 'http://127.0.0.1:5500/';
     global.communication = {}
     global.communication.uriBeginning = uriBeginningTemp
@@ -79,42 +78,17 @@
     }
 
      // The function get the poi info for pois that waiting for approval
-     global.communication.openEditPage = function (poiId, successCallbackFunc, failureCallbackFunc = undefined) {
-        var url = communication.uriBeginning + 'editPoi';
-        var params = "id=" + poiId;
-        var params = {}
-        communication.addTokensToObject(params)
-        params = JSON.stringify(params);
-        var http = new XMLHttpRequest();
-        http.open("GET", url+"?"+params, true);
-        http.onreadystatechange = function()
-        {
-            if(http.readyState == 4 && http.status == 200) {
-                successCallbackFunc(http.responseText);
-            } else if(Http.readyState == 4 && Http.status == 553) { //if no permission
-                communication.openLoginPage()
-            }
-        }
-        http.send(params);
+     global.communication.openEditPage = function (poiId) { //TODO need to fix
+        basicUrl = communication.uriBeginning + 'editPoi';
+        var url = communication.addTokensToUrl(basicUrl)
+        url.searchParams.append('id', poiId)
+        location.href = url.href;
     }
 
     // login page
-    global.communication.openSearchPage = function (successCallbackFunc, failureCallbackFunc = undefined) {
-        var url = communication.uriBeginning + 'searchPage';
-        var params = {}
-        communication.addTokensToObject(params)
-        params = JSON.stringify(params);
-        var http = new XMLHttpRequest();
-        http.open("GET", url, true);
-        http.onreadystatechange = function()
-        {
-            if(http.readyState == 4 && http.status == 200) {
-                successCallbackFunc(http.responseText);
-            } else if(Http.readyState == 4 && Http.status == 553) { //if no permission
-                communication.openLoginPage()
-            }
-        }
-        http.send(params);
+    global.communication.openSearchPage = function () { //TODO need to fix
+        var newUrl = communication.addTokensToUrl(communication.uriBeginning + 'searchPoisPage')
+        window.location.href = newUrl.href;
     }
 
     

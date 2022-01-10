@@ -152,8 +152,7 @@ function login(){
                 } else {
                     console.log("The user exist :) :) :).");
                     setServerTokens(jsonResponse)
-                    var newUrl = communication.addTokensToUrl(communication.uriBeginning + 'searchPoisPage')
-                    window.location.href = newUrl.href;
+                    communication.openSearchPage()
                 }
             }
         } else if(Http.readyState == 4 && Http.status == 553) { //if no permission

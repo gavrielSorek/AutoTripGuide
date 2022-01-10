@@ -188,8 +188,8 @@ def start_logic():
     redis_client1 = redis.Redis(host='localhost', port=6379, db=0)
     num_of_thread = 3
     # pages num need to be = number of threads
-    pages_to_start = [search_page('Masada', 'en'), search_page('Rujm el-Hiri', 'en'),
-                      search_page('Nahal Betzet', 'en')]
+    pages_to_start = [search_page('Statue of Liberty', 'en'), search_page('Walt Disney World', 'en'),
+                      search_page('Yosemite National Park', 'en')]
     languages_for_threads = [['en', 'he'], ['en', 'he'], ['en', 'he']]
     crawlers = [None] * num_of_thread
     for i in range(num_of_thread):
@@ -197,7 +197,13 @@ def start_logic():
                               , output_json_f_name='data_sender/json_file_' + str(i) + ".json")
     for i in range(num_of_thread):
         crawlers[i].crawl_with_thread()
-    time.sleep(400)
+    # time.sleep(1000)
+    userVal = 'continue'
+    while userVal != 'q':
+        userVal = input("Enter q to exit: \n")
+
+
+
 
     # add the last page that the crawlers crawled
     crawlers_last_title = []

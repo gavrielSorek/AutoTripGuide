@@ -17,6 +17,8 @@ var deleteCheckbox = document.getElementById('deletePoi')
 var globalIsAudioReady = true;
 var globalAudioData = undefined;
 var globalContributor = undefined;
+var globalApprover = undefined;
+
 document.getElementById("submit_button").addEventListener("click", submitPoi);
 recordButton.addEventListener("mousedown", record);
 recordButton.addEventListener("mouseup", stopRecord);
@@ -129,7 +131,7 @@ async function sendPoiInfoToServer() {
         _shortDesc: shortDesc.value,
         _Contributor: getContributor(),
         _CreatedDate: getTodayDate(),
-        _ApprovedBy: "ApprovedBy ??",
+        _ApprovedBy: getApprover(),
         _UpdatedBy: localStorage['userName'],
         _LastUpdatedDate: getTodayDate()
     }
@@ -171,6 +173,12 @@ function getContributor(){
         return globalContributor;
     }
     return "Contributor name ??";
+}
+function getApprover() {
+    if (globalApprover) {
+        return globalApprover;
+    }
+    return "ApprovedBy ??";
 }
 
 /* -------------------------- map function -------------------- */
@@ -321,6 +329,7 @@ function setPoiDataOnPage(poi) {
     // console.log(poi)
     if (poi[0]) {
         globalContributor = poi[0]._Contributor
+        globalApprover = poi[0]._ApprovedBy
         console.log(poi[0])
         document.getElementById("PoiName").defaultValue = poi[0]._poiName;
         document.getElementById("latitude").defaultValue = poi[0]._latitude;

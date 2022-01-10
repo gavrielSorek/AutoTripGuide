@@ -57,33 +57,40 @@ function authPermission(req, res, next , requirePermission) {
             permissionStatus = req.query.permissionStatus;
             permissionToken = req.query.PermissionToken;
         } else {
-            res.status(553);
             res.send('you dont have permission to this page')
+            res.status(553);
             res.end();
+            return;
         }
     }
 
     if ((tokens[permissionStatus] == permissionToken ||  oldTokens[permissionStatus] == permissionToken) && PERMISSIONS_TO_NUMBER[permissionStatus] != undefined) {
         if(PERMISSIONS_TO_NUMBER[permissionStatus] <= requirePermission) {next()} //all good
         else {
-            res.status(553);
             res.send('you dont have permission to this page')
+            res.status(553);
             res.end();
         }
     } else {
         sendLoginPage(req, res, next)
     }
 }
-
+//Verifies Contributor permission
 function authContributor(req, res, next) {
     requirePermission = PERMISSIONS_TO_NUMBER['contributor']
     authPermission(req, res, next, requirePermission)
 }
-
+//Verifies Approver permission
 function authApprover(req, res, next) {
     requirePermission = PERMISSIONS_TO_NUMBER['approver']
     authPermission(req, res, next, requirePermission)
 }
+//Verifies All permission
+function authAll(req, res, next) {
+    requirePermission = PERMISSIONS_TO_NUMBER['all']
+    authPermission(req, res, next, requirePermission)
+}
+
 // send login page
 function sendLoginPage(req, res, next) {
     res.writeHead(301, {

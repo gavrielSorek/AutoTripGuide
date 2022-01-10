@@ -222,17 +222,12 @@ function showPoi(item) {
     if (permissions.isPermitted('approver')) {
         $('button').click(editButtonClicked)
     }
-
 }
 
 // edit button clicked
 function editButtonClicked() {
     if (!lastShownPoi) {return}
-    basicUrl = communication.uriBeginning + 'editPoi';
-    var url = communication.addTokensToUrl(basicUrl)
-    url.searchParams.append('id', lastShownPoi._id)
-    console.log(url);
-    location.href = url.href;
+    communication.openEditPage(lastShownPoi._id)
 }
 
 // The function perform the search according to the user request
