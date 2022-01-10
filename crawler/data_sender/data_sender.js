@@ -23,7 +23,7 @@ function sendPoisToServer(pois) {
     var objectToSend = {}
     objectToSend["poisArray"] = pois
     objectToSend["permissionStatus"] = "all"
-    objectToSend["PermissionToken"] = "UdJRlHxCoVzCcA6dQ79nkX8dWg8EaCvx0fKHyXRkaQ3FClY8py"
+    objectToSend["PermissionToken"] = "Ml2N58lCLiz5HQUKZJWEvYhDAk28HYEf1d3DZCwDmIxGxnEpx6"
 
     var poisInfoJson = JSON.stringify(objectToSend);
     Http.send(poisInfoJson);
