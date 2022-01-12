@@ -24,6 +24,7 @@
     "gridfs-bucket": "^0.7.4",
     "jquery": "^3.6.0",
     "jsdom": "^19.0.0",
+    "localtunnel": "^2.0.2",
     "mongodb": "^4.2.0",
     "node-blob": "^0.0.2",
     "nodemailer": "^6.7.2",

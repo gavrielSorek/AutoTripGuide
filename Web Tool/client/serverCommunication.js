@@ -1,6 +1,6 @@
 
 (function (global) {
-    const uriBeginningTemp = 'http://127.0.0.1:5500/';
+    const uriBeginningTemp = 'https://great-kangaroo-66.loca.lt/';
     global.communication = {}
     global.communication.uriBeginning = uriBeginningTemp
 
