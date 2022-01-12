@@ -128,6 +128,17 @@ app.get("/dataInPage",permissions.authContributor, function (req, res) { //next 
         }
     });
  })
+
+  // get permission management page
+  app.get("/permissionManagementPage", function (req, res) { //next requrie (the function will not stop the program)
+    res.sendFile(path.resolve(__dirname, '../client/permissionManagement.html'), function(err) {
+        if (err) {
+            res.status(err.status).end();
+        }
+    });
+ })
+
+
 //Route get edit pois logic
 app.get("/editPoi", permissions.authApprover,async function (req, res, next) { //next requrie (the function will not stop the program)
     console.log("in get edit poi")

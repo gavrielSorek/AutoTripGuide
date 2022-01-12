@@ -86,7 +86,7 @@ function onGoogleSignIn(googleUser) {
 
 
     const Http = new XMLHttpRequest();
-    const url=communication.uriBeginning +'/googlelogin';
+    const url=communication.uriBeginning +'googlelogin';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
