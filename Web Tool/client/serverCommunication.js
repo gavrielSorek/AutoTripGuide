@@ -1,6 +1,6 @@
 
 (function (global) {
-    const uriBeginningTemp = 'https://great-kangaroo-66.loca.lt/';
+    const uriBeginningTemp = 'https://autotripguide.loca.lt/';
     global.communication = {}
     global.communication.uriBeginning = uriBeginningTemp
 
