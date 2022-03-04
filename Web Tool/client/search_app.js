@@ -12,6 +12,7 @@ var lastMapCenter = undefined
 //user query/ last function
 var lastUserQuery = undefined
 var lastParameterSearched = undefined
+var isLastQueryWasSuccess = false
 var isUserTrigeredLastFunction = false
 
 //init
@@ -24,14 +25,21 @@ var greenMarkerGroup = L.featureGroup();
 const maxMarkersOnMap = 500
 const secClipRange = 0.1 //#secure clipping range (clip pois in secure distance)
 
+
 // The function get the poi info according name
-function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) { //TODO use in communication method instead
+function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds = false, relevantBounds = undefined, suceessCallBack = undefined) { //TODO use in communication method instead
     var poiInfo = {
         poiParameter : valueOfParameter
     }
     var quaryParams = {}
     quaryParams['poiParameter'] = poiParameter
-    quaryParams['relevantBounds'] = getRelevantBounds()
+    if (searchOutsideTheBounds == false) {
+        quaryParams['relevantBounds'] = relevantBounds
+    }
+    else {
+        // set default bounds while searchOutsideTheBounds = true
+        quaryParams['relevantBounds'] = getRelevantBounds(secClipRange)
+    }
     quaryParams['poiInfo'] = poiInfo
     quaryParams['searchOutsideTheBounds'] = searchOutsideTheBounds
     communication.addTokensToObject(quaryParams)
@@ -54,10 +62,12 @@ function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds) { /
                 if(poisInfo.length == 0) {
                     userShowNotFoundMessage()
                     console.log("not found");
-                    return
                 } else {
                 console.log(poisInfo);
                 showPoisOnMap(poisInfo);
+                if(suceessCallBack) {
+                    console.log("pppppppppppp")
+                    suceessCallBack()}              
                 }
             } else {
                 userShowNotFoundMessage();
@@ -249,24 +259,27 @@ function getSearchInfo() {
         console.log("Name radio button is checked")
         //save usage data
         lastParameterSearched = '_poiName'
-        getPoisInfo('_poiName', valueToSearch, true);
+        // poiParameter, valueOfParameter, searchOutsideTheBounds = false, relevantBounds = undefined, suceessCallBack = undefined
+        getPoisInfo('_poiName', valueToSearch, searchOutsideTheBounds=true, relevantBounds=undefined,suceessCallBack = ()=>{
+            center = {lat : parseFloat(globalMarker._latitude), lng : parseFloat(globalMarker._longitude) }
+            getPoisInfo(undefined, undefined, false, getBoundsAroundCenter(center,0.07)), undefined, undefined});
         // getPoisInfoByName(valueToSearch, true);
       }else if(document.getElementById('Contributor').checked) {
         //Contributor radio button is checked
         console.log("Contributor radio button is checked")
         lastParameterSearched = '_Contributor'
-        getPoisInfo('_Contributor', valueToSearch, true);
+        getPoisInfo('_Contributor', valueToSearch, searchOutsideTheBounds=true);
       }else if(document.getElementById('Approved By').checked) {
         //Approved By radio button is checked
         console.log("Approved By radio button is checked")
         lastParameterSearched = '_ApprovedBy'
-        getPoisInfo('_ApprovedBy', valueToSearch, true);
+        getPoisInfo('_ApprovedBy', valueToSearch, searchOutsideTheBounds=true);
       }else if(document.getElementById('Waiting for approval').checked) {
         //Waiting for approval radio button is checked
         console.log("Waiting for approval radio button is checked")
         lastParameterSearched = '_ApprovedBy'
         lastUserQuery = 'ApprovedBy ??'
-        getPoisInfo('_ApprovedBy', 'ApprovedBy ??', true);
+        getPoisInfo('_ApprovedBy', 'ApprovedBy ??', searchOutsideTheBounds=true);
       }else if(document.getElementById('All').checked) {
         //All radio button is checked
         console.log("All radio button is checked")
@@ -286,24 +299,23 @@ function getSearchInfo() {
 //   });
 
 /* -------------------------- map function -------------------- */
-function getRelevantBounds() {
+function getRelevantBounds(dist) {
     var relevantBounds = {}
     relevantBounds['northEast'] = currentMapBounds._northEast
     relevantBounds['southWest'] = currentMapBounds._southWest
     // add secure range
-    relevantBounds['northEast'].lat += secClipRange
-    relevantBounds['northEast'].lng += secClipRange
-    relevantBounds['southWest'].lat -= secClipRange
-    relevantBounds['southWest'].lng -= secClipRange
+    relevantBounds['northEast'].lat += dist
+    relevantBounds['northEast'].lng += dist
+    relevantBounds['southWest'].lat -= dist
+    relevantBounds['southWest'].lng -= dist
     console.log("======================================")
-    console.log(relevantBounds['northEast'])
     return relevantBounds;
 }
 
 function updatePoisOnMap() {
 
     if (lastParameterSearched) { //if already the user searched in the map
-        getPoisInfo(lastParameterSearched,lastUserQuery, false)
+        getPoisInfo(lastParameterSearched,lastUserQuery, false, getRelevantBounds(secClipRange))
     }
     
     console.log(currentMapBounds)
@@ -317,6 +329,19 @@ lastMapCenter = map.getCenter()
 currentMapBounds = map.getBounds()
 lastMapZoom = map.getZoom()
 
+// return the bounds around the some center location accordingly to given distance
+function getBoundsAroundCenter(center, dist) {
+    var relevantBounds = {}
+    relevantBounds['northEast'] = {lat: center.lat, lng: center.lng}
+    relevantBounds['southWest'] = {lat: center.lat, lng: center.lng}
+    // add secure range
+    relevantBounds['northEast'].lat += dist
+    relevantBounds['northEast'].lng += dist
+    relevantBounds['southWest'].lat -= dist
+    relevantBounds['southWest'].lng -= dist
+    return relevantBounds;
+
+}
 
 map.on('moveend', function(e) { //the map moved
     if (isUserTrigeredLastFunction) { //this occure when the map move to pin thats why we dont do nothing
@@ -361,4 +386,6 @@ if(input) {
         }
     });
 }
+
+
 
