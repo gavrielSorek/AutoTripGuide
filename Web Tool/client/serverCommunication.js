@@ -132,6 +132,12 @@
         var newUrl = communication.createUrl(communication.uriBeginning + 'contactPage')
         window.location.href = newUrl.href;
     }
+    global.communication.loginPage = function openContactPage(){
+        window.localStorage.clear();
+        var newUrl = communication.createUrl(communication.uriBeginning)
+        window.location.href = newUrl.href;
+    }
+    
     // default bounds
     function getDefaultBounds() {
         var relevantBounds = {}
