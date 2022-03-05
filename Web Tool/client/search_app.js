@@ -18,6 +18,7 @@ var isUserTrigeredLastFunction = false
 //init
 globalMarker = undefined
 lastShownPoi = undefined
+lastShownPois = undefined
 var map = L.map('map').setView([31.83303, 34.863443], 10);
 var redMarkerGroup = L.featureGroup();
 var markerSet = new Set() 
@@ -66,7 +67,6 @@ function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds = fa
                 console.log(poisInfo);
                 showPoisOnMap(poisInfo);
                 if(suceessCallBack) {
-                    console.log("pppppppppppp")
                     suceessCallBack()}              
                 }
             } else {
@@ -111,6 +111,7 @@ function showNotFoundMessage() {
 }
 
 function showPoisOnMap(poisArray) {
+    lastShownPois = poisArray
     if (markerSet.size >= maxMarkersOnMap) {
         markerSet.clear()
         greenMarkerGroup.clearLayers();
@@ -197,9 +198,6 @@ function showPoi(item) {
     elem2.append($('<h3>').text(item._poiName));
     if (permissions.isPermitted('approver')) {
         elem2.append($('<button id="edit_button" class="button edit_button">').text("EDIT"));
-        //add edit button listener
-    }
-    if (permissions.isPermitted('approver')) {
         elem2.append($('<button id="approve_button" class="button approve_button">').text("APPROVE"));
         //add edit button listener
     }
@@ -228,7 +226,8 @@ function showPoi(item) {
     elem1.append(elem2);
     resultArea.append(elem1); 
     if (permissions.isPermitted('approver')) {
-        $('button').click(editButtonClicked)
+        $('#edit_button').click(editButtonClicked)
+        $('#approve_button').click(approveButtonClicked)
     }
     document.body.scrollTop = 30000;
 }
@@ -237,6 +236,31 @@ function showPoi(item) {
 function editButtonClicked() {
     if (!lastShownPoi) {return}
     communication.openEditPage(lastShownPoi._id)
+}
+
+function removeObjectFromArray(objectToRemove, array){
+    for (i = 0; i < array.length; i++) {
+        if (array[i] == objectToRemove) {
+            array.splice(i, 1);
+        }
+    }
+    return array
+
+}
+
+// approve button clicked
+function approveButtonClicked() {
+    if (!lastShownPoi) {return}
+    removeObjectFromArray(lastShownPoi, lastShownPois)
+    lastShownPoi['_ApprovedBy'] = localStorage['userName']
+    lastShownPois.push(lastShownPoi);
+    communication.editPoi(lastShownPoi, successCallbackFunc = ()=>{
+        markerSet.clear()
+        greenMarkerGroup.clearLayers();
+        redMarkerGroup.clearLayers();
+        showPoisOnMap(lastShownPois);
+    })
+    
 }
 
 // The function perform the search according to the user request

@@ -77,6 +77,42 @@
         }
     }
 
+    // The function edit poi
+    global.communication.editPoi = function(poi, successCallbackFunc = undefined, failureCallbackFunc = undefined) {
+            poiArray = [poi] //thats what the server expected
+            objectToSend = {}
+            objectToSend['poisArray'] = poiArray;
+            communication.addTokensToObject(objectToSend);
+            var poiInfoJson= JSON.stringify(objectToSend);
+            const Http = new XMLHttpRequest();
+            Http.onerror = function (e) {
+                if (failureCallbackFunc)
+                    failureCallbackFunc()
+            };
+            const url = '/editPois';
+            Http.open("POST", url);
+            Http.withCredentials = false;
+            Http.setRequestHeader("Content-Type", "application/json");
+            Http.send(poiInfoJson);
+            messages.showLoadingMessage ();
+            Http.onreadystatechange = (e) => {
+                if (Http.readyState == 4 && Http.status == 200) {
+                    messages.closeMessages()
+                    var response = Http.responseText;
+                    if (response.length > 0) {
+                        console.log("response from the server is recieved")
+                        var jsonResponse = JSON.parse(Http.responseText);
+                        console.log(jsonResponse);
+                        if (successCallbackFunc) {
+                            successCallbackFunc()
+                        }
+                    }
+                } else if(Http.readyState == 4 && Http.status == 553) { //if no permission
+                    communication.openLoginPage()
+            }
+        }
+    }
+
      // The function get the poi info for pois that waiting for approval
      global.communication.openEditPage = function (poiId) { //TODO need to fix
         basicUrl = communication.uriBeginning + 'editPoi';
@@ -148,6 +184,28 @@
         relevantBounds['southWest'] = { lat: 31.31610138349565, lng: 35.35400390625001 }
         relevantBounds['northEast'] = { lat: 31.83303, lng: 36.35400390625001 }
         return relevantBounds;
+    }
+
+
+
+
+    /**************** messages for communication purposes ****************/
+
+    // The function show a Loading message.
+    if (!global.messages) {global.messages = {}}
+    global.messages.showLoadingMessage = function () {
+        Swal.fire({
+            title: 'Please Wait !',
+            html: 'data uploading',
+            allowOutsideClick: false,
+            onBeforeOpen: () => {
+                Swal.showLoading()
+            },
+        });
+    }
+    // close messages
+    global.messages.closeMessages = function () {
+        swal.close()
     }
 
 }(window))
