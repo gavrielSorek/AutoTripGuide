@@ -237,9 +237,14 @@ function getGeneralEditFile() {
 
     var lastDiv = htmlDoc.getElementById("divBeforeSubmit");
     var deleteCheckbox = '<input type="checkbox" id="deletePoi" name="deletePoi">' + '<label for="deletePoi" style="color:red;" id = "deleteLabel">Delete poi</label>'
-    lastDiv.insertAdjacentHTML('afterend', deleteCheckbox);
-    var deleteLabel = htmlDoc.getElementById("deleteLabel");
-    deleteLabel.insertAdjacentHTML('afterend', '<br><br>');
+
+    var editCheckboxes = '<input type="radio" id="deletePoi" name="edit_options" value="deletePoi">' +
+      '<label for="deletePoi" style="color:red;">Delete POI</label><br>' +
+      '<input type="radio" id="approvePoi" name="edit_options" value="approve_poi">' +
+      '<label for="approve_poi" style="color:green;">Approve POI</label><br>'
+    lastDiv.insertAdjacentHTML('afterend', editCheckboxes);
+    // var deleteLabel = htmlDoc.getElementById("deleteLabel");
+    // deleteLabel.insertAdjacentHTML('afterend', '<br><br>');
     return htmlDoc.documentElement.innerHTML;
 }
  // create edit page for spacific poi

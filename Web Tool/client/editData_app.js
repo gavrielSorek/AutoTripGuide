@@ -11,6 +11,8 @@ var source = document.getElementById("source");
 var select = document.getElementById("languages");
 var recordButton = document.getElementById("record_button");
 var deleteCheckbox = document.getElementById('deletePoi')
+var approveCheckbox = document.getElementById('approvePoi')
+
 
 
 //init
@@ -137,6 +139,8 @@ async function sendPoiInfoToServer() {
     }
     if (deleteCheckbox.checked) { // if user wants to delete the poi
         poiInfo['_delete'] = 'true'
+    } else if(approveCheckbox.checked) { // if approver wants to approve the poi
+        poiInfo['_ApprovedBy'] = localStorage['userName']
     }
     poiArray = [poiInfo] //thats what the server expected
     objectToSend = {}
