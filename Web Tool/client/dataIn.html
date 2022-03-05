@@ -68,10 +68,15 @@
                 <input type="text" id="source" autocomplete="off" name="" required="" value="">
                 <label>Source</label>
               </div>
-              <div class="user-box">
+              <div id="upload-audio" class="user-box">
                 <label>Audio</label>
-                <input type="file" id="upload" />
-                <button type = "button" id="record_button" style="background-color: cornsilk;"><img src="./images/recorder.png" height ="50" width="50"/></button>
+                <input type="file" id="upload" class="btn-file-upload" value="Choose audio"/>
+              </div>
+              <div id="record-audio" class="user-box">
+                <label id="record_label">Record Audio</label>
+                <button type = "button" id="record_button"><img src="./images/recorder.png" height ="40" width="40"/></button>
+              </div>
+              <div id="record-audio" class="user-box">
                 <audio id="audio" controls>
                   <source src="" id="src" />
                 </audio>

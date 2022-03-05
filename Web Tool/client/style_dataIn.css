@@ -227,9 +227,34 @@ body {
   margin-top: 2%;
 }
 
+#audio {
+  margin-bottom: -7%;
+}
+
+#record_button {
+  background-color: #fff;
+  border-color: #fff;
+  border-radius: 5px;
+}
+
+#record_label {
+  margin-top: -65%;
+  width: 160px !important;
+}
+
 #upload,
 #audio {
   display: inline-block;
+  margin-top: 10%;
+}
+
+#upload-audio {
+  display: inline-block;
+}
+
+#record-audio {
+  display: inline-block;
+  margin-left: 3%;
 }
 
 #PoiName,
@@ -260,4 +285,25 @@ body {
   width: 100%;
   background-color: transparent;
   color: #fff;
+}
+
+.btn-file-upload {
+  width: 120px;
+  position: relative;
+}
+
+.btn-file-upload:after {
+  content: attr(value);
+  position: absolute;
+  top: 10px;
+  left: 0;
+  bottom: 0;
+  width: 34%;
+  height: 58%;
+  background: #fff;
+  color: rgb(12, 6, 6);
+  border-radius: 5px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 2;
 }
