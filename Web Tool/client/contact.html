@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
   </head>
   <body>
-    <div class="w3-bar w3-black">
+    <div class="w3-bar w3-black" id = "NavigationBar">
         <a class="w3-bar-item w3-button w3-hover-black w3-hide-medium w3-hide-large w3-right" href="javascript:void(0);" onclick="toggleFunction()" title="Toggle Navigation Menu">
           <i class="fa fa-bars"></i>
         </a>
@@ -18,7 +18,7 @@
         <a onclick="communication.openDataInPage()" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-th"></i> CONTRIBUTION </a>
         <a onclick="communication.openAboutPage()" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-user"></i> ABOUT</a>
         <a onclick="communication.openContactPage()" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-envelope"></i> CONTACT</a>
-        <a onclick="communication.loginPage()" class="w3-bar-item w3-button w3-hide-small"><i class="fa fa-sign-out"></i> LOG OUT</a>
+        <a onclick="communication.loginPage()" class="w3-bar-item w3-button w3-hide-small w3-right"><i class="fa fa-sign-out"></i> LOG OUT</a>
       </div>
 
 <div class="bgimg-3 w3-display-container w3-opacity-min">
@@ -29,6 +29,7 @@
   <p class="w3-center"><em>Some text about who we are and what we do.</em></p>
   
   </body>
+  <script src="permissionsClient.js"></script>
   <script id="communication_script" src="serverCommunication.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

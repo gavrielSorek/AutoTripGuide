@@ -1,7 +1,7 @@
 const path = require('path');
 
 
-module.exports = {initAccessTokens, generatTokensPeriodly, getUserTokens, authContributor, authApprover}
+module.exports = {initAccessTokens, generatTokensPeriodly, getUserTokens, authContributor, authApprover, authAll}
 const ROLE = {
     ADMIN: 'admin',
     USER: 'user'

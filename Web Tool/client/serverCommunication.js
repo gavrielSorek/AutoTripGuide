@@ -132,9 +132,13 @@
         var newUrl = communication.createUrl(communication.uriBeginning + 'contactPage')
         window.location.href = newUrl.href;
     }
-    global.communication.loginPage = function openContactPage(){
+    global.communication.loginPage = function openLoginPage(){
         window.localStorage.clear();
         var newUrl = communication.createUrl(communication.uriBeginning)
+        window.location.href = newUrl.href;
+    }
+    global.communication.permissionsManagement = function openPermissionManagementPage(){
+        var newUrl = communication.addTokensToUrl(communication.uriBeginning + 'permissionManagementPage')
         window.location.href = newUrl.href;
     }
     

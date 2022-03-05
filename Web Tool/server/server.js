@@ -130,7 +130,7 @@ app.get("/dataInPage",permissions.authContributor, function (req, res) { //next 
  })
 
   // get permission management page
-  app.get("/permissionManagementPage", function (req, res) { //next requrie (the function will not stop the program)
+  app.get("/permissionManagementPage", permissions.authAll,function (req, res) { //next requrie (the function will not stop the program)
     res.sendFile(path.resolve(__dirname, '../client/permissionManagement.html'), function(err) {
         if (err) {
             res.status(err.status).end();
