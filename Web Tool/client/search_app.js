@@ -84,7 +84,6 @@ function userShowNotFoundMessage() {
     }
 }
 
-
 function loadAudio(poiAudioFromDB) {
     console.log("inside load audio")
     console.log(poiAudioFromDB.data)
@@ -94,7 +93,6 @@ function loadAudio(poiAudioFromDB) {
     poiAudio.src = window.URL.createObjectURL(new Blob([uint8Array1], {type: 'audio/ogg'}))
     poiAudio.load();
 }
-
 
 // The function delete the data from the page
 function deleteEverything() {
@@ -154,9 +152,6 @@ function showPoisOnMap(poisArray) {
         map.panTo(new L.LatLng(globalMarker._latitude, globalMarker._longitude));
     }
 }
-
-
-
 
 //icons for markers
 var redIcon = new L.Icon({
@@ -230,16 +225,12 @@ function showPoi(item) {
         
         elem2.append(poiAudio);
     }
-    // elem2.append($('<div style="white-space: pre">'));
-    // if (permissions.isPermitted('approver')) {
-    //     elem2.append($('<button id="edit_button" class="button edit_button">').text("Edit: " + item._poiName));
-    //     //add edit button listener
-    // }
     elem1.append(elem2);
     resultArea.append(elem1); 
     if (permissions.isPermitted('approver')) {
         $('button').click(editButtonClicked)
     }
+    document.body.scrollTop = 30000;
 }
 
 // edit button clicked
@@ -394,6 +385,25 @@ if(input) {
             document.getElementById("searchicon").click();
         }
     });
+}
+
+var top_button = document.getElementById("top_button");
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+  if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
+    top_button.style.display = "block";
+  } else {
+    top_button.style.display = "none";
+  }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
 }
 
 
