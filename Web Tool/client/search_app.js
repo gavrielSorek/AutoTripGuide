@@ -139,7 +139,7 @@ function showPoisOnMap(poisArray) {
             marker = L.marker([lat, lng], {icon: greenIcon}).addTo(greenMarkerGroup);
         }
         marker.bindPopup("<b>Welcome to </b><br>" + name)
-        marker.on('click', function(){
+        marker.on('dblclick', function(){
             showPoi(item)
         })
     });   
