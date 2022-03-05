@@ -40,7 +40,9 @@ header.container-fluid {
 }
 
 ul {
-  padding: 0;
+  margin-left: -35%;
+  /* transform: translateX(35%); */
+  width: 160%;
 }
 
 li {
@@ -224,7 +226,7 @@ input[type="radio"]:checked:after {
 
 .button {
   white-space: pre-wrap;
-  background-color: #4CAF50; /* Green */
+  background-color: #4caf50; /* Green */
   border: none;
   color: white;
   padding: 15px 32px;
@@ -237,7 +239,7 @@ input[type="radio"]:checked:after {
 }
 
 .button1 {
-  background-color: white; 
-  color: black; 
-  border: 2px solid #4CAF50;
+  background-color: white;
+  color: black;
+  border: 2px solid #4caf50;
 }

@@ -92,6 +92,10 @@ async function findPoisInfo(poiParam, paramVal,relevantBounds, searchOutsideTheB
     return db.findPois(dbClientSearcher, poiParam, paramVal, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
 }
 async function poiHandler(poi) {
+    if(poi._language.localeCompare("en")) {
+        poiName = poi._poiName
+        poi._poiName = poiName.toLowerCase();
+    }
     if(!poi._country) {
         poi._country = geo.getCountry(parseFloat(poi._latitude), parseFloat(poi._longitude));
     }
