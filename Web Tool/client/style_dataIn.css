@@ -1,5 +1,5 @@
 html {
-  height: 180%;
+  height: 200%;
 }
 
 body {
@@ -12,11 +12,14 @@ body {
 
 .create-box {
   position: absolute;
-  top: 85%;
-  left: 55%;
+  top: 50px;
+  left: 0;
+  right: 0;
+  margin:0 auto;
+  border: solid;
   width: 800px;
   padding: 45px;
-  transform: translate(-60%, -45%);
+  /* transform: translate(-60%, -60%); */
   background: rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
