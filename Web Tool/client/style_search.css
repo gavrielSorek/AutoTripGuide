@@ -64,6 +64,7 @@ li > h3 {
   margin-top: 0;
   color: #243b55;
   line-height: 2;
+  display: inline-block;
 }
 
 li > p {
@@ -95,14 +96,15 @@ button {
 }
 
 .form {
-  padding: 10px 0;
-  padding-right: 15px;
+  padding: 15px 0;
+  padding-right: 20px;
   border: 3px solid #f4fafa;
   transform: translate(-0%, -300%);
   background: rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
   box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
   border-radius: 10px;
+  width: 110%;
 }
 
 .form.col-xs-12 {
@@ -224,22 +226,39 @@ input[type="radio"]:checked:after {
   unicode-bidi: plaintext;
 }
 
-.button {
-  white-space: pre-wrap;
-  background-color: #4caf50; /* Green */
-  border: none;
+.approve_button {
+  margin-left: 85%;
+  margin-top: -6.8%;
+  background-color: #55b186;
+}
+
+.edit_button {
+  margin-left: 67%;
+  margin-top: -0%;
+  background-color: #243b55;
+}
+
+.edit_button:hover {
+  background-color: #5e89ba; /* Green */
   color: white;
+}
+
+.approve_button:hover {
+  background-color: #44eba3; /* Green */
+  color: white;
+}
+
+.edit_button,
+.approve_button {
+  border-radius: 5px;
   padding: 15px 32px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  margin: 4px 2px;
+  white-space: nowrap;
+  /* margin: 4px 2px; */
   cursor: pointer;
-}
-
-.button1 {
-  background-color: white;
-  color: black;
-  border: 2px solid #4caf50;
+  color: white;
+  border: 2px solid white;
 }

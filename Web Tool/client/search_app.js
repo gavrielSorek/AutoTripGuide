@@ -194,12 +194,20 @@ function showPoi(item) {
     // displayResults(); 
     $("#searchBox").animate({'padding-top':"30vh"}, 600);
     $(".container-fluid").animate({height:"80vh"}, 600);
-
     resultArea.empty();
     var elem1 = $('<a>');
     elem1.attr("target","_blank");
     var elem2 = $('<li>');
+    elem2.append($('<div style="white-space: pre">'));
     elem2.append($('<h3>').text(item._poiName));
+    if (permissions.isPermitted('approver')) {
+        elem2.append($('<button id="edit_button" class="button edit_button">').text("EDIT"));
+        //add edit button listener
+    }
+    if (permissions.isPermitted('approver')) {
+        elem2.append($('<button id="approve_button" class="button approve_button">').text("APPROVE"));
+        //add edit button listener
+    }
     elem2.append($('<p>').text("Name: " + item._poiName));
     elem2.append($('<p>').text("Latitude: " + item._latitude));
     elem2.append($('<p>').text("Longtitude: " + item._longitude));
@@ -222,11 +230,11 @@ function showPoi(item) {
         
         elem2.append(poiAudio);
     }
-    elem2.append($('<div style="white-space: pre">'));
-    if (permissions.isPermitted('approver')) {
-        elem2.append($('<button id="edit_button" class="button button1">').text("Edit: " + item._poiName));
-        //add edit button listener
-    }
+    // elem2.append($('<div style="white-space: pre">'));
+    // if (permissions.isPermitted('approver')) {
+    //     elem2.append($('<button id="edit_button" class="button edit_button">').text("Edit: " + item._poiName));
+    //     //add edit button listener
+    // }
     elem1.append(elem2);
     resultArea.append(elem1); 
     if (permissions.isPermitted('approver')) {
@@ -252,6 +260,7 @@ function getSearchInfo() {
     }
     resultArea.empty();
     valueToSearch = document.getElementById('searchBar').value;
+    valueToSearch = valueToSearch.toLowerCase();
     lastUserQuery = valueToSearch;
     console.log("the value to search is: " + valueToSearch)
     if(document.getElementById('Name').checked) {
