@@ -219,3 +219,9 @@ body {
   font-size: 14px;
   line-height: 2;
 }
+#backHome {
+  position: relative;
+  color: white;
+  margin-left: 670px;
+
+}
