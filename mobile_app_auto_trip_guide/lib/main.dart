@@ -1,19 +1,25 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
-import 'package:final_project/Map/locationTypes.dart';
+import 'package:final_project/Map/location_types.dart';
 import 'package:final_project/Map/events.dart';
 
 
 // inits
 Location? USER_LOCATION;
 LocationData? USER_LOCATION_DATA;
+UserMap? USER_MAP;
 
 Future<void> init() async {
+  // initialization order is very important
   USER_LOCATION = await getLocation();
   USER_LOCATION_DATA = await USER_LOCATION!.getLocation();
   USER_LOCATION!.onLocationChanged.listen(locationChangedEvent);
+  USER_MAP = UserMap();
+
 }
 
 // start logic
@@ -21,6 +27,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await init();
   runApp(const AutoGuideApp());
+  // check
+  // sleep(const Duration(seconds:10));
+  // print('sleep finished');
+  // locationChangedEvent(USER_LOCATION_DATA!);
 }
 
 class AutoGuideApp extends StatelessWidget {
@@ -31,11 +41,12 @@ class AutoGuideApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
       home: const HomePage(),
     );
   }
+
 }
 
 class HomePage extends StatelessWidget {
@@ -49,7 +60,7 @@ class HomePage extends StatelessWidget {
           children: [
             Expanded(
                 child: Container(
-              child: UserMap(),
+              child: USER_MAP,
             )),
             Row( // menu row
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -91,10 +102,14 @@ class HomePage extends StatelessWidget {
 }
 
 class UserMap extends StatefulWidget {
-  const UserMap({Key? key}) : super(key: key);
+  late _UserMapState _userMapState;
+  UserMap({Key? key}) : super(key: key);
 
   @override
-  _UserMapState createState() => _UserMapState();
+  State<StatefulWidget> createState() {
+    _userMapState = _UserMapState();
+    return _userMapState;
+  }
 }
 
 class _UserMapState extends State<UserMap> {
@@ -134,14 +149,34 @@ class _UserMapState extends State<UserMap> {
         color: Colors.purpleAccent,
         iconSize: 45.0,
         onPressed: () {
+
           print('Marker tapped');
         },
       ),
     ),
   ];
 
+  void updateUserLocation() {
+    setState(() {
+      markersList[0] = getUserMarker();
+    });
+  }
+  Marker getUserMarker() {
+    return Marker(
+        width: 45.0,
+        height: 45.0,
+        point: LatLng(32.81,
+            USER_LOCATION_DATA!.longitude ?? 0.0),
+        builder: (context) => Container(
+            child: IconButton(
+                icon: Icon(Icons.directions_car_sharp),
+                onPressed: () {
+                  print('Marker tapped!');
+                })));
+  }
   @override
   Widget build(BuildContext context) {
+
     return FlutterMap(
         options: MapOptions(
             center: LatLng(USER_LOCATION_DATA!.latitude ?? 0.0,
@@ -181,5 +216,7 @@ Future<Location?> getLocation() async {
 
 void locationChangedEvent(LocationData currentLocation) {
   USER_LOCATION_DATA = currentLocation;
-  // TODO change user marker
+  USER_MAP!._userMapState.updateUserLocation();
+
+
 }
