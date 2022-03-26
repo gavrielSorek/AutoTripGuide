@@ -6,18 +6,21 @@ import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:final_project/Map/location_types.dart';
 import 'package:final_project/Map/events.dart';
+import 'package:final_project/Map/server_communication.dart';
 
 
 // inits
 Location? USER_LOCATION;
 LocationData? USER_LOCATION_DATA;
 UserMap? USER_MAP;
+ServerCommunication? MAP_SERVER_COMMUNICATOR;
 
 Future<void> init() async {
   // initialization order is very important
   USER_LOCATION = await getLocation();
   USER_LOCATION_DATA = await USER_LOCATION!.getLocation();
   USER_LOCATION!.onLocationChanged.listen(locationChangedEvent);
+  MAP_SERVER_COMMUNICATOR = ServerCommunication('auto_trip_guide_mobile.lt');
   USER_MAP = UserMap();
 
 }
@@ -213,10 +216,18 @@ Future<Location?> getLocation() async {
   }
   return location;
 }
+bool isNewPoisNeeded(){
+  return true;
+}
 
-void locationChangedEvent(LocationData currentLocation) {
+void locationChangedEvent(LocationData currentLocation) async{
   USER_LOCATION_DATA = currentLocation;
   USER_MAP!._userMapState.updateUserLocation();
-
+  if (isNewPoisNeeded()) {
+  List<Poi> pois = await MAP_SERVER_COMMUNICATOR!.getPoisByLocation(LocationInfo(USER_LOCATION_DATA!.latitude ?? -1,
+  USER_LOCATION_DATA!.longitude ?? -1,
+  USER_LOCATION_DATA!.heading ?? -1,
+  USER_LOCATION_DATA!.speed ?? -1));
+  }
 
 }
