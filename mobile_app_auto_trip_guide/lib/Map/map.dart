@@ -126,7 +126,7 @@ class _UserMapState extends State<UserMap> {
     return Marker(
         width: 45.0,
         height: 45.0,
-        point: LatLng(32.81, UserMap.USER_LOCATION_DATA!.longitude ?? 0.0),
+        point: LatLng(UserMap.USER_LOCATION_DATA!.latitude ?? 0.0 , UserMap.USER_LOCATION_DATA!.longitude ?? 0.0),
         builder: (context) => Container(
             child: IconButton(
                 icon: Icon(Icons.directions_car_sharp),
