@@ -30,10 +30,8 @@ async function findDataByParams(client, queryObject, relevantBounds, MaxCount, s
 }
 
 // The function find a pois 
-async function findPois(client, poiParam ,paramVal, relevantBounds, MaxCount, searchOutsideTheBoundery) {
-    var queryObject = {}
-    if (poiParam)
-        queryObject[poiParam] = paramVal
+async function findPois(client, poiParams , relevantBounds, MaxCount, searchOutsideTheBoundery) {
+    var queryObject = poiParams
     return findDataByParams(client, queryObject, relevantBounds, MaxCount, searchOutsideTheBoundery)
 }
 
@@ -51,8 +49,10 @@ async function getAudio(dbClient, audioId) {
     return audioPromise
 }
 
-
-
+// check if object is empty
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+}
 
 
 

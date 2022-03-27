@@ -35,13 +35,21 @@ async function init() {
 
  // get searchPage page
  app.get("/searchNearbyPois", async function (req, res) { //next requrie (the function will not stop the program)
-    user_data = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language}
-    pois = await db.findPois(dbClientSearcher, undefined, undefined, getBounds(user_data), MAX_POIS_FOR_USER, false)
+    userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language}
+    searchParams = {}
+    addUserDataTosearchParams(searchParams, userData)
+    pois = await db.findPois(dbClientSearcher, searchParams, getBounds(userData), MAX_POIS_FOR_USER, false)
     res.status(200);
     res.json(pois);
     res.end();
  })
  
+ function addUserDataTosearchParams(searchParams, userData){
+     if (userData.language) {
+         searchParams['_language'] = userData.language
+     }
+ }
+
  function getBounds(user_data){
     var epsilon = 0.07
     var relevantBounds = {}
