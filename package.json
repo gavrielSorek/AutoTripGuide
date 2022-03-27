@@ -1,5 +1,11 @@
 {
   "dependencies": {
-    "country-reverse-geocoding": "^0.2.2"
+    "cors": "^2.8.5",
+    "country-reverse-geocoding": "^0.2.2",
+    "express": "^4.17.3",
+    "jquery": "^3.6.0",
+    "localtunnel": "^2.0.2",
+    "mongo": "^0.1.0",
+    "mongoose": "^6.2.8"
   }
 }
