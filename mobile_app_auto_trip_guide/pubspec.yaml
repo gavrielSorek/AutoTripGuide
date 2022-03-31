@@ -31,7 +31,7 @@ dependencies:
   flutter_map:
   flutter:
     sdk: flutter
-  http: 0.13.4
+  http: ^0.13.4
 
 
 

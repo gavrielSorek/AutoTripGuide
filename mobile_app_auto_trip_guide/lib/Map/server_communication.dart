@@ -1,33 +1,42 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:final_project/Map/location_types.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 class ServerCommunication {
-  String serverGetPoisUrl;
-  ServerCommunication(this.serverGetPoisUrl);
+  // String serverUrl = "https://autotripguidemobile.loca.lt";
+  String serverUrl = "autotripguidemobile.loca.lt";
 
-  static Uri addLocationInfoToUrl(String url,LocationInfo locationInfo) {
+  ServerCommunication();
+
+  static Uri addLocationInfoToUrl(String url, String path,LocationInfo locationInfo) {
     final queryParameters = {
       'lat': locationInfo.lat.toString(),
-      'lng': locationInfo.lat.toString(),
+      'lng': locationInfo.lng.toString(),
       'heading': locationInfo.heading.toString(),
-      'speed': locationInfo.speed.toString(),
+      'speed': locationInfo.speed.toString()
     };
-    final uri = Uri.https(url, '', queryParameters);
+    final uri = Uri.https(url, path, queryParameters);
     return uri;
   }
 
-  Future<List<Poi>> getPoisByLocation(LocationInfo locationInfo) async{
-    Uri newUri = addLocationInfoToUrl(serverGetPoisUrl, locationInfo);
-    var response = await http.get(newUri);
-    if (response.statusCode == 200) {
-      // parse the JSON.
-      Iterable iterator = json.decode(response.body);
-      return List<Poi>.from(iterator.map((poi)=> Poi.fromJson(poi)));
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load Pois');
+  Future<List<Poi>> getPoisByLocation(LocationInfo? locationInfo) async{
+    Uri newUri = addLocationInfoToUrl(serverUrl , '/searchNearbyPois', locationInfo!);
+
+    var client = http.Client();
+    try {
+      var response = await client.get(newUri, headers: {"Access-Control-Allow-Origin": "*"});
+      if (response.statusCode == 200) {
+        final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
+        return parsed.map<Poi>((json) => Poi.fromJson(json)).toList();
+      } else {
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        throw Exception('Failed to load Pois');
+      }
+    } finally {
+      client.close();
     }
   }
 }

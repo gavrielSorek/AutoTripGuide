@@ -18,7 +18,7 @@ class UserMap extends StatefulWidget {
     USER_LOCATION = await getLocation();
     USER_LOCATION_DATA = await USER_LOCATION!.getLocation();
     USER_LOCATION!.onLocationChanged.listen(locationChangedEvent);
-    MAP_SERVER_COMMUNICATOR = ServerCommunication('auto_trip_guide_mobile.lt');
+    MAP_SERVER_COMMUNICATOR = ServerCommunication();
     USER_MAP = UserMap();
   }
 
@@ -51,9 +51,9 @@ class UserMap extends StatefulWidget {
   }
   static void locationChangedEvent(LocationData currentLocation) async {
     USER_LOCATION_DATA = currentLocation;
-    USER_MAP!._userMapState.updateUserLocation();
+    List<Poi> pois;
     if (isNewPoisNeeded()) {
-      List<Poi> pois = await MAP_SERVER_COMMUNICATOR!.getPoisByLocation(
+      pois = await MAP_SERVER_COMMUNICATOR!.getPoisByLocation(
           LocationInfo(
               USER_LOCATION_DATA!.latitude ?? -1,
               USER_LOCATION_DATA!.longitude ?? -1,
@@ -62,18 +62,24 @@ class UserMap extends StatefulWidget {
     }
   }
 
-  late _UserMapState _userMapState;
+  // late _UserMapState _userMapState;
 
-  UserMap({Key? key}) : super(key: key);
+  UserMap({Key? key}) : super(key: key) {
+    print("hello from ctor");
+  }
 
   @override
   State<StatefulWidget> createState() {
-    _userMapState = _UserMapState();
-    return _userMapState;
+    // _userMapState = _UserMapState();
+    return _UserMapState();
   }
+
 }
 
 class _UserMapState extends State<UserMap> {
+  _UserMapState() : super() {
+    print("hello from ctor2");
+  }
   List<Marker> markersList = [
     Marker(
         width: 45.0,
@@ -137,6 +143,7 @@ class _UserMapState extends State<UserMap> {
 
   @override
   Widget build(BuildContext context) {
+    print("hello from build");
     return FlutterMap(
         options: MapOptions(
             center: LatLng(UserMap.USER_LOCATION_DATA!.latitude ?? 0.0,

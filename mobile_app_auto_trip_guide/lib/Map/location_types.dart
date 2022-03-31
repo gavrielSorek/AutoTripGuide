@@ -14,7 +14,7 @@ class Poi {
   double? latitude;
   double? longitude;
   String? shortDesc;
-  List<String>? language;
+  String? language;
   dynamic? audio;
   String? source;
   String? Contributor;
@@ -41,23 +41,22 @@ class Poi {
     this.Categories,
   });
 
-
   factory Poi.fromJson(Map<String, dynamic> json) {
-    return Poi(
-      poiName: json['_poiName'],
-      latitude: json['_latitude'],
-      longitude: json['_longitude'],
-      shortDesc: json['_shortDesc'],
-      language: json['_language'],
-      audio: json['_audio'],
-      source: json['_source'],
-      Contributor: json['_Contributor'],
-      CreatedDate: json['_CreatedDate'],
-      ApprovedBy: json['_ApprovedBy'],
-      UpdatedBy: json['_UpdatedBy'],
-      LastUpdatedDate: json['_LastUpdatedDate'],
-      country: json['_country'],
-      Categories: json['_Categories'],
+    return  Poi(
+      poiName: json['_poiName'] as String,
+      latitude: json['_latitude'] as double,
+      longitude: json['_longitude'] as double,
+      shortDesc: json['_shortDesc'] as String,
+      language: json['_language'] as String,
+      audio: json['_audio'] as String,
+      source: json['_source'] as String,
+      Contributor: json['_Contributor'] as String,
+      CreatedDate: json['_CreatedDate'] as String,
+      ApprovedBy: json['_ApprovedBy'] as String,
+      UpdatedBy: json['_UpdatedBy'] as String,
+      LastUpdatedDate: json['_LastUpdatedDate']as String,
+      country: json['_country'] as String,
+      Categories: json['_Categories'].split(',') as List<String>,
     );
   }
 }

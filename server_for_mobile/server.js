@@ -32,7 +32,12 @@ async function init() {
         console.error(e); 
     }
 }
-
+// get searchPage page
+app.get("/", async function (req, res) { //next requrie (the function will not stop the program)
+    res.status(200);
+    res.write("hello");
+    res.end();
+ })
  // get searchPage page
  app.get("/searchNearbyPois", async function (req, res) { //next requrie (the function will not stop the program)
     userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language}
