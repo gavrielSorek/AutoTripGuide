@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:final_project/Map/location_types.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
   String serverUrl = "autotripguidemobile.loca.lt";
@@ -27,10 +26,11 @@ class ServerCommunication {
     var client = http.Client();
     try {
       var response = await client.get(newUri, headers: {"Access-Control-Allow-Origin": "*"});
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.contentLength! > 0) {
         final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
         return parsed.map<Poi>((json) => Poi.fromJson(json)).toList();
       } else {
+        if (response.contentLength == 0) {return [];}
         // If the server did not return a 200 OK response,
         // then throw an exception.
         throw Exception('Failed to load Pois');

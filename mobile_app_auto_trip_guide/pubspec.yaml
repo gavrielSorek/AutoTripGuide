@@ -32,6 +32,9 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.13.4
+#  http: any
+  flutter_map_location_marker: any
+
 
 
 
