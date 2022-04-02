@@ -17,6 +17,7 @@ class UserMap extends StatefulWidget {
   static UserMap? USER_MAP;
   static ServerCommunication? MAP_SERVER_COMMUNICATOR;
   static List userChangeLocationFuncs = [];
+  static Map poisMap = Map<String, Poi>(); // the string is poi name
 
 
   static Future<void> mapInit() async {
@@ -77,7 +78,7 @@ class UserMap extends StatefulWidget {
 class _UserMapState extends State<UserMap> {
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
-  MapController mapController = MapController();
+  final MapController _mapController = MapController();
   List<Marker> markers = [];
 
   _UserMapState() : super() {
@@ -103,6 +104,7 @@ class _UserMapState extends State<UserMap> {
   void onLocationChanged(LocationData currentLocation) async {
     print("hello from location changed");
     List<Poi> pois;
+    // TODO add a condition that won't crazy the server
     if (true) {
       pois = await UserMap.MAP_SERVER_COMMUNICATOR!.getPoisByLocation(
           LocationInfo(
@@ -112,9 +114,13 @@ class _UserMapState extends State<UserMap> {
               UserMap.USER_LOCATION_DATA!.speed ?? -1));
     }
     setState(() {
+      // add all the new poi
       for (Poi poi in pois) {
-        Marker marker = getMarkerFromPoi(poi);
-        markersList.add(marker);
+        if (!UserMap.poisMap.containsKey(poi.poiName)) {
+          UserMap.poisMap[poi.poiName] = poi;
+          Marker marker = getMarkerFromPoi(poi);
+          markersList.add(marker);
+        }
       }
     });
   }
@@ -142,7 +148,7 @@ class _UserMapState extends State<UserMap> {
 
     print("hello from build");
     return FlutterMap(
-      mapController: mapController,
+      mapController: _mapController,
         options: MapOptions(
             onPositionChanged: (MapPosition position, bool hasGesture) {
               if (hasGesture) {
