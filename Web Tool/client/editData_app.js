@@ -125,8 +125,8 @@ async function sendPoiInfoToServer() {
     var poiInfo = {
         _id: poiName.name,
         _poiName: poiName.value,
-        _longitude: longitude.value,
-        _latitude: latitude.value,
+        _longitude: parseFloat(longitude.value),
+        _latitude: parseFloat(latitude.value),
         _source: source.value,
         _language: select.options[select.selectedIndex].value,
         _audio: audioData,
