@@ -23,9 +23,10 @@ class UserMap extends StatefulWidget {
     // initialization order is very important
     USER_LOCATION = await getLocation();
     USER_LOCATION_DATA = await USER_LOCATION!.getLocation();
-    USER_LOCATION!.onLocationChanged.listen(locationChangedEvent);
     MAP_SERVER_COMMUNICATOR = ServerCommunication();
     USER_MAP = UserMap();
+    USER_LOCATION!.onLocationChanged.listen(locationChangedEvent);
+
   }
 
   static Future<Location?> getLocation() async {
@@ -60,19 +61,7 @@ class UserMap extends StatefulWidget {
     for (int i = 0; i < UserMap.userChangeLocationFuncs.length; i++ ) {
       userChangeLocationFuncs[i](currentLocation);
     }
-
-    // List<Poi> pois;
-    // if (isNewPoisNeeded()) {
-    //   pois = await MAP_SERVER_COMMUNICATOR!.getPoisByLocation(
-    //       LocationInfo(
-    //           USER_LOCATION_DATA!.latitude ?? -1,
-    //           USER_LOCATION_DATA!.longitude ?? -1,
-    //           USER_LOCATION_DATA!.heading ?? -1,
-    //           USER_LOCATION_DATA!.speed ?? -1));
-    // }
   }
-
-  // late _UserMapState _userMapState;
 
   UserMap({Key? key}) : super(key: key) {
     print("hello from ctor");
@@ -80,7 +69,6 @@ class UserMap extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    // _userMapState = _UserMapState();
     return _UserMapState();
   }
 
@@ -128,9 +116,6 @@ class _UserMapState extends State<UserMap> {
         Marker marker = getMarkerFromPoi(poi);
         markersList.add(marker);
       }
-
-      // markersList[0] = getUserMarker();
-      // mapController.move(LatLng(currentLocation.latitude!,currentLocation.longitude!), mapController.zoom);
     });
   }
 
@@ -140,11 +125,16 @@ class _UserMapState extends State<UserMap> {
         height: 45.0,
         point: LatLng(poi.latitude!, poi.longitude!),
         builder: (context) => Container(
-            child: IconButton(
-                icon: Icon(Icons.location_on),
-                onPressed: () {
-                  print('Marker tapped!');
-                })));
+          child: IconButton(
+            icon: Icon(Icons.location_on),
+            color: Colors.purpleAccent,
+            iconSize: 45.0,
+            onPressed: () {
+              print('Marker tapped');
+              },
+          ),
+        ),
+    );
   }
 
   @override
@@ -182,7 +172,6 @@ class _UserMapState extends State<UserMap> {
           ),
         ),
       ],
-
       nonRotatedChildren: [
         Positioned(
           left: 20,
@@ -204,14 +193,7 @@ class _UserMapState extends State<UserMap> {
         )
       ],
         layers: [MarkerLayerOptions(markers: markersList)],
-        // layers: [
-        //   TileLayerOptions(
-        //       urlTemplate: "https://a.tile.openstreetmap.de/{z}/{x}/{y}.png",
-        //       subdomains: ['a', 'b', 'c']),
-        //   // MarkerLayerOptions(markers: markersList),
-        //   LocationMarkerLayerOptions()
-        //
-        // ]
+
     );
   }
 }
