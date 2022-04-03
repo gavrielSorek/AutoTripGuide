@@ -67,3 +67,8 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
     await init()
     console.log(`Server is runing on port ${port}`)
 })
+
+// if localtunnel doing problems
+// http://localhost.run/ 
+
+// write this in terminal:  ssh -R 80:localhost:5600 localhost.run

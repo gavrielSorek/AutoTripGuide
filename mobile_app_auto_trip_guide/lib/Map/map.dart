@@ -2,13 +2,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:final_project/Map/location_types.dart';
-import 'package:final_project/Map/events.dart';
 import 'package:final_project/Map/server_communication.dart';
+
 
 class UserMap extends StatefulWidget {
   // inits
@@ -18,7 +19,6 @@ class UserMap extends StatefulWidget {
   static ServerCommunication? MAP_SERVER_COMMUNICATOR;
   static List userChangeLocationFuncs = [];
   static Map poisMap = Map<String, Poi>(); // the string is poi name
-
 
   static Future<void> mapInit() async {
     // initialization order is very important
@@ -53,10 +53,6 @@ class UserMap extends StatefulWidget {
     return location;
   }
 
-  static bool isNewPoisNeeded() {
-    //TODO add logic
-    return true;
-  }
   static void locationChangedEvent(LocationData currentLocation) async {
     USER_LOCATION_DATA = currentLocation;
     for (int i = 0; i < UserMap.userChangeLocationFuncs.length; i++ ) {
@@ -79,7 +75,9 @@ class _UserMapState extends State<UserMap> {
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
   final MapController _mapController = MapController();
-  List<Marker> markers = [];
+  double mapHeading = 0;
+  List<Marker> markersList = [];
+  bool isNewPoisNeededFlag = true;
 
   _UserMapState() : super() {
     UserMap.userChangeLocationFuncs.add(onLocationChanged);
@@ -91,6 +89,13 @@ class _UserMapState extends State<UserMap> {
     super.initState();
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
+    FlutterCompass.events?.listen((event) { //TODO check
+      setState(() {
+        mapHeading = 360 + event.heading!;
+        print(event.heading!);
+        // _mapController.rotate(mapHeading);
+      });
+    });
   }
 
   @override
@@ -99,32 +104,49 @@ class _UserMapState extends State<UserMap> {
     super.dispose();
   }
 
-  List<Marker> markersList = [];
-
+  // add new pois if location changed
   void onLocationChanged(LocationData currentLocation) async {
     print("hello from location changed");
     List<Poi> pois;
     // TODO add a condition that won't crazy the server
-    if (true) {
+    if (isNewPoisNeeded()) {
       pois = await UserMap.MAP_SERVER_COMMUNICATOR!.getPoisByLocation(
           LocationInfo(
               UserMap.USER_LOCATION_DATA!.latitude ?? -1,
               UserMap.USER_LOCATION_DATA!.longitude ?? -1,
               UserMap.USER_LOCATION_DATA!.heading ?? -1,
               UserMap.USER_LOCATION_DATA!.speed ?? -1));
-    }
-    setState(() {
-      // add all the new poi
-      for (Poi poi in pois) {
-        if (!UserMap.poisMap.containsKey(poi.poiName)) {
-          UserMap.poisMap[poi.poiName] = poi;
-          Marker marker = getMarkerFromPoi(poi);
-          markersList.add(marker);
+
+      setState(() {
+        // add all the new poi
+        print("add pois to map");
+        for (Poi poi in pois) {
+          if (!UserMap.poisMap.containsKey(poi.poiName)) {
+            UserMap.poisMap[poi.poiName] = poi;
+            Marker marker = getMarkerFromPoi(poi);
+            markersList.add(marker);
+          }
         }
-      }
-    });
+      });
+    }
+  }
+  // change pois needed flag
+  Future<void> poisNeededFlagChange(int timeToWait, bool val) async {
+    await Future.delayed(Duration(seconds: timeToWait));
+    isNewPoisNeededFlag = val;
   }
 
+  bool isNewPoisNeeded(){
+    if(isNewPoisNeededFlag) {
+      isNewPoisNeededFlag = false;
+      poisNeededFlagChange(5,true);
+      print("hello from isNewPoisNeeded");
+      return true;
+    }
+    return false;
+  }
+
+  // return marker from poi
   Marker getMarkerFromPoi(Poi poi) {
     return Marker(
         width: 45.0,
@@ -145,11 +167,11 @@ class _UserMapState extends State<UserMap> {
 
   @override
   Widget build(BuildContext context) {
-
-    print("hello from build");
+    print("hello from build map");
     return FlutterMap(
       mapController: _mapController,
         options: MapOptions(
+          rotation: mapHeading,
             onPositionChanged: (MapPosition position, bool hasGesture) {
               if (hasGesture) {
                 setState(
@@ -188,8 +210,8 @@ class _UserMapState extends State<UserMap> {
               setState(
                     () => _centerOnLocationUpdate = CenterOnLocationUpdate.always,
               );
-              // Center the location marker on the map and zoom the map to level 18.
-              _centerCurrentLocationStreamController.add(18);
+              // Center the location marker on the map and zoom the map to level 15.
+              _centerCurrentLocationStreamController.add(14);
             },
             child: const Icon(
               Icons.my_location,
@@ -199,8 +221,6 @@ class _UserMapState extends State<UserMap> {
         )
       ],
         layers: [MarkerLayerOptions(markers: markersList)],
-
     );
   }
 }
-
