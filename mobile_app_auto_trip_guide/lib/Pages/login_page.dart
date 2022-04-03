@@ -1,19 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:final_project/Pages/login_controller.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:final_project/Pages/home_page.dart';
 
-class LoginController extends GetxController {
-  var _googleSignin = GoogleSignIn();
-  var googleAccount = Rx<GoogleSignInAccount?>(null);
-
-  login() async {
-    googleAccount.value = await _googleSignin.signIn();
-  }
-
-  logout() async {
-    googleAccount.value = await _googleSignin.signOut();
-  }
-}
 
 class LoginPage extends StatelessWidget {
   final controller = Get.put(LoginController());
@@ -21,13 +11,12 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login Page')),
       body: Center(
           child: Obx(() {
             if (controller.googleAccount.value == null)
               return buildNewLogin();
             else
-              return buildProfileView();
+              return HomePage();  //return buildProfileView();
           })
       ),
     );

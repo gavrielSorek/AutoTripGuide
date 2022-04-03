@@ -1,17 +1,28 @@
-
-
 import 'package:final_project/Map/events.dart';
 import 'package:final_project/Map/map.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:final_project/Pages/home_page.dart';
+import 'package:final_project/Pages/login_controller.dart';
+import 'package:get/get.dart';
+
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
+  final controller = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Auto Trip Guide'), centerTitle: true),
+        appBar: AppBar(
+          title: const Text('Auto Trip Guide'),
+          centerTitle: true,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: controller.logout,
+            ),
+          ],),
         body: Column(
           children: [
             Expanded(

@@ -1,12 +1,10 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:final_project/Pages/home_page.dart';
 import 'package:location/location.dart';
-
 import 'Map/map.dart';
-
+import 'Pages/login_page.dart';
 
 // inits
 
@@ -20,7 +18,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await init();
   runApp(const AutoGuideApp());
-  // UserMap.locationChangedEvent(UserMap.USER_LOCATION_DATA!);
+  UserMap.locationChangedEvent(UserMap.USER_LOCATION_DATA!);
 }
 
 class AutoGuideApp extends StatelessWidget {
@@ -33,13 +31,7 @@ class AutoGuideApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const HomePage(),
+      home: LoginPage(),   //const HomePage()
     );
   }
 }
-
-
-
-
-
-

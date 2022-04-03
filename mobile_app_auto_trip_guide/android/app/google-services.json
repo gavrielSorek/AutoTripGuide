@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "505998861423",
+    "project_id": "auto-trip-guide-auth",
+    "storage_bucket": "auto-trip-guide-auth.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:505998861423:android:0139805fda10eb1aded99a",
+        "android_client_info": {
+          "package_name": "com.example.final_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "505998861423-ujm9uv4of14foibflm39dkh6ja04ehi0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.final_project",
+            "certificate_hash": "1a696a02fe310548d6d402fbe16a26df62070bc9"
+          }
+        },
+        {
+          "client_id": "505998861423-run5muk3ek2rqvmgql4moljqnvdpec7g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOzDNtNhnnlZqamsNPgr8OLiU7qQSbxY8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "505998861423-run5muk3ek2rqvmgql4moljqnvdpec7g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
