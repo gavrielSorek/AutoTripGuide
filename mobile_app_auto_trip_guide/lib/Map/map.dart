@@ -68,6 +68,7 @@ class UserMap extends StatefulWidget {
 }
 
 class _UserMapState extends State<UserMap> {
+  GuideData guideData = GuideData();
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
   final MapController _mapController = MapController();
@@ -201,32 +202,28 @@ class _UserMapState extends State<UserMap> {
         ),
       ],
       nonRotatedChildren: [
-        Column(
             // menu row
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
               Align(
-                  alignment: Alignment.bottomRight,
+                  alignment: Alignment.topRight,
                   child: Container(
                       alignment: Alignment.bottomRight,
-                      margin: EdgeInsets.all(20),
+                      margin: EdgeInsets.only(top: MediaQuery.of(context).size.height / 6, right: MediaQuery.of(context).size.width / 15),
                       color: Colors.yellow,
-                      height: MediaQuery.of(context).size.width / 11,
-                      width: MediaQuery.of(context).size.width / 11,
+                      height: MediaQuery.of(context).size.width / 10,
+                      width: MediaQuery.of(context).size.width / 10,
                       child: FloatingActionButton(
                         onPressed: () {
+                          setState(() {
+                            guideData.changeGuideType();
+                          });
                           print("change to audio or to text");
                         },
-                        child: const Icon(
-                          Icons.settings_voice_outlined,
-                          color: Colors.white,
-                        ),
+                        child: guideData.guideIcon,
                       ))),
               Align(
                   alignment: Alignment.bottomLeft,
-                  widthFactor: 10,
-                  heightFactor: 10,
                   child: Container(
+                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height / 11, left: MediaQuery.of(context).size.width / 15),
                     height: MediaQuery.of(context).size.width / 11,
                     width: MediaQuery.of(context).size.width / 11,
                     child: FloatingActionButton(
@@ -245,8 +242,7 @@ class _UserMapState extends State<UserMap> {
                       ),
                     ),
                   ))
-            ])
-      ],
+            ],
       layers: [MarkerLayerOptions(markers: markersList)],
     );
   }
