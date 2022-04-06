@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:final_project/Map/location_types.dart';
 import 'package:final_project/Map/server_communication.dart';
-
 
 class UserMap extends StatefulWidget {
   // inits
@@ -27,7 +25,6 @@ class UserMap extends StatefulWidget {
     MAP_SERVER_COMMUNICATOR = ServerCommunication();
     USER_MAP = UserMap();
     USER_LOCATION!.onLocationChanged.listen(locationChangedEvent);
-
   }
 
   static Future<Location?> getLocation() async {
@@ -55,7 +52,7 @@ class UserMap extends StatefulWidget {
 
   static void locationChangedEvent(LocationData currentLocation) async {
     USER_LOCATION_DATA = currentLocation;
-    for (int i = 0; i < UserMap.userChangeLocationFuncs.length; i++ ) {
+    for (int i = 0; i < UserMap.userChangeLocationFuncs.length; i++) {
       userChangeLocationFuncs[i](currentLocation);
     }
   }
@@ -68,7 +65,6 @@ class UserMap extends StatefulWidget {
   State<StatefulWidget> createState() {
     return _UserMapState();
   }
-
 }
 
 class _UserMapState extends State<UserMap> {
@@ -89,7 +85,8 @@ class _UserMapState extends State<UserMap> {
     super.initState();
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
-    FlutterCompass.events?.listen((event) { //TODO check
+    FlutterCompass.events?.listen((event) {
+      //TODO check
       setState(() {
         mapHeading = 360 + event.heading!;
         print(event.heading!);
@@ -130,16 +127,17 @@ class _UserMapState extends State<UserMap> {
       });
     }
   }
+
   // change pois needed flag
   Future<void> poisNeededFlagChange(int timeToWait, bool val) async {
     await Future.delayed(Duration(seconds: timeToWait));
     isNewPoisNeededFlag = val;
   }
 
-  bool isNewPoisNeeded(){
-    if(isNewPoisNeededFlag) {
+  bool isNewPoisNeeded() {
+    if (isNewPoisNeededFlag) {
       isNewPoisNeededFlag = false;
-      poisNeededFlagChange(5,true);
+      poisNeededFlagChange(5, true);
       print("hello from isNewPoisNeeded");
       return true;
     }
@@ -149,19 +147,19 @@ class _UserMapState extends State<UserMap> {
   // return marker from poi
   Marker getMarkerFromPoi(Poi poi) {
     return Marker(
-        width: 45.0,
-        height: 45.0,
-        point: LatLng(poi.latitude!, poi.longitude!),
-        builder: (context) => Container(
-          child: IconButton(
-            icon: Icon(Icons.location_on),
-            color: Colors.purpleAccent,
-            iconSize: 45.0,
-            onPressed: () {
-              print('Marker tapped');
-              },
-          ),
+      width: 45.0,
+      height: 45.0,
+      point: LatLng(poi.latitude!, poi.longitude!),
+      builder: (context) => Container(
+        child: IconButton(
+          icon: Icon(Icons.location_on),
+          color: Colors.purpleAccent,
+          iconSize: 45.0,
+          onPressed: () {
+            print('Marker tapped');
+          },
         ),
+      ),
     );
   }
 
@@ -170,19 +168,21 @@ class _UserMapState extends State<UserMap> {
     print("hello from build map");
     return FlutterMap(
       mapController: _mapController,
-        options: MapOptions(
+      options: MapOptions(
           rotation: mapHeading,
-            onPositionChanged: (MapPosition position, bool hasGesture) {
-              if (hasGesture) {
-                setState(
-                      () => _centerOnLocationUpdate = CenterOnLocationUpdate.never,
-                );
-              }
-            },
-          plugins: [LocationMarkerPlugin(),],
-            center: LatLng(UserMap.USER_LOCATION_DATA!.latitude ?? 0.0,
-                UserMap.USER_LOCATION_DATA!.longitude ?? 0.0),
-            minZoom: 5.0),
+          onPositionChanged: (MapPosition position, bool hasGesture) {
+            if (hasGesture) {
+              setState(
+                () => _centerOnLocationUpdate = CenterOnLocationUpdate.never,
+              );
+            }
+          },
+          plugins: [
+            LocationMarkerPlugin(),
+          ],
+          center: LatLng(UserMap.USER_LOCATION_DATA!.latitude ?? 0.0,
+              UserMap.USER_LOCATION_DATA!.longitude ?? 0.0),
+          minZoom: 5.0),
       // ignore: sort_child_properties_last
       children: [
         TileLayerWidget(
@@ -195,32 +195,59 @@ class _UserMapState extends State<UserMap> {
         LocationMarkerLayerWidget(
           plugin: LocationMarkerPlugin(
             centerCurrentLocationStream:
-            _centerCurrentLocationStreamController.stream,
+                _centerCurrentLocationStreamController.stream,
             centerOnLocationUpdate: _centerOnLocationUpdate,
           ),
         ),
       ],
       nonRotatedChildren: [
-        Positioned(
-          left: 20,
-          bottom: 20,
-          child: FloatingActionButton(
-            onPressed: () {
-              // Automatically center the location marker on the map when location updated until user interact with the map.
-              setState(
-                    () => _centerOnLocationUpdate = CenterOnLocationUpdate.always,
-              );
-              // Center the location marker on the map and zoom the map to level 15.
-              _centerCurrentLocationStreamController.add(14);
-            },
-            child: const Icon(
-              Icons.my_location,
-              color: Colors.white,
-            ),
-          ),
-        )
+        Column(
+            // menu row
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Align(
+                  alignment: Alignment.bottomRight,
+                  child: Container(
+                      alignment: Alignment.bottomRight,
+                      margin: EdgeInsets.all(20),
+                      color: Colors.yellow,
+                      height: MediaQuery.of(context).size.width / 11,
+                      width: MediaQuery.of(context).size.width / 11,
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          print("change to audio or to text");
+                        },
+                        child: const Icon(
+                          Icons.settings_voice_outlined,
+                          color: Colors.white,
+                        ),
+                      ))),
+              Align(
+                  alignment: Alignment.bottomLeft,
+                  widthFactor: 10,
+                  heightFactor: 10,
+                  child: Container(
+                    height: MediaQuery.of(context).size.width / 11,
+                    width: MediaQuery.of(context).size.width / 11,
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        // Automatically center the location marker on the map when location updated until user interact with the map.
+                        setState(
+                          () => _centerOnLocationUpdate =
+                              CenterOnLocationUpdate.always,
+                        );
+                        // Center the location marker on the map and zoom the map to level 15.
+                        _centerCurrentLocationStreamController.add(14);
+                      },
+                      child: const Icon(
+                        Icons.my_location,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ))
+            ])
       ],
-        layers: [MarkerLayerOptions(markers: markersList)],
+      layers: [MarkerLayerOptions(markers: markersList)],
     );
   }
 }
