@@ -138,6 +138,8 @@ class _UserMapState extends State<UserMap> {
           }
         }
       });
+      // guideTool.handleMapPoiVoice(UserMap.poisMap["my house"]);;
+
     }
   }
 

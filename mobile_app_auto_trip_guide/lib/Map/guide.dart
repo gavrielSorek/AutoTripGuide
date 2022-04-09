@@ -7,17 +7,25 @@ import 'BlurryDialog.dart';
 class Guide {
   BuildContext context;
   GuideData guideData;
+
   Guide(this.context, this.guideData);
 
   void setMapPoiColor(MapPoi mapPoi, Color color) {
     mapPoi.iconButton!.iconState!.setColor(Colors.black);
   }
+
   handleMapPoiVoice(MapPoi mapPoi) {
     setMapPoiColor(mapPoi, Colors.black);
-    BlurryDialog  alert = BlurryDialog("Do you want to hear about this poi",mapPoi.poi.poiName!,(){
+    BlurryDialog alert = BlurryDialog(
+        "Do you want to hear about this poi", mapPoi.poi.poiName!, () {
+      // ok callback
       Navigator.of(context).pop();
-
-
+    }, () {
+      // next callback
+      Navigator.of(context).pop();
+    }, () {
+      // cancel
+      Navigator.of(context).pop();
     });
     showDialog(
       context: context,
@@ -25,14 +33,10 @@ class Guide {
         return alert;
       },
     );
-
-
   }
+
   handleMapPoiText(MapPoi mapPoi) {
     setMapPoiColor(mapPoi, Colors.black);
-
-
-
   }
 }
 

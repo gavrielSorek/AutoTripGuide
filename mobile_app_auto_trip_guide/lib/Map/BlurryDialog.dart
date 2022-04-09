@@ -7,9 +7,13 @@ class BlurryDialog extends StatelessWidget {
 
   String title;
   String content;
-  VoidCallback continueCallBack;
+  VoidCallback nextCallBack;
+  VoidCallback okCallBack;
+  VoidCallback cancelCallBack;
 
-  BlurryDialog(this.title, this.content, this.continueCallBack);
+
+
+  BlurryDialog(this.title, this.content, this.okCallBack, this.nextCallBack,this.cancelCallBack);
   TextStyle textStyle = TextStyle (color: Colors.black);
 
   @override
@@ -21,15 +25,21 @@ class BlurryDialog extends StatelessWidget {
           content: Text(content, style: textStyle,),
           actions: <Widget>[
             FlatButton(
-              child: Text("Continue"),
+              child: Text("ok"),
               onPressed: () {
-                continueCallBack();
+                okCallBack();
+              },
+            ),
+            FlatButton(
+              child: Text("next"),
+              onPressed: () {
+                nextCallBack();
               },
             ),
             FlatButton(
               child: Text("Cancel"),
               onPressed: () {
-                Navigator.of(context).pop();
+                cancelCallBack();
               },
             ),
           ],
