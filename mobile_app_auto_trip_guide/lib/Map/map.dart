@@ -9,6 +9,8 @@ import 'package:location/location.dart';
 import 'package:final_project/Map/location_types.dart';
 import 'package:final_project/Map/server_communication.dart';
 
+import 'guide.dart';
+
 class UserMap extends StatefulWidget {
   // inits
   static Location? USER_LOCATION;
@@ -16,7 +18,7 @@ class UserMap extends StatefulWidget {
   static UserMap? USER_MAP;
   static ServerCommunication? MAP_SERVER_COMMUNICATOR;
   static List userChangeLocationFuncs = [];
-  static Map poisMap = Map<String, Poi>(); // the string is poi name
+  static Map poisMap = Map<String, MapPoi>(); // the string is poi name
 
   static Future<void> mapInit() async {
     // initialization order is very important
@@ -74,6 +76,7 @@ class UserMap extends StatefulWidget {
 
 class _UserMapState extends State<UserMap> {
   GuideData guideData = GuideData();
+  late Guide guideTool;
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
   final MapController _mapController = MapController();
@@ -92,6 +95,7 @@ class _UserMapState extends State<UserMap> {
     print("init _UserMapState");
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
+    guideTool = Guide(context, guideData);
     // FlutterCompass.events?.listen((event) {
     //   //TODO check
     //   // setState(() {
@@ -118,19 +122,19 @@ class _UserMapState extends State<UserMap> {
     if (isNewPoisNeeded()) {
       pois = await UserMap.MAP_SERVER_COMMUNICATOR!.getPoisByLocation(
           LocationInfo(
-              UserMap.USER_LOCATION_DATA!.latitude ?? -1,
-              UserMap.USER_LOCATION_DATA!.longitude ?? -1,
-              UserMap.USER_LOCATION_DATA!.heading ?? -1,
-              UserMap.USER_LOCATION_DATA!.speed ?? -1));
+              UserMap.USER_LOCATION_DATA!.latitude !,
+              UserMap.USER_LOCATION_DATA!.longitude!,
+              UserMap.USER_LOCATION_DATA!.heading!,
+              UserMap.USER_LOCATION_DATA!.speed!));
 
       setState(() {
         // add all the new poi
         print("add pois to map");
         for (Poi poi in pois) {
           if (!UserMap.poisMap.containsKey(poi.poiName)) {
-            UserMap.poisMap[poi.poiName] = poi;
-            Marker marker = getMarkerFromPoi(poi);
-            markersList.add(marker);
+            MapPoi mapPoi= MapPoi(poi);
+            UserMap.poisMap[poi.poiName] = mapPoi;
+            markersList.add(mapPoi.marker!);
           }
         }
       });

@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 class UserInfo {
   String? name;
   String? emailAddr;
+
   // String? gender;
   // List<String>? languages;
   // int? age;
@@ -73,6 +76,37 @@ class Poi {
   }
 }
 
+class MapPoi {
+  // return marker from poi
+  static Marker getMarkerFromPoi(Poi poi, MutableMapIconButton iconButton) {
+    return Marker(
+      width: 45.0,
+      height: 45.0,
+      point: LatLng(poi.latitude!, poi.longitude!),
+      builder: (context) => Container(child: iconButton),
+    );
+  }
+
+  Poi poi;
+  Marker? marker;
+  // IconButton? iconButton;
+  MutableMapIconButton? iconButton;
+
+
+  MapPoi(this.poi) {
+    iconButton = MutableMapIconButton();
+        // IconButton(
+        // icon: Icon(Icons.location_on),
+        // color: Colors.purpleAccent,
+        // iconSize: 45.0,
+        // onPressed: () {
+        //   iconButton!.c = 100;
+        //   print('Marker tapped');
+        // });
+    marker = getMarkerFromPoi(poi, iconButton!);
+  }
+}
+
 enum GuideStatus { voice, text }
 
 // contain data about the guid type
@@ -86,11 +120,49 @@ class GuideData {
   GuideStatus status = GuideStatus.voice; //default
   Icon guideIcon = guideIcons[GuideStatus.voice.index];
 
-
   // CHANGE THE STATUS AND THE ICON
   void changeGuideType() {
     int oppositeStatusIdx = 1 - status.index;
     status = statusValues[oppositeStatusIdx];
     guideIcon = guideIcons[oppositeStatusIdx];
+  }
+}
+
+
+class MutableMapIconButton extends StatefulWidget {
+  MutableMapIconButton({Key? key}) : super(key: key);
+  _MutableMapIconButton? iconState;
+
+  @override
+  State<StatefulWidget> createState() {
+    iconState = _MutableMapIconButton();
+    return iconState!;
+  }
+}
+class _MutableMapIconButton extends State<StatefulWidget> {
+  Color _iconColor = Colors.purple;
+  double _iconSize = 45.0;
+
+  void setColor(Color color) {
+    setState(() {
+      _iconColor = color;
+    });
+  }
+  void setSize(double size) {
+    setState(() {
+      _iconSize = size;
+    });
+  }
+
+  @override
+  Widget build(BuildContext) {
+    return IconButton(
+      icon: Icon(Icons.location_on),
+      iconSize: _iconSize,
+      color: _iconColor,
+      onPressed: () {
+        setColor(Colors.black);
+      },
+    );
   }
 }
