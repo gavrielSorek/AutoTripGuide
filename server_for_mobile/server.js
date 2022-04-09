@@ -66,7 +66,7 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
 // add new user
 app.get("/addNewUser", async function (req, res) { //next requrie (the function will not stop the program)
     console.log("inside get of addNewUser - server side")
-    userData = {'name': req.query.name, 'emailAddr': req.query.emailAddr}
+    userData = {'name': req.query.name, 'emailAddr': req.query.emailAddr, 'gender': req.query.gender, 'languages': req.query.languages, 'age': req.query.age, 'categories': req.query.categories}
     result = await db.addUser(dbClientSearcher, userData)
     res.status(200);
     res.json(result);
@@ -85,3 +85,4 @@ app.get("/addNewUser", async function (req, res) { //next requrie (the function 
 // OR
 // install ngrok globaly : "npm install ngrok -g" 
 // and then : "ngrok http 5600"
+//ngrok authtoken 27ZMPFvj1rAMBK80Sxm7pjJuQGd_7TSnsVtTyy5NELsRvJ856

@@ -5,11 +5,14 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:final_project/Pages/home_page.dart';
 import 'package:final_project/Map/server_communication.dart';
 import '../Map/location_types.dart';
+import 'account_page.dart';
 
 
 class LoginPage extends StatelessWidget {
   final controller = Get.put(LoginController());
   ServerCommunication MAP_SERVER_COMMUNICATOR = ServerCommunication();
+
+  //LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,7 @@ class LoginPage extends StatelessWidget {
               return buildNewLogin();
             } else {
               addUser();
-              return HomePage();  //return buildProfileView();
+              return HomePage();  //return buildProfileView(); return HomePage();
             }
           })
       ),
@@ -29,11 +32,8 @@ class LoginPage extends StatelessWidget {
 
 
   void addUser() async {
-    int val = await MAP_SERVER_COMMUNICATOR.addNewUser(
-        UserInfo("sapir david", "sap@gmail.com"));
-    //change user info: UserInfo(controller.googleAccount.value?.displayName ?? '', controller.googleAccount.value?.email ?? ''))
-    print("the val is: ");
-    print(val);
+     MAP_SERVER_COMMUNICATOR.addNewUser(
+        UserInfo(controller.googleAccount.value?.displayName ?? '', controller.googleAccount.value?.email ?? '', "", [""], 0, [""]));
   }
 
 

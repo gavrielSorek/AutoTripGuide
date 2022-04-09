@@ -226,6 +226,7 @@ class _UserMapState extends State<UserMap> {
                       height: MediaQuery.of(context).size.width / 10,
                       width: MediaQuery.of(context).size.width / 10,
                       child: FloatingActionButton(
+                        heroTag: null,
                         onPressed: () {
                           setState(() {
                             guideData.changeGuideType();
@@ -241,6 +242,7 @@ class _UserMapState extends State<UserMap> {
                     height: MediaQuery.of(context).size.width / 11,
                     width: MediaQuery.of(context).size.width / 11,
                     child: FloatingActionButton(
+                      heroTag: null,
                       onPressed: () {
                         // Automatically center the location marker on the map when location updated until user interact with the map.
                         setState(

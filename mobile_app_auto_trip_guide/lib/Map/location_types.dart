@@ -6,12 +6,11 @@ import 'package:latlong2/latlong.dart';
 class UserInfo {
   String? name;
   String? emailAddr;
-
-  // String? gender;
-  // List<String>? languages;
-  // int? age;
-  // List<String>? Categories;
-  UserInfo(this.name, this.emailAddr);
+  String? gender;
+  List<String>? languages;
+  int? age;
+  List<String>? categories;
+  UserInfo(this.name, this.emailAddr, this.gender, this.languages, this.age, this.categories);
 }
 
 class LocationInfo {

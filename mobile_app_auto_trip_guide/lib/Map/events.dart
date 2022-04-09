@@ -3,16 +3,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 
-void mapButtonClickedEvent() {
+import '../Pages/account_page.dart';
+
+void mapButtonClickedEvent(BuildContext context) {
+}
+void accountButtonClickedEvent(BuildContext context) {
+  Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage()));
+}
+void reviewsButtonClickedEvent(BuildContext context) {
 
 }
-void accountButtonClickedEvent() {
-
-}
-void reviewsButtonClickedEvent() {
-
-}
-void settingButtonClickedEvent() {
+void settingButtonClickedEvent(BuildContext context) {
 
 }
 //

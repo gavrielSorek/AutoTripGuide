@@ -6,8 +6,8 @@ import 'package:http/retry.dart';
 
 class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
-  String serverUrl = "autotripguidemobile.loca.lt";
-  //String serverUrl = "6a42b107629f55.lhrtunnel.link";
+  //String serverUrl = "autotripguidemobile.loca.lt";
+  String serverUrl = "aded-84-94-109-213.ngrok.io";
 
   static var client = RetryClient(http.Client());
 
@@ -48,23 +48,25 @@ class ServerCommunication {
   static Uri addUserInfoToUrl(String url, String path,UserInfo userInfo) {
     final queryParameters = {
       'name': userInfo.name.toString(),
-      'emailAddr': userInfo.emailAddr.toString()
+      'emailAddr': userInfo.emailAddr.toString(),
+      'gender': userInfo.gender.toString(),
+      'languages': userInfo.languages.toString(),
+      'age': userInfo.age.toString(),
+      'categories': userInfo.categories.toString()
     };
     final uri = Uri.https(url, path, queryParameters);
     return uri;
   }
 
-  Future<int> addNewUser(UserInfo? userInfo) async{
+  void addNewUser(UserInfo? userInfo) async{
     Uri newUri = addUserInfoToUrl(serverUrl , '/addNewUser', userInfo!);
     try {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {
         print("the user added successfully");
-        return 1;
       } else {
         if (response.contentLength == 0) {
           print("the user already exist");
-          return 0;
         }
         // If the server did not return a 200 OK response,
         // then throw an exception.

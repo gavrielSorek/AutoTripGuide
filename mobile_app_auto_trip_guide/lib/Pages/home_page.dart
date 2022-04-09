@@ -36,28 +36,28 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
-                  child: const ElevatedButton(onPressed: mapButtonClickedEvent, child: Icon(Icons.map),
+                  child: ElevatedButton(onPressed: ()=> mapButtonClickedEvent(context), child: Icon(Icons.map),
                   ),
                   height: MediaQuery.of(context).size.height / 11,
                   width: MediaQuery.of(context).size.width / 4,
                   color: Colors.cyan,
                 ),
                 Container(
-                  child: const ElevatedButton(onPressed: accountButtonClickedEvent, child: Icon(Icons.account_box_outlined),
+                  child: ElevatedButton(onPressed: ()=> accountButtonClickedEvent(context), child: Icon(Icons.account_box_outlined),
                   ),
                   height: MediaQuery.of(context).size.height / 11,
                   width: MediaQuery.of(context).size.width / 4,
                   color: Colors.cyan,
                 ),
                 Container(
-                  child: const ElevatedButton(onPressed: reviewsButtonClickedEvent, child: Icon(Icons.rate_review),
+                  child: ElevatedButton(onPressed: ()=> reviewsButtonClickedEvent(context), child: Icon(Icons.rate_review),
                   ),
                   height: MediaQuery.of(context).size.height / 11,
                   width: MediaQuery.of(context).size.width / 4,
                   color: Colors.cyan,
                 ),
                 Container(
-                  child: const ElevatedButton(onPressed: settingButtonClickedEvent, child: Icon(Icons.settings),
+                  child: ElevatedButton(onPressed: ()=> settingButtonClickedEvent(context), child: Icon(Icons.settings),
                   ),
                   height: MediaQuery.of(context).size.height / 11,
                   width: MediaQuery.of(context).size.width / 4,
