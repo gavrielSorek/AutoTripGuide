@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
@@ -8,6 +9,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:final_project/Map/location_types.dart';
 import 'package:final_project/Map/server_communication.dart';
+import 'package:final_project/Map/Audio_player_controller.dart';
 
 import 'guide.dart';
 
@@ -19,6 +21,7 @@ class UserMap extends StatefulWidget {
   static ServerCommunication? MAP_SERVER_COMMUNICATOR;
   static List userChangeLocationFuncs = [];
   static Map poisMap = Map<String, MapPoi>(); // the string is poi name
+  static bool continueGuide = false;
 
   static Future<void> mapInit() async {
     // initialization order is very important
@@ -89,6 +92,11 @@ class _UserMapState extends State<UserMap> {
     print("hello from ctor2");
   }
 
+  void guideUser() async {
+    sleep(Duration(seconds: 5));
+    guideTool.handleMapPoiVoice(UserMap.poisMap['my house']);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -115,14 +123,13 @@ class _UserMapState extends State<UserMap> {
 
   // add new pois if location changed
   void onLocationChanged(LocationData currentLocation) async {
-
     print("hello from location changed");
     List<Poi> pois;
     // TODO add a condition that won't crazy the server
     if (isNewPoisNeeded()) {
       pois = await UserMap.MAP_SERVER_COMMUNICATOR!.getPoisByLocation(
           LocationInfo(
-              UserMap.USER_LOCATION_DATA!.latitude !,
+              UserMap.USER_LOCATION_DATA!.latitude!,
               UserMap.USER_LOCATION_DATA!.longitude!,
               UserMap.USER_LOCATION_DATA!.heading!,
               UserMap.USER_LOCATION_DATA!.speed!));
@@ -132,14 +139,13 @@ class _UserMapState extends State<UserMap> {
         print("add pois to map");
         for (Poi poi in pois) {
           if (!UserMap.poisMap.containsKey(poi.poiName)) {
-            MapPoi mapPoi= MapPoi(poi);
+            MapPoi mapPoi = MapPoi(poi);
             UserMap.poisMap[poi.poiName] = mapPoi;
             markersList.add(mapPoi.marker!);
           }
         }
       });
-      // guideTool.handleMapPoiVoice(UserMap.poisMap["my house"]);;
-
+      // guideTool.handleMapPoiVoice(UserMap.poisMap["my house"]);
     }
   }
 
@@ -216,49 +222,67 @@ class _UserMapState extends State<UserMap> {
         ),
       ],
       nonRotatedChildren: [
-            // menu row
-              Align(
-                  alignment: Alignment.topRight,
-                  child: Container(
-                      alignment: Alignment.bottomRight,
-                      margin: EdgeInsets.only(top: MediaQuery.of(context).size.height / 6, right: MediaQuery.of(context).size.width / 15),
-                      color: Colors.yellow,
-                      height: MediaQuery.of(context).size.width / 10,
-                      width: MediaQuery.of(context).size.width / 10,
-                      child: FloatingActionButton(
-                        heroTag: null,
-                        onPressed: () {
-                          setState(() {
-                            guideData.changeGuideType();
-                          });
-                          print("change to audio or to text");
-                        },
-                        child: guideData.guideIcon,
-                      ))),
-              Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height / 11, left: MediaQuery.of(context).size.width / 15),
-                    height: MediaQuery.of(context).size.width / 11,
-                    width: MediaQuery.of(context).size.width / 11,
-                    child: FloatingActionButton(
-                      heroTag: null,
-                      onPressed: () {
-                        // Automatically center the location marker on the map when location updated until user interact with the map.
-                        setState(
-                          () => _centerOnLocationUpdate =
-                              CenterOnLocationUpdate.always,
-                        );
-                        // Center the location marker on the map and zoom the map to level 15.
-                        _centerCurrentLocationStreamController.add(14);
-                      },
-                      child: const Icon(
-                        Icons.my_location,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ))
-            ],
+        // menu row.
+        Align(
+          alignment: Alignment.topLeft,
+            child: AnimatedOpacity(
+              opacity: guideData.status == GuideStatus.voice ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 500),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 4,
+                  color: Colors.green,
+                  child: AudioApp(),
+                )
+            )
+        ),
+
+        Align(
+            alignment: Alignment.topRight,
+            child: Container(
+                alignment: Alignment.bottomRight,
+                margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height / 6,
+                    right: MediaQuery.of(context).size.width / 15),
+                color: Colors.yellow,
+                height: MediaQuery.of(context).size.width / 10,
+                width: MediaQuery.of(context).size.width / 10,
+                child: FloatingActionButton(
+                  heroTag: null,
+                  onPressed: () {
+                    setState(() {
+                      guideData.changeGuideType();
+                    });
+                    print("change to audio or to text");
+                  },
+                  child: guideData.guideIcon,
+                ))),
+        Align(
+            alignment: Alignment.bottomLeft,
+            child: Container(
+              margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height / 11,
+                  left: MediaQuery.of(context).size.width / 15),
+              height: MediaQuery.of(context).size.width / 11,
+              width: MediaQuery.of(context).size.width / 11,
+              child: FloatingActionButton(
+                heroTag: null,
+                onPressed: () {
+                  // Automatically center the location marker on the map when location updated until user interact with the map.
+                  setState(
+                    () =>
+                        _centerOnLocationUpdate = CenterOnLocationUpdate.always,
+                  );
+                  // Center the location marker on the map and zoom the map to level 15.
+                  _centerCurrentLocationStreamController.add(14);
+                },
+                child: const Icon(
+                  Icons.my_location,
+                  color: Colors.white,
+                ),
+              ),
+            ))
+      ],
       layers: [MarkerLayerOptions(markers: markersList)],
     );
   }
