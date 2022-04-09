@@ -6,8 +6,8 @@ import 'package:http/retry.dart';
 
 class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
-  // String serverUrl = "autotripguidemobile.loca.lt";
-  String serverUrl = "6a42b107629f55.lhrtunnel.link";
+  String serverUrl = "autotripguidemobile.loca.lt";
+  //String serverUrl = "6a42b107629f55.lhrtunnel.link";
 
   static var client = RetryClient(http.Client());
 
@@ -39,6 +39,36 @@ class ServerCommunication {
         // If the server did not return a 200 OK response,
         // then throw an exception.
         throw Exception('Failed to load Pois');
+      }
+    } finally {
+      // client.close();
+    }
+  }
+
+  static Uri addUserInfoToUrl(String url, String path,UserInfo userInfo) {
+    final queryParameters = {
+      'name': userInfo.name.toString(),
+      'emailAddr': userInfo.emailAddr.toString()
+    };
+    final uri = Uri.https(url, path, queryParameters);
+    return uri;
+  }
+
+  Future<int> addNewUser(UserInfo? userInfo) async{
+    Uri newUri = addUserInfoToUrl(serverUrl , '/addNewUser', userInfo!);
+    try {
+      var response = await client.get(newUri);
+      if (response.statusCode == 200 && response.contentLength! > 0) {
+        print("the user added successfully");
+        return 1;
+      } else {
+        if (response.contentLength == 0) {
+          print("the user already exist");
+          return 0;
+        }
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        throw Exception('Failed to add user');
       }
     } finally {
       // client.close();

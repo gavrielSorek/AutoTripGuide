@@ -3,24 +3,40 @@ import 'package:final_project/Pages/login_controller.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:final_project/Pages/home_page.dart';
+import 'package:final_project/Map/server_communication.dart';
+import '../Map/location_types.dart';
 
 
 class LoginPage extends StatelessWidget {
   final controller = Get.put(LoginController());
+  ServerCommunication MAP_SERVER_COMMUNICATOR = ServerCommunication();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
           child: Obx(() {
-            if (controller.googleAccount.value == null)
+            if (controller.googleAccount.value == null) {
               return buildNewLogin();
-            else
+            } else {
+              addUser();
               return HomePage();  //return buildProfileView();
+            }
           })
       ),
     );
   }
+
+
+  void addUser() async {
+    int val = await MAP_SERVER_COMMUNICATOR.addNewUser(
+        UserInfo("sapir david", "sap@gmail.com"));
+    //change user info: UserInfo(controller.googleAccount.value?.displayName ?? '', controller.googleAccount.value?.email ?? ''))
+    print("the val is: ");
+    print(val);
+  }
+
+
 
   FloatingActionButton buildLoginButton() {
     return FloatingActionButton.extended(

@@ -1,6 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+class UserInfo {
+  String? name;
+  String? emailAddr;
+  // String? gender;
+  // List<String>? languages;
+  // int? age;
+  // List<String>? Categories;
+  UserInfo(this.name, this.emailAddr);
+}
+
 class LocationInfo {
   double lat;
   double lng;

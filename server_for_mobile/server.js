@@ -63,6 +63,16 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
     return relevantBounds;
 }
 
+// add new user
+app.get("/addNewUser", async function (req, res) { //next requrie (the function will not stop the program)
+    console.log("inside get of addNewUser - server side")
+    userData = {'name': req.query.name, 'emailAddr': req.query.emailAddr}
+    result = await db.addUser(dbClientSearcher, userData)
+    res.status(200);
+    res.json(result);
+    res.end();
+ })
+
  app.listen(port, async ()=>{
     await init()
     console.log(`Server is runing on port ${port}`)

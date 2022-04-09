@@ -1,4 +1,4 @@
-module.exports = { getAudio, findPois};
+module.exports = { getAudio, findPois, addUser};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -47,6 +47,32 @@ async function getAudio(dbClient, audioId) {
     downloadStream.on('error', ()=> {reject('error to download ' + audioName)})
     });
     return audioPromise
+}
+
+// The function checks if the email address exist in the db - the user sign in before
+async function checkInfo(client, userInfo) {
+    var emailAddrVal = userInfo.emailAddr;
+    var resEmailAddr = await client.db("testDb").collection("mobileUsers").find({emailAddr: emailAddrVal});
+    var resEmailAddrArr = await resEmailAddr.toArray();
+    var resEmailAddrLen = resEmailAddrArr.length;
+
+     if(!resEmailAddrLen) {    //user with the given name or email is not exist
+         console.log(`not found a user with the details: '${emailAddrVal}'`);
+         return 0;
+     } else {    //user with the given email is xist
+        console.log(`Found a user with the email: '${emailAddrVal}'`);
+        return 1;
+     }
+}
+
+// The function inserts a new user to the db
+async function addUser(client, newUserInfo) {
+    checkCode = await checkInfo(client, newUserInfo);
+    if(checkCode == 0) {    //the user's info not exist in the db
+        const res = await client.db("testDb").collection("mobileUsers").insertOne(newUserInfo);
+        console.log(`new user created with the following id: ${res.insertedId}`);
+    }
+    return checkCode;
 }
 
 // check if object is empty
