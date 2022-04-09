@@ -57,6 +57,11 @@ class UserMap extends StatefulWidget {
     }
   }
 
+  static void preUnmountMap() {
+    UserMap.poisMap.clear();
+    userChangeLocationFuncs.clear();
+  }
+
   UserMap({Key? key}) : super(key: key) {
     print("hello from ctor");
   }
@@ -84,26 +89,29 @@ class _UserMapState extends State<UserMap> {
   @override
   void initState() {
     super.initState();
+    print("init _UserMapState");
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
-    FlutterCompass.events?.listen((event) {
-      //TODO check
-      setState(() {
-        mapHeading = 360 + event.heading!;
-        print(event.heading!);
-        // _mapController.rotate(mapHeading);
-      });
-    });
+    // FlutterCompass.events?.listen((event) {
+    //   //TODO check
+    //   // setState(() {
+    //   //   mapHeading = 360 + event.heading!;
+    //   //   print(event.heading!);
+    //   //   _mapController.rotate(mapHeading);
+    //   // });
+    // });
   }
 
   @override
   void dispose() {
+    print("____________________dispose statful map");
     _centerCurrentLocationStreamController.close();
     super.dispose();
   }
 
   // add new pois if location changed
   void onLocationChanged(LocationData currentLocation) async {
+
     print("hello from location changed");
     List<Poi> pois;
     // TODO add a condition that won't crazy the server
