@@ -182,7 +182,6 @@ class _AudioAppState extends State<AudioApp> {
               },
               min: 0.0,
               max: duration.inMilliseconds.toDouble()),
-        if (position != null) _buildMuteButtons(),
         if (position != null) _buildProgressView()
       ],
     ),
@@ -208,26 +207,4 @@ class _AudioAppState extends State<AudioApp> {
     )
   ]);
 
-  Row _buildMuteButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        if (!isMuted)
-          FlatButton.icon(
-            onPressed: () => mute(true),
-            icon: Icon(
-              Icons.headset_off,
-              color: Colors.cyan,
-            ),
-            label: Text('Mute', style: TextStyle(color: Colors.cyan)),
-          ),
-        if (isMuted)
-          FlatButton.icon(
-            onPressed: () => mute(false),
-            icon: Icon(Icons.headset, color: Colors.cyan),
-            label: Text('Unmute', style: TextStyle(color: Colors.cyan)),
-          ),
-      ],
-    );
-  }
 }
