@@ -65,7 +65,7 @@ class Poi {
       longitude: json['_longitude'] as double,
       shortDesc: (json['_shortDesc'] ?? "?") as String,
       language: (json['_language'] ?? "?") as String,
-      audio: (json['_audio'] ?? "?") as String,
+      audio: (json['_audio'] ?? "?"),
       source: (json['_source'] ?? "?") as String,
       Contributor: (json['_Contributor'] ?? "?") as String,
       CreatedDate: (json['_CreatedDate'] ?? "?") as String,
@@ -78,6 +78,14 @@ class Poi {
   }
 }
 
+class Audio {
+  var audio;
+  Audio(this.audio);
+  factory Audio.fromJson(Map<String, dynamic> json) {
+    return Audio(json['data']);
+  }
+
+}
 class MapPoi {
   // return marker from poi
   static Marker getMarkerFromPoi(Poi poi, MutableMapIconButton iconButton) {

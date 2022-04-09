@@ -6,8 +6,8 @@ import 'package:http/retry.dart';
 
 class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
-  //String serverUrl = "autotripguidemobile.loca.lt";
-  String serverUrl = "aded-84-94-109-213.ngrok.io";
+  String serverUrl = "autotripguidemobile.loca.lt";
+  // String serverUrl = "6e82-77-126-195-170.ngrok.io";
 
   static var client = RetryClient(http.Client());
 
@@ -43,6 +43,36 @@ class ServerCommunication {
     } finally {
       // client.close();
     }
+  }
+
+  static Uri addPoiInfoToUrl(String url, String path,String poiId) {
+    final queryParameters = {
+      'poiId': poiId,
+    };
+    final uri = Uri.https(url, path, queryParameters);
+    return uri;
+  }
+
+  Future getAudioById(String poiId) async {
+    Uri newUri = addPoiInfoToUrl(serverUrl , '/getAudio', poiId);
+
+    // var client = http.Client();
+    try {
+      var response = await client.get(newUri);
+      if (response.statusCode == 200 && response.contentLength! > 0) {
+        return Audio.fromJson(jsonDecode(response.body));
+        // final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
+        // return parsed.map<Poi>((json) => Poi.fromJson(json)).toList();
+      } else {
+        if (response.contentLength == 0) {return [];}
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        throw Exception('Failed to load Pois');
+      }
+    } finally {
+      // client.close();
+    }
+
   }
 
   static Uri addUserInfoToUrl(String url, String path,UserInfo userInfo) {

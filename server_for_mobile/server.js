@@ -48,6 +48,15 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
     res.json(pois);
     res.end();
  })
+
+  // get audio
+app.get("/getAudio", async function (req, res) { //next requrie (the function will not stop the program)
+    console.log("inside f getAudio - server side")
+    result = await db.getAudio(dbClientSearcher, req.query.poiId)
+    res.status(200);
+    res.json(result);
+    res.end();
+ })
  
  function addUserDataTosearchParams(searchParams, userData){
      if (userData.language) {
