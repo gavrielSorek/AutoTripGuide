@@ -11,16 +11,18 @@ import 'package:path_provider/path_provider.dart';
 
 typedef void OnError(Exception exception);
 
-const kUrl =
-    "https://www.mediacollege.com/downloads/sound-effects/nature/forest/rainforest-ambient.mp3";
+// const kUrl =
+//     "https://www.mediacollege.com/downloads/sound-effects/nature/forest/rainforest-ambient.mp3";
 
 // void main() {
 //   runApp(MaterialApp(home: Scaffold(body: AudioApp())));
 // }
 
-enum PlayerState { stopped, playing, paused }
+// enum PlayerState { stopped, playing, paused }
 
 class AudioApp extends StatefulWidget {
+  Uint8List byteData = Uint8List(0);
+
   @override
   _AudioAppState createState() => _AudioAppState();
 }
@@ -31,12 +33,10 @@ class _AudioAppState extends State<AudioApp> {
 
   AudioPlayer audioPlayer = AudioPlayer();
 
-  Uint8List byteData = Uint8List(0);
+  PlayerState playerState = PlayerState.STOPPED;
 
-  PlayerState playerState = PlayerState.stopped;
-
-  get isPlaying => playerState == PlayerState.playing;
-  get isPaused => playerState == PlayerState.paused;
+  get isPlaying => playerState == PlayerState.PLAYING;
+  get isPaused => playerState == PlayerState.PAUSED;
 
   get durationText =>
       duration != null ? duration.toString().split('.').first : '';
@@ -69,9 +69,9 @@ class _AudioAppState extends State<AudioApp> {
         .listen((p) => setState(() => position = p));
     _audioPlayerStateSubscription =
         audioPlayer.onPlayerStateChanged.listen((s) {
-          if (s == PlayerState.playing) {
+          if (s == PlayerState.PLAYING) {
             setState(() => duration = Duration(seconds: 1000));
-          } else if (s == PlayerState.stopped) {
+          } else if (s == PlayerState.STOPPED) {
             onComplete();
             setState(() {
               position = duration;
@@ -79,7 +79,7 @@ class _AudioAppState extends State<AudioApp> {
           }
         }, onError: (msg) {
           setState(() {
-            playerState = PlayerState.stopped;
+            playerState = PlayerState.STOPPED;
             duration = Duration(seconds: 0);
             position = Duration(seconds: 0);
           });
@@ -87,27 +87,27 @@ class _AudioAppState extends State<AudioApp> {
   }
 
   Future play() async {
-    await audioPlayer.play(kUrl);
+    await audioPlayer.playBytes(widget.byteData);
     setState(() {
-      playerState = PlayerState.playing;
+      playerState = PlayerState.PLAYING;
     });
   }
 
   Future _playLocal() async {
     print("play local");
     // await audioPlayer.play(localFilePath, isLocal: true);
-    setState(() => playerState = PlayerState.playing);
+    setState(() => playerState = PlayerState.PLAYING);
   }
 
   Future pause() async {
     await audioPlayer.pause();
-    setState(() => playerState = PlayerState.paused);
+    setState(() => playerState = PlayerState.PAUSED);
   }
 
   Future stop() async {
     await audioPlayer.stop();
     setState(() {
-      playerState = PlayerState.stopped;
+      playerState = PlayerState.STOPPED;
       position = Duration();
     });
   }
@@ -121,7 +121,7 @@ class _AudioAppState extends State<AudioApp> {
   }
 
   void onComplete() {
-    setState(() => playerState = PlayerState.stopped);
+    setState(() => playerState = PlayerState.STOPPED);
   }
 
 
@@ -176,9 +176,14 @@ class _AudioAppState extends State<AudioApp> {
         ]),
         if (duration != null)
           Slider(
-              value: position.inMilliseconds.toDouble(),
+              value: 0.0,
+              // value: position.inMilliseconds.toDouble(),
               onChanged: (double value) {
-                audioPlayer.seek(Duration(milliseconds: (value / 1000).round()));
+                print("--------------------------");
+                print(value);
+                audioPlayer.seek(Duration(milliseconds: value.round()));
+
+                // audioPlayer.seek(Duration(milliseconds: (value / 1000).round()));
               },
               min: 0.0,
               max: duration.inMilliseconds.toDouble()),

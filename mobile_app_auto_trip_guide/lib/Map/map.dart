@@ -79,6 +79,7 @@ class UserMap extends StatefulWidget {
 
 class _UserMapState extends State<UserMap> {
   GuideData guideData = GuideData();
+  AudioApp audioPlayer = AudioApp();
   late Guide guideTool;
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
@@ -103,7 +104,7 @@ class _UserMapState extends State<UserMap> {
     print("init _UserMapState");
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
-    guideTool = Guide(context, guideData);
+    guideTool = Guide(context, guideData, audioPlayer);
     // FlutterCompass.events?.listen((event) {
     //   //TODO check
     //   // setState(() {
@@ -232,7 +233,7 @@ class _UserMapState extends State<UserMap> {
                   width: MediaQuery.of(context).size.width,
                   height: 152,
                   color: Colors.green,
-                  child: AudioApp(),
+                  child: audioPlayer,
                 )
             )
         ),
