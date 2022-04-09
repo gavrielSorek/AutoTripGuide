@@ -82,3 +82,6 @@ app.get("/addNewUser", async function (req, res) { //next requrie (the function 
 // http://localhost.run/ 
 
 // write this in terminal:  ssh -R 80:localhost:5600 localhost.run
+// OR
+// install ngrok globaly : "npm install ngrok -g" 
+// and then : "ngrok http 5600"
