@@ -24,6 +24,7 @@ class LocationInfo {
 }
 
 class Poi {
+  String? id;
   String? poiName;
   double? latitude;
   double? longitude;
@@ -40,6 +41,7 @@ class Poi {
   List<String>? Categories;
 
   Poi({
+    this.id,
     this.poiName,
     this.latitude,
     this.longitude,
@@ -58,6 +60,7 @@ class Poi {
 
   factory Poi.fromJson(Map<String, dynamic> json) {
     return Poi(
+      id: json['_id'] as String,
       poiName: json['_poiName'] as String,
       latitude: json['_latitude'] as double,
       longitude: json['_longitude'] as double,
