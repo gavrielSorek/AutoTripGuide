@@ -1,24 +1,10 @@
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:path_provider/path_provider.dart';
 
 typedef void OnError(Exception exception);
-
-// const kUrl =
-//     "https://www.mediacollege.com/downloads/sound-effects/nature/forest/rainforest-ambient.mp3";
-
-// void main() {
-//   runApp(MaterialApp(home: Scaffold(body: AudioApp())));
-// }
-
-// enum PlayerState { stopped, playing, paused }
 
 class AudioApp extends StatefulWidget {
   Uint8List byteData = Uint8List(0);
@@ -139,9 +125,9 @@ class _AudioAppState extends State<AudioApp> {
   }
 
 
-  Future _loadFile() async {
-    print("load file!!!!!!!!!!!! pressed");
-  }
+  // Future _loadFile() async {
+  //   print("load file!!!!!!!!!!!! pressed");
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -152,10 +138,6 @@ class _AudioAppState extends State<AudioApp> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Text(
-            //   'Flutter Audioplayer',
-            //   style: textTheme.headline1,
-            // ),
             Material(child: _buildPlayer()),
           ],
         ),
@@ -164,11 +146,8 @@ class _AudioAppState extends State<AudioApp> {
   }
 
   Widget _buildPlayer() => Container(
-    // padding: EdgeInsets.all(5.0),
     width: double.infinity ,
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
+    child:
         Row(mainAxisSize: MainAxisSize.min, children: [
           IconButton(
             onPressed: () {
@@ -184,17 +163,10 @@ class _AudioAppState extends State<AudioApp> {
                 });
               }
             },
-            // onPressed: isPlaying ? null : () => play(),
             iconSize: 30.0,
             icon: playPauseIcon,
             color: Colors.cyan,
           ),
-          // IconButton(
-          //   onPressed: isPlaying ? () => pause() : null,
-          //   iconSize: 30.0,
-          //   icon: Icon(Icons.pause),
-          //   color: Colors.cyan,
-          // ),
           IconButton(
             onPressed: isPlaying || isPaused ? () => stop() : null,
             iconSize: 30.0,
@@ -203,35 +175,14 @@ class _AudioAppState extends State<AudioApp> {
           ),
           if (duration != null)
             Slider(
-                value: 0.0,
-                // value: position.inMilliseconds.toDouble(),
+                value: position.inMilliseconds.toDouble(),
                 onChanged: (double value) {
-                  print("--------------------------");
-                  print(value);
                   audioPlayer.seek(Duration(milliseconds: value.round()));
-
-                  // audioPlayer.seek(Duration(milliseconds: (value / 1000).round()));
                 },
                 min: 0.0,
                 max: duration.inMilliseconds.toDouble()),
           if (position != null) _buildProgressView()
         ]),
-        // if (duration != null)
-        //   Slider(
-        //       value: 0.0,
-        //       // value: position.inMilliseconds.toDouble(),
-        //       onChanged: (double value) {
-        //         print("--------------------------");
-        //         print(value);
-        //         audioPlayer.seek(Duration(milliseconds: value.round()));
-        //
-        //         // audioPlayer.seek(Duration(milliseconds: (value / 1000).round()));
-        //       },
-        //       min: 0.0,
-        //       max: duration.inMilliseconds.toDouble()),
-        // if (position != null) _buildProgressView()
-      ],
-    ),
   );
 
   Row _buildProgressView() => Row(mainAxisSize: MainAxisSize.min, children: [
