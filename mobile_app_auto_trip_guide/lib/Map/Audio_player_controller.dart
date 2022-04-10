@@ -68,9 +68,12 @@ class _AudioAppState extends State<AudioApp> {
     _positionSubscription = audioPlayer.onAudioPositionChanged
         .listen((p) => setState(() => position = p));
     _audioPlayerStateSubscription =
-        audioPlayer.onPlayerStateChanged.listen((s) {
+        audioPlayer.onPlayerStateChanged.listen((s) async {
           if (s == PlayerState.PLAYING) {
-            setState(() => duration = Duration(seconds: 1000));
+            // print("-------------------------------");
+            // int ddd = await audioPlayer.getDuration();
+            // print(ddd);
+            // setState(() => duration = Duration(seconds: 1000));
           } else if (s == PlayerState.STOPPED) {
             onComplete();
             setState(() {
@@ -84,6 +87,14 @@ class _AudioAppState extends State<AudioApp> {
             position = Duration(seconds: 0);
           });
         });
+    audioPlayer.onDurationChanged.listen((Duration newDuration) {
+      // duration = newDuration;
+      setState(() => duration = newDuration);
+
+      // if (playerState == PlayerState.PLAYING) {
+      //   setState(() => duration = newDuration);
+      // }
+    });
   }
 
   Future play() async {
@@ -93,11 +104,11 @@ class _AudioAppState extends State<AudioApp> {
     });
   }
 
-  Future _playLocal() async {
-    print("play local");
-    // await audioPlayer.play(localFilePath, isLocal: true);
-    setState(() => playerState = PlayerState.PLAYING);
-  }
+  // Future _playLocal() async {
+  //   print("play local");
+  //   // await audioPlayer.play(localFilePath, isLocal: true);
+  //   setState(() => playerState = PlayerState.PLAYING);
+  // }
 
   Future pause() async {
     await audioPlayer.pause();
@@ -112,13 +123,13 @@ class _AudioAppState extends State<AudioApp> {
     });
   }
 
-  Future mute(bool muted) async {
-    await audioPlayer.setVolume(0.0);
-    // await audioPlayer.mute(muted);
-    setState(() {
-      isMuted = muted;
-    });
-  }
+  // Future mute(bool muted) async {
+  //   await audioPlayer.setVolume(0.0);
+  //   // await audioPlayer.mute(muted);
+  //   setState(() {
+  //     isMuted = muted;
+  //   });
+  // }
 
   void onComplete() {
     setState(() => playerState = PlayerState.STOPPED);

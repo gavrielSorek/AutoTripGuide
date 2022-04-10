@@ -17,7 +17,8 @@ class Guide {
   Guide(this.context, this.guideData, this.audioPlayer);
 
   void setMapPoiColor(MapPoi mapPoi, Color color) {
-    mapPoi.iconButton!.iconState!.setColor(Colors.black);
+
+    mapPoi.iconButton!.iconState?.setColor(Colors.black);
   }
 
   handleMapPoiVoice(MapPoi mapPoi) async{

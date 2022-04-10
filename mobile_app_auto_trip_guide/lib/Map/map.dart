@@ -21,7 +21,7 @@ class UserMap extends StatefulWidget {
   static ServerCommunication? MAP_SERVER_COMMUNICATOR;
   static List userChangeLocationFuncs = [];
   static Map poisMap = Map<String, MapPoi>(); // the string is poi name
-  static bool continueGuide = false;
+  static bool continueGuide = true;
 
   static Future<void> mapInit() async {
     // initialization order is very important
@@ -146,7 +146,12 @@ class _UserMapState extends State<UserMap> {
           }
         }
       });
-      // guideTool.handleMapPoiVoice(UserMap.poisMap["my house"]);
+      //TODO delete
+      if (UserMap.continueGuide) {
+        UserMap.continueGuide = false;
+        guideTool.handleMapPoiVoice(UserMap.poisMap["Masada"]);
+
+      }
     }
   }
 
