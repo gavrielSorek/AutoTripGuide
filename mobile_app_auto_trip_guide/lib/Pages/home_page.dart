@@ -37,6 +37,7 @@ class HomePage extends StatelessWidget {
               children: [
                 Container(
                   child: ElevatedButton(onPressed: ()=> mapButtonClickedEvent(context), child: Icon(Icons.map),
+                    onLongPress: ()=>mapButtonLongClickedEvent(context),
                   ),
                   height: MediaQuery.of(context).size.height / 11,
                   width: MediaQuery.of(context).size.width / 4,

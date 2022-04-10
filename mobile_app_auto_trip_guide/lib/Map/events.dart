@@ -6,14 +6,30 @@ import 'package:flutter_compass/flutter_compass.dart';
 import '../Pages/account_page.dart';
 
 void mapButtonClickedEvent(BuildContext context) {
+  Navigator.popUntil(context, (route) {
+    if (route.settings.name == '/') {
+      return true;
+    }
+    return false;
+  });
+  while (!ModalRoute.of(context)!.isCurrent) {
+    Navigator.pop(context);
+  }
+}
+void mapButtonLongClickedEvent(BuildContext context) {
+  mapButtonClickedEvent(context); //get to home page
+
 }
 void accountButtonClickedEvent(BuildContext context) {
   Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage()));
 }
+
+
 void reviewsButtonClickedEvent(BuildContext context) {
 
 }
 void settingButtonClickedEvent(BuildContext context) {
+
 
 }
 //

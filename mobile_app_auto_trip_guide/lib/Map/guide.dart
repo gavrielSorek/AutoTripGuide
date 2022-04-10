@@ -4,9 +4,6 @@ import 'package:final_project/Map/Audio_player_controller.dart';
 import 'package:final_project/Map/location_types.dart';
 import 'package:final_project/Map/map.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:audioplayers/audioplayers.dart';
-
 import 'BlurryDialog.dart';
 
 class Guide {

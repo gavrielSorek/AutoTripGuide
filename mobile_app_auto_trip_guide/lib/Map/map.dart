@@ -214,7 +214,7 @@ class _UserMapState extends State<UserMap> {
       children: [
         TileLayerWidget(
           options: TileLayerOptions(
-            urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            urlTemplate: 'https://a.tile.openstreetmap.de/{z}/{x}/{y}.png',
             subdomains: ['a', 'b', 'c'],
             maxZoom: 19,
           ),
