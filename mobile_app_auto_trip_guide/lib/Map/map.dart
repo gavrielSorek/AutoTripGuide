@@ -258,6 +258,9 @@ class _UserMapState extends State<UserMap> {
                   onPressed: () {
                     setState(() {
                       guideData.changeGuideType();
+                      if (guideData.status == GuideStatus.text) {
+                        audioPlayer.clearPlayer();
+                      }
                     });
                     print("change to audio or to text");
                   },

@@ -9,8 +9,16 @@ typedef void OnError(Exception exception);
 class AudioApp extends StatefulWidget {
   Uint8List byteData = Uint8List(0);
 
+  clearPlayer() {
+    // byteData = Uint8List(0);
+    _audioAppState!.clearPlayer();
+  }
+  _AudioAppState? _audioAppState;
   @override
-  _AudioAppState createState() => _AudioAppState();
+  _AudioAppState createState() {
+    _audioAppState = _AudioAppState();
+    return _audioAppState!;
+  }
 }
 
 class _AudioAppState extends State<AudioApp> {
@@ -36,6 +44,10 @@ class _AudioAppState extends State<AudioApp> {
 
   late StreamSubscription _positionSubscription;
   late StreamSubscription _audioPlayerStateSubscription;
+
+  void clearPlayer() {
+    stop();
+  }
 
   @override
   void initState() {
