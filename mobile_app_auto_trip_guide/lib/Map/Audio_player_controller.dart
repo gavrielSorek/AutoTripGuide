@@ -86,7 +86,11 @@ class _AudioAppState extends State<AudioApp> {
   }
 
   Future play() async {
-    await audioPlayer.playBytes(widget.byteData);
+    if (isPaused) {
+      await audioPlayer.resume();
+    } else {
+      await audioPlayer.playBytes(widget.byteData);
+    }
     setState(() {
       playerState = PlayerState.PLAYING;
     });
@@ -151,6 +155,9 @@ class _AudioAppState extends State<AudioApp> {
         Row(mainAxisSize: MainAxisSize.min, children: [
           IconButton(
             onPressed: () {
+              if (widget.byteData.isEmpty) {
+                return;
+              }
               if (!isPlaying) {
                 setState(() {
                   playPauseIcon = pauseIcon;
