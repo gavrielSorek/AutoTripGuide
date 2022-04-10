@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:final_project/Map/Audio_player_controller.dart';
-import 'package:final_project/Map/location_types.dart';
+import 'package:final_project/Map/audio_player_controller.dart';
+import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/map.dart';
 import 'package:flutter/material.dart';
-import 'BlurryDialog.dart';
+import 'blurry_dialog.dart';
 
 class Guide {
   BuildContext context;
@@ -29,6 +29,7 @@ class Guide {
       List<int> intList = audio.audio.cast<int>().toList();
       Uint8List byteData = Uint8List.fromList(intList); // Load audio as a byte array here.
       audioPlayer.byteData = byteData;
+
       // AudioPlayer audioPlayer = AudioPlayer();
       // int result = await audioPlayer.playBytes(byteData);
 

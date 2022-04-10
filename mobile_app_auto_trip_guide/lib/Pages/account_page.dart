@@ -1,9 +1,6 @@
-import 'package:final_project/Map/events.dart';
-import 'package:final_project/Map/map.dart';
 import 'package:final_project/Pages/personal_details_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:final_project/Pages/home_page.dart';
 import 'package:final_project/Pages/login_controller.dart';
 import 'package:get/get.dart';
 

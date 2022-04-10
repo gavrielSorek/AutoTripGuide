@@ -1,13 +1,13 @@
 import 'dart:convert';
-import 'package:final_project/Map/location_types.dart';
+import 'package:final_project/Map/types.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
 
 
 class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
-  String serverUrl = "autotripguidemobile.loca.lt";
-  // String serverUrl = "6e82-77-126-195-170.ngrok.io";
+  // String serverUrl = "autotripguidemobile.loca.lt";
+  String serverUrl = "3961-77-126-195-170.ngrok.io";
 
   static var client = RetryClient(http.Client());
 

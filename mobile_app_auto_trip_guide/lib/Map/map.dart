@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
-import 'package:final_project/Map/location_types.dart';
+import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
-import 'package:final_project/Map/Audio_player_controller.dart';
+import 'package:final_project/Map/audio_player_controller.dart';
 
 import 'guide.dart';
 
@@ -248,9 +246,9 @@ class _UserMapState extends State<UserMap> {
             child: Container(
                 alignment: Alignment.bottomRight,
                 margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height / 6,
-                    right: MediaQuery.of(context).size.width / 15),
-                color: Colors.yellow,
+                    top: MediaQuery.of(context).size.height / 10,
+                    right: MediaQuery.of(context).size.width / 20),
+                color: Colors.transparent,
                 height: MediaQuery.of(context).size.width / 10,
                 width: MediaQuery.of(context).size.width / 10,
                 child: FloatingActionButton(

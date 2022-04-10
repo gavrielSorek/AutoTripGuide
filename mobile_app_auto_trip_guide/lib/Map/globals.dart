@@ -1,9 +1,7 @@
 import 'dart:collection';
-
-import 'package:final_project/Map/Audio_player_controller.dart';
-import 'package:final_project/Map/location_types.dart';
+import 'package:final_project/Map/audio_player_controller.dart';
+import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
-
 import 'map.dart';
 
 class Globals {

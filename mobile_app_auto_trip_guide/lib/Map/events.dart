@@ -1,8 +1,5 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_compass/flutter_compass.dart';
-
 import '../Pages/account_page.dart';
 
 void mapButtonClickedEvent(BuildContext context) {
