@@ -236,7 +236,7 @@ class _UserMapState extends State<UserMap> {
                 duration: const Duration(milliseconds: 500),
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  height: 152,
+                  height: 48,
                   color: Colors.green,
                   child: audioPlayer,
                 )

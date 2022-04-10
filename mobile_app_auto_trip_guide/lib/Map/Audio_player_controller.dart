@@ -30,7 +30,9 @@ class AudioApp extends StatefulWidget {
 class _AudioAppState extends State<AudioApp> {
   Duration duration = Duration(seconds: 0);
   Duration position = Duration(seconds: 0);
-
+  Icon playIcon = Icon(Icons.play_arrow);
+  Icon pauseIcon = Icon(Icons.pause);
+  Icon playPauseIcon = Icon(Icons.play_arrow); // default
   AudioPlayer audioPlayer = AudioPlayer();
 
   PlayerState playerState = PlayerState.STOPPED;
@@ -120,6 +122,7 @@ class _AudioAppState extends State<AudioApp> {
     setState(() {
       playerState = PlayerState.STOPPED;
       position = Duration();
+      playPauseIcon = playIcon;
     });
   }
 
@@ -161,60 +164,77 @@ class _AudioAppState extends State<AudioApp> {
   }
 
   Widget _buildPlayer() => Container(
-    padding: EdgeInsets.all(5.0),
+    // padding: EdgeInsets.all(5.0),
+    width: double.infinity ,
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Row(mainAxisSize: MainAxisSize.min, children: [
           IconButton(
-            onPressed: isPlaying ? null : () => play(),
+            onPressed: () {
+              if (!isPlaying) {
+                setState(() {
+                  playPauseIcon = pauseIcon;
+                  play();
+                });
+              } else {
+                setState(() {
+                  playPauseIcon = playIcon;
+                  pause();
+                });
+              }
+            },
+            // onPressed: isPlaying ? null : () => play(),
             iconSize: 30.0,
-            icon: Icon(Icons.play_arrow),
+            icon: playPauseIcon,
             color: Colors.cyan,
           ),
-          IconButton(
-            onPressed: isPlaying ? () => pause() : null,
-            iconSize: 30.0,
-            icon: Icon(Icons.pause),
-            color: Colors.cyan,
-          ),
+          // IconButton(
+          //   onPressed: isPlaying ? () => pause() : null,
+          //   iconSize: 30.0,
+          //   icon: Icon(Icons.pause),
+          //   color: Colors.cyan,
+          // ),
           IconButton(
             onPressed: isPlaying || isPaused ? () => stop() : null,
             iconSize: 30.0,
             icon: Icon(Icons.stop),
             color: Colors.cyan,
           ),
-        ]),
-        if (duration != null)
-          Slider(
-              value: 0.0,
-              // value: position.inMilliseconds.toDouble(),
-              onChanged: (double value) {
-                print("--------------------------");
-                print(value);
-                audioPlayer.seek(Duration(milliseconds: value.round()));
+          if (duration != null)
+            Slider(
+                value: 0.0,
+                // value: position.inMilliseconds.toDouble(),
+                onChanged: (double value) {
+                  print("--------------------------");
+                  print(value);
+                  audioPlayer.seek(Duration(milliseconds: value.round()));
 
-                // audioPlayer.seek(Duration(milliseconds: (value / 1000).round()));
-              },
-              min: 0.0,
-              max: duration.inMilliseconds.toDouble()),
-        if (position != null) _buildProgressView()
+                  // audioPlayer.seek(Duration(milliseconds: (value / 1000).round()));
+                },
+                min: 0.0,
+                max: duration.inMilliseconds.toDouble()),
+          if (position != null) _buildProgressView()
+        ]),
+        // if (duration != null)
+        //   Slider(
+        //       value: 0.0,
+        //       // value: position.inMilliseconds.toDouble(),
+        //       onChanged: (double value) {
+        //         print("--------------------------");
+        //         print(value);
+        //         audioPlayer.seek(Duration(milliseconds: value.round()));
+        //
+        //         // audioPlayer.seek(Duration(milliseconds: (value / 1000).round()));
+        //       },
+        //       min: 0.0,
+        //       max: duration.inMilliseconds.toDouble()),
+        // if (position != null) _buildProgressView()
       ],
     ),
   );
 
   Row _buildProgressView() => Row(mainAxisSize: MainAxisSize.min, children: [
-    Padding(
-      padding: EdgeInsets.all(5.0),
-      child: CircularProgressIndicator(
-        value: position != null && position.inMilliseconds > 0
-            ? (position.inMilliseconds.toDouble()) /
-            (duration.inMilliseconds.toDouble())
-            : 0.0,
-        valueColor: AlwaysStoppedAnimation(Colors.cyan),
-        backgroundColor: Colors.grey.shade400,
-      ),
-    ),
     Text(
       position != null
           ? "${positionText ?? ''} / ${durationText ?? ''}"
