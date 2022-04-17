@@ -77,6 +77,7 @@ class UserMap extends StatefulWidget {
     userMapState = _UserMapState();
     return userMapState!;
   }
+
 }
 
 class _UserMapState extends State<UserMap> {
@@ -369,5 +370,9 @@ class _UserMapState extends State<UserMap> {
       markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.id]] =
           getMarkerFromPoi(mapPoi.poi);
     });
+  }
+
+  void triggerGuide() {
+    guideTool.handlePois();
   }
 }

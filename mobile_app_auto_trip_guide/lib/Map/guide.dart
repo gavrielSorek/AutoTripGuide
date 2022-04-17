@@ -40,6 +40,7 @@ class Guide {
     }, () {
       // next callback
       Navigator.of(context).pop();
+      state = GuideState.waiting;
       handleNextPoi();
     }, () {
       // cancel
@@ -78,6 +79,8 @@ class Guide {
     }, () {
       // next callback
       Navigator.of(context).pop();
+      state = GuideState.waiting;
+
       handleNextPoi();
     }, () {
       // cancel

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Pages/account_page.dart';
+import 'map.dart';
 
 void mapButtonClickedEvent(BuildContext context) {
   Navigator.popUntil(context, (route) {
@@ -16,6 +17,8 @@ void mapButtonClickedEvent(BuildContext context) {
 
 void mapButtonLongClickedEvent(BuildContext context) {
   mapButtonClickedEvent(context); //get to home page
+  print("triggering guide");
+  UserMap.USER_MAP!.userMapState?.triggerGuide();
 }
 
 void accountButtonClickedEvent(BuildContext context) {

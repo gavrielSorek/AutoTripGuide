@@ -6,7 +6,7 @@ import 'package:http/retry.dart';
 class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
   // String serverUrl = "autotripguidemobile.loca.lt";
-  String serverUrl = "999d-77-126-184-189.ngrok.io";
+  String serverUrl = "204f-77-126-184-189.ngrok.io";
 
   var client = RetryClient(http.Client());
 
@@ -66,12 +66,12 @@ class ServerCommunication {
         // final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
         // return parsed.map<Poi>((json) => Poi.fromJson(json)).toList();
       } else {
-        if (response.contentLength == 0) {
-          return [];
-        }
         // If the server did not return a 200 OK response,
         // then throw an exception.
-        throw Exception('Failed to load Pois');
+        print('failed to load audio');
+        return [];
+
+        // throw Exception('Failed to load audio');
       }
     } finally {
       // client.close();
