@@ -7,12 +7,11 @@ import 'package:http/retry.dart';
 class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
   // String serverUrl = "autotripguidemobile.loca.lt";
-  String serverUrl = "3961-77-126-195-170.ngrok.io";
+  String serverUrl = "17a6-77-126-184-189.ngrok.io";
 
-  static var client = RetryClient(http.Client());
+  var client = RetryClient(http.Client());
+  // var client = http.Client();
 
-
-  ServerCommunication();
 
   static Uri addLocationInfoToUrl(String url, String path,LocationInfo locationInfo) {
     final queryParameters = {

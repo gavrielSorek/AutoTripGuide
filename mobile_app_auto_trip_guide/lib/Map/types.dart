@@ -118,6 +118,8 @@ class MapPoi {
 }
 
 enum GuideStatus { voice, text }
+enum GuideState { working, stopped }
+
 
 // contain data about the guid type
 class GuideData {

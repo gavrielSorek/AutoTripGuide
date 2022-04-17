@@ -11,6 +11,7 @@ class Guide {
   BuildContext context;
   GuideData guideData;
   AudioApp audioPlayer;
+  GuideState state = GuideState.stopped;
 
   Guide(this.context, this.guideData, this.audioPlayer);
 
@@ -52,9 +53,33 @@ class Guide {
 
   void handleMapPoiText(MapPoi mapPoi) {
     setMapPoiColor(mapPoi, Colors.black);
-  }
-  void handlePois() {
 
+
+  }
+  void handlePois() async {
+    print("in handlePois");
+    // Globals.globalUnhandledPois.forEach(void f(K key, V value));
+
+    if (state == GuideState.working) {
+      return;
+    }
+    state = GuideState.working;
+    Map clonePois = Map.from(Globals.globalUnhandledPois);
+    clonePois.forEach((var poiId, var mapPoi) {
+      MapPoi mapPoiElement = mapPoi as MapPoi;
+      if (guideData.status == GuideStatus.voice) {
+        handleMapPoiVoice(mapPoiElement);
+      } else {
+        handleMapPoiText(mapPoiElement);
+      }
+      Globals.globalUnhandledPois.remove(poiId);
+
+    });
+    if (Globals.globalUnhandledPois.isNotEmpty) {
+      handlePois();
+    } else {
+      state = GuideState.stopped;
+    }
   }
 
 

@@ -61,6 +61,7 @@ class UserMap extends StatefulWidget {
 
   static void preUnmountMap() {
     Globals.globalAllPois.cast();
+    Globals.globalUnhandledPois.clear();
     userChangeLocationFuncs.clear();
   }
 
@@ -89,10 +90,10 @@ class _UserMapState extends State<UserMap> {
     print("hello from ctor2");
   }
 
-  void guideUser() async {
-    sleep(Duration(seconds: 5));
-    guideTool.handleMapPoiVoice(Globals.globalAllPois['my house']);
-  }
+  // void guideUser() async {
+  //   sleep(Duration(seconds: 5));
+  //   guideTool.handleMapPoiVoice(Globals.globalAllPois['my house']);
+  // }
 
   @override
   void initState() {
@@ -101,6 +102,9 @@ class _UserMapState extends State<UserMap> {
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
     guideTool = Guide(context, guideData, Globals.globalAudioPlayer);
+    WidgetsBinding.instance
+        ?.addPostFrameCallback((_) { guideTool.handlePois();});
+
     // FlutterCompass.events?.listen((event) {
     //   //TODO check
     //   // setState(() {
@@ -138,14 +142,17 @@ class _UserMapState extends State<UserMap> {
           if (!Globals.globalAllPois.containsKey(poi.poiName)) {
             MapPoi mapPoi = MapPoi(poi);
             Globals.globalAllPois[poi.poiName] = mapPoi;
+            Globals.globalUnhandledPois[poi.poiName] = mapPoi;
             markersList.add(mapPoi.marker!);
           }
         }
       });
+
       //TODO delete
       if (UserMap.continueGuide) {
         UserMap.continueGuide = false;
-        guideTool.handleMapPoiVoice(Globals.globalAllPois["Masada"]);
+        guideTool.handlePois();
+        // guideTool.handleMapPoiVoice(Globals.globalAllPois["Masada"]);
 
       }
     }

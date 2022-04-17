@@ -3,12 +3,12 @@ import 'package:final_project/Pages/login_controller.dart';
 import 'package:get/get.dart';
 import 'package:final_project/Pages/home_page.dart';
 import 'package:final_project/Map/server_communication.dart';
+import '../Map/globals.dart';
 import '../Map/types.dart';
 
 
 class LoginPage extends StatelessWidget {
   final controller = Get.put(LoginController());
-  ServerCommunication MAP_SERVER_COMMUNICATOR = ServerCommunication();
 
   //LoginPage({Key? key}) : super(key: key);
 
@@ -30,7 +30,7 @@ class LoginPage extends StatelessWidget {
 
 
   void addUser() async {
-     MAP_SERVER_COMMUNICATOR.addNewUser(
+     Globals.globalServerCommunication.addNewUser(
         UserInfo(controller.googleAccount.value?.displayName ?? '', controller.googleAccount.value?.email ?? '', "", [""], 0, [""]));
   }
 
