@@ -1,3 +1,4 @@
+import 'package:final_project/Map/map.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -108,7 +109,7 @@ class MapPoi {
   MutableMapIconButton? iconButton;
 
   MapPoi(this.poi) {
-    iconButton = MutableMapIconButton();
+    iconButton = MutableMapIconButton(()=>{UserMap.USER_MAP!.userMapState?.guideAboutMapPoi(this)});
     // IconButton(
     // icon: Icon(Icons.location_on),
     // color: Colors.purpleAccent,
@@ -145,12 +146,13 @@ class GuideData {
 }
 
 class MutableMapIconButton extends StatefulWidget {
-  MutableMapIconButton({Key? key}) : super(key: key);
-  _MutableMapIconButton? iconState;
+  dynamic onPressedFunc;
 
+  MutableMapIconButton(this.onPressedFunc, {Key? key}) : super(key: key);
+  _MutableMapIconButton? iconState;
   @override
   State<StatefulWidget> createState() {
-    iconState = _MutableMapIconButton();
+    iconState = _MutableMapIconButton(onPressedFunc);
     return iconState!;
   }
 }
@@ -158,6 +160,8 @@ class MutableMapIconButton extends StatefulWidget {
 class _MutableMapIconButton extends State<StatefulWidget> {
   Color _iconColor = Colors.purple;
   double _iconSize = 45.0;
+  dynamic onPressedFunc;
+  _MutableMapIconButton(this.onPressedFunc);
 
   void setColor(Color color) {
     setState(() {
@@ -177,9 +181,7 @@ class _MutableMapIconButton extends State<StatefulWidget> {
       icon: Icon(Icons.location_on),
       iconSize: _iconSize,
       color: _iconColor,
-      onPressed: () {
-        setColor(Colors.black);
-      },
+      onPressed: onPressedFunc,
     );
   }
 }

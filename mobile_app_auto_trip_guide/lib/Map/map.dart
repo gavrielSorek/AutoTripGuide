@@ -183,25 +183,6 @@ class _UserMapState extends State<UserMap> {
     return false;
   }
 
-  // return marker from poi
-  Marker getMarkerFromPoi(Poi poi, {Color color = Colors.purpleAccent}) {
-    return Marker(
-      width: 45.0,
-      height: 45.0,
-      point: LatLng(poi.latitude, poi.longitude),
-      builder: (context) => Container(
-        child: IconButton(
-          icon: Icon(Icons.location_on),
-          color: color,
-          iconSize: 45.0,
-          onPressed: () {
-            print('Marker tapped');
-          },
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     print("hello from build map");
@@ -400,19 +381,24 @@ class _UserMapState extends State<UserMap> {
 
   void highlightMapPoi(MapPoi mapPoi) {
     setState(() {
-      markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.id]] =
-          getMarkerFromPoi(mapPoi.poi, color: Colors.black);
+      mapPoi.iconButton!.iconState?.setColor(Colors.black);
+      // markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.id]] =
+      //     getMarkerFromPoi(mapPoi.poi, color: Colors.black);
     });
   }
 
   void unHighlightMapPoi(MapPoi mapPoi) {
     setState(() {
-      markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.id]] =
-          getMarkerFromPoi(mapPoi.poi);
+      mapPoi.iconButton!.iconState?.setColor(Colors.purpleAccent);
     });
   }
 
   void triggerGuide() {
     guideTool.handlePois();
+  }
+
+  void guideAboutMapPoi(MapPoi mapPoi) {
+    guideTool.stop();
+    guideTool.handleMapPoi(mapPoi);
   }
 }

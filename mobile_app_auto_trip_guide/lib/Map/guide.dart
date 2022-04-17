@@ -17,7 +17,7 @@ class Guide {
 
   Guide(this.context, this.guideData, this.audioPlayer);
 
-  void handleMapPoiVoice(MapPoi mapPoi) async {
+  Future<void> handleMapPoiVoice(MapPoi mapPoi) async {
     // setMapPoiColor(mapPoi, Colors.black);
     if (lastMapPoiHandled != null) {
       UserMap.USER_MAP!.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
@@ -56,7 +56,7 @@ class Guide {
     );
   }
 
-  void handleMapPoiText(MapPoi mapPoi) async {
+  Future<void> handleMapPoiText(MapPoi mapPoi) async {
     if (lastMapPoiHandled != null) {
       UserMap.USER_MAP!.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
     }
@@ -90,7 +90,6 @@ class Guide {
       // cancel
       Navigator.of(context).pop();
       state = GuideState.waiting;
-
     });
     showDialog(
       context: context,
@@ -100,27 +99,54 @@ class Guide {
     );
   }
 
+  Future<void> handleMapPoi (MapPoi mapPoi) async {
+    state = GuideState.working;
+    if (guideData.status == GuideStatus.voice) {
+      await handleMapPoiVoice(mapPoi);
+    } else {
+      await handleMapPoiText(mapPoi);
+    }
+    Globals.globalUnhandledPois.remove(mapPoi.poi.id);
+    state = GuideState.waiting;
+
+  }
+
   void handleNextPoi() async {
     if (state == GuideState.working || Globals.globalUnhandledPois.isEmpty) {
       print("error in handleNextPoi in Guide or pois map is empty");
       return;
     }
-    state = GuideState.working;
     MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
-    if (guideData.status == GuideStatus.voice) {
-      handleMapPoiVoice(mapPoiElement);
-    } else {
-      handleMapPoiText(mapPoiElement);
-    }
-    Globals.globalUnhandledPois.remove(mapPoiElement.poi.id);
+    await handleMapPoi(mapPoiElement);
     if (Globals.globalUnhandledPois.isNotEmpty && state != GuideState.stopped) {
-      handleNextPoi();
     } else {
       if (Globals.globalUnhandledPois.isEmpty) {
         state = GuideState.waiting;
       }
     }
   }
+
+  // void handleNextPoi() async {
+  //   if (state == GuideState.working || Globals.globalUnhandledPois.isEmpty) {
+  //     print("error in handleNextPoi in Guide or pois map is empty");
+  //     return;
+  //   }
+  //   state = GuideState.working;
+  //   MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
+  //   if (guideData.status == GuideStatus.voice) {
+  //     handleMapPoiVoice(mapPoiElement);
+  //   } else {
+  //     handleMapPoiText(mapPoiElement);
+  //   }
+  //   Globals.globalUnhandledPois.remove(mapPoiElement.poi.id);
+  //   if (Globals.globalUnhandledPois.isNotEmpty && state != GuideState.stopped) {
+  //     handleNextPoi();
+  //   } else {
+  //     if (Globals.globalUnhandledPois.isEmpty) {
+  //       state = GuideState.waiting;
+  //     }
+  //   }
+  // }
 
   void handlePois() async {
     print("in handlePois");

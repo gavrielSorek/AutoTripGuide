@@ -69,7 +69,7 @@ class ServerCommunication {
         // If the server did not return a 200 OK response,
         // then throw an exception.
         print('failed to load audio');
-        return [];
+        return Audio.fromJson(jsonDecode('{"type":"Buffer","data":[]}'));
 
         // throw Exception('Failed to load audio');
       }
