@@ -77,13 +77,14 @@ class UserMap extends StatefulWidget {
     userMapState = _UserMapState();
     return userMapState!;
   }
-
 }
 
 class _UserMapState extends State<UserMap> {
   GuideData guideData = GuideData();
   late Guide guideTool;
-  NavigationButtonState navButtonState = NavigationButtonState.hide;
+  ButtonState navButtonState = ButtonState.hide;
+  ButtonState nextButtonState = ButtonState.hide;
+
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
   final MapController _mapController = MapController();
@@ -253,32 +254,58 @@ class _UserMapState extends State<UserMap> {
                   color: Colors.green,
                   child: Globals.globalAudioPlayer,
                 ))),
-
-        Align(
-            alignment: Alignment.topRight,
-            child: Container(
-                alignment: Alignment.bottomRight,
-                margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height / 10,
-                    right: MediaQuery.of(context).size.width / 20),
-                color: Colors.transparent,
-                height: MediaQuery.of(context).size.width / 10,
-                width: MediaQuery.of(context).size.width / 10,
-                child: FloatingActionButton(
-                  heroTag: null,
-                  onPressed: () {
-                    setState(() {
-                      guideData.changeGuideType();
-                      if (guideData.status == GuideStatus.text) {
-                        Globals.globalAudioPlayer.clearPlayer();
-                      }
-                    });
-                    print("change to audio or to text");
-                  },
-                  child: guideData.guideIcon,
-                ))),
-        // Align(
-        //     alignment: Alignment.topLeft,
+        Column(
+            // crossAxisAlignment: CrossAxisAlignment.center,
+            // mainAxisSize: MainAxisSize.max,
+            // mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                      alignment: Alignment.bottomRight,
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height / 10,
+                          right: MediaQuery.of(context).size.width / 20),
+                      color: Colors.transparent,
+                      height: MediaQuery.of(context).size.width / 10,
+                      width: MediaQuery.of(context).size.width / 10,
+                      child: FloatingActionButton(
+                        heroTag: null,
+                        onPressed: () {
+                          setState(() {
+                            guideData.changeGuideType();
+                            if (guideData.status == GuideStatus.text) {
+                              Globals.globalAudioPlayer.clearPlayer();
+                            }
+                          });
+                          print("change to audio or to text");
+                        },
+                        child: guideData.guideIcon,
+                      ))),
+              Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                      alignment: Alignment.bottomRight,
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height / 60,
+                          right: MediaQuery.of(context).size.width / 20),
+                      color: Colors.transparent,
+                      height: MediaQuery.of(context).size.width / 10,
+                      width: MediaQuery.of(context).size.width / 10,
+                      child: AnimatedOpacity(
+                          opacity: nextButtonState == ButtonState.view ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 500),
+                          child: FloatingActionButton(
+                            heroTag: null,
+                            onPressed: () {
+                              guideTool.stop();
+                              guideTool.handlePois();
+                              print("change to audio or to text");
+                            },
+                            child: const Icon(Icons.navigate_next_sharp,
+                                color: Colors.white),
+                          )))),
+            ]),
         Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
@@ -291,7 +318,7 @@ class _UserMapState extends State<UserMap> {
                 // height: MediaQuery.of(context).size.width / 2,
                 width: MediaQuery.of(context).size.width / 11,
                 child: AnimatedOpacity(
-                    opacity: NavigationButtonState.view == navButtonState
+                    opacity: ButtonState.view == navButtonState
                         ? 1.0
                         : 0.0,
                     duration: const Duration(milliseconds: 500),
@@ -346,15 +373,28 @@ class _UserMapState extends State<UserMap> {
     );
   }
 
+
+  void showNextButton() {
+    setState(() {
+      nextButtonState = ButtonState.view;
+    });
+  }
+
+  void hideNextButton() {
+    setState(() {
+      nextButtonState = ButtonState.hide;
+    });
+  }
+
   void showNavButton() {
     setState(() {
-      navButtonState = NavigationButtonState.view;
+      navButtonState = ButtonState.view;
     });
   }
 
   void hideNavButton() {
     setState(() {
-      navButtonState = NavigationButtonState.hide;
+      navButtonState = ButtonState.hide;
     });
   }
 

@@ -17,8 +17,8 @@ class Globals {
   static AppLauncher globalAppLauncher = AppLauncher();
   static MapPoi? mainMapPoi; // spoken poi
 
-  static setMainMapPoi(MapPoi mapPoi) {
-    if (UserMap.USER_MAP!.userMapState != null) {
+  static setMainMapPoi(var mapPoi) {
+    if (UserMap.USER_MAP!.userMapState != null && mapPoi != null) {
       UserMap.USER_MAP!.userMapState!.showNavButton();
     }
     mainMapPoi = mapPoi;

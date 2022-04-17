@@ -24,6 +24,7 @@ class Guide {
     }
     Globals.setMainMapPoi(mapPoi);
     UserMap.USER_MAP!.userMapState?.highlightMapPoi(mapPoi);
+    UserMap.USER_MAP!.userMapState?.showNextButton();
     lastMapPoiHandled = mapPoi;
     BlurryDialog alert = BlurryDialog(
         "Do you want to hear about this poi", mapPoi.poi.poiName!, () async {
@@ -45,6 +46,7 @@ class Guide {
     }, () {
       // cancel
       Navigator.of(context).pop();
+      state = GuideState.waiting;
     });
     showDialog(
       context: context,
@@ -59,6 +61,8 @@ class Guide {
       UserMap.USER_MAP!.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
     }
     UserMap.USER_MAP!.userMapState?.highlightMapPoi(mapPoi);
+    UserMap.USER_MAP!.userMapState?.showNextButton();
+
     lastMapPoiHandled = mapPoi;
     BlurryDialog alert = BlurryDialog(
         "Do you want to read about this poi", mapPoi.poi.poiName!, () async {
@@ -85,6 +89,8 @@ class Guide {
     }, () {
       // cancel
       Navigator.of(context).pop();
+      state = GuideState.waiting;
+
     });
     showDialog(
       context: context,
@@ -140,5 +146,15 @@ class Guide {
     // } else {
     //   state = GuideState.waiting;
     // }
+  }
+
+  void stop() {
+    if (guideData.status == GuideStatus.voice) {
+      audioPlayer.stopAudio();
+    }
+    Globals.setMainMapPoi(null);
+    UserMap.USER_MAP!.userMapState?.hideNextButton();
+
+    state = GuideState.stopped;
   }
 }

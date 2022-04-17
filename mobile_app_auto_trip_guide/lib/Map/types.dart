@@ -123,7 +123,7 @@ class MapPoi {
 
 enum GuideStatus { voice, text }
 enum GuideState { working, waiting, stopped }
-enum NavigationButtonState { hide, view }
+enum ButtonState { hide, view }
 
 // contain data about the guid type
 class GuideData {
