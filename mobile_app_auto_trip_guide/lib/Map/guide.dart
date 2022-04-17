@@ -5,6 +5,7 @@ import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/map.dart';
 import 'package:flutter/material.dart';
 import 'blurry_dialog.dart';
+import 'globals.dart';
 
 class Guide {
   BuildContext context;
@@ -18,13 +19,13 @@ class Guide {
     mapPoi.iconButton!.iconState?.setColor(Colors.black);
   }
 
-  handleMapPoiVoice(MapPoi mapPoi) async{
+  void handleMapPoiVoice(MapPoi mapPoi) async{
     setMapPoiColor(mapPoi, Colors.black);
     BlurryDialog alert = BlurryDialog(
         "Do you want to hear about this poi", mapPoi.poi.poiName!, () async {
       // ok callback
       Navigator.of(context).pop();
-      Audio audio = await UserMap.MAP_SERVER_COMMUNICATOR!.getAudioById(mapPoi.poi.id!);
+      Audio audio = await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id!);
       print(audio);
       List<int> intList = audio.audio.cast<int>().toList();
       Uint8List byteData = Uint8List.fromList(intList); // Load audio as a byte array here.
@@ -49,9 +50,16 @@ class Guide {
     );
   }
 
-  handleMapPoiText(MapPoi mapPoi) {
+  void handleMapPoiText(MapPoi mapPoi) {
     setMapPoiColor(mapPoi, Colors.black);
   }
+  void handlePois() {
+
+  }
+
+
+
+
 }
 
 // _showDialog(BuildContext context)

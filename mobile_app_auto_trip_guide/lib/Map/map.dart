@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:final_project/Map/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -16,16 +17,14 @@ class UserMap extends StatefulWidget {
   static Location? USER_LOCATION;
   static LocationData? USER_LOCATION_DATA;
   static UserMap? USER_MAP;
-  static ServerCommunication? MAP_SERVER_COMMUNICATOR;
   static List userChangeLocationFuncs = [];
-  static Map poisMap = Map<String, MapPoi>(); // the string is poi name
+  // static Map poisMap = Map<String, MapPoi>(); // the string is poi name
   static bool continueGuide = true;
 
   static Future<void> mapInit() async {
     // initialization order is very important
     USER_LOCATION = await getLocation();
     USER_LOCATION_DATA = await USER_LOCATION!.getLocation();
-    MAP_SERVER_COMMUNICATOR = ServerCommunication();
     USER_MAP = UserMap();
     USER_LOCATION!.onLocationChanged.listen(locationChangedEvent);
   }
@@ -61,7 +60,7 @@ class UserMap extends StatefulWidget {
   }
 
   static void preUnmountMap() {
-    UserMap.poisMap.clear();
+    Globals.globalAllPois.cast();
     userChangeLocationFuncs.clear();
   }
 
@@ -77,7 +76,6 @@ class UserMap extends StatefulWidget {
 
 class _UserMapState extends State<UserMap> {
   GuideData guideData = GuideData();
-  AudioApp audioPlayer = AudioApp();
   late Guide guideTool;
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
@@ -93,7 +91,7 @@ class _UserMapState extends State<UserMap> {
 
   void guideUser() async {
     sleep(Duration(seconds: 5));
-    guideTool.handleMapPoiVoice(UserMap.poisMap['my house']);
+    guideTool.handleMapPoiVoice(Globals.globalAllPois['my house']);
   }
 
   @override
@@ -102,7 +100,7 @@ class _UserMapState extends State<UserMap> {
     print("init _UserMapState");
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
-    guideTool = Guide(context, guideData, audioPlayer);
+    guideTool = Guide(context, guideData, Globals.globalAudioPlayer);
     // FlutterCompass.events?.listen((event) {
     //   //TODO check
     //   // setState(() {
@@ -126,7 +124,7 @@ class _UserMapState extends State<UserMap> {
     List<Poi> pois;
     // TODO add a condition that won't crazy the server
     if (isNewPoisNeeded()) {
-      pois = await UserMap.MAP_SERVER_COMMUNICATOR!.getPoisByLocation(
+      pois = await Globals.globalServerCommunication.getPoisByLocation(
           LocationInfo(
               UserMap.USER_LOCATION_DATA!.latitude!,
               UserMap.USER_LOCATION_DATA!.longitude!,
@@ -137,9 +135,9 @@ class _UserMapState extends State<UserMap> {
         // add all the new poi
         print("add pois to map");
         for (Poi poi in pois) {
-          if (!UserMap.poisMap.containsKey(poi.poiName)) {
+          if (!Globals.globalAllPois.containsKey(poi.poiName)) {
             MapPoi mapPoi = MapPoi(poi);
-            UserMap.poisMap[poi.poiName] = mapPoi;
+            Globals.globalAllPois[poi.poiName] = mapPoi;
             markersList.add(mapPoi.marker!);
           }
         }
@@ -147,7 +145,7 @@ class _UserMapState extends State<UserMap> {
       //TODO delete
       if (UserMap.continueGuide) {
         UserMap.continueGuide = false;
-        guideTool.handleMapPoiVoice(UserMap.poisMap["Masada"]);
+        guideTool.handleMapPoiVoice(Globals.globalAllPois["Masada"]);
 
       }
     }
@@ -217,6 +215,8 @@ class _UserMapState extends State<UserMap> {
             maxZoom: 19,
           ),
         ),
+        // MarkerLayerWidget(options: MarkerLayerOptions(markers: markersList)
+        // ),
         LocationMarkerLayerWidget(
           plugin: LocationMarkerPlugin(
             centerCurrentLocationStream:
@@ -236,7 +236,7 @@ class _UserMapState extends State<UserMap> {
                   width: MediaQuery.of(context).size.width,
                   height: 48,
                   color: Colors.green,
-                  child: audioPlayer,
+                  child: Globals.globalAudioPlayer,
                 )
             )
         ),
@@ -257,7 +257,7 @@ class _UserMapState extends State<UserMap> {
                     setState(() {
                       guideData.changeGuideType();
                       if (guideData.status == GuideStatus.text) {
-                        audioPlayer.clearPlayer();
+                        Globals.globalAudioPlayer.clearPlayer();
                       }
                     });
                     print("change to audio or to text");
@@ -290,7 +290,7 @@ class _UserMapState extends State<UserMap> {
               ),
             ))
       ],
-      layers: [MarkerLayerOptions(markers: markersList)],
+      layers: [MarkerLayerOptions(markers: markersList),],
     );
   }
 }
