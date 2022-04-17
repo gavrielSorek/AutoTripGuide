@@ -10,6 +10,7 @@ class Globals {
   static AudioApp globalAudioPlayer = AudioApp();
   static Map globalAllPois = HashMap<String, MapPoi>();
   static Map globalUnhandledPois = HashMap<String, MapPoi>();
+  static Map globalPoisIdToMarkerIdx = HashMap<String, int>();
 
   static Map globalInterestingPois = HashMap<String, MapPoi>();
   static init() async {

@@ -12,25 +12,28 @@ class Guide {
   GuideData guideData;
   AudioApp audioPlayer;
   GuideState state = GuideState.stopped;
+  MapPoi? lastMapPoiHandled;
 
   Guide(this.context, this.guideData, this.audioPlayer);
 
-  void setMapPoiColor(MapPoi mapPoi, Color color) {
-
-    mapPoi.iconButton!.iconState?.setColor(Colors.black);
-  }
-
   void handleMapPoiVoice(MapPoi mapPoi) async{
-    setMapPoiColor(mapPoi, Colors.black);
+    // setMapPoiColor(mapPoi, Colors.black);
+    if (lastMapPoiHandled != null) {
+      UserMap.USER_MAP!.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
+    }
+    UserMap.USER_MAP!.userMapState?.highlightMapPoi(mapPoi);
+    lastMapPoiHandled = mapPoi;
     BlurryDialog alert = BlurryDialog(
         "Do you want to hear about this poi", mapPoi.poi.poiName!, () async {
       // ok callback
       Navigator.of(context).pop();
       Audio audio = await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id!);
-      print(audio);
+
       List<int> intList = audio.audio.cast<int>().toList();
       Uint8List byteData = Uint8List.fromList(intList); // Load audio as a byte array here.
       audioPlayer.byteData = byteData;
+      audioPlayer.playAudio();
+
 
       // AudioPlayer audioPlayer = AudioPlayer();
       // int result = await audioPlayer.playBytes(byteData);
@@ -52,7 +55,10 @@ class Guide {
   }
 
   void handleMapPoiText(MapPoi mapPoi) {
-    setMapPoiColor(mapPoi, Colors.black);
+    if (lastMapPoiHandled != null) {
+      UserMap.USER_MAP!.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
+    }
+    UserMap.USER_MAP!.userMapState?.highlightMapPoi(mapPoi);
 
 
   }

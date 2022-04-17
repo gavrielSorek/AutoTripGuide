@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:audioplayers/audioplayers.dart';
@@ -8,6 +7,10 @@ typedef void OnError(Exception exception);
 
 class AudioApp extends StatefulWidget {
   Uint8List byteData = Uint8List(0);
+
+  void playAudio() {
+    _audioAppState?.play();
+  }
 
   clearPlayer() {
     // byteData = Uint8List(0);
@@ -98,6 +101,7 @@ class _AudioAppState extends State<AudioApp> {
   }
 
   Future play() async {
+    playPauseIcon = pauseIcon;
     if (isPaused) {
       await audioPlayer.resume();
     } else {
@@ -115,6 +119,7 @@ class _AudioAppState extends State<AudioApp> {
   // }
 
   Future pause() async {
+    playPauseIcon = playIcon;
     await audioPlayer.pause();
     setState(() => playerState = PlayerState.PAUSED);
   }
@@ -140,7 +145,6 @@ class _AudioAppState extends State<AudioApp> {
     setState(() => playerState = PlayerState.STOPPED);
   }
 
-
   // Future _loadFile() async {
   //   print("load file!!!!!!!!!!!! pressed");
   // }
@@ -162,9 +166,8 @@ class _AudioAppState extends State<AudioApp> {
   }
 
   Widget _buildPlayer() => Container(
-    width: double.infinity ,
-    child:
-        Row(mainAxisSize: MainAxisSize.min, children: [
+        width: double.infinity,
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
           IconButton(
             onPressed: () {
               if (widget.byteData.isEmpty) {
@@ -172,12 +175,10 @@ class _AudioAppState extends State<AudioApp> {
               }
               if (!isPlaying) {
                 setState(() {
-                  playPauseIcon = pauseIcon;
                   play();
                 });
               } else {
                 setState(() {
-                  playPauseIcon = playIcon;
                   pause();
                 });
               }
@@ -202,15 +203,16 @@ class _AudioAppState extends State<AudioApp> {
                 max: duration.inMilliseconds.toDouble()),
           if (position != null) _buildProgressView()
         ]),
-  );
+      );
 
   Row _buildProgressView() => Row(mainAxisSize: MainAxisSize.min, children: [
-    Text(
-      position != null
-          ? "${positionText ?? ''} / ${durationText ?? ''}"
-          : duration != null ? durationText : '',
-      style: TextStyle(fontSize: 12.0),
-    )
-  ]);
-
+        Text(
+          position != null
+              ? "${positionText ?? ''} / ${durationText ?? ''}"
+              : duration != null
+                  ? durationText
+                  : '',
+          style: TextStyle(fontSize: 12.0),
+        )
+      ]);
 }

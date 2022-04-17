@@ -69,9 +69,12 @@ class UserMap extends StatefulWidget {
     print("hello from ctor");
   }
 
+  _UserMapState? userMapState;
+
   @override
   State<StatefulWidget> createState() {
-    return _UserMapState();
+    userMapState = _UserMapState();
+    return userMapState!;
   }
 }
 
@@ -143,6 +146,7 @@ class _UserMapState extends State<UserMap> {
             MapPoi mapPoi = MapPoi(poi);
             Globals.globalAllPois[poi.poiName] = mapPoi;
             Globals.globalUnhandledPois[poi.poiName] = mapPoi;
+            Globals.globalPoisIdToMarkerIdx[poi.poiName] = markersList.length;
             markersList.add(mapPoi.marker!);
           }
         }
@@ -156,6 +160,17 @@ class _UserMapState extends State<UserMap> {
 
       }
     }
+  }
+
+  void highlightMapPoi(MapPoi mapPoi) {
+    setState(() {
+      markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.poiName]] = getMarkerFromPoi(mapPoi.poi , color: Colors.black);
+    });
+  }
+  void unHighlightMapPoi(MapPoi mapPoi) {
+    setState(() {
+      markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.poiName]] = getMarkerFromPoi(mapPoi.poi);
+    });
   }
 
   // change pois needed flag
@@ -175,7 +190,7 @@ class _UserMapState extends State<UserMap> {
   }
 
   // return marker from poi
-  Marker getMarkerFromPoi(Poi poi) {
+  Marker getMarkerFromPoi(Poi poi, {Color color=Colors.purpleAccent}) {
     return Marker(
       width: 45.0,
       height: 45.0,
@@ -183,7 +198,7 @@ class _UserMapState extends State<UserMap> {
       builder: (context) => Container(
         child: IconButton(
           icon: Icon(Icons.location_on),
-          color: Colors.purpleAccent,
+          color: color,
           iconSize: 45.0,
           onPressed: () {
             print('Marker tapped');
