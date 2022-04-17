@@ -44,7 +44,7 @@ async function getAudio(dbClient, audioId) {
     downloadStream.on('data', (chunk) =>{
         resolve(chunk);
     })
-    downloadStream.on('error', ()=> {reject('error to download ' + audioName)})
+    downloadStream.on('error', ()=> {reject('error to download audio')})
     });
     return audioPromise
 }

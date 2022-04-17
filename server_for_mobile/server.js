@@ -52,7 +52,7 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
   // get audio
 app.get("/getAudio", async function (req, res) { //next requrie (the function will not stop the program)
     console.log("inside f getAudio - server side")
-    result = await db.getAudio(dbClientSearcher, req.query.poiId)
+    result = await db.getAudio(dbClientSearcher, req.query.poiId).catch((error) => {console.log(error)})
     res.status(200);
     res.json(result);
     res.end();
