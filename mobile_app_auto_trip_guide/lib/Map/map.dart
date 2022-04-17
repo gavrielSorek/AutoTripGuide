@@ -81,6 +81,7 @@ class UserMap extends StatefulWidget {
 class _UserMapState extends State<UserMap> {
   GuideData guideData = GuideData();
   late Guide guideTool;
+  NavigationButtonState navButtonState = NavigationButtonState.hide;
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
   final MapController _mapController = MapController();
@@ -183,7 +184,7 @@ class _UserMapState extends State<UserMap> {
     return Marker(
       width: 45.0,
       height: 45.0,
-      point: LatLng(poi.latitude!, poi.longitude!),
+      point: LatLng(poi.latitude, poi.longitude),
       builder: (context) => Container(
         child: IconButton(
           icon: Icon(Icons.location_on),
@@ -275,31 +276,90 @@ class _UserMapState extends State<UserMap> {
                   },
                   child: guideData.guideIcon,
                 ))),
-        Align(
-            alignment: Alignment.bottomLeft,
-            child: Container(
-              margin: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.height / 11,
-                  left: MediaQuery.of(context).size.width / 15),
-              height: MediaQuery.of(context).size.width / 11,
-              width: MediaQuery.of(context).size.width / 11,
-              child: FloatingActionButton(
-                heroTag: null,
-                onPressed: () {
-                  // Automatically center the location marker on the map when location updated until user interact with the map.
-                  setState(
-                    () =>
-                        _centerOnLocationUpdate = CenterOnLocationUpdate.always,
-                  );
-                  // Center the location marker on the map and zoom the map to level 15.
-                  _centerCurrentLocationStreamController.add(14);
-                },
-                child: const Icon(
-                  Icons.my_location,
-                  color: Colors.white,
-                ),
-              ),
-            ))
+        // Align(
+        //     alignment: Alignment.topLeft,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                      margin: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height / 70,
+                          left: MediaQuery.of(context).size.width / 15),
+                      // height: MediaQuery.of(context).size.width / 2,
+                      width: MediaQuery.of(context).size.width / 11,
+                      child: AnimatedOpacity(
+                        opacity: NavigationButtonState.view == navButtonState ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 500),
+                          child: FloatingActionButton(
+                              heroTag: null,
+                              onPressed: () {
+                                print("navigate to poi pressed");
+
+                                if (Globals.mainMapPoi != null) {
+                                  print("navigate to poi");
+                                  double lat = Globals.mainMapPoi!.poi.latitude;
+                                  double lng = Globals.mainMapPoi!.poi.longitude;
+                                  Globals.globalAppLauncher.launchWaze(lat, lng);
+                                }
+                                // Automatically center the location marker on the map when location updated until user interact with the map.
+                                // Center the location marker on the map and zoom the map to level 15.
+                              },
+                              child: const Icon(
+                                Icons.navigation_rounded,
+                                color: Colors.white,
+                              ),
+                          )
+
+                      )
+
+                      // FloatingActionButton(
+                      //   heroTag: null,
+                      //   onPressed: () {
+                      //     print("navigate to poi pressed");
+                      //
+                      //     if (Globals.mainMapPoi != null) {
+                      //       print("navigate to poi");
+                      //       double lat = Globals.mainMapPoi!.poi.latitude;
+                      //       double lng = Globals.mainMapPoi!.poi.longitude;
+                      //       Globals.globalAppLauncher.launchWaze(lat, lng);
+                      //     }
+                      //     // Automatically center the location marker on the map when location updated until user interact with the map.
+                      //     // Center the location marker on the map and zoom the map to level 15.
+                      //   },
+                      //   child: const Icon(
+                      //     Icons.navigation_rounded,
+                      //     color: Colors.white,
+                      //   ),
+                      // ),
+                    ),
+
+                Container(
+                  margin: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).size.height / 11,
+                      left: MediaQuery.of(context).size.width / 15),
+                  // height: MediaQuery.of(context).size.height / 0.8,
+                  width: MediaQuery.of(context).size.width / 11,
+                  child: FloatingActionButton(
+                    heroTag: null,
+                    onPressed: () {
+                      // Automatically center the location marker on the map when location updated until user interact with the map.
+                      setState(
+                        () =>
+                            _centerOnLocationUpdate = CenterOnLocationUpdate.always,
+                      );
+                      // Center the location marker on the map and zoom the map to level 15.
+                      _centerCurrentLocationStreamController.add(14);
+                    },
+                    child: const Icon(
+                      Icons.my_location,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
+              ],
+            ),
       ],
       layers: [MarkerLayerOptions(markers: markersList),],
     );
@@ -307,6 +367,16 @@ class _UserMapState extends State<UserMap> {
 
 
 
+  void showNavButton() {
+    setState(() {
+      navButtonState = NavigationButtonState.view;
+    });
+  }
+  void hideNavButton() {
+    setState(() {
+      navButtonState = NavigationButtonState.hide;
+    });
+  }
   void highlightMapPoi(MapPoi mapPoi) {
     setState(() {
       markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.id]] = getMarkerFromPoi(mapPoi.poi , color: Colors.black);

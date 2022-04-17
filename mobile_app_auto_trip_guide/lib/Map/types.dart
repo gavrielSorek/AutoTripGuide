@@ -25,8 +25,8 @@ class LocationInfo {
 class Poi {
   String? id;
   String? poiName;
-  double? latitude;
-  double? longitude;
+  double latitude;
+  double longitude;
   String? shortDesc;
   String? language;
   dynamic? audio;
@@ -42,8 +42,8 @@ class Poi {
   Poi({
     this.id,
     this.poiName,
-    this.latitude,
-    this.longitude,
+    required this.latitude,
+    required this.longitude,
     this.shortDesc,
     this.language,
     this.audio,
@@ -92,7 +92,7 @@ class MapPoi {
     return Marker(
       width: 45.0,
       height: 45.0,
-      point: LatLng(poi.latitude!, poi.longitude!),
+      point: LatLng(poi.latitude, poi.longitude),
       builder: (context) => Container(child: iconButton),
     );
   }
@@ -119,6 +119,7 @@ class MapPoi {
 
 enum GuideStatus { voice, text }
 enum GuideState { working, waiting, stopped }
+enum NavigationButtonState{hide, view}
 
 
 // contain data about the guid type

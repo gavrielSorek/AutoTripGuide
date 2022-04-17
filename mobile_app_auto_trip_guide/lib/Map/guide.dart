@@ -22,6 +22,7 @@ class Guide {
     if (lastMapPoiHandled != null) {
       UserMap.USER_MAP!.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
     }
+    Globals.setMainMapPoi(mapPoi);
     UserMap.USER_MAP!.userMapState?.highlightMapPoi(mapPoi);
     lastMapPoiHandled = mapPoi;
     BlurryDialog alert = BlurryDialog(
