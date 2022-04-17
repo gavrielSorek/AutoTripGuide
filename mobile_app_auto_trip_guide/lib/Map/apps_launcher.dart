@@ -1,14 +1,13 @@
 import 'package:url_launcher/url_launcher.dart';
 
 class AppLauncher {
-
   void launchWaze(double lat, double lng) async {
     var url = 'waze://?ll=${lat.toString()},${lng.toString()}';
     var fallbackUrl =
         'https://waze.com/ul?ll=${lat.toString()},${lng.toString()}&navigate=yes';
     try {
       bool launched =
-      await launch(url, forceSafariVC: false, forceWebView: false);
+          await launch(url, forceSafariVC: false, forceWebView: false);
       if (!launched) {
         await launch(fallbackUrl, forceSafariVC: false, forceWebView: false);
       }
@@ -23,7 +22,7 @@ class AppLauncher {
         'https://www.google.com/maps/search/?api=1&query=${lat.toString()},${lng.toString()}';
     try {
       bool launched =
-      await launch(url, forceSafariVC: false, forceWebView: false);
+          await launch(url, forceSafariVC: false, forceWebView: false);
       if (!launched) {
         await launch(fallbackUrl, forceSafariVC: false, forceWebView: false);
       }
@@ -31,5 +30,4 @@ class AppLauncher {
       await launch(fallbackUrl, forceSafariVC: false, forceWebView: false);
     }
   }
-
 }

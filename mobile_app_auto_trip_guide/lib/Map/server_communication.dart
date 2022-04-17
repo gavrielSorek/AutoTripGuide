@@ -3,17 +3,17 @@ import 'package:final_project/Map/types.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
 
-
 class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
   // String serverUrl = "autotripguidemobile.loca.lt";
-  String serverUrl = "17a6-77-126-184-189.ngrok.io";
+  String serverUrl = "999d-77-126-184-189.ngrok.io";
 
   var client = RetryClient(http.Client());
+
   // var client = http.Client();
 
-
-  static Uri addLocationInfoToUrl(String url, String path,LocationInfo locationInfo) {
+  static Uri addLocationInfoToUrl(
+      String url, String path, LocationInfo locationInfo) {
     final queryParameters = {
       'lat': locationInfo.lat.toString(),
       'lng': locationInfo.lng.toString(),
@@ -24,8 +24,9 @@ class ServerCommunication {
     return uri;
   }
 
-  Future<List<Poi>> getPoisByLocation(LocationInfo? locationInfo) async{
-    Uri newUri = addLocationInfoToUrl(serverUrl , '/searchNearbyPois', locationInfo!);
+  Future<List<Poi>> getPoisByLocation(LocationInfo? locationInfo) async {
+    Uri newUri =
+        addLocationInfoToUrl(serverUrl, '/searchNearbyPois', locationInfo!);
 
     // var client = http.Client();
     try {
@@ -34,7 +35,9 @@ class ServerCommunication {
         final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
         return parsed.map<Poi>((json) => Poi.fromJson(json)).toList();
       } else {
-        if (response.contentLength == 0) {return [];}
+        if (response.contentLength == 0) {
+          return [];
+        }
         // If the server did not return a 200 OK response,
         // then throw an exception.
         throw Exception('Failed to load Pois');
@@ -44,7 +47,7 @@ class ServerCommunication {
     }
   }
 
-  static Uri addPoiInfoToUrl(String url, String path,String poiId) {
+  static Uri addPoiInfoToUrl(String url, String path, String poiId) {
     final queryParameters = {
       'poiId': poiId,
     };
@@ -53,7 +56,7 @@ class ServerCommunication {
   }
 
   Future getAudioById(String poiId) async {
-    Uri newUri = addPoiInfoToUrl(serverUrl , '/getAudio', poiId);
+    Uri newUri = addPoiInfoToUrl(serverUrl, '/getAudio', poiId);
 
     // var client = http.Client();
     try {
@@ -63,7 +66,9 @@ class ServerCommunication {
         // final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
         // return parsed.map<Poi>((json) => Poi.fromJson(json)).toList();
       } else {
-        if (response.contentLength == 0) {return [];}
+        if (response.contentLength == 0) {
+          return [];
+        }
         // If the server did not return a 200 OK response,
         // then throw an exception.
         throw Exception('Failed to load Pois');
@@ -71,10 +76,9 @@ class ServerCommunication {
     } finally {
       // client.close();
     }
-
   }
 
-  static Uri addUserInfoToUrl(String url, String path,UserInfo userInfo) {
+  static Uri addUserInfoToUrl(String url, String path, UserInfo userInfo) {
     final queryParameters = {
       'name': userInfo.name.toString(),
       'emailAddr': userInfo.emailAddr.toString(),
@@ -87,8 +91,8 @@ class ServerCommunication {
     return uri;
   }
 
-  void addNewUser(UserInfo? userInfo) async{
-    Uri newUri = addUserInfoToUrl(serverUrl , '/addNewUser', userInfo!);
+  void addNewUser(UserInfo? userInfo) async {
+    Uri newUri = addUserInfoToUrl(serverUrl, '/addNewUser', userInfo!);
     try {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {

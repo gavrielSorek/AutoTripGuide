@@ -18,6 +18,7 @@ class UserMap extends StatefulWidget {
   static LocationData? USER_LOCATION_DATA;
   static UserMap? USER_MAP;
   static List userChangeLocationFuncs = [];
+
   // static Map poisMap = Map<String, MapPoi>(); // the string is poi name
   static bool continueGuide = true;
 
@@ -106,8 +107,9 @@ class _UserMapState extends State<UserMap> {
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
     guideTool = Guide(context, guideData, Globals.globalAudioPlayer);
-    WidgetsBinding.instance
-        ?.addPostFrameCallback((_) { guideTool.handlePois();});
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      guideTool.handlePois();
+    });
 
     // FlutterCompass.events?.listen((event) {
     //   //TODO check
@@ -180,7 +182,7 @@ class _UserMapState extends State<UserMap> {
   }
 
   // return marker from poi
-  Marker getMarkerFromPoi(Poi poi, {Color color=Colors.purpleAccent}) {
+  Marker getMarkerFromPoi(Poi poi, {Color color = Colors.purpleAccent}) {
     return Marker(
       width: 45.0,
       height: 45.0,
@@ -240,18 +242,16 @@ class _UserMapState extends State<UserMap> {
       nonRotatedChildren: [
         // menu row.
         Align(
-          alignment: Alignment.topLeft,
+            alignment: Alignment.topLeft,
             child: AnimatedOpacity(
-              opacity: guideData.status == GuideStatus.voice ? 1.0 : 0.0,
+                opacity: guideData.status == GuideStatus.voice ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 500),
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: 48,
                   color: Colors.green,
                   child: Globals.globalAudioPlayer,
-                )
-            )
-        ),
+                ))),
 
         Align(
             alignment: Alignment.topRight,
@@ -278,113 +278,96 @@ class _UserMapState extends State<UserMap> {
                 ))),
         // Align(
         //     alignment: Alignment.topLeft,
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                      margin: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.height / 70,
-                          left: MediaQuery.of(context).size.width / 15),
-                      // height: MediaQuery.of(context).size.width / 2,
-                      width: MediaQuery.of(context).size.width / 11,
-                      child: AnimatedOpacity(
-                        opacity: NavigationButtonState.view == navButtonState ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 500),
-                          child: FloatingActionButton(
-                              heroTag: null,
-                              onPressed: () {
-                                print("navigate to poi pressed");
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+                margin: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).size.height / 70,
+                    left: MediaQuery.of(context).size.width / 15),
+                // height: MediaQuery.of(context).size.width / 2,
+                width: MediaQuery.of(context).size.width / 11,
+                child: AnimatedOpacity(
+                    opacity: NavigationButtonState.view == navButtonState
+                        ? 1.0
+                        : 0.0,
+                    duration: const Duration(milliseconds: 500),
+                    child: FloatingActionButton(
+                      heroTag: null,
+                      onPressed: () {
+                        print("navigate to poi pressed");
 
-                                if (Globals.mainMapPoi != null) {
-                                  print("navigate to poi");
-                                  double lat = Globals.mainMapPoi!.poi.latitude;
-                                  double lng = Globals.mainMapPoi!.poi.longitude;
-                                  Globals.globalAppLauncher.launchWaze(lat, lng);
-                                }
-                                // Automatically center the location marker on the map when location updated until user interact with the map.
-                                // Center the location marker on the map and zoom the map to level 15.
-                              },
-                              child: const Icon(
-                                Icons.navigation_rounded,
-                                color: Colors.white,
-                              ),
-                          )
-
-                      )
-
-                      // FloatingActionButton(
-                      //   heroTag: null,
-                      //   onPressed: () {
-                      //     print("navigate to poi pressed");
-                      //
-                      //     if (Globals.mainMapPoi != null) {
-                      //       print("navigate to poi");
-                      //       double lat = Globals.mainMapPoi!.poi.latitude;
-                      //       double lng = Globals.mainMapPoi!.poi.longitude;
-                      //       Globals.globalAppLauncher.launchWaze(lat, lng);
-                      //     }
-                      //     // Automatically center the location marker on the map when location updated until user interact with the map.
-                      //     // Center the location marker on the map and zoom the map to level 15.
-                      //   },
-                      //   child: const Icon(
-                      //     Icons.navigation_rounded,
-                      //     color: Colors.white,
-                      //   ),
-                      // ),
-                    ),
-
-                Container(
-                  margin: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).size.height / 11,
-                      left: MediaQuery.of(context).size.width / 15),
-                  // height: MediaQuery.of(context).size.height / 0.8,
-                  width: MediaQuery.of(context).size.width / 11,
-                  child: FloatingActionButton(
-                    heroTag: null,
-                    onPressed: () {
-                      // Automatically center the location marker on the map when location updated until user interact with the map.
-                      setState(
-                        () =>
-                            _centerOnLocationUpdate = CenterOnLocationUpdate.always,
-                      );
-                      // Center the location marker on the map and zoom the map to level 15.
-                      _centerCurrentLocationStreamController.add(14);
-                    },
-                    child: const Icon(
-                      Icons.my_location,
-                      color: Colors.white,
-                    ),
-                  ),
-                )
-              ],
-            ),
+                        if (Globals.mainMapPoi != null) {
+                          print("navigate to poi");
+                          double lat = Globals.mainMapPoi!.poi.latitude;
+                          double lng = Globals.mainMapPoi!.poi.longitude;
+                          Globals.globalAppLauncher.launchWaze(lat, lng);
+                        }
+                        // Automatically center the location marker on the map when location updated until user interact with the map.
+                        // Center the location marker on the map and zoom the map to level 15.
+                      },
+                      child: const Icon(
+                        Icons.navigation_rounded,
+                        color: Colors.white,
+                      ),
+                    ))),
+            Container(
+              margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height / 11,
+                  left: MediaQuery.of(context).size.width / 15),
+              // height: MediaQuery.of(context).size.height / 0.8,
+              width: MediaQuery.of(context).size.width / 11,
+              child: FloatingActionButton(
+                heroTag: null,
+                onPressed: () {
+                  // Automatically center the location marker on the map when location updated until user interact with the map.
+                  setState(
+                    () =>
+                        _centerOnLocationUpdate = CenterOnLocationUpdate.always,
+                  );
+                  // Center the location marker on the map and zoom the map to level 15.
+                  _centerCurrentLocationStreamController.add(14);
+                },
+                child: const Icon(
+                  Icons.my_location,
+                  color: Colors.white,
+                ),
+              ),
+            )
+          ],
+        ),
       ],
-      layers: [MarkerLayerOptions(markers: markersList),],
+      layers: [
+        MarkerLayerOptions(markers: markersList),
+      ],
     );
   }
-
-
 
   void showNavButton() {
     setState(() {
       navButtonState = NavigationButtonState.view;
     });
   }
+
   void hideNavButton() {
     setState(() {
       navButtonState = NavigationButtonState.hide;
     });
   }
+
   void highlightMapPoi(MapPoi mapPoi) {
     setState(() {
-      markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.id]] = getMarkerFromPoi(mapPoi.poi , color: Colors.black);
+      markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.id]] =
+          getMarkerFromPoi(mapPoi.poi, color: Colors.black);
     });
   }
+
   void unHighlightMapPoi(MapPoi mapPoi) {
     setState(() {
-      markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.id]] = getMarkerFromPoi(mapPoi.poi);
+      markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.id]] =
+          getMarkerFromPoi(mapPoi.poi);
     });
   }
 }

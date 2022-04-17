@@ -16,7 +16,9 @@ class AudioApp extends StatefulWidget {
     // byteData = Uint8List(0);
     _audioAppState!.clearPlayer();
   }
+
   _AudioAppState? _audioAppState;
+
   @override
   _AudioAppState createState() {
     _audioAppState = _AudioAppState();
@@ -35,6 +37,7 @@ class _AudioAppState extends State<AudioApp> {
   PlayerState playerState = PlayerState.STOPPED;
 
   get isPlaying => playerState == PlayerState.PLAYING;
+
   get isPaused => playerState == PlayerState.PAUSED;
 
   get durationText =>
@@ -72,24 +75,24 @@ class _AudioAppState extends State<AudioApp> {
         .listen((p) => setState(() => position = p));
     _audioPlayerStateSubscription =
         audioPlayer.onPlayerStateChanged.listen((s) async {
-          if (s == PlayerState.PLAYING) {
-            // print("-------------------------------");
-            // int ddd = await audioPlayer.getDuration();
-            // print(ddd);
-            // setState(() => duration = Duration(seconds: 1000));
-          } else if (s == PlayerState.STOPPED) {
-            onComplete();
-            setState(() {
-              position = duration;
-            });
-          }
-        }, onError: (msg) {
-          setState(() {
-            playerState = PlayerState.STOPPED;
-            duration = Duration(seconds: 0);
-            position = Duration(seconds: 0);
-          });
+      if (s == PlayerState.PLAYING) {
+        // print("-------------------------------");
+        // int ddd = await audioPlayer.getDuration();
+        // print(ddd);
+        // setState(() => duration = Duration(seconds: 1000));
+      } else if (s == PlayerState.STOPPED) {
+        onComplete();
+        setState(() {
+          position = duration;
         });
+      }
+    }, onError: (msg) {
+      setState(() {
+        playerState = PlayerState.STOPPED;
+        duration = Duration(seconds: 0);
+        position = Duration(seconds: 0);
+      });
+    });
     audioPlayer.onDurationChanged.listen((Duration newDuration) {
       // duration = newDuration;
       setState(() => duration = newDuration);

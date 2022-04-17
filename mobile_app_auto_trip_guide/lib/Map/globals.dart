@@ -23,6 +23,7 @@ class Globals {
     }
     mainMapPoi = mapPoi;
   }
+
   static deleteMainMapPoi() {
     if (UserMap.USER_MAP!.userMapState != null) {
       UserMap.USER_MAP!.userMapState!.hideNavButton();
@@ -33,10 +34,5 @@ class Globals {
   static init() async {
     // initialization order is very important
     await UserMap.mapInit();
-
-
-
   }
-
-
 }

@@ -10,7 +10,9 @@ class UserInfo {
   List<String>? languages;
   int? age;
   List<String>? categories;
-  UserInfo(this.name, this.emailAddr, this.gender, this.languages, this.age, this.categories);
+
+  UserInfo(this.name, this.emailAddr, this.gender, this.languages, this.age,
+      this.categories);
 }
 
 class LocationInfo {
@@ -80,12 +82,14 @@ class Poi {
 
 class Audio {
   var audio;
+
   Audio(this.audio);
+
   factory Audio.fromJson(Map<String, dynamic> json) {
     return Audio(json['data']);
   }
-
 }
+
 class MapPoi {
   // return marker from poi
   static Marker getMarkerFromPoi(Poi poi, MutableMapIconButton iconButton) {
@@ -99,28 +103,27 @@ class MapPoi {
 
   Poi poi;
   Marker? marker;
+
   // IconButton? iconButton;
   MutableMapIconButton? iconButton;
 
-
   MapPoi(this.poi) {
     iconButton = MutableMapIconButton();
-        // IconButton(
-        // icon: Icon(Icons.location_on),
-        // color: Colors.purpleAccent,
-        // iconSize: 45.0,
-        // onPressed: () {
-        //   iconButton!.c = 100;
-        //   print('Marker tapped');
-        // });
+    // IconButton(
+    // icon: Icon(Icons.location_on),
+    // color: Colors.purpleAccent,
+    // iconSize: 45.0,
+    // onPressed: () {
+    //   iconButton!.c = 100;
+    //   print('Marker tapped');
+    // });
     marker = getMarkerFromPoi(poi, iconButton!);
   }
 }
 
 enum GuideStatus { voice, text }
 enum GuideState { working, waiting, stopped }
-enum NavigationButtonState{hide, view}
-
+enum NavigationButtonState { hide, view }
 
 // contain data about the guid type
 class GuideData {
@@ -141,7 +144,6 @@ class GuideData {
   }
 }
 
-
 class MutableMapIconButton extends StatefulWidget {
   MutableMapIconButton({Key? key}) : super(key: key);
   _MutableMapIconButton? iconState;
@@ -152,6 +154,7 @@ class MutableMapIconButton extends StatefulWidget {
     return iconState!;
   }
 }
+
 class _MutableMapIconButton extends State<StatefulWidget> {
   Color _iconColor = Colors.purple;
   double _iconSize = 45.0;
@@ -161,6 +164,7 @@ class _MutableMapIconButton extends State<StatefulWidget> {
       _iconColor = color;
     });
   }
+
   void setSize(double size) {
     setState(() {
       _iconSize = size;

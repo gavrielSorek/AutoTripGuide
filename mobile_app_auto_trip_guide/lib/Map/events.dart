@@ -13,22 +13,19 @@ void mapButtonClickedEvent(BuildContext context) {
     Navigator.pop(context);
   }
 }
+
 void mapButtonLongClickedEvent(BuildContext context) {
   mapButtonClickedEvent(context); //get to home page
-
 }
+
 void accountButtonClickedEvent(BuildContext context) {
-  Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountPage()));
+  Navigator.of(context)
+      .push(MaterialPageRoute(builder: (context) => AccountPage()));
 }
 
+void reviewsButtonClickedEvent(BuildContext context) {}
 
-void reviewsButtonClickedEvent(BuildContext context) {
-
-}
-void settingButtonClickedEvent(BuildContext context) {
-
-
-}
+void settingButtonClickedEvent(BuildContext context) {}
 //
 // class Compass {
 //

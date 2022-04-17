@@ -17,7 +17,7 @@ class Guide {
 
   Guide(this.context, this.guideData, this.audioPlayer);
 
-  void handleMapPoiVoice(MapPoi mapPoi) async{
+  void handleMapPoiVoice(MapPoi mapPoi) async {
     // setMapPoiColor(mapPoi, Colors.black);
     if (lastMapPoiHandled != null) {
       UserMap.USER_MAP!.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
@@ -29,18 +29,14 @@ class Guide {
         "Do you want to hear about this poi", mapPoi.poi.poiName!, () async {
       // ok callback
       Navigator.of(context).pop();
-      Audio audio = await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id!);
+      Audio audio =
+          await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id!);
 
       List<int> intList = audio.audio.cast<int>().toList();
-      Uint8List byteData = Uint8List.fromList(intList); // Load audio as a byte array here.
+      Uint8List byteData =
+          Uint8List.fromList(intList); // Load audio as a byte array here.
       audioPlayer.byteData = byteData;
       audioPlayer.playAudio();
-
-
-      // AudioPlayer audioPlayer = AudioPlayer();
-      // int result = await audioPlayer.playBytes(byteData);
-
-
     }, () {
       // next callback
       Navigator.of(context).pop();
@@ -68,15 +64,10 @@ class Guide {
       // ok callback
       Navigator.of(context).pop();
       TextGuideDialog textDialog = TextGuideDialog(
-        mapPoi.poi.poiName ?? "?",
-        mapPoi.poi.shortDesc ?? "?",
-          () {
-            Navigator.of(context).pop();
-            //next callback
-
-          }
-
-      );
+          mapPoi.poi.poiName ?? "?", mapPoi.poi.shortDesc ?? "?", () {
+        Navigator.of(context).pop();
+        //next callback
+      });
 
       showDialog(
         context: context,
@@ -84,10 +75,6 @@ class Guide {
           return textDialog;
         },
       );
-
-      Audio audio = await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id!);
-
-
     }, () {
       // next callback
       Navigator.of(context).pop();
@@ -102,9 +89,8 @@ class Guide {
         return alert;
       },
     );
-
-
   }
+
   void handleNextPoi() async {
     if (state == GuideState.working || Globals.globalUnhandledPois.isEmpty) {
       print("error in handleNextPoi in Guide or pois map is empty");
@@ -125,8 +111,8 @@ class Guide {
         state = GuideState.waiting;
       }
     }
-
   }
+
   void handlePois() async {
     print("in handlePois");
     // Globals.globalUnhandledPois.forEach(void f(K key, V value));
@@ -152,27 +138,4 @@ class Guide {
     //   state = GuideState.waiting;
     // }
   }
-
-
-
-
 }
-
-// _showDialog(BuildContext context)
-// {
-//
-//   VoidCallback continueCallBack = () => {
-//     Navigator.of(context).pop(),
-//     // code on continue comes here
-//
-//   };
-//   BlurryDialog  alert = BlurryDialog("Abort","Are you sure you want to abort this operation?",continueCallBack);
-//
-//
-//   showDialog(
-//     context: context,
-//     builder: (BuildContext context) {
-//       return alert;
-//     },
-//   );
-// }

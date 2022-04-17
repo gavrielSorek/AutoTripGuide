@@ -22,7 +22,6 @@ void main() async {
   runApp(const AutoGuideApp());
 }
 
-
 class AutoGuideApp extends StatelessWidget {
   const AutoGuideApp({Key? key}) : super(key: key);
 
@@ -33,18 +32,17 @@ class AutoGuideApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: LoginPage(),   //const HomePage()
+      home: LoginPage(), //const HomePage()
     );
   }
 }
 
-
-
 // for the problem 	CERTIFICATE_VERIFY_FAILED: certificate has expired(handshake.cc:393)
-class MyHttpOverrides extends HttpOverrides{
+class MyHttpOverrides extends HttpOverrides {
   @override
-  HttpClient createHttpClient(SecurityContext? context){
+  HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
