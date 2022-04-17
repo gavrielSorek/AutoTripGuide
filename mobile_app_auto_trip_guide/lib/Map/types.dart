@@ -1,8 +1,9 @@
-import 'package:final_project/Map/map.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+
+import 'globals.dart';
 
 class UserInfo {
   String? name;
@@ -109,7 +110,7 @@ class MapPoi {
   MutableMapIconButton? iconButton;
 
   MapPoi(this.poi) {
-    iconButton = MutableMapIconButton(()=>{UserMap.USER_MAP!.userMapState?.guideAboutMapPoi(this)});
+    iconButton = MutableMapIconButton(()=>{Globals.globalUserMap.userMapState?.guideAboutMapPoi(this)});
     // IconButton(
     // icon: Icon(Icons.location_on),
     // color: Colors.purpleAccent,

@@ -16,9 +16,7 @@ class UserMap extends StatefulWidget {
   // inits
   static Location? USER_LOCATION;
   static LocationData? USER_LOCATION_DATA;
-  static UserMap? USER_MAP;
   static List userChangeLocationFuncs = [];
-
   // static Map poisMap = Map<String, MapPoi>(); // the string is poi name
   static bool continueGuide = true;
 
@@ -26,7 +24,6 @@ class UserMap extends StatefulWidget {
     // initialization order is very important
     USER_LOCATION = await getLocation();
     USER_LOCATION_DATA = await USER_LOCATION!.getLocation();
-    USER_MAP = UserMap();
     USER_LOCATION!.onLocationChanged.listen(locationChangedEvent);
   }
 
@@ -382,8 +379,6 @@ class _UserMapState extends State<UserMap> {
   void highlightMapPoi(MapPoi mapPoi) {
     setState(() {
       mapPoi.iconButton!.iconState?.setColor(Colors.black);
-      // markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.id]] =
-      //     getMarkerFromPoi(mapPoi.poi, color: Colors.black);
     });
   }
 

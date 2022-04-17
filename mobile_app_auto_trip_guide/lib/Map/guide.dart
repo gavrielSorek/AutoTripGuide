@@ -1,9 +1,7 @@
 import 'dart:typed_data';
-
 import 'package:final_project/Map/audio_player_controller.dart';
 import 'package:final_project/Map/text_guid_dialog.dart';
 import 'package:final_project/Map/types.dart';
-import 'package:final_project/Map/map.dart';
 import 'package:flutter/material.dart';
 import 'blurry_dialog.dart';
 import 'globals.dart';
@@ -20,11 +18,11 @@ class Guide {
   Future<void> handleMapPoiVoice(MapPoi mapPoi) async {
     // setMapPoiColor(mapPoi, Colors.black);
     if (lastMapPoiHandled != null) {
-      UserMap.USER_MAP!.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
+      Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
     }
     Globals.setMainMapPoi(mapPoi);
-    UserMap.USER_MAP!.userMapState?.highlightMapPoi(mapPoi);
-    UserMap.USER_MAP!.userMapState?.showNextButton();
+    Globals.globalUserMap.userMapState?.highlightMapPoi(mapPoi);
+    Globals.globalUserMap.userMapState?.showNextButton();
     lastMapPoiHandled = mapPoi;
     BlurryDialog alert = BlurryDialog(
         "Do you want to hear about this poi", mapPoi.poi.poiName!, () async {
@@ -58,10 +56,10 @@ class Guide {
 
   Future<void> handleMapPoiText(MapPoi mapPoi) async {
     if (lastMapPoiHandled != null) {
-      UserMap.USER_MAP!.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
+      Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
     }
-    UserMap.USER_MAP!.userMapState?.highlightMapPoi(mapPoi);
-    UserMap.USER_MAP!.userMapState?.showNextButton();
+    Globals.globalUserMap.userMapState?.highlightMapPoi(mapPoi);
+    Globals.globalUserMap.userMapState?.showNextButton();
 
     lastMapPoiHandled = mapPoi;
     BlurryDialog alert = BlurryDialog(
@@ -141,7 +139,7 @@ class Guide {
       audioPlayer.stopAudio();
     }
     Globals.deleteMainMapPoi();
-    UserMap.USER_MAP!.userMapState?.hideNextButton();
+    Globals.globalUserMap.userMapState?.hideNextButton();
 
     state = GuideState.stopped;
   }

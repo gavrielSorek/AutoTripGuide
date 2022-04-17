@@ -6,7 +6,7 @@ import 'apps_launcher.dart';
 import 'map.dart';
 
 class Globals {
-  // static UserMap globalUserMap = UserMap();
+  static UserMap globalUserMap = UserMap();
   static ServerCommunication globalServerCommunication = ServerCommunication();
   static AudioApp globalAudioPlayer = AudioApp();
   static Map globalAllPois = HashMap<String, MapPoi>();
@@ -18,15 +18,15 @@ class Globals {
   static MapPoi? mainMapPoi; // spoken poi
 
   static setMainMapPoi(var mapPoi) {
-    if (UserMap.USER_MAP!.userMapState != null && mapPoi != null) {
-      UserMap.USER_MAP!.userMapState!.showNavButton();
+    if (Globals.globalUserMap.userMapState != null && mapPoi != null) {
+      Globals.globalUserMap.userMapState!.showNavButton();
     }
     mainMapPoi = mapPoi;
   }
 
   static deleteMainMapPoi() {
-    if (UserMap.USER_MAP!.userMapState != null) {
-      UserMap.USER_MAP!.userMapState!.hideNavButton();
+    if (Globals.globalUserMap.userMapState != null) {
+      Globals.globalUserMap.userMapState!.hideNavButton();
     }
     mainMapPoi = null;
   }

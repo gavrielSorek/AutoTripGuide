@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project/Pages/login_controller.dart';
 import 'package:get/get.dart';
+import '../Map/globals.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -29,7 +30,7 @@ class HomePage extends StatelessWidget {
           children: [
             Expanded(
                 child: Container(
-                  child: UserMap.USER_MAP,
+                  child: Globals.globalUserMap,
                 )),
             Row( // menu row
               mainAxisAlignment: MainAxisAlignment.spaceAround,
