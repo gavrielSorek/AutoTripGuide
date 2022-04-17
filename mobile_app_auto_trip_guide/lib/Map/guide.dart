@@ -121,32 +121,11 @@ class Guide {
     if (Globals.globalUnhandledPois.isNotEmpty && state != GuideState.stopped) {
     } else {
       if (Globals.globalUnhandledPois.isEmpty) {
-        state = GuideState.waiting;
+        stop();
       }
     }
   }
 
-  // void handleNextPoi() async {
-  //   if (state == GuideState.working || Globals.globalUnhandledPois.isEmpty) {
-  //     print("error in handleNextPoi in Guide or pois map is empty");
-  //     return;
-  //   }
-  //   state = GuideState.working;
-  //   MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
-  //   if (guideData.status == GuideStatus.voice) {
-  //     handleMapPoiVoice(mapPoiElement);
-  //   } else {
-  //     handleMapPoiText(mapPoiElement);
-  //   }
-  //   Globals.globalUnhandledPois.remove(mapPoiElement.poi.id);
-  //   if (Globals.globalUnhandledPois.isNotEmpty && state != GuideState.stopped) {
-  //     handleNextPoi();
-  //   } else {
-  //     if (Globals.globalUnhandledPois.isEmpty) {
-  //       state = GuideState.waiting;
-  //     }
-  //   }
-  // }
 
   void handlePois() async {
     print("in handlePois");
@@ -155,30 +134,13 @@ class Guide {
       return;
     }
     handleNextPoi();
-    // state = GuideState.working;
-    // Map clonePois = Map.from(Globals.globalUnhandledPois);
-    // clonePois.forEach((var poiId, var mapPoi) {
-    //   MapPoi mapPoiElement = mapPoi as MapPoi;
-    //   if (guideData.status == GuideStatus.voice) {
-    //     handleMapPoiVoice(mapPoiElement);
-    //   } else {
-    //     handleMapPoiText(mapPoiElement);
-    //   }
-    //   Globals.globalUnhandledPois.remove(poiId);
-    //
-    // });
-    // if (Globals.globalUnhandledPois.isNotEmpty) {
-    //   handlePois();
-    // } else {
-    //   state = GuideState.waiting;
-    // }
   }
 
   void stop() {
     if (guideData.status == GuideStatus.voice) {
       audioPlayer.stopAudio();
     }
-    Globals.setMainMapPoi(null);
+    Globals.deleteMainMapPoi();
     UserMap.USER_MAP!.userMapState?.hideNextButton();
 
     state = GuideState.stopped;
