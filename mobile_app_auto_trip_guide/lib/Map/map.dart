@@ -142,11 +142,11 @@ class _UserMapState extends State<UserMap> {
         // add all the new poi
         print("add pois to map");
         for (Poi poi in pois) {
-          if (!Globals.globalAllPois.containsKey(poi.poiName)) {
+          if (!Globals.globalAllPois.containsKey(poi.id)) {
             MapPoi mapPoi = MapPoi(poi);
-            Globals.globalAllPois[poi.poiName] = mapPoi;
-            Globals.globalUnhandledPois[poi.poiName] = mapPoi;
-            Globals.globalPoisIdToMarkerIdx[poi.poiName] = markersList.length;
+            Globals.globalAllPois[poi.id] = mapPoi;
+            Globals.globalUnhandledPois[poi.id] = mapPoi;
+            Globals.globalPoisIdToMarkerIdx[poi.id] = markersList.length;
             markersList.add(mapPoi.marker!);
           }
         }
@@ -160,17 +160,6 @@ class _UserMapState extends State<UserMap> {
 
       }
     }
-  }
-
-  void highlightMapPoi(MapPoi mapPoi) {
-    setState(() {
-      markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.poiName]] = getMarkerFromPoi(mapPoi.poi , color: Colors.black);
-    });
-  }
-  void unHighlightMapPoi(MapPoi mapPoi) {
-    setState(() {
-      markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.poiName]] = getMarkerFromPoi(mapPoi.poi);
-    });
   }
 
   // change pois needed flag
@@ -314,5 +303,18 @@ class _UserMapState extends State<UserMap> {
       ],
       layers: [MarkerLayerOptions(markers: markersList),],
     );
+  }
+
+
+
+  void highlightMapPoi(MapPoi mapPoi) {
+    setState(() {
+      markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.id]] = getMarkerFromPoi(mapPoi.poi , color: Colors.black);
+    });
+  }
+  void unHighlightMapPoi(MapPoi mapPoi) {
+    setState(() {
+      markersList[Globals.globalPoisIdToMarkerIdx[mapPoi.poi.id]] = getMarkerFromPoi(mapPoi.poi);
+    });
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:final_project/Map/audio_player_controller.dart';
+import 'package:final_project/Map/text_guid_dialog.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/map.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ class Guide {
   BuildContext context;
   GuideData guideData;
   AudioApp audioPlayer;
-  GuideState state = GuideState.stopped;
+  GuideState state = GuideState.waiting;
   MapPoi? lastMapPoiHandled;
 
   Guide(this.context, this.guideData, this.audioPlayer);
@@ -54,11 +55,51 @@ class Guide {
     );
   }
 
-  void handleMapPoiText(MapPoi mapPoi) {
+  void handleMapPoiText(MapPoi mapPoi) async {
     if (lastMapPoiHandled != null) {
       UserMap.USER_MAP!.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
     }
     UserMap.USER_MAP!.userMapState?.highlightMapPoi(mapPoi);
+    lastMapPoiHandled = mapPoi;
+    BlurryDialog alert = BlurryDialog(
+        "Do you want to read about this poi", mapPoi.poi.poiName!, () async {
+      // ok callback
+      Navigator.of(context).pop();
+      TextGuideDialog textDialog = TextGuideDialog(
+        mapPoi.poi.poiName ?? "?",
+        mapPoi.poi.shortDesc ?? "?",
+          () {
+            Navigator.of(context).pop();
+            //next callback
+
+          }
+
+      );
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return textDialog;
+        },
+      );
+
+
+      Audio audio = await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id!);
+
+
+    }, () {
+      // next callback
+      Navigator.of(context).pop();
+    }, () {
+      // cancel
+      Navigator.of(context).pop();
+    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
 
 
   }
@@ -84,7 +125,7 @@ class Guide {
     if (Globals.globalUnhandledPois.isNotEmpty) {
       handlePois();
     } else {
-      state = GuideState.stopped;
+      state = GuideState.waiting;
     }
   }
 
