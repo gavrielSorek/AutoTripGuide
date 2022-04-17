@@ -44,6 +44,7 @@ class Guide {
     }, () {
       // next callback
       Navigator.of(context).pop();
+      handleNextPoi();
     }, () {
       // cancel
       Navigator.of(context).pop();
@@ -84,13 +85,13 @@ class Guide {
         },
       );
 
-
       Audio audio = await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id!);
 
 
     }, () {
       // next callback
       Navigator.of(context).pop();
+      handleNextPoi();
     }, () {
       // cancel
       Navigator.of(context).pop();
@@ -104,30 +105,52 @@ class Guide {
 
 
   }
-  void handlePois() async {
-    print("in handlePois");
-    // Globals.globalUnhandledPois.forEach(void f(K key, V value));
-
-    if (state == GuideState.working) {
+  void handleNextPoi() async {
+    if (state == GuideState.working || Globals.globalUnhandledPois.isEmpty) {
+      print("error in handleNextPoi in Guide or pois map is empty");
       return;
     }
     state = GuideState.working;
-    Map clonePois = Map.from(Globals.globalUnhandledPois);
-    clonePois.forEach((var poiId, var mapPoi) {
-      MapPoi mapPoiElement = mapPoi as MapPoi;
-      if (guideData.status == GuideStatus.voice) {
-        handleMapPoiVoice(mapPoiElement);
-      } else {
-        handleMapPoiText(mapPoiElement);
-      }
-      Globals.globalUnhandledPois.remove(poiId);
-
-    });
-    if (Globals.globalUnhandledPois.isNotEmpty) {
-      handlePois();
+    MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
+    if (guideData.status == GuideStatus.voice) {
+      handleMapPoiVoice(mapPoiElement);
     } else {
-      state = GuideState.waiting;
+      handleMapPoiText(mapPoiElement);
     }
+    Globals.globalUnhandledPois.remove(mapPoiElement.poi.id);
+    if (Globals.globalUnhandledPois.isNotEmpty && state != GuideState.stopped) {
+      handleNextPoi();
+    } else {
+      if (Globals.globalUnhandledPois.isEmpty) {
+        state = GuideState.waiting;
+      }
+    }
+
+  }
+  void handlePois() async {
+    print("in handlePois");
+    // Globals.globalUnhandledPois.forEach(void f(K key, V value));
+    if (state == GuideState.working) {
+      return;
+    }
+    handleNextPoi();
+    // state = GuideState.working;
+    // Map clonePois = Map.from(Globals.globalUnhandledPois);
+    // clonePois.forEach((var poiId, var mapPoi) {
+    //   MapPoi mapPoiElement = mapPoi as MapPoi;
+    //   if (guideData.status == GuideStatus.voice) {
+    //     handleMapPoiVoice(mapPoiElement);
+    //   } else {
+    //     handleMapPoiText(mapPoiElement);
+    //   }
+    //   Globals.globalUnhandledPois.remove(poiId);
+    //
+    // });
+    // if (Globals.globalUnhandledPois.isNotEmpty) {
+    //   handlePois();
+    // } else {
+    //   state = GuideState.waiting;
+    // }
   }
 
 
