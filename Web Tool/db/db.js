@@ -43,11 +43,8 @@ async function findDataByParams(client, queryObject, relevantBounds, MaxCount, s
 }
 
 // The function find a pois 
-async function findPois(client, poiParam ,paramVal, relevantBounds, MaxCount, searchOutsideTheBoundery) {
-    var queryObject = {}
-    if (poiParam)
-        queryObject[poiParam] = paramVal
-    return findDataByParams(client, queryObject, relevantBounds, MaxCount, searchOutsideTheBoundery)
+async function findPois(client, poiParams , relevantBounds, MaxCount, searchOutsideTheBoundery) {
+    return findDataByParams(client, poiParams, relevantBounds, MaxCount, searchOutsideTheBoundery)
 }
 // The function insert audio to the db
 async function insertAudio(dbClient, audio, audioName, idOfPoi) {

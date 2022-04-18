@@ -1,0 +1,12 @@
+json to communicate with the server (search pois example):
+{
+    "PermissionToken": "kjsklfjadlkgheesd347ejdske3jd4534654864ekfjdkf4359fldjfkdjgdgm",
+    "permissionStatus": "crawler",
+    "poiParameter": "_poiName",
+    "poiInfo": 
+        {
+        "poiParameter": "masada"
+        },
+    "relevantBounds" :{"northEast": {"lat": 32.0, "lng": 36.0}, "southWest": {"lat": 32.0, "lng": 36.0}},
+    "searchOutsideTheBounds" :true
+}

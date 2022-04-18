@@ -88,8 +88,8 @@ async function editPoi(poi) {
     } 
 }
 
-async function findPoisInfo(poiParam, paramVal,relevantBounds, searchOutsideTheBounds) {
-    return db.findPois(dbClientSearcher, poiParam, paramVal, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
+async function findPoisInfo(poiParams,relevantBounds, searchOutsideTheBounds) {
+    return db.findPois(dbClientSearcher, poiParams, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
 }
 async function poiHandler(poi) {
     language = poi._language
@@ -209,8 +209,9 @@ app.post('/editPois', permissions.authApprover, (req, res, next) =>{
 app.post('/searchPois', permissions.authContributor,async function(req, res) {
     console.log("Pois search general")
     const data = req.body;
-    const queryParam = data.poiParameter;
-    poisInfo = findPoisInfo(queryParam, data.poiInfo.poiParameter ,data.relevantBounds, data.searchOutsideTheBounds).then(function(pois) {
+    var queryParams = {}
+    queryParams[data.poiParameter] = data.poiInfo.poiParameter;
+    poisInfo = findPoisInfo(queryParams ,data.relevantBounds, data.searchOutsideTheBounds).then(function(pois) {
         res.status(200);
         res.json(pois);
         res.end();

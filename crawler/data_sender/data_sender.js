@@ -1,6 +1,7 @@
 var XMLHttpRequest = require('xhr2');
 var xhr = new XMLHttpRequest();
 var geo = require("./services/countryByPosition");
+var tokenGetter = require("./services/serverTokenGetter");
 
 // The function returns the date of today
 function getTodayDate() {
@@ -14,16 +15,18 @@ function getTodayDate() {
 }
 
 // The function send the poi info request to the server
-function sendPoisToServer(pois) {
+async function sendPoisToServer(pois) {
     const Http = new XMLHttpRequest();
-    const url = 'http://localhost:5500/createPois';
+    const serverUrl = 'https://autotripguide.loca.lt';
+    const url = serverUrl + '/createPois';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
     var objectToSend = {}
+    var tokenAndPermission = await tokenGetter.getToken('crawler@gmail.com', '1234', serverUrl)
     objectToSend["poisArray"] = pois
-    objectToSend["permissionStatus"] = "all"
-    objectToSend["PermissionToken"] = "Ml2N58lCLiz5HQUKZJWEvYhDAk28HYEf1d3DZCwDmIxGxnEpx6"
+    objectToSend["permissionStatus"] = tokenAndPermission.permissionStatus
+    objectToSend["PermissionToken"] = tokenAndPermission.PermissionToken
 
     var poisInfoJson = JSON.stringify(objectToSend);
     Http.send(poisInfoJson);
