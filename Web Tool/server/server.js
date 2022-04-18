@@ -250,7 +250,8 @@ function getGeneralEditFile() {
 }
  // create edit page for spacific poi
  async function createEditHtmlFile(poiId) {
-    var poi = await db.findPois(dbClientSearcher, '_id' ,poiId, getDefaultBounds(), 10, true);
+    var queryParams = {_id : poiId}
+    var poi = await db.findPois(dbClientSearcher, queryParams, getDefaultBounds(), 10, true);
     var editPoiHtml = generalEditFile.repeat(1);
     const parser = new DOMParser();
     var htmlDoc = parser.parseFromString(editPoiHtml, 'text/html');
