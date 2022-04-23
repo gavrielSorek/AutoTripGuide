@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'package:final_project/Map/types.dart';
 import 'package:http/http.dart' as http;
@@ -6,7 +7,7 @@ import 'package:http/retry.dart';
 class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
   // String serverUrl = "autotripguidemobile.loca.lt";
-  String serverUrl = "204f-77-126-184-189.ngrok.io";
+  String serverUrl = "cfc0-84-94-109-213.ngrok.io";
 
   var client = RetryClient(http.Client());
 
@@ -113,5 +114,42 @@ class ServerCommunication {
   @override
   void dispose() {
     client.close();
+  }
+
+  static Uri addLangToUrl(String url, String path, String language) {
+    final queryParameters = {
+      'language': language.toString()
+    };
+    final uri = Uri.https(url, path, queryParameters);
+    return uri;
+  }
+
+  Future<Map<String, List<String>>> getCategories(String language) async {
+    Uri newUri =
+    addLangToUrl(serverUrl, '/getCategories', language);
+    try {
+      var response = await client.get(newUri);
+      if (response.statusCode == 200 && response.contentLength! > 0) {
+        final categoriesMap = jsonDecode(response.body);
+        Map<String, List<String>> newMap = Map.from(categoriesMap.map((key, value) {
+          List<dynamic> values = List.from(value);
+          return MapEntry(
+              key.toString(),
+              values.map((theValue) {
+                return theValue.toString();
+              }).toList());
+        }));
+        return newMap;
+      } else {
+        if (response.contentLength == 0) {
+          return {};
+        }
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        throw Exception('Failed to get categories');
+      }
+    } finally {
+      // client.close();
+    }
   }
 }

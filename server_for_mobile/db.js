@@ -1,4 +1,4 @@
-module.exports = { getAudio, findPois, addUser};
+module.exports = { getAudio, findPois, addUser, getCategories};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -73,6 +73,20 @@ async function addUser(client, newUserInfo) {
         console.log(`new user created with the following id: ${res.insertedId}`);
     }
     return checkCode;
+}
+
+// The function inserts a new user to the db
+async function getCategories(client, lang) {
+    var categoryLang = lang.language;
+    var res = await client.db("testDb").collection("Categories").find({language: categoryLang});
+    var resArr = await res.toArray();
+    if (resArr.length > 0) {
+        //console.log(resArr[0].categories);
+        console.log("found categories for the reuired language")
+        return resArr[0].categories;
+    } else {
+        return {};
+    }
 }
 
 // check if object is empty

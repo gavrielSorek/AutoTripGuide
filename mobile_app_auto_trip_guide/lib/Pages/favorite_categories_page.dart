@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project/Pages/login_controller.dart';
 import 'package:get/get.dart';
+import '../Map/globals.dart';
 
 
 class FavoriteCategoriesPage extends StatefulWidget {
@@ -14,43 +15,38 @@ class FavoriteCategoriesPage extends StatefulWidget {
 
 class FavoriteCategories extends State<FavoriteCategoriesPage> {
   final controller = Get.put(LoginController());
-  Map<String, List<String>> categoriesMap = {'ALL':['A','B','C','E','F','G','H'], 'MY FAVORITE': ['A','B'], 'HISTORY':['F','G'], 'SPORT':['C','E']};
-  List<String> categories = <String>['ALL', 'MY FAVORITE', 'HISTORY', 'SPORT'];
-  List<String>? subCategories = <String>['A','B','C','E','F','G','H'];
+  // Map<String, List<String>> categoriesMap = {'ALL':['A','B','C','E','F','G','H'], 'MY FAVORITE': ['A','B'], 'HISTORY':['F','G'], 'SPORT':['C','E']};
+  Map<String, List<String>> categoriesMap = Globals.globalCategories;
+  //List<String> categories = <String>['ALL', 'MY FAVORITE', 'HISTORY', 'SPORT'];
+  List<String> categories = Globals.globalCategories.keys.toList();
   List<String> favorCategories = ['A','B'];
   int selectedIndex = 0;
   bool favorChanged = false;
 
   Container buildCategoryCard(BuildContext context) {
     return Container(
-        height: MediaQuery.of(context).size.height / 7.5,
-        width: MediaQuery.of(context).size.width / 1.2,
+        height: MediaQuery.of(context).size.height / 1.5,
+        width: MediaQuery.of(context).size.width / 1.1,
         child: Card(
           color: const Color.fromRGBO(64, 75, 96, .9),
           semanticContainer: true,
           clipBehavior: Clip.antiAliasWithSaveLayer,
           child: ListView.separated(
-              padding: const EdgeInsets.all(8),
-              itemCount: categories.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Text(categories[index], style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20), textAlign: TextAlign.center,
-                  ),
-                  textColor: selectedIndex == index ? Colors.black : null,
-                    onTap: () {
-                      setState(() {
-                        selectedIndex = index;
-                        String selectedCategory = categories[index];
-                        if(selectedCategory == "MY FAVORITE") {
-                          subCategories = favorCategories;
-                        } else {
-                          subCategories = categoriesMap[selectedCategory];
-                        }
-                      });
-                    });
-              },
+            shrinkWrap: true,
+            padding: const EdgeInsets.all(8),
+            itemCount: categories.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ExpansionTile(
+                title: Text(categories[index], style: const TextStyle(
+                    fontSize: 20),),
+                backgroundColor: Color.fromRGBO(55, 55, 20, .20),
+                iconColor : Colors.red,
+                textColor:Colors.red,
+                  children: <Widget>[
+                  buildSubCategoryCard(categories[index], context),
+                ],
+              );
+            },
             separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.white),
           ),
           elevation: 8,
@@ -60,9 +56,9 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
         ));
   }
 
-  Container buildSubCategoryCard(BuildContext context) {
+  Container buildSubCategoryCard(String selectedCategory, BuildContext context) {
     return Container(
-        height: MediaQuery.of(context).size.height / 1.8,
+        height: MediaQuery.of(context).size.height / 2,
         width: MediaQuery.of(context).size.width / 1.05,
         child: Card(
           color: const Color.fromRGBO(64, 75, 96, .9),
@@ -70,9 +66,9 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
           clipBehavior: Clip.antiAliasWithSaveLayer,
           child: ListView.separated(
             padding: const EdgeInsets.all(8),
-            itemCount: subCategories!.length,
+            itemCount: categoriesMap[selectedCategory]!.length,
             itemBuilder: (BuildContext context, int index) {
-              String category = subCategories![index];
+              String category = categoriesMap[selectedCategory]![index];
               bool isFavor = favorCategories.contains(category);
               return ListTile(
                 title: Text(category, style: TextStyle(
@@ -86,8 +82,10 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
                 onTap: () {
                   setState(() {
                     if (isFavor) {
+                      categoriesMap["MY FAVORITE"]?.remove(category);
                       favorCategories.remove(category);
                     } else {
+                      categoriesMap["MY FAVORITE"]?.add(category);
                       favorCategories.add(category);
                     }
                     favorChanged = true;
@@ -143,6 +141,7 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
         ));
   }
 
+  //    Future<Map<String, List<String>>> map = getCategoriesFromDB();
 
   @override
   Widget build(BuildContext context) {
@@ -166,12 +165,6 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 buildCategoryCard(context),
-              ],
-            ),
-            Row( // menu row
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                buildSubCategoryCard(context)
               ],
             ),
             Row( // menu row

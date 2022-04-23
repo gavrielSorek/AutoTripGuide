@@ -82,6 +82,16 @@ app.get("/addNewUser", async function (req, res) { //next requrie (the function 
     res.end();
  })
 
+ // get categories
+app.get("/getCategories", async function (req, res) { //next requrie (the function will not stop the program)
+    console.log("inside get of Categories - server side")
+    language = {'language': req.query.language};
+    result = await db.getCategories(dbClientSearcher, language)
+    res.status(200);
+    res.json(result);
+    res.end();
+ })
+
  app.listen(port, async ()=>{
     await init()
     console.log(`Server is runing on port ${port}`)

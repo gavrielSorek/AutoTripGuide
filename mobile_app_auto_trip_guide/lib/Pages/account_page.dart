@@ -20,8 +20,8 @@ class AccountPage extends StatelessWidget {
 
   Container buildCard(String cardName, BuildContext context) {
     return Container(
-        height: 200,
-        width: 200,
+        height: MediaQuery.of(context).size.height / 4,
+        width: MediaQuery.of(context).size.width / 2,
         child: Card(
           semanticContainer: true,
           clipBehavior: Clip.antiAliasWithSaveLayer,

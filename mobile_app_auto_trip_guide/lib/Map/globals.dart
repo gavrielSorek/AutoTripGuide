@@ -12,7 +12,8 @@ class Globals {
   static Map globalAllPois = HashMap<String, MapPoi>();
   static Map globalUnhandledPois = HashMap<String, MapPoi>();
   static Map globalPoisIdToMarkerIdx = HashMap<String, int>();
-
+  static String globalDefaultLanguage = "eng";
+  static Map<String, List<String>> globalCategories = {};
   static Map globalInterestingPois = HashMap<String, MapPoi>();
   static AppLauncher globalAppLauncher = AppLauncher();
   static MapPoi? mainMapPoi; // spoken poi
@@ -34,5 +35,6 @@ class Globals {
   static init() async {
     // initialization order is very important
     await UserMap.mapInit();
+    globalCategories = await Globals.globalServerCommunication.getCategories(globalDefaultLanguage);
   }
 }
