@@ -3,14 +3,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project/Pages/login_controller.dart';
 import 'package:get/get.dart';
+import 'package:final_project/Pages/favorite_categories_page.dart';
 
 
 class AccountPage extends StatelessWidget {
   AccountPage({Key? key}) : super(key: key);
   final controller = Get.put(LoginController());
 
-  void _navigateToNextScreen(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => PersonalDetailsPage()));
+  void _navigateToNextScreen(String screenName, BuildContext context) {
+    if(screenName == "Personal details") {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => PersonalDetailsPage()));
+    } else if(screenName == "Favorite categories") {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => FavoriteCategoriesPage()));
+    }
   }
 
   Container buildCard(String cardName, BuildContext context) {
@@ -23,7 +28,7 @@ class AccountPage extends StatelessWidget {
           child: Center(
             child: InkWell(
               onTap: () {
-                _navigateToNextScreen(context);
+                _navigateToNextScreen(cardName, context);
               },
               child: Center(
                 child: Text(cardName, style: TextStyle(
