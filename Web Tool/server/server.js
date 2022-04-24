@@ -104,7 +104,9 @@ async function poiHandler(poi) {
         poi._id = uuidv1()
     }
     if(poi._audio != "no audio") {
-        db.insertAudio(dbClientAudio, Object.values(poi._audio), poi._poiName, poi._id);
+        var audio = poi._audio
+        poi._audio = "have audio"
+        db.insertAudio(dbClientAudio, Object.values(audio), poi._poiName, poi._id);
     } 
 }
 
