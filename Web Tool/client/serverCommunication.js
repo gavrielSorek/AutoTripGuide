@@ -9,13 +9,14 @@
         if (!relevantBounds) {
             relevantBounds = getDefaultBounds();
         }
-        var poiInfo = {
-            poiParameter: valueOfParameter
-        }
+        // var poiInfo = {
+        //     poiParameter: valueOfParameter
+        // }
         var quaryParams = {}
-        quaryParams['poiParameter'] = poiParameter
+        quaryParams['poiSearchParams'] = {}
+        quaryParams['poiSearchParams'][poiParameter] = valueOfParameter;
+        // quaryParams['poiParameter'] = poiParameter
         quaryParams['relevantBounds'] = relevantBounds
-        quaryParams['poiInfo'] = poiInfo
         quaryParams['searchOutsideTheBounds'] = searchOutsideTheBounds
         communication.addTokensToObject(quaryParams)
         // communication.addTokensToObject(quaryParams) //add tokens
@@ -46,9 +47,8 @@
 
     // The function get the poi info for pois that waiting for approval
     global.communication.getAudioById = function (id, successCallbackFunc, failureCallbackFunc = undefined) {
-        var poiInfo = {
-            _id: id
-        }
+        poiInfo = {_id: id}
+
         communication.addTokensToObject(poiInfo)
         var poiInfoJson = JSON.stringify(poiInfo);
         const Http = new XMLHttpRequest();

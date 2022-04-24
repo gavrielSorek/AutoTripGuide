@@ -29,11 +29,9 @@ const secClipRange = 0.1 //#secure clipping range (clip pois in secure distance)
 
 // The function get the poi info according name
 function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds = false, relevantBounds = undefined, suceessCallBack = undefined) { //TODO use in communication method instead
-    var poiInfo = {
-        poiParameter : valueOfParameter
-    }
     var quaryParams = {}
-    quaryParams['poiParameter'] = poiParameter
+    quaryParams['poiSearchParams'] = {}
+    quaryParams['poiSearchParams'][poiParameter] = valueOfParameter;
     if (searchOutsideTheBounds == false) {
         quaryParams['relevantBounds'] = relevantBounds
     }
@@ -41,7 +39,6 @@ function getPoisInfo(poiParameter, valueOfParameter, searchOutsideTheBounds = fa
         // set default bounds while searchOutsideTheBounds = true
         quaryParams['relevantBounds'] = getRelevantBounds(secClipRange)
     }
-    quaryParams['poiInfo'] = poiInfo
     quaryParams['searchOutsideTheBounds'] = searchOutsideTheBounds
     communication.addTokensToObject(quaryParams)
     var quaryParamsJson= JSON.stringify(quaryParams);
@@ -430,6 +427,3 @@ function topFunction() {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
 }
-
-
-

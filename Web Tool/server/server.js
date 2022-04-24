@@ -107,7 +107,7 @@ async function poiHandler(poi) {
         poi._id = uuidv1()
     }
     if(poi._audio != "no audio") {
-        await db.deleteAudio(client, poi._id);
+        await db.deleteAudio(dbClientAudio, poi._id);
         var audio = poi._audio
         poi._audio = "have audio"
         db.insertAudio(dbClientAudio, Object.values(audio), poi._poiName, poi._id);
@@ -215,8 +215,7 @@ app.post('/editPois', permissions.authApprover, (req, res, next) =>{
 app.post('/searchPois', permissions.authContributor,async function(req, res) {
     console.log("Pois search general")
     const data = req.body;
-    var queryParams = {}
-    queryParams[data.poiParameter] = data.poiInfo.poiParameter;
+    var queryParams = data.poiSearchParams;
     poisInfo = findPoisInfo(queryParams ,data.relevantBounds, data.searchOutsideTheBounds).then(function(pois) {
         res.status(200);
         res.json(pois);

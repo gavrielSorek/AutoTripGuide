@@ -102,6 +102,7 @@ async function deleteAudio(client, id) {
 
 //delete poi
 async function editPoi(client, updatedPoi, id) {
+    var queryObject = {_id: id}
     client.db("testDb").collection("testCollection").replaceOne(queryObject, updatedPoi, mongoHandler)
 }
 // mongo ans handler
