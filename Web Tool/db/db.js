@@ -1,4 +1,4 @@
-module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi, deletePoi, changePermission};
+module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi, deletePoi, changePermission, deleteAudio};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -102,12 +102,7 @@ async function deleteAudio(client, id) {
 
 //delete poi
 async function editPoi(client, updatedPoi, id) {
-    var queryObject = {_id: id}
     client.db("testDb").collection("testCollection").replaceOne(queryObject, updatedPoi, mongoHandler)
-    await deleteAudio(client, id);
-    if (updatedPoi._audio != 'no audio') {
-        insertAudio(client, Object.values(updatedPoi._audio), updatedPoi._poiName, updatedPoi._id)
-    }
 }
 // mongo ans handler
 function mongoHandler(err, res) {

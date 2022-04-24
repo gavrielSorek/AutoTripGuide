@@ -80,7 +80,7 @@ async function editPoi(poi) {
         if (poi._delete) {
             await db.deletePoi(dbClientInsertor, poi, poi._id);
         } else {
-            poiHandler(poi, true)
+            poiHandler(poi)
             await db.editPoi(dbClientInsertor, poi, poi._id);
         }
     } catch (e) {
@@ -91,8 +91,11 @@ async function editPoi(poi) {
 async function findPoisInfo(poiParams,relevantBounds, searchOutsideTheBounds) {
     return db.findPois(dbClientSearcher, poiParams, relevantBounds, MAX_ELEMENT_ON_MAP, searchOutsideTheBounds);
 }
-async function poiHandler(poi, isEdit=false) {
+async function poiHandler(poi) {
     language = poi._language
+    if(!poi._poiName) {
+        poi._poiName = 'unknown'
+    }
     if(language == "en") {
         poiName = poi._poiName
         poi._poiName = poiName.toLowerCase();
@@ -103,7 +106,8 @@ async function poiHandler(poi, isEdit=false) {
     if(!poi._id) {
         poi._id = uuidv1()
     }
-    if(poi._audio != "no audio" && isEdit == false) {
+    if(poi._audio != "no audio") {
+        await db.deleteAudio(client, poi._id);
         var audio = poi._audio
         poi._audio = "have audio"
         db.insertAudio(dbClientAudio, Object.values(audio), poi._poiName, poi._id);

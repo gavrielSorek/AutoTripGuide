@@ -285,8 +285,9 @@ function getSearchInfo() {
         lastParameterSearched = '_poiName'
         // poiParameter, valueOfParameter, searchOutsideTheBounds = false, relevantBounds = undefined, suceessCallBack = undefined
         getPoisInfo('_poiName', valueToSearch, searchOutsideTheBounds=true, relevantBounds=undefined,suceessCallBack = ()=>{
-            center = {lat : parseFloat(globalMarker._latitude), lng : parseFloat(globalMarker._longitude) }
-            getPoisInfo(undefined, undefined, false, getBoundsAroundCenter(center,0.07)), undefined, undefined});
+            //center = {lat : parseFloat(globalMarker._latitude), lng : parseFloat(globalMarker._longitude) }
+            //getPoisInfo(undefined, undefined, false, getBoundsAroundCenter(center,0.07)), undefined, undefined
+        });
         // getPoisInfoByName(valueToSearch, true);
       }else if(document.getElementById('Contributor').checked) {
         //Contributor radio button is checked
