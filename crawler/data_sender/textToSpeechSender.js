@@ -24,9 +24,12 @@ async function init() {
 async function getPoisWithNoVoice() {
     const Http = new XMLHttpRequest();
 
-    var queryParams = {PermissionToken: globalTokenAndPermission.PermissionToken, permissionStatus: globalTokenAndPermission.permissionStatus, poiParameter: '_audio', poiInfo: {poiParameter: 'no audio'},
+    var queryParams = {PermissionToken: globalTokenAndPermission.PermissionToken, permissionStatus: globalTokenAndPermission.permissionStatus,
     relevantBounds: {northEast: {lat: 32.0, lng: 36.0}, southWest: {lat: 32.0, lng: 36.0}} ,searchOutsideTheBounds:true}
-    
+    queryParams['poiSearchParams'] = {}
+    queryParams['poiSearchParams']['_language'] = 'en'
+    queryParams['poiSearchParams']['_audio'] = 'no audio'
+
 
 
     var queryParamsJson = JSON.stringify(queryParams);
@@ -44,7 +47,7 @@ async function getPoisWithNoVoice() {
             } else if (Http.readyState == 4) { //if the operation is complete.
                 var response = Http.responseText
                 if (response.length > 0) {
-                    console.log("response from the server is recieved")
+                    //console.log("response from the server is recieved")
                     var poisInfo = JSON.parse(Http.responseText);
                     if(poisInfo.length == 0) {
                         console.log("not found");
@@ -72,18 +75,18 @@ async function textToVoice(text, language) {
             console.log("Text to speech converted!");
             fs.readFile( __dirname + '/Voic123.mp3', function (err, data) {
                 if (err) {
-                reject(err); 
+                    reject(err); 
                 }
                 var voiceData = new Uint8Array(data)
                 resolve(voiceData);
             });
         });
     });
-    return await audioPromise;
+    return audioPromise;
 }
 
     // The function send the poi info request to the server
-function updatePoiOnServer(poi) {
+async function updatePoiOnServer(poi) {
     poiArray = [poi] //thats what the server expected
     objectToSend = {}
     objectToSend['poisArray'] = poiArray;
@@ -98,28 +101,35 @@ function updatePoiOnServer(poi) {
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
     Http.send(poiInfoJson);
-    Http.onreadystatechange = (e) => {
-        if (Http.readyState == 4 && Http.status == 200) {
-            console.log("finished to upload poi: " + poi._poiName)
-            var response = Http.responseText;
-            if (response.length > 0) {
-                console.log("response from the server is recieved")
-                var jsonResponse = JSON.parse(Http.responseText);
-                console.log(jsonResponse);
-            }
-        } 
-    }
+
+    const audioPromise = new Promise((resolve, reject) => {
+        Http.onreadystatechange = (e) => {
+            if (Http.readyState == 4 && Http.status == 200) {
+                resolve("finished to upload poi");
+                console.log("finished to upload poi: " + poi._poiName)
+                var response = Http.responseText;
+                if (response.length > 0) {
+                    //console.log("response from the server is recieved")
+                    console.log('Add voice for ' + poi._poiName);
+                    //var jsonResponse = JSON.parse(Http.responseText);
+                    //console.log(jsonResponse);
+                }
+            } 
+        }
+    });
+    return await audioPromise;
+
 }
 
 async function handleAllPois() {
     var poisWithNoVoice = await getPoisWithNoVoice();
     poisWithNoVoice.forEach(async(poi) => {
         if(poi._language == 'en') {
-            console.log(poi._poiName + " ---------------  will convert")
-            poi._audio = await textToVoice(poi._shortDesc ,poi._language)
-            //poi._audio = await textToVoice('asadad' ,poi._language)
-
-            updatePoiOnServer(poi);
+            // console.log(poi._poiName + " ---------------  will convert")
+            //poi._audio = await textToVoice(poi._shortDesc ,poi._language)
+            poi._audio = await textToVoice('This is a Demo' ,poi._language)
+            var res = await updatePoiOnServer(poi);
+            console.log('q')
         }
     
     });
