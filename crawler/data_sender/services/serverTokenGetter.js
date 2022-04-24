@@ -14,7 +14,6 @@ async function getToken(mail, password, serverUrl) {
     Http.HTTPS=true
 
     const url= serverUrl + '/login';
-    console.log(url)
     Http.open("POST",  url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -24,8 +23,8 @@ async function getToken(mail, password, serverUrl) {
             if (Http.readyState == 4 && Http.status == 200) { //if the operation is complete. 
                 var response = Http.responseText
                 if(response.length > 0) {
-                    console.log("response from the server is recieved")
-                    console.log(response)
+                    // console.log("response from the server is recieved")
+                    // console.log(response)
                     var jsonResponse = JSON.parse(Http.responseText);
                     if (jsonResponse['loginStatus'] == 0) {
                         console.log("The username you entered doesn't belong to an account. Please check your username and try again.");

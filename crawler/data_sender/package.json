@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "country-reverse-geocoding": "^0.2.2"
+    "country-reverse-geocoding": "^0.2.2",
+    "gtts": "^0.2.1",
+    "xhr2": "^0.2.1"
   }
 }

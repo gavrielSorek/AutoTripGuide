@@ -1,8 +1,10 @@
 {
   "dependencies": {
+    "@google-cloud/text-to-speech": "^3.4.0",
     "cors": "^2.8.5",
     "country-reverse-geocoding": "^0.2.2",
     "express": "^4.17.3",
+    "gtts": "^0.2.1",
     "jquery": "^3.6.0",
     "localtunnel": "^2.0.2",
     "mongo": "^0.1.0",
