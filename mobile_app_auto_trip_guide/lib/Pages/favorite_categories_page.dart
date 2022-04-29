@@ -1,11 +1,8 @@
-import 'dart:collection';
-import 'package:final_project/Pages/personal_details_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project/Pages/login_controller.dart';
 import 'package:get/get.dart';
 import '../Map/globals.dart';
-
 
 class FavoriteCategoriesPage extends StatefulWidget {
   const FavoriteCategoriesPage({Key? key}) : super(key: key);
@@ -15,140 +12,78 @@ class FavoriteCategoriesPage extends StatefulWidget {
 
 class FavoriteCategories extends State<FavoriteCategoriesPage> {
   final controller = Get.put(LoginController());
-  // Map<String, List<String>> categoriesMap = {'ALL':['A','B','C','E','F','G','H'], 'MY FAVORITE': ['A','B'], 'HISTORY':['F','G'], 'SPORT':['C','E']};
-  Map<String, List<String>> categoriesMap = Globals.globalCategories;
-  //List<String> categories = <String>['ALL', 'MY FAVORITE', 'HISTORY', 'SPORT'];
   List<String> categories = Globals.globalCategories.keys.toList();
-  List<String> favorCategories = ['A','B'];
-  int selectedIndex = 0;
   bool favorChanged = false;
+  List<String> favorCategories = <String>['Parks', 'Museums'];  //TODO:: get favorite categories from the user info in db
 
-  Container buildCategoryCard(BuildContext context) {
-    return Container(
-        height: MediaQuery.of(context).size.height / 1.5,
-        width: MediaQuery.of(context).size.width / 1.1,
-        child: Card(
-          color: const Color.fromRGBO(64, 75, 96, .9),
-          semanticContainer: true,
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          child: ListView.separated(
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(8),
-            itemCount: categories.length,
-            itemBuilder: (BuildContext context, int index) {
-              return ExpansionTile(
-                title: Text(categories[index], style: const TextStyle(
-                    fontSize: 20),),
-                backgroundColor: Color.fromRGBO(55, 55, 20, .20),
-                iconColor : Colors.red,
-                textColor:Colors.red,
-                  children: <Widget>[
-                  buildSubCategoryCard(categories[index], context),
-                ],
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.white),
+  List<Widget> buildCategoriesChips () {
+    List<Widget> chips = [];
+    for (String category in categories) {
+      Widget item =  Padding(
+        padding: const EdgeInsets.only(left:10, right: 5),
+        child: FilterChip(
+          backgroundColor: Color.fromRGBO(0, 204, 204, 1.0),
+          avatar: CircleAvatar(
+            backgroundColor: favorCategories.contains(category)?Color.fromRGBO(89, 0, 179, 1.0):Color.fromRGBO(0, 128, 128, 1.0),
+            child: Text(category[0].toUpperCase(),style: TextStyle(color: Colors.white),),
           ),
-          elevation: 8,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0)),
-          margin: EdgeInsets.all(20),
-        ));
+          label: Text(category,style: TextStyle(color: Colors.white)),
+          selected: favorCategories.contains(category),
+          selectedColor: Color.fromRGBO(135,88,244, 1.0),
+          onSelected: (bool selected) {
+            setState(() {
+              if (selected) {
+                favorCategories.add(category);
+              } else {
+                favorCategories.removeWhere((String name) {
+                  return name == category;
+                });
+              }
+              favorChanged = true;
+            });
+          },
+        ),
+      );
+      chips.add(item);
+    }
+    return chips;
   }
 
-  Container buildSubCategoryCard(String selectedCategory, BuildContext context) {
-    return Container(
-        height: MediaQuery.of(context).size.height / 2,
-        width: MediaQuery.of(context).size.width / 1.05,
-        child: Card(
-          color: const Color.fromRGBO(64, 75, 96, .9),
-          semanticContainer: true,
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          child: ListView.separated(
-            padding: const EdgeInsets.all(8),
-            itemCount: categoriesMap[selectedCategory]!.length,
-            itemBuilder: (BuildContext context, int index) {
-              String category = categoriesMap[selectedCategory]![index];
-              bool isFavor = favorCategories.contains(category);
-              return ListTile(
-                title: Text(category, style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20),
-                    ),
-                trailing: Icon(
-                  isFavor ? Icons.favorite : Icons.favorite_border,
-                  color: isFavor ? Colors.red : Colors.white,
-                ),
-                onTap: () {
-                  setState(() {
-                    if (isFavor) {
-                      categoriesMap["MY FAVORITE"]?.remove(category);
-                      favorCategories.remove(category);
-                    } else {
-                      categoriesMap["MY FAVORITE"]?.add(category);
-                      favorCategories.add(category);
-                    }
-                    favorChanged = true;
-                  });
-                },
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) => const Divider(color: Colors.white),
-          ),
-          elevation: 8,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0)),
-          margin: EdgeInsets.all(20),
-        ));
-  }
-
-  Container buildApplyButton(BuildContext context) {
-    return Container(
-        height: 100,
-        width: 120,
-        child: Card(
-          color: Color.fromRGBO(64, 75, 96, .9),
-          semanticContainer: true,
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          child: Center(
-            child: InkWell(
-              onTap: () {
-                if(favorChanged) {
-                  final snackBar = SnackBar(
-                    content: const Text('Your Favorite Categories Saved!'),
-                    action: SnackBarAction(
-                      label: 'Undo',
-                      onPressed: () {
-                        // undo the change
-                      },
-                    ),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                }
+  ElevatedButton buildApplyButton(){
+    return ElevatedButton(
+      child: const Text('Apply'),
+      onPressed: () {
+        if(favorChanged) {
+          final snackBar = SnackBar(
+            content: const Text('Your Favorite Categories Saved!'),
+            action: SnackBarAction(
+              label: 'Undo',
+              onPressed: () {
+                // undo the change
               },
-              child: const Center(
-                child: Text("Apply", style: TextStyle(
-                    color: Colors.yellow,
-                    fontSize: 20),
-                    textAlign: TextAlign.center),
-              ),
             ),
-          ),
-          elevation: 8,
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }
+        //TODO:: add update of favorite categories for the user in db
+      },
+      style: ElevatedButton.styleFrom(
+          primary: Color.fromRGBO(135,88,244, 1.0),
+          padding: const EdgeInsets.symmetric(horizontal: 160, vertical: 15),
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0)),
-          margin: EdgeInsets.all(20),
-        ));
+              borderRadius: BorderRadius.circular(15)),
+          textStyle:
+          const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+    );
   }
-
-  //    Future<Map<String, List<String>>> map = getCategoriesFromDB();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(58, 66, 86, 1.0),
+      backgroundColor: Color.fromRGBO(0, 26, 51, 1.0),
         appBar: AppBar(
           title: const Text('Favorite Categoriess'),
+          backgroundColor: Color.fromRGBO(38, 77, 115,1.0),
           leading: const BackButton(),
           centerTitle: true,
           actions: <Widget>[
@@ -159,20 +94,25 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
           ],),
         body: Column(
           children: [
-            SizedBox(height:16),
-            SizedBox(height:16),
+            SizedBox(height:MediaQuery.of(context).size.height / 20),
+            Text("Choose your favorite categories", style: TextStyle(
+                color: Colors.white,
+                fontSize: 20),
+                ),
+            SizedBox(height:MediaQuery.of(context).size.height / 20),
+            Wrap( // menu row
+              spacing: 8,
+              direction: Axis.horizontal,
+              children:
+              buildCategoriesChips(),
+            ),
+            SizedBox(height:MediaQuery.of(context).size.height / 2.1),
             Row( // menu row
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                buildCategoryCard(context),
+                buildApplyButton()
               ],
             ),
-            Row( // menu row
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                buildApplyButton(context)
-              ],
-            )
           ],
         )
     );
