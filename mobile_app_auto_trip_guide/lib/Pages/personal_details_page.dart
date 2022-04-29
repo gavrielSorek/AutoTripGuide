@@ -15,6 +15,7 @@ class PersonalDetailsPage extends StatelessWidget {
     //chnage userInfo with get info req from db
 
     return Scaffold(
+        backgroundColor: Color.fromRGBO(0, 26, 51, 1.0),
         appBar: buildAppBar(context),
         body: ListView(
           physics: const BouncingScrollPhysics(),
@@ -36,7 +37,7 @@ class PersonalDetailsPage extends StatelessWidget {
     children: [
       Text(
         userInfo.name?? '',
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white),
       ),
       const SizedBox(height: 4),
       Text(
@@ -56,9 +57,9 @@ class PersonalDetailsPage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(userInfo.name?? '', style: const TextStyle(color: Colors.black),),
+              child: Text(userInfo.name?? '', style: const TextStyle(color: Colors.white),),
             ),
-          ), decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(20)),border: Border.all(width: 1.0, color: Colors.black)),
+          ), decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(20)),border: Border.all(width: 1.0, color: Colors.white)),
         ),
       ),
       Padding(
@@ -69,9 +70,9 @@ class PersonalDetailsPage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text('Languages           ', style: TextStyle(color: Colors.black),),
+              child: Text('Languages           ', style: TextStyle(color: Colors.white),),
             ),
-          ), decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(20)),border: Border.all(width: 1.0, color: Colors.black)),
+          ), decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(20)),border: Border.all(width: 1.0, color: Colors.white)),
         ),
       ),
       Padding(
@@ -82,9 +83,9 @@ class PersonalDetailsPage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text('Age                         ', style: TextStyle(color: Colors.black),),
+              child: Text('Age                         ', style: TextStyle(color: Colors.white),),
             ),
-          ), decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(20)),border: Border.all(width: 1.0, color: Colors.black)),
+          ), decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(20)),border: Border.all(width: 1.0, color: Colors.white)),
         ),
       ),
       Padding(
@@ -95,9 +96,9 @@ class PersonalDetailsPage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text(userInfo.emailAddr?? '', style: TextStyle(color: Colors.black),),
+              child: Text(userInfo.emailAddr?? '', style: TextStyle(color: Colors.white),),
             ),
-          ), decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(20)),border: Border.all(width: 1.0, color: Colors.black)),
+          ), decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(20)),border: Border.all(width: 1.0, color: Colors.white)),
         ),
       ),
       Padding(
@@ -108,9 +109,9 @@ class PersonalDetailsPage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text(userInfo.gender?? '', style: TextStyle(color: Colors.black),),
+              child: Text(userInfo.gender?? '', style: TextStyle(color: Colors.white),),
             ),
-          ), decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(20)),border: Border.all(width: 1.0, color: Colors.black)),
+          ), decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(20)),border: Border.all(width: 1.0, color: Colors.white)),
         ),
       )
     ],
@@ -120,18 +121,11 @@ class PersonalDetailsPage extends StatelessWidget {
 
 
 AppBar buildAppBar(BuildContext context) {
-  const icon = CupertinoIcons.moon_stars;
-
   return AppBar(
+    title: const Text('Personal details'),
+    centerTitle: true,
     leading: const BackButton(),
-    backgroundColor: Colors.black, //change to backgroundColor: Colors.transparent,
     elevation: 0,
-    actions: [
-      IconButton(
-        icon: const Icon(icon),
-        onPressed: () {},
-      ),
-    ],
   );
 }
 

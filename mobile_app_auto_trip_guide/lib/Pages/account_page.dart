@@ -23,6 +23,7 @@ class AccountPage extends StatelessWidget {
         height: MediaQuery.of(context).size.height / 4,
         width: MediaQuery.of(context).size.width / 2,
         child: Card(
+          color: Color.fromRGBO(30, 61, 123,1.0),
           semanticContainer: true,
           clipBehavior: Clip.antiAliasWithSaveLayer,
           child: Center(
@@ -32,7 +33,7 @@ class AccountPage extends StatelessWidget {
               },
               child: Center(
                 child: Text(cardName, style: TextStyle(
-                    color: Colors.grey[800],
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 20),
                     textAlign: TextAlign.center),
@@ -42,7 +43,7 @@ class AccountPage extends StatelessWidget {
           elevation: 8,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0)),
-          shadowColor: Colors.cyan,
+          //shadowColor: Colors.white,
           margin: EdgeInsets.all(20),
         ));
   }
@@ -51,6 +52,7 @@ class AccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Color.fromRGBO(0, 26, 51, 1.0),
         appBar: AppBar(
           title: const Text('Account'),
           leading: const BackButton(),
@@ -63,8 +65,7 @@ class AccountPage extends StatelessWidget {
           ],),
         body: Column(
           children: [
-            SizedBox(height:16),
-            SizedBox(height:16),
+            SizedBox(height:MediaQuery.of(context).size.height / 20),
             Row( // menu row
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
