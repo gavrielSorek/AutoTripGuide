@@ -81,8 +81,8 @@ class UserMap extends StatefulWidget {
 class _UserMapState extends State<UserMap> {
   GuideData guideData = GuideData();
   late Guide guideTool;
-  ButtonState navButtonState = ButtonState.hide;
-  ButtonState nextButtonState = ButtonState.hide;
+  WidgetVisibility navButtonState = WidgetVisibility.hide;
+  WidgetVisibility nextButtonState = WidgetVisibility.hide;
 
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
@@ -274,7 +274,7 @@ class _UserMapState extends State<UserMap> {
                       width: MediaQuery.of(context).size.width / 10,
                       child: AnimatedOpacity(
                           opacity:
-                              nextButtonState == ButtonState.view ? 1.0 : 0.0,
+                              nextButtonState == WidgetVisibility.view ? 1.0 : 0.0,
                           duration: const Duration(milliseconds: 500),
                           child: FloatingActionButton(
                             heroTag: null,
@@ -304,7 +304,7 @@ class _UserMapState extends State<UserMap> {
                         width: MediaQuery.of(context).size.width / 11,
                         child: AnimatedOpacity(
                             opacity:
-                                ButtonState.view == navButtonState ? 1.0 : 0.0,
+                                WidgetVisibility.view == navButtonState ? 1.0 : 0.0,
                             duration: const Duration(milliseconds: 500),
                             child: FloatingActionButton(
                               heroTag: null,
@@ -355,29 +355,10 @@ class _UserMapState extends State<UserMap> {
               ],
             ),
             Spacer(),
-
             // column only for the dialog box
             Column(children: [
               Spacer(),
-              AnimatedOpacity(
-                  opacity: 1,
-                  duration: Duration(milliseconds: 500),
-                  child: Container(
-                      color: Colors.transparent,
-                      // width: double.infinity,
-                      // height: 257,
-                      // width: MediaQuery.of(context).size.width / 11,
-                      // height: MediaQuery.of(context).size.height / 2,
-
-                      child: CustomDialogBox(
-                        title: "Custom Dialog Demo",
-                        descriptions:
-                            "Hii all this is a custom dialog in flutter and  ",
-                        text: "Yes",
-                        img: Image.network(
-                            'https://www.istockphoto.com/photos/masada'),
-                        key: UniqueKey(),
-                      )))
+              guideTool.guideDialogBox
             ]),
           ],
         )
@@ -390,25 +371,25 @@ class _UserMapState extends State<UserMap> {
 
   void showNextButton() {
     setState(() {
-      nextButtonState = ButtonState.view;
+      nextButtonState = WidgetVisibility.view;
     });
   }
 
   void hideNextButton() {
     setState(() {
-      nextButtonState = ButtonState.hide;
+      nextButtonState = WidgetVisibility.hide;
     });
   }
 
   void showNavButton() {
     setState(() {
-      navButtonState = ButtonState.view;
+      navButtonState = WidgetVisibility.view;
     });
   }
 
   void hideNavButton() {
     setState(() {
-      navButtonState = ButtonState.hide;
+      navButtonState = WidgetVisibility.hide;
     });
   }
 
