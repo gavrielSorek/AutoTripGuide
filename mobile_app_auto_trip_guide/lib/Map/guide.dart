@@ -20,7 +20,6 @@ class Guide {
     if (lastMapPoiHandled != null) {
       Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
     }
-    Globals.setMainMapPoi(mapPoi);
     Globals.globalUserMap.userMapState?.highlightMapPoi(mapPoi);
     Globals.globalUserMap.userMapState?.showNextButton();
     lastMapPoiHandled = mapPoi;
@@ -69,6 +68,8 @@ class Guide {
       TextGuideDialog textDialog = TextGuideDialog(
           mapPoi.poi.poiName ?? "?", mapPoi.poi.shortDesc ?? "?", () {
         Navigator.of(context).pop();
+        state = GuideState.waiting;
+        handleNextPoi();
         //next callback
       });
 
@@ -99,6 +100,7 @@ class Guide {
 
   Future<void> handleMapPoi (MapPoi mapPoi) async {
     state = GuideState.working;
+    Globals.setMainMapPoi(mapPoi);
     if (guideData.status == GuideStatus.voice) {
       await handleMapPoiVoice(mapPoi);
     } else {

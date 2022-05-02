@@ -10,6 +10,7 @@ import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
 import 'package:final_project/Map/audio_player_controller.dart';
 
+import 'dialog_box.dart';
 import 'guide.dart';
 
 class UserMap extends StatefulWidget {
@@ -17,6 +18,7 @@ class UserMap extends StatefulWidget {
   static Location? USER_LOCATION;
   static LocationData? USER_LOCATION_DATA;
   static List userChangeLocationFuncs = [];
+
   // static Map poisMap = Map<String, MapPoi>(); // the string is poi name
   static bool continueGuide = true;
 
@@ -271,7 +273,8 @@ class _UserMapState extends State<UserMap> {
                       height: MediaQuery.of(context).size.width / 10,
                       width: MediaQuery.of(context).size.width / 10,
                       child: AnimatedOpacity(
-                          opacity: nextButtonState == ButtonState.view ? 1.0 : 0.0,
+                          opacity:
+                              nextButtonState == ButtonState.view ? 1.0 : 0.0,
                           duration: const Duration(milliseconds: 500),
                           child: FloatingActionButton(
                             heroTag: null,
@@ -289,59 +292,80 @@ class _UserMapState extends State<UserMap> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Container(
-                margin: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).size.height / 70,
-                    left: MediaQuery.of(context).size.width / 15),
-                // height: MediaQuery.of(context).size.width / 2,
-                width: MediaQuery.of(context).size.width / 11,
-                child: AnimatedOpacity(
-                    opacity: ButtonState.view == navButtonState
-                        ? 1.0
-                        : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    child: FloatingActionButton(
-                      heroTag: null,
-                      onPressed: () {
-                        print("navigate to poi pressed");
+            Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                    margin: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).size.height / 70,
+                        left: MediaQuery.of(context).size.width / 15),
+                    // height: MediaQuery.of(context).size.width / 2,
+                    width: MediaQuery.of(context).size.width / 11,
+                    child: AnimatedOpacity(
+                        opacity: ButtonState.view == navButtonState ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 500),
+                        child: FloatingActionButton(
+                          heroTag: null,
+                          onPressed: () {
+                            print("navigate to poi pressed");
 
-                        if (Globals.mainMapPoi != null) {
-                          print("navigate to poi");
-                          double lat = Globals.mainMapPoi!.poi.latitude;
-                          double lng = Globals.mainMapPoi!.poi.longitude;
-                          Globals.globalAppLauncher.launchWaze(lat, lng);
-                        }
-                        // Automatically center the location marker on the map when location updated until user interact with the map.
-                        // Center the location marker on the map and zoom the map to level 15.
-                      },
-                      child: const Icon(
-                        Icons.navigation_rounded,
-                        color: Colors.white,
-                      ),
-                    ))),
-            Container(
-              margin: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).size.height / 11,
-                  left: MediaQuery.of(context).size.width / 15),
-              // height: MediaQuery.of(context).size.height / 0.8,
-              width: MediaQuery.of(context).size.width / 11,
-              child: FloatingActionButton(
-                heroTag: null,
-                onPressed: () {
-                  // Automatically center the location marker on the map when location updated until user interact with the map.
-                  setState(
-                    () =>
-                        _centerOnLocationUpdate = CenterOnLocationUpdate.always,
-                  );
-                  // Center the location marker on the map and zoom the map to level 15.
-                  _centerCurrentLocationStreamController.add(14);
-                },
-                child: const Icon(
-                  Icons.my_location,
-                  color: Colors.white,
-                ),
-              ),
-            )
+                            if (Globals.mainMapPoi != null) {
+                              print("navigate to poi");
+                              double lat = Globals.mainMapPoi!.poi.latitude;
+                              double lng = Globals.mainMapPoi!.poi.longitude;
+                              Globals.globalAppLauncher.launchWaze(lat, lng);
+                            }
+                            // Automatically center the location marker on the map when location updated until user interact with the map.
+                            // Center the location marker on the map and zoom the map to level 15.
+                          },
+                          child: const Icon(
+                            Icons.navigation_rounded,
+                            color: Colors.white,
+                          ),
+                        )))),
+            Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  margin: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).size.height / 11,
+                      left: MediaQuery.of(context).size.width / 15),
+                  // height: MediaQuery.of(context).size.height / 0.8,
+                  width: MediaQuery.of(context).size.width / 11,
+                  child: FloatingActionButton(
+                    heroTag: null,
+                    onPressed: () {
+                      // Automatically center the location marker on the map when location updated until user interact with the map.
+                      setState(
+                        () => _centerOnLocationUpdate =
+                            CenterOnLocationUpdate.always,
+                      );
+                      // Center the location marker on the map and zoom the map to level 15.
+                      _centerCurrentLocationStreamController.add(14);
+                    },
+                    child: const Icon(
+                      Icons.my_location,
+                      color: Colors.white,
+                    ),
+                  ),
+                )),
+            AnimatedOpacity(
+                opacity: nextButtonState == ButtonState.view ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 500),
+                child: Container(
+                    color: Colors.black,
+                    width: double.infinity,
+                    height: 257,
+                    // width: MediaQuery.of(context).size.width / 11,
+                    // height: MediaQuery.of(context).size.height / 2,
+
+                    child: CustomDialogBox(
+                      title: "Custom Dialog Demo",
+                      descriptions:
+                          "Hii all this is a custom dialog in flutter and  ",
+                      text: "Yes",
+                      img: Image.network(
+                          'https://www.istockphoto.com/photos/masada'),
+                      key: UniqueKey(),
+                    )))
           ],
         ),
       ],
@@ -350,7 +374,6 @@ class _UserMapState extends State<UserMap> {
       ],
     );
   }
-
 
   void showNextButton() {
     setState(() {
