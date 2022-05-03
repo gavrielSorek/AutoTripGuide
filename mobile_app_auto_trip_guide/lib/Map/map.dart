@@ -222,10 +222,12 @@ class _UserMapState extends State<UserMap> {
         ),
       ],
       nonRotatedChildren: [
-        // menu row.
-        Align(
-            alignment: Alignment.topLeft,
-            child: AnimatedOpacity(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            AnimatedOpacity(
                 opacity: guideData.status == GuideStatus.voice ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 500),
                 child: Container(
@@ -233,133 +235,126 @@ class _UserMapState extends State<UserMap> {
                   height: 48,
                   color: Colors.green,
                   child: Globals.globalAudioPlayer,
-                ))),
-        Column(
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            // mainAxisSize: MainAxisSize.max,
-            // mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Align(
-                  alignment: Alignment.topRight,
-                  child: Container(
-                      alignment: Alignment.bottomRight,
-                      margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height / 10,
-                          right: MediaQuery.of(context).size.width / 20),
-                      color: Colors.transparent,
-                      height: MediaQuery.of(context).size.width / 10,
-                      width: MediaQuery.of(context).size.width / 10,
-                      child: FloatingActionButton(
-                        heroTag: null,
-                        onPressed: () {
-                          setState(() {
-                            guideData.changeGuideType();
-                            if (guideData.status == GuideStatus.text) {
-                              Globals.globalAudioPlayer.clearPlayer();
-                            }
-                          });
-                          print("change to audio or to text");
-                        },
-                        child: guideData.guideIcon,
-                      ))),
-              Align(
-                  alignment: Alignment.topRight,
-                  child: Container(
-                      alignment: Alignment.bottomRight,
-                      margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height / 60,
-                          right: MediaQuery.of(context).size.width / 20),
-                      color: Colors.transparent,
-                      height: MediaQuery.of(context).size.width / 10,
-                      width: MediaQuery.of(context).size.width / 10,
-                      child: AnimatedOpacity(
-                          opacity:
-                              nextButtonState == WidgetVisibility.view ? 1.0 : 0.0,
-                          duration: const Duration(milliseconds: 500),
-                          child: FloatingActionButton(
-                            heroTag: null,
-                            onPressed: () {
-                              guideTool.stop();
-                              guideTool.handlePois();
-                              print("change to audio or to text");
-                            },
-                            child: const Icon(Icons.navigate_next_sharp,
-                                color: Colors.white),
-                          )))),
-            ]),
-        Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.end,
+                )),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Container(
-                        margin: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).size.height / 70,
-                            left: MediaQuery.of(context).size.width / 15),
-                        // height: MediaQuery.of(context).size.width / 2,
-                        width: MediaQuery.of(context).size.width / 11,
-                        child: AnimatedOpacity(
-                            opacity:
-                                WidgetVisibility.view == navButtonState ? 1.0 : 0.0,
-                            duration: const Duration(milliseconds: 500),
-                            child: FloatingActionButton(
-                              heroTag: null,
-                              onPressed: () {
-                                print("navigate to poi pressed");
+                // Align(
+                //     alignment: Alignment.topLeft,
+                //     child:
+                Container(
+                    color: Colors.transparent,
+                    margin: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height / 15,
+                        left: MediaQuery.of(context).size.width / 15),
+                    // height: MediaQuery.of(context).size.width / 2,
+                    width: MediaQuery.of(context).size.width / 11,
+                    child: AnimatedOpacity(
+                        opacity:
+                            WidgetVisibility.view == navButtonState ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 500),
+                        child: FloatingActionButton(
+                          heroTag: null,
+                          onPressed: () {
+                            print("navigate to poi pressed");
 
-                                if (Globals.mainMapPoi != null) {
-                                  print("navigate to poi");
-                                  double lat = Globals.mainMapPoi!.poi.latitude;
-                                  double lng =
-                                      Globals.mainMapPoi!.poi.longitude;
-                                  Globals.globalAppLauncher
-                                      .launchWaze(lat, lng);
-                                }
-                                // Automatically center the location marker on the map when location updated until user interact with the map.
-                                // Center the location marker on the map and zoom the map to level 15.
-                              },
-                              child: const Icon(
-                                Icons.navigation_rounded,
-                                color: Colors.white,
-                              ),
-                            )))),
-                Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Container(
-                      margin: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.height / 11,
-                          left: MediaQuery.of(context).size.width / 15),
-                      // height: MediaQuery.of(context).size.height / 0.8,
-                      width: MediaQuery.of(context).size.width / 11,
-                      child: FloatingActionButton(
-                        heroTag: null,
-                        onPressed: () {
-                          // Automatically center the location marker on the map when location updated until user interact with the map.
-                          setState(
-                            () => _centerOnLocationUpdate =
-                                CenterOnLocationUpdate.always,
-                          );
-                          // Center the location marker on the map and zoom the map to level 15.
-                          _centerCurrentLocationStreamController.add(14);
-                        },
-                        child: const Icon(
-                          Icons.my_location,
-                          color: Colors.white,
-                        ),
-                      ),
-                    )),
+                            if (Globals.mainMapPoi != null) {
+                              print("navigate to poi");
+                              double lat = Globals.mainMapPoi!.poi.latitude;
+                              double lng = Globals.mainMapPoi!.poi.longitude;
+                              Globals.globalAppLauncher.launchWaze(lat, lng);
+                            }
+                            // Automatically center the location marker on the map when location updated until user interact with the map.
+                            // Center the location marker on the map and zoom the map to level 15.
+                          },
+                          child: const Icon(
+                            Icons.navigation_rounded,
+                            color: Colors.white,
+                          ),
+                        )))
+                // )
+                ,
+                // Align(
+                //     alignment: Alignment.topRight,
+                //     child:
+                Container(
+                    color: Colors.transparent,
+                    alignment: Alignment.bottomRight,
+                    margin: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height / 15,
+                        right: MediaQuery.of(context).size.width / 15),
+                    height: MediaQuery.of(context).size.width / 10,
+                    width: MediaQuery.of(context).size.width / 10,
+                    child: FloatingActionButton(
+                      heroTag: null,
+                      onPressed: () {
+                        setState(() {
+                          guideData.changeGuideType();
+                          if (guideData.status == GuideStatus.text) {
+                            Globals.globalAudioPlayer.clearPlayer();
+                          }
+                        });
+                        print("change to audio or to text");
+                      },
+                      child: guideData.guideIcon,
+                    ))
+                // )
+                ,
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height / 30,
+                      left: MediaQuery.of(context).size.width / 15),
+                  // height: MediaQuery.of(context).size.height / 0.8,
+                  width: MediaQuery.of(context).size.width / 10,
+                  child: FloatingActionButton(
+                    heroTag: null,
+                    onPressed: () {
+                      // Automatically center the location marker on the map when location updated until user interact with the map.
+                      setState(
+                        () => _centerOnLocationUpdate =
+                            CenterOnLocationUpdate.always,
+                      );
+                      // Center the location marker on the map and zoom the map to level 15.
+                      _centerCurrentLocationStreamController.add(14);
+                    },
+                    child: const Icon(
+                      Icons.my_location,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Container(
+                    alignment: Alignment.bottomRight,
+                    margin: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height / 30,
+                        right: MediaQuery.of(context).size.width / 15),
+                    color: Colors.transparent,
+                    height: MediaQuery.of(context).size.width / 10,
+                    width: MediaQuery.of(context).size.width / 10,
+                    child: AnimatedOpacity(
+                        opacity: nextButtonState == WidgetVisibility.view
+                            ? 1.0
+                            : 0.0,
+                        duration: const Duration(milliseconds: 500),
+                        child: FloatingActionButton(
+                          heroTag: null,
+                          onPressed: () {
+                            guideTool.stop();
+                            guideTool.handlePois();
+                            print("next");
+                          },
+                          child: const Icon(Icons.navigate_next_sharp,
+                              color: Colors.white),
+                        ))),
               ],
             ),
             Spacer(),
-            // column only for the dialog box
-            Column(children: [
-              Spacer(),
-              guideTool.guideDialogBox
-            ]),
+            guideTool.guideDialogBox
           ],
         )
       ],

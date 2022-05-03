@@ -81,6 +81,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                 height: 22,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   FlatButton(
                       onPressed: () {
