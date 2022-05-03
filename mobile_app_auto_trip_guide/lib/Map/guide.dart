@@ -99,9 +99,7 @@ class Guide {
       return;
     }
     MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
-    handleMapPoi(mapPoiElement);
-    guideDialogBox.setMapPoi(mapPoiElement);
-    guideDialogBox.showDialog();
+    askPoi(mapPoiElement);
     if (Globals.globalUnhandledPois.isNotEmpty && state != GuideState.stopped) {
       askNextPoi();
     } else {
@@ -110,6 +108,11 @@ class Guide {
       }
     }
   }
+  void askPoi(MapPoi poi) {
+    handleMapPoi(poi);
+    guideDialogBox.setMapPoi(poi);
+    guideDialogBox.showDialog();
+  }
 
   void stop() {
     if (guideData.status == GuideStatus.voice) {
@@ -117,7 +120,7 @@ class Guide {
     }
     Globals.deleteMainMapPoi();
     Globals.globalUserMap.userMapState?.hideNextButton();
-
+    guideDialogBox.hideDialog();
     state = GuideState.stopped;
   }
 }

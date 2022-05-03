@@ -406,6 +406,6 @@ class _UserMapState extends State<UserMap> {
 
   void guideAboutMapPoi(MapPoi mapPoi) {
     guideTool.stop();
-    guideTool.handleMapPoi(mapPoi);
+    guideTool.askPoi(mapPoi);
   }
 }
