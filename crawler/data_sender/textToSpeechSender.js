@@ -7,10 +7,12 @@ var XMLHttpRequest = require('xhr2');
 let fs = require("fs");
 // let wav = require("node-wav");
 const gTTS = require('gtts');
+var gtts = require('node-gtts')('en');
+var path = require('path');
 
 // const serverUrl = 'https://autotripguide.loca.lt';
 
-const serverUrl = 'https://autotripguide.loca.lt/'
+const serverUrl = 'http://2a34-77-126-184-189.ngrok.io'
 
 
 //init
@@ -33,7 +35,7 @@ async function getPoisWithNoVoice() {
 
 
     var queryParamsJson = JSON.stringify(queryParams);
-    const url = serverUrl + 'searchPois';
+    const url = serverUrl + '/searchPois';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
@@ -68,21 +70,18 @@ async function getPoisWithNoVoice() {
 
 
 async function textToVoice(text, language) {
-    const audioPromise = new Promise((resolve, reject) => {
-        var gtts = new gTTS(text, language);
-        gtts.save(__dirname + '/Voic123.mp3', function (err, result){
-            if(err) { reject(err); }
-            console.log("Text to speech converted!");
-            fs.readFile( __dirname + '/Voic123.mp3', function (err, data) {
-                if (err) {
-                    reject(err); 
-                }
-                var voiceData = new Uint8Array(data)
-                resolve(voiceData);
-            });
-        });
-    });
-    return audioPromise;
+
+    const chunks = [];
+    return new Promise((resolve, reject) => {
+        var stream = gtts.stream(text)
+        stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+        stream.on('error', (err) => reject(err));
+        stream.on('end', () => resolve(Buffer.concat(chunks)));
+    })
+    
+      
+    //   const result = await streamToString(stream)
+
 }
 
     // The function send the poi info request to the server
@@ -96,11 +95,13 @@ async function updatePoiOnServer(poi) {
     Http.onerror = function (e) {
         console.log(e);
     };
-    const url = serverUrl +'editPois';
+    const url = serverUrl +'/editPois';
+    // const url = '/editPois';
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
     Http.send(poiInfoJson);
+    Http.onerror((e)=>console.log(e))
 
     const audioPromise = new Promise((resolve, reject) => {
         Http.onreadystatechange = (e) => {
@@ -117,32 +118,57 @@ async function updatePoiOnServer(poi) {
             } 
         }
     });
-    return await audioPromise;
+    return audioPromise;
 
 }
 
 async function handleAllPois() {
     var poisWithNoVoice = await getPoisWithNoVoice();
-    poisWithNoVoice.forEach(async(poi) => {
+
+    for (var i =0; i < poisWithNoVoice.length; i++)
+    {
+        poi = poisWithNoVoice[i]
         if(poi._language == 'en') {
             // console.log(poi._poiName + " ---------------  will convert")
-            //poi._audio = await textToVoice(poi._shortDesc ,poi._language)
-            poi._audio = await textToVoice('This is a Demo' ,poi._language)
+            poi._audio = await textToVoice(poi._shortDesc ,poi._language)
+            poi._audio = new Uint8Array(poi._audio)
+            //poi._audio = await textToVoice('This is a Demo' ,poi._language)
             var res = await updatePoiOnServer(poi);
-            console.log('q')
+            console.log(res)
         }
-    
-    });
+
+    }
+    // poisWithNoVoice.forEach(async(poi) => {
+    //     if(poi._language == 'en') {
+    //         // console.log(poi._poiName + " ---------------  will convert")
+    //         poi._audio = await textToVoice(poi._shortDesc ,poi._language)
+    //         //poi._audio = await textToVoice('This is a Demo' ,poi._language)
+    //         var res = await updatePoiOnServer(poi);
+    //         console.log(res)
+    //     }
+    // });
     handleAllPois()
 }
-
 
 async function main() {
     await init();
     handleAllPois();
-
 }
 main();
+
+
+// async function try1() {
+//     var i = 0
+//     while (i < 1){
+//         textToVoice('The cliff of Masada is, geologically speaking, a horst.[7] As the plateau abruptly ends in cliffs steeply falling about 400 m (1,300 ft) to the east and about 90 m (300 ft) to the west, the natural approaches to the fortress are very difficult to navigate. The top of the mesa-like plateau is flat and rhomboid-shaped, about 550 m (1,800 ft) by 270 m (890 ft). Herod built a 4 m (13 ft) high casemate wall around the plateau totalling 1,300 m (4,300 ft) in length, reinforced by many towers. The fortress contained storehouses, barracks, an armory, a palace, and cisterns that were refilled by rainwater. Three narrow, winding paths led from below up to fortified gates.[citation needed]', 'en')
+//         .then((data)=>{console.log(data)})
+//         i++;
+//         console.log(i)
+//     }
+
+// }
+// try1()
+// textToVoice('The cliff of Masada is, geologically speaking, a horst.[7] As the plateau abruptly ends in cliffs steeply falling about 400 m (1,300 ft) to the east and about 90 m (300 ft) to the west, the natural approaches to the fortress are very difficult to navigate. The top of the mesa-like plateau is flat and rhomboid-shaped, about 550 m (1,800 ft) by 270 m (890 ft). Herod built a 4 m (13 ft) high casemate wall around the plateau totalling 1,300 m (4,300 ft) in length, reinforced by many towers. The fortress contained storehouses, barracks, an armory, a palace, and cisterns that were refilled by rainwater. Three narrow, winding paths led from below up to fortified gates.[citation needed]', 'en')
 
 
 
