@@ -1,4 +1,4 @@
-module.exports = { getAudio, findPois, addUser, getCategories};
+module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -48,6 +48,15 @@ async function getAudio(dbClient, audioId) {
     });
     return audioPromise
 }
+
+// this function return audio stream
+async function getAudioStream(dbClient, audioId) {
+    const db = await dbClient.db("testDb");
+    const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myCustomBucket' });
+    var downloadStream = bucket.openDownloadStreamByName(audioId);
+    return downloadStream
+}
+
 
 // The function checks if the email address exist in the db - the user sign in before
 async function checkInfo(client, userInfo) {

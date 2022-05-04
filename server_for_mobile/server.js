@@ -92,6 +92,18 @@ app.get("/getCategories", async function (req, res) { //next requrie (the functi
     res.end();
  })
 
+ app.get('/getAudioStream',async function(req, res) {
+    console.log("audio stream search is recieved")
+    audioStream = await db.getAudioStream(dbClientSearcher, req.query.poiId)
+    res.writeHead(200, {
+        'Content-Type': 'audio/mpeg',
+        // 'Content-Length': audioStream.size
+    });
+    audioStream.pipe(res)
+    // fs.createReadStream(filePath).pipe(response);
+
+})
+
  app.listen(port, async ()=>{
     await init()
     console.log(`Server is runing on port ${port}`)
