@@ -63,9 +63,7 @@ async function getPoisWithNoVoice() {
             } 
         }   
     });
-
-    var pois = poisPromise;
-    return pois;
+    return poisPromise;
 }
 
 
@@ -129,63 +127,29 @@ async function handleAllPois() {
     {
         poi = poisWithNoVoice[i]
         if(poi._language == 'en') {
-            // console.log(poi._poiName + " ---------------  will convert")
+            console.log('handle : ' + poi._poiName)
+            poiShortDesc = poi._shortDesc.replace(/ *\([^)]*\) */g, ""); //remove parenthesis
             poi._audio = await textToVoice(poi._shortDesc ,poi._language)
             poi._audio = new Uint8Array(poi._audio)
-            //poi._audio = await textToVoice('This is a Demo' ,poi._language)
+            console.log(poi._poiName + ' converted')
+
             var res = await updatePoiOnServer(poi);
             console.log(res)
+
         }
 
     }
-    // poisWithNoVoice.forEach(async(poi) => {
-    //     if(poi._language == 'en') {
-    //         // console.log(poi._poiName + " ---------------  will convert")
-    //         poi._audio = await textToVoice(poi._shortDesc ,poi._language)
-    //         //poi._audio = await textToVoice('This is a Demo' ,poi._language)
-    //         var res = await updatePoiOnServer(poi);
-    //         console.log(res)
-    //     }
-    // });
     handleAllPois()
 }
 
 async function main() {
+    console.log('start text to speech')
     await init();
-    handleAllPois();
+    await handleAllPois();
+    console.log('finished')
 }
 main();
 
-
-// async function try1() {
-//     var i = 0
-//     while (i < 1){
-//         textToVoice('The cliff of Masada is, geologically speaking, a horst.[7] As the plateau abruptly ends in cliffs steeply falling about 400 m (1,300 ft) to the east and about 90 m (300 ft) to the west, the natural approaches to the fortress are very difficult to navigate. The top of the mesa-like plateau is flat and rhomboid-shaped, about 550 m (1,800 ft) by 270 m (890 ft). Herod built a 4 m (13 ft) high casemate wall around the plateau totalling 1,300 m (4,300 ft) in length, reinforced by many towers. The fortress contained storehouses, barracks, an armory, a palace, and cisterns that were refilled by rainwater. Three narrow, winding paths led from below up to fortified gates.[citation needed]', 'en')
-//         .then((data)=>{console.log(data)})
-//         i++;
-//         console.log(i)
-//     }
-
-// }
-// try1()
-// textToVoice('The cliff of Masada is, geologically speaking, a horst.[7] As the plateau abruptly ends in cliffs steeply falling about 400 m (1,300 ft) to the east and about 90 m (300 ft) to the west, the natural approaches to the fortress are very difficult to navigate. The top of the mesa-like plateau is flat and rhomboid-shaped, about 550 m (1,800 ft) by 270 m (890 ft). Herod built a 4 m (13 ft) high casemate wall around the plateau totalling 1,300 m (4,300 ft) in length, reinforced by many towers. The fortress contained storehouses, barracks, an armory, a palace, and cisterns that were refilled by rainwater. Three narrow, winding paths led from below up to fortified gates.[citation needed]', 'en')
-
-
-
-
-
-
-    // {
-    //     "PermissionToken": "kjsklfjadlkgheesd347ejdske3jd4534654864ekfjdkf4359fldjfkdjgdgm",
-    //     "permissionStatus": "crawler",
-    //     "poiParameter": "_poiName",
-    //     "poiInfo": 
-    //         {
-    //         "poiParameter": "masada"
-    //         },
-    //     "relevantBounds" :{"northEast": {"lat": 32.0, "lng": 36.0}, "southWest": {"lat": 32.0, "lng": 36.0}},
-    //     "searchOutsideTheBounds" :true
-    // }
 
 addTokensToObject = function (object) {
     query = {}
