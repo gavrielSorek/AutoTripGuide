@@ -14,7 +14,7 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
   final controller = Get.put(LoginController());
   List<String> categories = Globals.globalCategories.keys.toList();
   bool favorChanged = false;
-  List<String> favorCategories = <String>['Parks', 'Museums'];  //TODO:: get favorite categories from the user info in db
+  List<String> favorCategories = Globals.globalFavoriteCategories;
 
   List<Widget> buildCategoriesChips () {
     List<Widget> chips = [];
@@ -49,31 +49,27 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
     return chips;
   }
 
-  ElevatedButton buildApplyButton(){
+
+  ElevatedButton buildApplyButton(BuildContext context){
     return ElevatedButton(
       child: const Text('Apply'),
       onPressed: () {
         if(favorChanged) {
+          Globals.globalFavoriteCategories = favorCategories;
+          Globals.globalServerCommunication.updateFavorCategories(controller.googleAccount.value?.email ?? '');
           final snackBar = SnackBar(
             content: const Text('Your Favorite Categories Saved!'),
-            action: SnackBarAction(
-              label: 'Undo',
-              onPressed: () {
-                // undo the change
-              },
-            ),
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
-        //TODO:: add update of favorite categories for the user in db
       },
       style: ElevatedButton.styleFrom(
           primary: Color.fromRGBO(135,88,244, 1.0),
-          padding: const EdgeInsets.symmetric(horizontal: 160, vertical: 15),
+          padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 2.5, vertical: MediaQuery.of(context).size.height / 100),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15)),
           textStyle:
-          const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
     );
   }
 
@@ -82,7 +78,8 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
     return Scaffold(
       backgroundColor: Color.fromRGBO(0, 26, 51, 1.0),
         appBar: AppBar(
-          title: const Text('Favorite Categoriess'),
+          title: const Text('Favorite Categories'),
+          titleSpacing: MediaQuery.of(context).size.width / 50,
           backgroundColor: Color.fromRGBO(38, 77, 115,1.0),
           leading: const BackButton(),
           centerTitle: true,
@@ -106,11 +103,11 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
               children:
               buildCategoriesChips(),
             ),
-            SizedBox(height:MediaQuery.of(context).size.height / 2.1),
+            SizedBox(height:MediaQuery.of(context).size.height / 3.5),
             Row( // menu row
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                buildApplyButton()
+                buildApplyButton(context)
               ],
             ),
           ],
