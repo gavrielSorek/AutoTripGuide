@@ -1,4 +1,4 @@
-module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream};
+module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -55,6 +55,16 @@ async function getAudioStream(dbClient, audioId) {
     const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myCustomBucket' });
     var downloadStream = bucket.openDownloadStreamByName(audioId);
     return downloadStream
+}
+
+// this function return audio length
+async function getAudioLength(dbClient, audioId) {
+    var res = await dbClient.db("testDb").collection("myCustomBucket.files").findOne({filename: audioId})
+    if (res == null) {
+        print('error no audio')
+        return undefined;
+    }
+    return res.length;
 }
 
 

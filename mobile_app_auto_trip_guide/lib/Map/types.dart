@@ -111,21 +111,13 @@ class MapPoi {
 
   MapPoi(this.poi) {
     iconButton = MutableMapIconButton(()=>{Globals.globalUserMap.userMapState?.guideAboutMapPoi(this)});
-    // IconButton(
-    // icon: Icon(Icons.location_on),
-    // color: Colors.purpleAccent,
-    // iconSize: 45.0,
-    // onPressed: () {
-    //   iconButton!.c = 100;
-    //   print('Marker tapped');
-    // });
     marker = getMarkerFromPoi(poi, iconButton!);
   }
 }
 
 enum GuideStatus { voice, text }
 enum GuideState { working, waiting, stopped }
-enum ButtonState { hide, view }
+enum WidgetVisibility { hide, view }
 
 // contain data about the guid type
 class GuideData {

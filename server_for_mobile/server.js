@@ -94,12 +94,31 @@ app.get("/getCategories", async function (req, res) { //next requrie (the functi
 
  app.get('/getAudioStream',async function(req, res) {
     console.log("audio stream search is recieved")
-    audioStream = await db.getAudioStream(dbClientSearcher, req.query.poiId)
-    res.writeHead(200, {
-        'Content-Type': 'audio/mpeg',
-        // 'Content-Length': audioStream.size
+    var length = await db.getAudioLength(dbClientSearcher, req.query.poiId)
+    var audioStream = await db.getAudioStream(dbClientSearcher, req.query.poiId)
+    // res.writeHead(200, {
+    //     'Content-Type': 'audio/mpeg',
+    //     'Accept-Ranges': 'bytes',
+    //     'Content-length' : length
+    // });
+
+    res.set('content-type', 'audio/mpeg');
+    res.set('accept-ranges', 'bytes');
+    res.set('Content-length', length)
+  
+    audioStream.on('data', (chunk) => {
+        res.write(chunk);
+      });
+
+    audioStream.on('error', () => {
+    res.sendStatus(404);
+    });  
+
+    audioStream.on('end', () => {
+        res.end();
     });
-    audioStream.pipe(res)
+
+    // audioStream.pipe(res)
     // fs.createReadStream(filePath).pipe(response);
 
 })
