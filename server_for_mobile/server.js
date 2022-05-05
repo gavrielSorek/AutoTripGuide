@@ -103,6 +103,25 @@ app.get("/getCategories", async function (req, res) { //next requrie (the functi
     // fs.createReadStream(filePath).pipe(response);
 
 })
+ // get favorite categories for specific user
+app.get("/getFavorCategories", async function (req, res) { //next requrie (the function will not stop the program)
+    console.log("inside get of favorite Categories - server side")
+    emailAddr = {'emailAddr': req.query.email};
+    result = await db.getFavorCategories(dbClientSearcher, emailAddr)
+    res.status(200);
+    res.json(result);
+    res.end();
+ })
+
+  // update favorite categories for specific user
+app.get("/updateFavorCategories", async function (req, res) { //next requrie (the function will not stop the program)
+    console.log("inside update of favorite Categories - server side")
+    userInfo = {'emailAddr': req.query.email, 'favorCategories': req.query.categories};
+    result = await db.updateFavorCategories(dbClientSearcher, userInfo)
+    res.status(200);
+    res.json(result);
+    res.end();
+ })
 
  app.listen(port, async ()=>{
     await init()

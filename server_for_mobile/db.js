@@ -1,4 +1,4 @@
-module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream};
+module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream, getFavorCategories, updateFavorCategories};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -84,7 +84,7 @@ async function addUser(client, newUserInfo) {
     return checkCode;
 }
 
-// The function inserts a new user to the db
+// The function inserts a return the categories from the db
 async function getCategories(client, lang) {
     var categoryLang = lang.language;
     var res = await client.db("testDb").collection("Categories").find({language: categoryLang});
@@ -96,6 +96,32 @@ async function getCategories(client, lang) {
     } else {
         return {};
     }
+}
+
+// The function inserts a return the favorite categories of specific user from the db
+async function getFavorCategories(client, email) {
+    var emailAddress = email.emailAddr;
+    var res = await client.db("testDb").collection("mobileUsers").find({emailAddr: emailAddress});
+    var resArr = await res.toArray();
+    if (resArr.length > 0) {
+        //console.log(resArr[0].categories);
+        console.log("found favorite categories for the reuired user")
+        return resArr[0].categories;
+    } else {
+        return [];
+    }
+}
+
+async function updateFavorCategories(client, userInfo) {
+    var emailAddress = userInfo.emailAddr;
+    var favorCategories = userInfo.favorCategories;
+    if (typeof favorCategories !== 'object' || favorCategories == null) {
+        favorCategories = userInfo.favorCategories.split(', ');
+    }
+    const res = await client.db("testDb").collection("mobileUsers").updateOne({emailAddr: emailAddress}, { $set: {
+        categories: favorCategories
+    }});
+    return 1;
 }
 
 // check if object is empty

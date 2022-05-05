@@ -21,7 +21,7 @@ class LoginPage extends StatelessWidget {
               return buildNewLogin();
             } else {
               addUser();
-              return HomePage();  //return buildProfileView(); return HomePage();
+              return HomePage();
             }
           })
       ),
@@ -31,10 +31,9 @@ class LoginPage extends StatelessWidget {
 
   void addUser() async {
      Globals.globalServerCommunication.addNewUser(
-        UserInfo(controller.googleAccount.value?.displayName ?? '', controller.googleAccount.value?.email ?? '', "", [""], 0, [""]));
+        UserInfo(controller.googleAccount.value?.displayName ?? '', controller.googleAccount.value?.email ?? '', "", [""], 0, Globals.globalFavoriteCategories));
+     Globals.globalFavoriteCategories = await Globals.globalServerCommunication.getFavorCategories(controller.googleAccount.value?.email ?? '');
   }
-
-
 
   FloatingActionButton buildLoginButton() {
     return FloatingActionButton.extended(

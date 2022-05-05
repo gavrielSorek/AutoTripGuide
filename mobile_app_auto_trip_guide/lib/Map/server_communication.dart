@@ -4,10 +4,12 @@ import 'package:final_project/Map/types.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
 
+import 'globals.dart';
+
 class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
   // String serverUrl = "autotripguidemobile.loca.lt";
-  String serverUrl = "cfc0-84-94-109-213.ngrok.io";
+  String serverUrl = "aae0-84-94-109-213.ngrok.io";
 
   var client = RetryClient(http.Client());
 
@@ -147,6 +149,61 @@ class ServerCommunication {
         // If the server did not return a 200 OK response,
         // then throw an exception.
         throw Exception('Failed to get categories');
+      }
+    } finally {
+      // client.close();
+    }
+  }
+
+  static Uri addMailToUrl(String url, String path, String emailAddr) {
+    final queryParameters = {
+      'email': emailAddr.toString()
+    };
+    final uri = Uri.https(url, path, queryParameters);
+    return uri;
+  }
+
+  Future getFavorCategories(String emailAddr) async {
+    Uri newUri =
+    addMailToUrl(serverUrl, '/getFavorCategories', emailAddr);
+    try {
+      var response = await client.get(newUri);
+      if (response.statusCode == 200 && response.contentLength! > 0) {
+        final favorCategoriesMap = jsonDecode(response.body);
+        List<String> favorCategoriesList = favorCategoriesMap.cast<String>();
+        return favorCategoriesList;
+      } else {
+        if (response.contentLength == 0) {
+          return [];
+        }
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        throw Exception('Failed to get favorite categories');
+      }
+    } finally {
+      // client.close();
+    }
+  }
+
+  static Uri addMailAndCategoriesToUrl(String url, String path, String emailAddr) {
+    final queryParameters = {
+      'email': emailAddr.toString(),
+      'categories': Globals.globalFavoriteCategories
+    };
+    final uri = Uri.https(url, path, queryParameters);
+    return uri;
+  }
+
+  void updateFavorCategories(String emailAddr) async {
+    Uri newUri = addMailAndCategoriesToUrl(serverUrl, '/updateFavorCategories', emailAddr);
+    try {
+      var response = await client.get(newUri);
+      if (response.statusCode == 200 && response.contentLength! > 0) {
+        print("the favorite categories update successfully");
+      } else {
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        throw Exception('Failed to update favorite categories');
       }
     } finally {
       // client.close();

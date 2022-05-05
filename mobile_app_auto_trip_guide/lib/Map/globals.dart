@@ -14,6 +14,7 @@ class Globals {
   static Map globalPoisIdToMarkerIdx = HashMap<String, int>();
   static String globalDefaultLanguage = "eng";
   static Map<String, List<String>> globalCategories = {};
+  static List<String> globalFavoriteCategories = [];
   static Map globalInterestingPois = HashMap<String, MapPoi>();
   static AppLauncher globalAppLauncher = AppLauncher();
   static MapPoi? mainMapPoi; // spoken poi
