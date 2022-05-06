@@ -227,6 +227,7 @@ class _UserMapState extends State<UserMap> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            // audio player
             AnimatedOpacity(
                 opacity: guideData.status == GuideStatus.voice ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 500),
@@ -239,9 +240,6 @@ class _UserMapState extends State<UserMap> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Align(
-                //     alignment: Alignment.topLeft,
-                //     child:
                 Container(
                     color: Colors.transparent,
                     margin: EdgeInsets.only(
@@ -272,11 +270,8 @@ class _UserMapState extends State<UserMap> {
                             color: Colors.white,
                           ),
                         )))
-                // )
                 ,
-                // Align(
-                //     alignment: Alignment.topRight,
-                //     child:
+                // guide state button
                 Container(
                     color: Colors.transparent,
                     alignment: Alignment.bottomRight,
@@ -293,6 +288,7 @@ class _UserMapState extends State<UserMap> {
                           if (guideData.status == GuideStatus.text) {
                             Globals.globalAudioPlayer.clearPlayer();
                           }
+                          guideTool.guideStateChanged();
                         });
                         print("change to audio or to text");
                       },

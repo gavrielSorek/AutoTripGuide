@@ -60,24 +60,8 @@ class Guide {
     } else {
       await handleMapPoiText(mapPoi);
     }
-    Globals.globalUnhandledPois.remove(mapPoi.poi.id);
-    state = GuideState.waiting;
   }
 
-  // void handleNextPoi() async {
-  //   if (state == GuideState.working || Globals.globalUnhandledPois.isEmpty) {
-  //     print("error in handleNextPoi in Guide or pois map is empty");
-  //     return;
-  //   }
-  //   MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
-  //   await handleMapPoi(mapPoiElement);
-  //   if (Globals.globalUnhandledPois.isNotEmpty && state != GuideState.stopped) {
-  //   } else {
-  //     if (Globals.globalUnhandledPois.isEmpty) {
-  //       stop();
-  //     }
-  //   }
-  // }
 
   void handlePois() async {
     askNextPoi();
@@ -93,22 +77,18 @@ class Guide {
   }
 
   void askNextPoi() {
+
     if (state == GuideState.working || Globals.globalUnhandledPois.isEmpty) {
       print("error in handleNextPoi in Guide or pois map is empty");
       return;
     }
     MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
+    Globals.globalUnhandledPois.remove(mapPoiElement.poi.id); // handling poi so remove from UnhandledPois
     askPoi(mapPoiElement);
-    if (Globals.globalUnhandledPois.isNotEmpty && state != GuideState.stopped) {
-      askNextPoi();
-    } else {
-      if (Globals.globalUnhandledPois.isEmpty) {
-        stop();
-      }
-    }
   }
   void askPoi(MapPoi poi) {
-    handleMapPoi(poi);
+    //handleMapPoi(poi);
+    guideDialogBox.updateGuideStatus(guideData.status);
     guideDialogBox.setMapPoi(poi);
     guideDialogBox.showDialog();
   }
@@ -121,6 +101,24 @@ class Guide {
     Globals.globalUserMap.userMapState?.hideNextButton();
     guideDialogBox.hideDialog();
     state = GuideState.stopped;
+  }
+
+  void postPoiHandling() {
+    // if (Globals.globalUnhandledPois.isNotEmpty && state == GuideState.waiting) {
+    //   askNextPoi();
+    // } else {
+    //   if (Globals.globalUnhandledPois.isEmpty) {
+    //     stop();
+    //   }
+    // }
+
+  }
+
+  void guideStateChanged() {
+    if (state == GuideState.working) {
+      stop();
+      askPoi(lastMapPoiHandled!);
+    }
   }
 }
 
@@ -176,9 +174,9 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
     setState(() {
       guideStatus = status;
       if (guideStatus == GuideStatus.voice) {
-        ask = "Do you want to hear ";
+        ask = "Do you want to hear about ";
       } else {
-        ask = "Do you want to read ";
+        ask = "Do you want to read about ";
       }
     });
   }

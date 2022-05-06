@@ -26,7 +26,7 @@ class PoiReadingPage extends StatelessWidget {
     } else {
       widgetToShow = MyWebView(
         title: poi.poiName ?? "No name",
-        selectedUrl: "https://en.wikipedia.org/wiki/Masada",
+        selectedUrl: poi.source!,
       );
     }
   }
