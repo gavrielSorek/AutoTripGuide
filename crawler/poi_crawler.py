@@ -188,9 +188,9 @@ def start_logic():
     redis_client1 = redis.Redis(host='localhost', port=6379, db=0)
     num_of_thread = 3
     # pages num need to be = number of threads
-    pages_to_start = [search_page('Statue of Liberty', 'en'), search_page('Walt Disney World', 'en'),
+    pages_to_start = [search_page('Masada', 'en'), search_page('Yarkon Park', 'en'),
                       search_page('Yosemite National Park', 'en')]
-    languages_for_threads = [['en', 'he'], ['en', 'he'], ['en', 'he']]
+    languages_for_threads = [['en'], ['en'], ['en']]
     crawlers = [None] * num_of_thread
     for i in range(num_of_thread):
         crawlers[i] = Crawler(pages_to_start[i], redis_client=redis_client1, languages=languages_for_threads[i]

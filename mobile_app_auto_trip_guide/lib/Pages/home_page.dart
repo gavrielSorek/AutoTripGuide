@@ -1,5 +1,6 @@
 import 'package:final_project/Map/events.dart';
 import 'package:final_project/Map/map.dart';
+import 'package:final_project/UsefulWidgets/toolbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project/Pages/login_controller.dart';
@@ -32,36 +33,7 @@ class HomePage extends StatelessWidget {
                 child: Container(
                   child: Globals.globalUserMap,
                 )),
-            Row( // menu row
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  child: ElevatedButton(onPressed: ()=> mapButtonClickedEvent(context), child: Icon(Icons.map),
-                    onLongPress: ()=>mapButtonLongClickedEvent(context),
-                  ),
-                  height: MediaQuery.of(context).size.height / 11,
-                  width: MediaQuery.of(context).size.width / 4,
-                ),
-                Container(
-                  child: ElevatedButton(onPressed: ()=> accountButtonClickedEvent(context), child: Icon(Icons.account_box_outlined),
-                  ),
-                  height: MediaQuery.of(context).size.height / 11,
-                  width: MediaQuery.of(context).size.width / 4,
-                ),
-                Container(
-                  child: ElevatedButton(onPressed: ()=> reviewsButtonClickedEvent(context), child: Icon(Icons.rate_review),
-                  ),
-                  height: MediaQuery.of(context).size.height / 11,
-                  width: MediaQuery.of(context).size.width / 4,
-                ),
-                Container(
-                  child: ElevatedButton(onPressed: ()=> settingButtonClickedEvent(context), child: Icon(Icons.settings),
-                  ),
-                  height: MediaQuery.of(context).size.height / 11,
-                  width: MediaQuery.of(context).size.width / 4,
-                ),
-              ],
-            ),
+            const Toolbar(),
           ],
         )
     );

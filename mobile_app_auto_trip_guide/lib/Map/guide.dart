@@ -3,6 +3,7 @@ import 'package:final_project/Map/audio_player_controller.dart';
 import 'package:final_project/Map/text_guid_dialog.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
+import '../Pages/poi_reading_page.dart';
 import 'blurry_dialog.dart';
 import 'dialog_box.dart';
 import 'globals.dart';
@@ -22,30 +23,28 @@ class Guide {
           guideDialogBox.hideDialog();
         },
         onPressNext: () {
+          stop();
           askNextPoi();
         });
   }
 
   Future<void> handleMapPoiVoice(MapPoi mapPoi) async {
-    // setMapPoiColor(mapPoi, Colors.black);
-    // if (lastMapPoiHandled != null) {
-    //   Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
-    // }
-    // Globals.globalUserMap.userMapState?.highlightMapPoi(mapPoi);
-    // Globals.globalUserMap.userMapState?.showNextButton();
-    // lastMapPoiHandled = mapPoi;
-
     Audio audio =
-        await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id!);
+    await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id!);
 
     List<int> intList = audio.audio.cast<int>().toList();
     Uint8List byteData =
-        Uint8List.fromList(intList); // Load audio as a byte array here.
+    Uint8List.fromList(intList); // Load audio as a byte array here.
     audioPlayer.byteData = byteData;
     audioPlayer.playAudio();
   }
 
-  Future<void> handleMapPoiText(MapPoi mapPoi) async {}
+  Future<void> handleMapPoiText(MapPoi mapPoi) async {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => PoiReadingPage(poi: mapPoi.poi,)));
+
+
+  }
 
   Future<void> handleMapPoi(MapPoi mapPoi) async {
     state = GuideState.working;
@@ -161,7 +160,7 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
   MapPoi? mainPoi;
   GuideStatus guideStatus = GuideStatus.voice;
   String ask = "Do you want to hear about ";
-  WidgetVisibility dialogVisibility = WidgetVisibility.view;
+  WidgetVisibility dialogVisibility = WidgetVisibility.hide;
 
   MapPoi? getMapPoi() {
     return mainPoi;

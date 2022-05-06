@@ -2,6 +2,7 @@
   "dependencies": {
     "country-reverse-geocoding": "^0.2.2",
     "gtts": "^0.2.1",
+    "node-gtts": "^2.0.2",
     "xhr2": "^0.2.1"
   }
 }

@@ -9,12 +9,12 @@ import 'globals.dart';
 class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
   // String serverUrl = "autotripguidemobile.loca.lt";
-  String serverUrl = "aae0-84-94-109-213.ngrok.io";
+
+  String serverUrl = "351c-77-126-184-189.ngrok.io";
 
   var client = RetryClient(http.Client());
 
   // var client = http.Client();
-
   static Uri addLocationInfoToUrl(
       String url, String path, LocationInfo locationInfo) {
     final queryParameters = {
@@ -25,6 +25,10 @@ class ServerCommunication {
     };
     final uri = Uri.https(url, path, queryParameters);
     return uri;
+  }
+
+  String getAudioStreamUrl(Poi poi) {
+    return 'https://' + serverUrl+'/getAudioStream'+ '?poiId=' + poi.id.toString();
   }
 
   Future<List<Poi>> getPoisByLocation(LocationInfo? locationInfo) async {

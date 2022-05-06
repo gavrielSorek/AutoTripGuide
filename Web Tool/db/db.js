@@ -1,4 +1,4 @@
-module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi, deletePoi, changePermission, deleteAudio};
+module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi, deletePoi, changePermission, deleteAudio, getAudioStream};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -68,6 +68,15 @@ async function getAudio(dbClient, audioId) {
     });
     return audioPromise
 }
+
+// this function return audio stream
+async function getAudioStream(dbClient, audioId) {
+    const db = await dbClient.db("testDb");
+    const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myCustomBucket' });
+    var downloadStream = bucket.openDownloadStreamByName(audioId);
+    return downloadStream
+}
+
 //delete poi audio
 async function deletePoi(client, updatedPoi, id) {
     deleteAudio(client, id);

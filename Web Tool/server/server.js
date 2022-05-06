@@ -17,8 +17,8 @@ const mongodb = require('mongodb');
 const express = require('express')
 bodyParser = require('body-parser');
 const app = express()
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
-app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '100mb', extended: true}));
+app.use(bodyParser.json({limit: '100mb'}));
 let cors = require('cors');
 const { data } = require("jquery");
 app.use(cors())
@@ -35,7 +35,8 @@ const CLIENT_ID = process.env.OAUTH_CLIENTID;
 const client = new OAuth2Client(CLIENT_ID)
 
 //init GLOBAL
-const jsdom = require("jsdom")
+const jsdom = require("jsdom");
+const { response } = require('express');
 const { JSDOM } = jsdom
 global.DOMParser = new JSDOM().window.DOMParser
 const dataInHtml = fs.readFileSync(path.resolve(__dirname, '../client/dataIn.html'), 'utf8')
@@ -289,6 +290,19 @@ app.post('/searchPoiAudioById', permissions.authContributor,async function(req, 
     const data = req.body;
     console.log(data)
     retAudioById(data._id, res)
+})
+
+app.post('/searchPoiAudioStreamById', permissions.authContributor,async function(req, res) {
+    console.log("audio stream search by name is recieved")
+    response.writeHead(200, {
+        'Content-Type': 'audio/mpeg',
+        'Content-Length': stat.size
+    });
+    
+    audioStream = db.getAudioStream(dbClient, audioId)
+    audioStream.pipe(response)
+    // fs.createReadStream(filePath).pipe(response);
+
 })
 
 function sendPosition(position, res) {

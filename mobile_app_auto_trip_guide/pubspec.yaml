@@ -37,6 +37,7 @@ dependencies:
   http: ^0.13.4
 #  http: any
   flutter_map_location_marker: any
+  webview_flutter: ^1.0.5
 
 
 
