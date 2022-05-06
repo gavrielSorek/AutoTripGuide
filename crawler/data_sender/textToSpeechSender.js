@@ -10,9 +10,9 @@ const gTTS = require('gtts');
 var gtts = require('node-gtts')('en');
 var path = require('path');
 
-// const serverUrl = 'https://autotripguide.loca.lt';
+ //const serverUrl = 'https://autotripguide.loca.lt';
 
-const serverUrl = 'http://2a34-77-126-184-189.ngrok.io'
+const serverUrl = 'http://localhost:5500'
 
 
 //init
@@ -98,10 +98,16 @@ async function updatePoiOnServer(poi) {
     Http.open("POST", url);
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
-    Http.send(poiInfoJson);
-    Http.onerror((e)=>console.log(e))
+
+
 
     const audioPromise = new Promise((resolve, reject) => {
+
+        Http.onerror = function(error){
+            console.error( error );
+            reject(error)
+        }
+
         Http.onreadystatechange = (e) => {
             if (Http.readyState == 4 && Http.status == 200) {
                 resolve("finished to upload poi");
@@ -116,6 +122,8 @@ async function updatePoiOnServer(poi) {
             } 
         }
     });
+    Http.send(poiInfoJson);
+
     return audioPromise;
 
 }
@@ -129,13 +137,18 @@ async function handleAllPois() {
         if(poi._language == 'en') {
             console.log('handle : ' + poi._poiName)
             poiShortDesc = poi._shortDesc.replace(/ *\([^)]*\) */g, ""); //remove parenthesis
-            poi._audio = await textToVoice(poi._shortDesc ,poi._language)
-            poi._audio = new Uint8Array(poi._audio)
-            console.log(poi._poiName + ' converted')
+            try {
+                poi._audio = await textToVoice(poiShortDesc ,poi._language)
+                poi._audio = new Uint8Array(poi._audio)
+                console.log(poi._poiName + ' converted')
+    
+                var res = await updatePoiOnServer(poi);
+                console.log(res)
 
-            var res = await updatePoiOnServer(poi);
-            console.log(res)
+            } catch {
+                console.log('error in poi ' + poi._poiName)
 
+            }
         }
 
     }
@@ -143,6 +156,8 @@ async function handleAllPois() {
 }
 
 async function main() {
+    sleep(100000000) // this fixes the bug that js exit when it waits for HTTP request
+
     console.log('start text to speech')
     await init();
     await handleAllPois();
@@ -155,4 +170,8 @@ addTokensToObject = function (object) {
     query = {}
     object['PermissionToken'] = globalTokenAndPermission['PermissionToken'];
     object['permissionStatus'] = globalTokenAndPermission['permissionStatus'];
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
