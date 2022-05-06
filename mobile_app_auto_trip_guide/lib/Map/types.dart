@@ -41,6 +41,8 @@ class Poi {
   String? UpdatedBy;
   String? LastUpdatedDate;
   String? country;
+  String? pic;
+
   List<String>? Categories;
 
   Poi({
@@ -59,6 +61,7 @@ class Poi {
     this.LastUpdatedDate,
     this.country,
     this.Categories,
+    this.pic
   });
 
   factory Poi.fromJson(Map<String, dynamic> json) {
@@ -77,6 +80,7 @@ class Poi {
       UpdatedBy: (json['_UpdatedBy'] ?? "?") as String,
       LastUpdatedDate: (json['_LastUpdatedDate'] ?? "?") as String,
       country: (json['_country'] ?? "?") as String,
+      pic: (json['_pic'] ?? "?") as String,
       Categories: (json['_Categories']?.split(',') ?? ['?']) as List<String>,
     );
   }

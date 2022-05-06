@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:final_project/Map/audio_player_controller.dart';
@@ -15,6 +16,7 @@ class Guide {
   MapPoi? lastMapPoiHandled;
   bool userClickedOkOnPoi = false;
   late GuideDialogBox guideDialogBox;
+  Timer? timerToGuideOnPoi;
 
   Guide(this.context, this.guideData, this.audioPlayer) {
     guideDialogBox = GuideDialogBox(
@@ -46,9 +48,9 @@ class Guide {
   Future<void> handleMapPoi(MapPoi mapPoi) async {
     state = GuideState.working;
     Globals.setMainMapPoi(mapPoi);
-    if (lastMapPoiHandled != null) {
-      Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
-    }
+     if (lastMapPoiHandled != null) {
+       Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
+     }
     Globals.globalUserMap.userMapState?.highlightMapPoi(mapPoi);
     Globals.globalUserMap.userMapState?.showNextButton();
     lastMapPoiHandled = mapPoi;
@@ -84,12 +86,22 @@ class Guide {
   }
 
   void askPoi(MapPoi poi) {
+    timerToGuideOnPoi?.cancel(); // cancel timer for last poi
+
+    // highlight wanted poi
+    Globals.setMainMapPoi(poi);
+    if (lastMapPoiHandled != null) {
+      Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
+    }
+    Globals.globalUserMap.userMapState?.highlightMapPoi(poi);
+
     userClickedOkOnPoi = false;
     //handleMapPoi(poi);
     guideDialogBox.updateGuideStatus(guideData.status);
     guideDialogBox.setMapPoi(poi);
     guideDialogBox.showDialog();
-    Future.delayed(const Duration(seconds: 10), () {
+
+    timerToGuideOnPoi = Timer(const Duration(seconds: 10), () {
       if (!userClickedOkOnPoi) {
         onUserClickedOk();
       }
@@ -97,6 +109,13 @@ class Guide {
   }
 
   void stop() {
+    // unhighlight last map poi
+    if (lastMapPoiHandled != null) {
+      Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
+    }
+    if (Globals.mainMapPoi != null) {
+      Globals.globalUserMap.userMapState?.unHighlightMapPoi(Globals.mainMapPoi!);
+    }
     if (guideData.status == GuideStatus.voice) {
       audioPlayer.stopAudio();
     }
@@ -221,7 +240,9 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
           descriptions: ask + (mainPoi?.poi.poiName ?? "No information") + "?",
           leftButtonText: "Ok",
           rightButtonText: "Next",
-          img: Image.network(
+          // img: Image.network(
+          //     "https://assets.hyatt.com/content/dam/hyatt/hyattdam/images/2019/02/07/1127/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.jpg/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.16x9.jpg"),
+          img: Image.network(mainPoi?.poi.pic ??
               "https://assets.hyatt.com/content/dam/hyatt/hyattdam/images/2019/02/07/1127/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.jpg/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.16x9.jpg"),
           key: UniqueKey(),
           onPressLeft: widget.onPressOk,
