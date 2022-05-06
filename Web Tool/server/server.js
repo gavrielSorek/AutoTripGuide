@@ -107,6 +107,9 @@ async function poiHandler(poi) {
     if(!poi._id) {
         poi._id = uuidv1()
     }
+    if(!poi._pic) {
+        poi._pic = "no pic"
+    }
     if(poi._audio != "no audio") {
         var audio = poi._audio
         poi._audio = "have audio"
