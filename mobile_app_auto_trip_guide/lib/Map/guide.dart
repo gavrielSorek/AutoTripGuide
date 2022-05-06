@@ -1,10 +1,9 @@
+import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:final_project/Map/audio_player_controller.dart';
-import 'package:final_project/Map/text_guid_dialog.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
 import '../Pages/poi_reading_page.dart';
-import 'blurry_dialog.dart';
 import 'dialog_box.dart';
 import 'globals.dart';
 
@@ -14,14 +13,12 @@ class Guide {
   AudioApp audioPlayer;
   GuideState state = GuideState.waiting;
   MapPoi? lastMapPoiHandled;
+  bool userClickedOkOnPoi = false;
   late GuideDialogBox guideDialogBox;
 
   Guide(this.context, this.guideData, this.audioPlayer) {
     guideDialogBox = GuideDialogBox(
-        onPressOk: () {
-          handleMapPoi(guideDialogBox.getMapPoi()!);
-          guideDialogBox.hideDialog();
-        },
+        onPressOk: onUserClickedOk,
         onPressNext: () {
           stop();
           askNextPoi();
@@ -30,20 +27,20 @@ class Guide {
 
   Future<void> handleMapPoiVoice(MapPoi mapPoi) async {
     Audio audio =
-    await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id!);
+        await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id!);
 
     List<int> intList = audio.audio.cast<int>().toList();
     Uint8List byteData =
-    Uint8List.fromList(intList); // Load audio as a byte array here.
+        Uint8List.fromList(intList); // Load audio as a byte array here.
     audioPlayer.byteData = byteData;
     audioPlayer.playAudio();
   }
 
   Future<void> handleMapPoiText(MapPoi mapPoi) async {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => PoiReadingPage(poi: mapPoi.poi,)));
-
-
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => PoiReadingPage(
+              poi: mapPoi.poi,
+            )));
   }
 
   Future<void> handleMapPoi(MapPoi mapPoi) async {
@@ -62,7 +59,6 @@ class Guide {
     }
   }
 
-
   void handlePois() async {
     askNextPoi();
     // print("in handlePois");
@@ -77,20 +73,27 @@ class Guide {
   }
 
   void askNextPoi() {
-
     if (state == GuideState.working || Globals.globalUnhandledPois.isEmpty) {
       print("error in handleNextPoi in Guide or pois map is empty");
       return;
     }
     MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
-    Globals.globalUnhandledPois.remove(mapPoiElement.poi.id); // handling poi so remove from UnhandledPois
+    Globals.globalUnhandledPois.remove(
+        mapPoiElement.poi.id); // handling poi so remove from UnhandledPois
     askPoi(mapPoiElement);
   }
+
   void askPoi(MapPoi poi) {
+    userClickedOkOnPoi = false;
     //handleMapPoi(poi);
     guideDialogBox.updateGuideStatus(guideData.status);
     guideDialogBox.setMapPoi(poi);
     guideDialogBox.showDialog();
+    Future.delayed(const Duration(seconds: 10), () {
+      if (!userClickedOkOnPoi) {
+        onUserClickedOk();
+      }
+    });
   }
 
   void stop() {
@@ -111,7 +114,6 @@ class Guide {
     //     stop();
     //   }
     // }
-
   }
 
   void guideStateChanged() {
@@ -119,6 +121,12 @@ class Guide {
       stop();
       askPoi(lastMapPoiHandled!);
     }
+  }
+
+  void onUserClickedOk() {
+    userClickedOkOnPoi = true;
+    handleMapPoi(guideDialogBox.getMapPoi()!);
+    guideDialogBox.hideDialog();
   }
 }
 
@@ -130,15 +138,25 @@ class GuideDialogBox extends StatefulWidget {
 
   _GuideDialogBoxState? guideDialogBoxState;
 
-  void setMapPoi(MapPoi poi) {guideDialogBoxState!.setMapPoi(poi);}
+  void setMapPoi(MapPoi poi) {
+    guideDialogBoxState!.setMapPoi(poi);
+  }
 
-  void updateGuideStatus(GuideStatus status) { guideDialogBoxState!.updateGuideStatus(status);}
+  void updateGuideStatus(GuideStatus status) {
+    guideDialogBoxState!.updateGuideStatus(status);
+  }
 
-  void showDialog() {guideDialogBoxState!.showDialog();}
+  void showDialog() {
+    guideDialogBoxState!.showDialog();
+  }
 
-  void hideDialog() { guideDialogBoxState!.hideDialog(); }
+  void hideDialog() {
+    guideDialogBoxState!.hideDialog();
+  }
 
-  MapPoi? getMapPoi() { return guideDialogBoxState!.getMapPoi();}
+  MapPoi? getMapPoi() {
+    return guideDialogBoxState!.getMapPoi();
+  }
 
   _GuideDialogBoxState getDialogBoxState() {
     if (guideDialogBoxState == null) {
