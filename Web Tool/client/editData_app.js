@@ -12,6 +12,7 @@ var select = document.getElementById("languages");
 var recordButton = document.getElementById("record_button");
 var deleteCheckbox = document.getElementById('deletePoi')
 var approveCheckbox = document.getElementById('approvePoi')
+var categoriesDiv = document.getElementById('categories');
 
 
 
@@ -24,6 +25,7 @@ var globalApprover = undefined;
 document.getElementById("submit_button").addEventListener("click", submitPoi);
 recordButton.addEventListener("mousedown", record);
 recordButton.addEventListener("mouseup", stopRecord);
+createCategoriesSection();
 
 
 // initRecord()
@@ -135,7 +137,8 @@ async function sendPoiInfoToServer() {
         _CreatedDate: getTodayDate(),
         _ApprovedBy: getApprover(),
         _UpdatedBy: localStorage['userName'],
-        _LastUpdatedDate: getTodayDate()
+        _LastUpdatedDate: getTodayDate(),
+        _Categories : getCheckedCategories()
     }
     if (deleteCheckbox.checked) { // if user wants to delete the poi
         poiInfo['_delete'] = 'true'
@@ -378,6 +381,72 @@ function startEditLogic() {
 }
 
 startEditLogic();
+
+function createCategoriesSection(){
+    var lang = {
+        language : "eng", //TODO::ADAPT LANGUAGE TO CATEGORIES LANGUAGE
+    }
+    var langJson= JSON.stringify(lang);
+    const Http = new XMLHttpRequest();
+    const url=communication.uriBeginning + 'getCategories';
+    Http.open("POST", url);
+    Http.withCredentials = false;
+    Http.setRequestHeader("Content-Type", "application/json");
+    Http.send(langJson);
+    Http.onreadystatechange = (e) => {  
+        if (Http.readyState == 4) { //if the operation is completed. 
+            var response = Http.responseText
+            if(response.length > 0) {
+                console.log("response from the server is recieved")
+                var jsonResponse = JSON.parse(Http.responseText);
+                // console.log(jsonResponse);
+                // console.log(Object.keys(jsonResponse));
+                globalCategories = Object.keys(jsonResponse);
+                addCategories();
+            } else {
+                messages.showNotFoundMessage()
+            }
+        }
+    }
+}
+
+function addCategories(){
+    console.log("globalCategories.length: " + globalCategories.length)
+    for(var i=0, n=globalCategories.length;i<n;i++) {
+        var checkbox = document.createElement('input');
+        checkbox.type = "checkbox";
+        checkbox.name = "category";
+        checkbox.id = i;
+        checkbox.onchange=function () {
+            console.log("test clicked");
+        };
+        var label = document.createElement('lable');
+        label.setAttribute("for",i);
+        label.setAttribute("class","md-chip md-chip-clickable md-chip-hover");
+        label.appendChild(document.createTextNode(" " + globalCategories[i] + " "));
+        label.style.color = "white";
+        categoriesDiv.appendChild(checkbox);
+        categoriesDiv.appendChild(label);
+    }
+}
+
+function toggle(source) {
+    checkboxes = document.getElementsByName('category');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+      checkboxes[i].checked = source.checked;
+    }
+}
+
+function getCheckedCategories(){
+    checkedCategories = [];
+    checkboxes = document.getElementsByName('category');
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+        if(checkboxes[i].checked) {
+            checkedCategories.push(globalCategories[i])
+        }
+    }
+    return checkedCategories;
+}
 
 
 

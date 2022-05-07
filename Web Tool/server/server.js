@@ -496,3 +496,19 @@ function getDefaultBounds(){
     relevantBounds['northEast'] = {lat : 31.83303, lng : 36.35400390625001}
     return relevantBounds;
 }
+
+// Route that handles create new user logic
+async function getCategories() {
+    return await db.getCategories(dbClientInsertor);
+}
+
+//get categories logic
+app.post('/getCategories', async function(req, res) {
+    console.log("get categories request in the server")
+    language = {'language': "eng"}; //TODO:: GET THE LANGUAGE IN THE REQUEST
+    result = await db.getCategories(dbClientSearcher, language)
+    res.status(200);
+    res.json(result);
+    res.end();
+});
+

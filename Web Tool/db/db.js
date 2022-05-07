@@ -1,4 +1,4 @@
-module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi, deletePoi, changePermission, deleteAudio, getAudioStream};
+module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi, deletePoi, changePermission, deleteAudio, getAudioStream, getCategories};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -197,7 +197,21 @@ async function changePermission(client, userInfo) {
         }});
         return 1;
     }
-    
+}
+
+// The function inserts a return the categories from the db
+async function getCategories(client, lang) {
+    var categoryLang = lang.language;
+    var res = await client.db("testDb").collection("Categories").find({language: categoryLang});
+    var resArr = await res.toArray();
+    if (resArr.length > 0) {
+        //console.log(resArr[0].categories);
+        console.log("found categories for the reuired language")
+        return resArr[0].categories;
+    } else {
+        console.log("not found categories for the reuired language")
+        return {};
+    }
 }
 
 
