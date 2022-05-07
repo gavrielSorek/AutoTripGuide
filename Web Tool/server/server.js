@@ -497,11 +497,6 @@ function getDefaultBounds(){
     return relevantBounds;
 }
 
-// Route that handles create new user logic
-async function getCategories() {
-    return await db.getCategories(dbClientInsertor);
-}
-
 //get categories logic
 app.post('/getCategories', async function(req, res) {
     console.log("get categories request in the server")

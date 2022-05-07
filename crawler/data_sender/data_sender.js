@@ -2,6 +2,9 @@ var XMLHttpRequest = require('xhr2');
 var xhr = new XMLHttpRequest();
 var geo = require("./services/countryByPosition");
 var tokenGetter = require("./services/serverTokenGetter");
+const serverUrl = 'https://autotripguide.loca.lt';
+var globalCategories = []
+var serverCategories = []
 
 // The function returns the date of today
 function getTodayDate() {
@@ -17,7 +20,6 @@ function getTodayDate() {
 // The function send the poi info request to the server
 async function sendPoisToServer(pois) {
     const Http = new XMLHttpRequest();
-    const serverUrl = 'https://autotripguide.loca.lt';
     const url = serverUrl + '/createPois';
     Http.open("POST", url);
     Http.withCredentials = false;
@@ -74,6 +76,13 @@ function convertFromCrawlerToServerPoi(crawlerPois) {
     for (var i = 0; i < crawlerPois.length; i++) {
         var crawlePoi = crawlerPois[i];
         var position = ParseDMS(crawlePoi['position']['latitude'] + " " + crawlePoi['position']['longitude'])
+        //convert object to array
+        var categoriesObject = convertToServerCategories(crawlePoi['categories'].join());
+        var categoriesArray = [];
+        categoriesObject.forEach(element => {
+            categoriesArray.push(element);
+        });
+
         serverPoi = {
             _poiName: crawlePoi['title'],
             _latitude: position['lat'],
@@ -88,13 +97,56 @@ function convertFromCrawlerToServerPoi(crawlerPois) {
             _UpdatedBy: "UpdatedBy crawler",
             _LastUpdatedDate: getTodayDate(),
             _country: geo.getCountry(position['lat'], position['lng']),
-            _Categories: crawlePoi['categories'].join()
+            _Categories: categoriesArray
+            // _Categories: convertToServerCategories(crawlePoi['categories'].join())
         }
         serverPois.push(serverPoi)
     }
     return serverPois
 }
-function main() {
+
+async function getServerCategories(){
+    var lang = {
+        language : "eng", //TODO::ADAPT LANGUAGE TO CATEGORIES LANGUAGE
+    }
+    var langJson= JSON.stringify(lang);
+    const Http = new XMLHttpRequest();
+    const url=serverUrl + '/getCategories';
+    Http.open("POST", url);
+    Http.withCredentials = false;
+    Http.setRequestHeader("Content-Type", "application/json");
+    Http.send(langJson);
+    const categoriesPromise = new Promise((resolve, reject) => {
+        Http.onreadystatechange = (e) => {  
+            if (Http.readyState == 4) { //if the operation is completed. 
+                var response = Http.responseText
+                if(response.length > 0) {
+                    console.log("response from the server is recieved")
+                    var jsonResponse = JSON.parse(Http.responseText);
+                    resolve(Object.keys(jsonResponse));
+                } else {
+                    reject("get categories from server failed");
+                }
+            }
+        }
+    });
+    return categoriesPromise;
+}
+
+function convertToServerCategories(crawlerCategories) {
+    crawlerCategories = crawlerCategories.toLowerCase();
+    var filterServerCategories = []
+    serverCategories.forEach(element => {
+        category = element.toLowerCase();
+        if(crawlerCategories.includes(category)) {
+            filterServerCategories.push(element);
+        }
+    });
+    return filterServerCategories;
+}
+
+async function main() {
+    serverCategories = await getServerCategories();
     var args = process.argv.slice(2);
     const jsonData = require(args[0]);
     var serverPois = convertFromCrawlerToServerPoi(jsonData)
