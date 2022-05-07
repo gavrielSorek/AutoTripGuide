@@ -17,6 +17,7 @@ class Guide {
   bool userClickedOkOnPoi = false;
   late GuideDialogBox guideDialogBox;
   Timer? timerToGuideOnPoi;
+  int loadingAnimationTime = 10;
 
   Guide(this.context, this.guideData, this.audioPlayer) {
     guideDialogBox = GuideDialogBox(
@@ -24,7 +25,8 @@ class Guide {
         onPressNext: () {
           stop();
           askNextPoi();
-        });
+        },
+        loadingAnimationTime: loadingAnimationTime);
   }
 
   Future<void> handleMapPoiVoice(MapPoi mapPoi) async {
@@ -48,9 +50,9 @@ class Guide {
   Future<void> handleMapPoi(MapPoi mapPoi) async {
     state = GuideState.working;
     Globals.setMainMapPoi(mapPoi);
-     if (lastMapPoiHandled != null) {
-       Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
-     }
+    if (lastMapPoiHandled != null) {
+      Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
+    }
     Globals.globalUserMap.userMapState?.highlightMapPoi(mapPoi);
     Globals.globalUserMap.userMapState?.showNextButton();
     lastMapPoiHandled = mapPoi;
@@ -88,6 +90,7 @@ class Guide {
   void askPoi(MapPoi poi) {
     timerToGuideOnPoi?.cancel(); // cancel timer for last poi
 
+
     // highlight wanted poi
     Globals.setMainMapPoi(poi);
     if (lastMapPoiHandled != null) {
@@ -101,7 +104,8 @@ class Guide {
     guideDialogBox.setMapPoi(poi);
     guideDialogBox.showDialog();
 
-    timerToGuideOnPoi = Timer(const Duration(seconds: 10), () {
+    guideDialogBox.startLoading();
+    timerToGuideOnPoi = Timer(Duration(seconds: loadingAnimationTime), () {
       if (!userClickedOkOnPoi) {
         onUserClickedOk();
       }
@@ -114,7 +118,8 @@ class Guide {
       Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
     }
     if (Globals.mainMapPoi != null) {
-      Globals.globalUserMap.userMapState?.unHighlightMapPoi(Globals.mainMapPoi!);
+      Globals.globalUserMap.userMapState
+          ?.unHighlightMapPoi(Globals.mainMapPoi!);
     }
     if (guideData.status == GuideStatus.voice) {
       audioPlayer.stopAudio();
@@ -151,8 +156,13 @@ class Guide {
 
 class GuideDialogBox extends StatefulWidget {
   dynamic onPressOk, onPressNext;
+  int loadingAnimationTime = 10; // default
 
-  GuideDialogBox({Key? key, this.onPressOk, this.onPressNext})
+  GuideDialogBox(
+      {Key? key,
+      this.onPressOk,
+      this.onPressNext,
+      required this.loadingAnimationTime})
       : super(key: key);
 
   _GuideDialogBoxState? guideDialogBoxState;
@@ -184,6 +194,15 @@ class GuideDialogBox extends StatefulWidget {
     return guideDialogBoxState!;
   }
 
+  void startLoading() {
+    guideDialogBoxState?.startLoading();
+  }
+
+  // void stopLoading() {
+  //   guideDialogBoxState?.stopLoading();
+  // }
+
+
   @override
   _GuideDialogBoxState createState() {
     guideDialogBoxState = _GuideDialogBoxState();
@@ -196,6 +215,26 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
   GuideStatus guideStatus = GuideStatus.voice;
   String ask = "Do you want to hear about ";
   WidgetVisibility dialogVisibility = WidgetVisibility.hide;
+  CustomDialogBox? dialogBox;
+  double progress = 0;
+
+  void startLoading() {
+    progress = 0;
+    int numberOfSteps = 10;
+    loadStep(numberOfSteps);
+  }
+
+  void loadStep(int numberOfSteps) {
+    double progressEveryStep = 1 / numberOfSteps;
+    int stepTime = (widget.loadingAnimationTime / numberOfSteps).round();
+    Future.delayed(Duration(seconds: stepTime), () {
+      progress += progressEveryStep;
+      dialogBox?.setProgress(progress);
+      if (progress < 1) {
+        loadStep(numberOfSteps);
+      }
+    });
+  }
 
   MapPoi? getMapPoi() {
     return mainPoi;
@@ -232,21 +271,21 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
 
   @override
   Widget build(BuildContext context) {
+    dialogBox = CustomDialogBox(
+      title: mainPoi?.poi.poiName ?? "No information",
+      descriptions: ask + (mainPoi?.poi.poiName ?? "No information") + "?",
+      leftButtonText: "Ok",
+      rightButtonText: "Next",
+      img: Image.network(mainPoi?.poi.pic ??
+          "https://assets.hyatt.com/content/dam/hyatt/hyattdam/images/2019/02/07/1127/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.jpg/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.16x9.jpg"),
+      key: UniqueKey(),
+      onPressLeft: widget.onPressOk,
+      onPressRight: widget.onPressNext,
+    );
+
     return AnimatedOpacity(
         opacity: WidgetVisibility.view == dialogVisibility ? 1.0 : 0.0,
         duration: Duration(milliseconds: 500),
-        child: CustomDialogBox(
-          title: mainPoi?.poi.poiName ?? "No information",
-          descriptions: ask + (mainPoi?.poi.poiName ?? "No information") + "?",
-          leftButtonText: "Ok",
-          rightButtonText: "Next",
-          // img: Image.network(
-          //     "https://assets.hyatt.com/content/dam/hyatt/hyattdam/images/2019/02/07/1127/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.jpg/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.16x9.jpg"),
-          img: Image.network(mainPoi?.poi.pic ??
-              "https://assets.hyatt.com/content/dam/hyatt/hyattdam/images/2019/02/07/1127/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.jpg/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.16x9.jpg"),
-          key: UniqueKey(),
-          onPressLeft: widget.onPressOk,
-          onPressRight: widget.onPressNext,
-        ));
+        child: dialogBox);
   }
 }
