@@ -1,7 +1,9 @@
 import 'package:final_project/Pages/home_page.dart';
+import 'package:final_project/Pages/setting_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Pages/account_page.dart';
+import '../Pages/reviews_page.dart';
 import 'globals.dart';
 
 void returnToHomePage(BuildContext context) {
@@ -26,7 +28,15 @@ void accountButtonClickedEvent(BuildContext context) {
       .push(MaterialPageRoute(builder: (context) => AccountPage()));
 }
 
-void reviewsButtonClickedEvent(BuildContext context) {}
+void reviewsButtonClickedEvent(BuildContext context) {
+  returnToHomePage(context);
+  Navigator.of(context)
+      .push(MaterialPageRoute(builder: (context) => ReviewsPage()));
+}
 
-void settingButtonClickedEvent(BuildContext context) {}
+void settingButtonClickedEvent(BuildContext context) {
+  returnToHomePage(context);
+  Navigator.of(context)
+      .push(MaterialPageRoute(builder: (context) => SettingsPage()));
+}
 
