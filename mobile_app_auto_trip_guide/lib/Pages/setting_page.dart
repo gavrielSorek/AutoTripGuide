@@ -1,14 +1,10 @@
-import 'package:final_project/Pages/personal_details_page.dart';
+import 'package:final_project/Map/events.dart';
 import 'package:final_project/UsefulWidgets/toolbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:final_project/Pages/login_controller.dart';
-import 'package:get/get.dart';
-import 'package:final_project/Pages/favorite_categories_page.dart';
 
 class SettingsPage extends StatelessWidget {
   SettingsPage({Key? key}) : super(key: key);
-  final controller = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +17,9 @@ class SettingsPage extends StatelessWidget {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.logout),
-              onPressed: controller.logout,
+              onPressed: (){
+                logOut(context);
+              },
             ),
           ],
         ),
@@ -31,8 +29,7 @@ class SettingsPage extends StatelessWidget {
             Row(
               // menu row
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-              ],
+              children: [],
             ),
             Spacer(),
             const Toolbar(),

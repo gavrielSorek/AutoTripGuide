@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:final_project/Pages/login_controller.dart';
 import 'package:get/get.dart';
 import 'package:final_project/Pages/home_page.dart';
-import 'package:final_project/Map/server_communication.dart';
 import '../Map/globals.dart';
 import '../Map/types.dart';
 
 
 class LoginPage extends StatelessWidget {
-  final controller = Get.put(LoginController());
-
   //LoginPage({Key? key}) : super(key: key);
 
   @override
@@ -17,7 +13,7 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       body: Center(
           child: Obx(() {
-            if (controller.googleAccount.value == null) {
+            if (Globals.globalController.googleAccount.value == null) {
               return buildNewLogin();
             } else {
               addUser();
@@ -31,14 +27,14 @@ class LoginPage extends StatelessWidget {
 
   void addUser() async {
      Globals.globalServerCommunication.addNewUser(
-        UserInfo(controller.googleAccount.value?.displayName ?? '', controller.googleAccount.value?.email ?? '', "", [""], 0, Globals.globalFavoriteCategories));
-     Globals.globalFavoriteCategories = await Globals.globalServerCommunication.getFavorCategories(controller.googleAccount.value?.email ?? '');
+        UserInfo(Globals.globalController.googleAccount.value?.displayName ?? '', Globals.globalController.googleAccount.value?.email ?? '', "", [""], 0, Globals.globalFavoriteCategories));
+     Globals.globalFavoriteCategories = await Globals.globalServerCommunication.getFavorCategories(Globals.globalController.googleAccount.value?.email ?? '');
   }
 
   FloatingActionButton buildLoginButton() {
     return FloatingActionButton.extended(
       onPressed: (){
-        controller.login();
+        Globals.globalController.login();
       },
       icon: Icon(
         Icons.audiotrack,
@@ -69,7 +65,7 @@ class LoginPage extends StatelessWidget {
             SizedBox(height:80 ,),
             FloatingActionButton.extended(
               onPressed: (){
-                controller.login();
+                Globals.globalController.login();
               },
               icon:
               Image.asset(
@@ -92,19 +88,19 @@ class LoginPage extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         CircleAvatar(
-          backgroundImage: Image.network(controller.googleAccount.value?.photoUrl ?? '').image,
+          backgroundImage: Image.network(Globals.globalController.googleAccount.value?.photoUrl ?? '').image,
           radius: 100,
         ),
-        Text(controller.googleAccount.value?.displayName ?? '',
+        Text(Globals.globalController.googleAccount.value?.displayName ?? '',
           style: Get.textTheme.headline4,),
-        Text(controller.googleAccount.value?.email ?? '',
+        Text(Globals.globalController.googleAccount.value?.email ?? '',
             style: Get.textTheme.headline5),
         SizedBox(height:16 ,),
         ActionChip(
           avatar: Icon(Icons.logout),
           label: Text('Logout'),
           onPressed: () {
-            controller.logout();
+            Globals.globalController.logout();
           },
         ),
       ],

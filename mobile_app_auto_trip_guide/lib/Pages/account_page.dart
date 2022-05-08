@@ -6,9 +6,10 @@ import 'package:final_project/Pages/login_controller.dart';
 import 'package:get/get.dart';
 import 'package:final_project/Pages/favorite_categories_page.dart';
 
+import '../Map/events.dart';
+
 class AccountPage extends StatelessWidget {
   AccountPage({Key? key}) : super(key: key);
-  final controller = Get.put(LoginController());
 
   void _navigateToNextScreen(String screenName, BuildContext context) {
     if (screenName == "Personal details") {
@@ -62,7 +63,9 @@ class AccountPage extends StatelessWidget {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.logout),
-              onPressed: controller.logout,
+              onPressed: () {
+                logOut(context);
+              },
             ),
           ],
         ),

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:final_project/Map/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -7,10 +6,6 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:final_project/Map/types.dart';
-import 'package:final_project/Map/server_communication.dart';
-import 'package:final_project/Map/audio_player_controller.dart';
-
-import 'dialog_box.dart';
 import 'guide.dart';
 
 class UserMap extends StatefulWidget {
@@ -57,8 +52,6 @@ class UserMap extends StatefulWidget {
   }
 
   static void preUnmountMap() {
-    Globals.globalAllPois.cast();
-    Globals.globalUnhandledPois.clear();
     userChangeLocationFuncs.clear();
   }
 

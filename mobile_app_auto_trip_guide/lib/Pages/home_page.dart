@@ -3,14 +3,11 @@ import 'package:final_project/Map/map.dart';
 import 'package:final_project/UsefulWidgets/toolbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:final_project/Pages/login_controller.dart';
-import 'package:get/get.dart';
 import '../Map/globals.dart';
 
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
-  final controller = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +20,7 @@ class HomePage extends StatelessWidget {
               icon: Icon(Icons.logout),
               onPressed: () {
                 UserMap.preUnmountMap();
-                controller.logout();
+                logOut(context);
               },
             ),
           ],),

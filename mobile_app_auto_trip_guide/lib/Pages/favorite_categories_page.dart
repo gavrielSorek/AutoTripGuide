@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:final_project/Pages/login_controller.dart';
-import 'package:get/get.dart';
+import '../Map/events.dart';
 import '../Map/globals.dart';
 
 class FavoriteCategoriesPage extends StatefulWidget {
@@ -11,7 +10,6 @@ class FavoriteCategoriesPage extends StatefulWidget {
 }
 
 class FavoriteCategories extends State<FavoriteCategoriesPage> {
-  final controller = Get.put(LoginController());
   List<String> categories = Globals.globalCategories.keys.toList();
   bool favorChanged = false;
   List<String> favorCategories = Globals.globalFavoriteCategories;
@@ -56,7 +54,7 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
       onPressed: () {
         if(favorChanged) {
           Globals.globalFavoriteCategories = favorCategories;
-          Globals.globalServerCommunication.updateFavorCategories(controller.googleAccount.value?.email ?? '');
+          Globals.globalServerCommunication.updateFavorCategories(Globals.globalController.googleAccount.value?.email ?? '');
           final snackBar = SnackBar(
             content: const Text('Your Favorite Categories Saved!'),
           );
@@ -86,7 +84,9 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.logout),
-              onPressed: controller.logout,
+              onPressed: () {
+                logOut(context);
+              }
             ),
           ],),
         body: Column(

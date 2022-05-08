@@ -6,6 +6,12 @@ import '../Pages/account_page.dart';
 import '../Pages/reviews_page.dart';
 import 'globals.dart';
 
+void logOut(BuildContext context) {
+  Globals.clearAll();
+  Globals.globalController.logout();
+  Navigator.of(context).popUntil((route) => route.isFirst);
+}
+
 void returnToHomePage(BuildContext context) {
   Navigator.of(context).popUntil((route) => route.isFirst);
 }
@@ -19,8 +25,6 @@ void mapButtonLongClickedEvent(BuildContext context) {
   print("triggering guide");
   Globals.globalUserMap.userMapState?.triggerGuide();
 }
-
-
 
 void accountButtonClickedEvent(BuildContext context) {
   returnToHomePage(context);

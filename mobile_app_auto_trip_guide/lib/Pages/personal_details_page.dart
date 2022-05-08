@@ -1,17 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import '../Map/globals.dart';
 import '../Map/types.dart';
-import 'login_controller.dart';
 
 
 class PersonalDetailsPage extends StatelessWidget {
   PersonalDetailsPage({Key? key}) : super(key: key);
-  final controller = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
-    UserInfo userInfo = UserInfo(controller.googleAccount.value?.displayName ?? '', controller.googleAccount.value?.email ?? '', "", [""], 0, [""]);
+    UserInfo userInfo = UserInfo(Globals.globalController.googleAccount.value?.displayName ?? '', Globals.globalController.googleAccount.value?.email ?? '', "", [""], 0, [""]);
     //chnage userInfo with get info req from db
 
     return Scaffold(
@@ -21,7 +19,7 @@ class PersonalDetailsPage extends StatelessWidget {
           physics: const BouncingScrollPhysics(),
           children: [
             ProfileWidget(
-              imagePath: controller.googleAccount.value?.photoUrl ?? '',
+              imagePath: Globals.globalController.googleAccount.value?.photoUrl ?? '',
               onClicked: () async {},
             ),
             const SizedBox(height: 24),
