@@ -16,7 +16,7 @@ class Globals {
   static Map globalUnhandledPois = HashMap<String, MapPoi>();
   static Map globalPoisIdToMarkerIdx = HashMap<String, int>();
   static String globalDefaultLanguage = "eng";
-  static Map<String, List<String>> globalCategories = {};
+  static Map<String, List<String>>? globalCategories;
   static List<String> globalFavoriteCategories = [];
   static Map globalInterestingPois = HashMap<String, MapPoi>(); // TODO use
   static AppLauncher globalAppLauncher = AppLauncher();
@@ -41,7 +41,6 @@ class Globals {
   static init() async {
     // initialization order is very important
     await UserMap.mapInit();
-    //globalCategories = await Globals.globalServerCommunication.getCategories(globalDefaultLanguage);
     globalAllPois.clear();
     globalUnhandledPois.clear();
     globalPoisIdToMarkerIdx.clear();

@@ -10,7 +10,7 @@ class FavoriteCategoriesPage extends StatefulWidget {
 }
 
 class FavoriteCategories extends State<FavoriteCategoriesPage> {
-  List<String> categories = Globals.globalCategories.keys.toList();
+  List<String> categories = Globals.globalCategories?.keys.toList() ?? [];
   bool favorChanged = false;
   List<String> favorCategories = Globals.globalFavoriteCategories;
 

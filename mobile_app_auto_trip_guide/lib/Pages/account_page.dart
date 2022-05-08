@@ -7,15 +7,18 @@ import 'package:get/get.dart';
 import 'package:final_project/Pages/favorite_categories_page.dart';
 
 import '../Map/events.dart';
+import '../Map/globals.dart';
 
 class AccountPage extends StatelessWidget {
   AccountPage({Key? key}) : super(key: key);
 
-  void _navigateToNextScreen(String screenName, BuildContext context) {
+  void _navigateToNextScreen(String screenName, BuildContext context) async{
     if (screenName == "Personal details") {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => PersonalDetailsPage()));
     } else if (screenName == "Favorite categories") {
+      // if globals categories = null bring it from the server
+      Globals.globalCategories ??= await Globals.globalServerCommunication.getCategories(Globals.globalDefaultLanguage);
       Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => FavoriteCategoriesPage()));
     }
