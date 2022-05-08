@@ -45,6 +45,9 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
   double progress = 0.11; // the smallest progress that possible
   // progress between 0 - 1
   setProgress(progress) {
+    if (!mounted) {
+      return; // Just do nothing if the widget is disposed.
+    }
     setState(() {
       // progress in reality can be [0.11, 1]
       this.progress = min(1,max(progress, 0.11));

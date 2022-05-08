@@ -160,6 +160,9 @@ class _MutableMapIconButton extends State<StatefulWidget> {
   _MutableMapIconButton(this.onPressedFunc);
 
   void setColor(Color color) {
+    if (!mounted) {
+      return; // Just do nothing if the widget is disposed.
+    }
     setState(() {
       _iconColor = color;
     });

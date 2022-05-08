@@ -355,12 +355,18 @@ class _UserMapState extends State<UserMap> {
   }
 
   void showNavButton() {
+    if (!mounted) {
+      return; // Just do nothing if the widget is disposed.
+    }
     setState(() {
       navButtonState = WidgetVisibility.view;
     });
   }
 
   void hideNavButton() {
+    if (!mounted) {
+      return; // Just do nothing if the widget is disposed.
+    }
     setState(() {
       navButtonState = WidgetVisibility.hide;
     });
