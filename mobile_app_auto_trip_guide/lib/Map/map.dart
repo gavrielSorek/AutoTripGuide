@@ -19,9 +19,6 @@ class UserMap extends StatefulWidget {
   static LocationData? USER_LOCATION_DATA;
   static List userChangeLocationFuncs = [];
 
-  // static Map poisMap = Map<String, MapPoi>(); // the string is poi name
-  static bool continueGuide = true;
-
   static Future<void> mapInit() async {
     // initialization order is very important
     USER_LOCATION = await getLocation();
@@ -96,11 +93,6 @@ class _UserMapState extends State<UserMap> {
     print("hello from ctor2");
   }
 
-  // void guideUser() async {
-  //   sleep(Duration(seconds: 5));
-  //   guideTool.handleMapPoiVoice(Globals.globalAllPois['my house']);
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -156,12 +148,9 @@ class _UserMapState extends State<UserMap> {
         }
       });
 
-      //TODO delete
-      if (UserMap.continueGuide) {
-        UserMap.continueGuide = false;
+      // if there is new pois and guideTool waiting
+      if (!pois.isEmpty && guideTool.state == GuideState.waiting) {
         guideTool.handlePois();
-        // guideTool.handleMapPoiVoice(Globals.globalAllPois["Masada"]);
-
       }
     }
   }

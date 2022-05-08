@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:final_project/Map/audio_player_controller.dart';
 import 'package:final_project/Map/types.dart';
@@ -14,10 +13,8 @@ class Guide {
   AudioApp audioPlayer;
   GuideState state = GuideState.waiting;
   MapPoi? lastMapPoiHandled;
-  bool userClickedOkOnPoi = false;
   late GuideDialogBox guideDialogBox;
-  Timer? timerToGuideOnPoi;
-  int loadingAnimationTime = 10;
+  int loadingAnimationTime = 10; // default
 
   Guide(this.context, this.guideData, this.audioPlayer) {
     guideDialogBox = GuideDialogBox(
@@ -25,6 +22,9 @@ class Guide {
         onPressNext: () {
           stop();
           askNextPoi();
+        },
+        onLoadingFinished: () {
+          onUserClickedOk();
         },
         loadingAnimationTime: loadingAnimationTime);
   }
@@ -48,14 +48,7 @@ class Guide {
   }
 
   Future<void> handleMapPoi(MapPoi mapPoi) async {
-    state = GuideState.working;
-    Globals.setMainMapPoi(mapPoi);
-    if (lastMapPoiHandled != null) {
-      Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
-    }
-    Globals.globalUserMap.userMapState?.highlightMapPoi(mapPoi);
-    Globals.globalUserMap.userMapState?.showNextButton();
-    lastMapPoiHandled = mapPoi;
+    preHandlePoi(mapPoi);
     if (guideData.status == GuideStatus.voice) {
       await handleMapPoiVoice(mapPoi);
     } else {
@@ -65,15 +58,6 @@ class Guide {
 
   void handlePois() async {
     askNextPoi();
-    // print("in handlePois");
-    // // Globals.globalUnhandledPois.forEach(void f(K key, V value));
-    // if (state == GuideState.working || Globals.globalUnhandledPois.isEmpty) {
-    //   print("error in handleNextPoi in Guide or pois map is empty");
-    //   return;
-    // }
-    // MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
-    // guideDialogBox.setMapPoi(mapPoiElement);
-    // guideDialogBox.showDialog();
   }
 
   void askNextPoi() {
@@ -88,28 +72,12 @@ class Guide {
   }
 
   void askPoi(MapPoi poi) {
-    timerToGuideOnPoi?.cancel(); // cancel timer for last poi
-
-
-    // highlight wanted poi
-    Globals.setMainMapPoi(poi);
-    if (lastMapPoiHandled != null) {
-      Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
-    }
-    Globals.globalUserMap.userMapState?.highlightMapPoi(poi);
-
-    userClickedOkOnPoi = false;
-    //handleMapPoi(poi);
+    state = GuideState.working;
+    preHandlePoi(poi);
     guideDialogBox.updateGuideStatus(guideData.status);
     guideDialogBox.setMapPoi(poi);
     guideDialogBox.showDialog();
-
     guideDialogBox.startLoading();
-    timerToGuideOnPoi = Timer(Duration(seconds: loadingAnimationTime), () {
-      if (!userClickedOkOnPoi) {
-        onUserClickedOk();
-      }
-    });
   }
 
   void stop() {
@@ -130,6 +98,18 @@ class Guide {
     state = GuideState.stopped;
   }
 
+  // lunch before handle poi
+  void preHandlePoi(MapPoi mapPoi) {
+    Globals.setMainMapPoi(mapPoi);
+    if (lastMapPoiHandled != null) {
+      Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
+    }
+    Globals.globalUserMap.userMapState?.highlightMapPoi(mapPoi);
+    Globals.globalUserMap.userMapState?.showNextButton();
+    lastMapPoiHandled = mapPoi;
+  }
+
+
   void postPoiHandling() {
     // if (Globals.globalUnhandledPois.isNotEmpty && state == GuideState.waiting) {
     //   askNextPoi();
@@ -139,7 +119,6 @@ class Guide {
     //   }
     // }
   }
-
   void guideStateChanged() {
     if (state == GuideState.working) {
       stop();
@@ -148,20 +127,20 @@ class Guide {
   }
 
   void onUserClickedOk() {
-    userClickedOkOnPoi = true;
     handleMapPoi(guideDialogBox.getMapPoi()!);
     guideDialogBox.hideDialog();
   }
 }
 
 class GuideDialogBox extends StatefulWidget {
-  dynamic onPressOk, onPressNext;
+  dynamic onPressOk, onPressNext, onLoadingFinished;
   int loadingAnimationTime = 10; // default
 
   GuideDialogBox(
       {Key? key,
       this.onPressOk,
       this.onPressNext,
+      this.onLoadingFinished,
       required this.loadingAnimationTime})
       : super(key: key);
 
@@ -198,10 +177,6 @@ class GuideDialogBox extends StatefulWidget {
     guideDialogBoxState?.startLoading();
   }
 
-  // void stopLoading() {
-  //   guideDialogBoxState?.stopLoading();
-  // }
-
 
   @override
   _GuideDialogBoxState createState() {
@@ -230,8 +205,11 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
     Future.delayed(Duration(seconds: stepTime), () {
       progress += progressEveryStep;
       dialogBox?.setProgress(progress);
-      if (progress < 1) {
+      if (progress <= 1) {
         loadStep(numberOfSteps);
+      } else {
+        // finished loading
+        widget.onLoadingFinished();
       }
     });
   }
