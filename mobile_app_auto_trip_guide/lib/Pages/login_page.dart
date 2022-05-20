@@ -26,9 +26,9 @@ class LoginPage extends StatelessWidget {
 
 
   void addUser() async {
-     Globals.globalEmail = Globals.globalController.googleAccount.value?.email ?? '';
-     Globals.globalServerCommunication.addNewUser(UserInfo(Globals.globalController.googleAccount.value?.displayName ?? '', Globals.globalEmail, "", "", "", Globals.globalFavoriteCategories));
-     Globals.setFavoriteCategories(await Globals.globalServerCommunication.getFavorCategories(Globals.globalController.googleAccount.value?.email ?? ''));
+     Globals.globalEmail = Globals.globalController.googleAccount.value?.email ?? ' ';
+     Globals.globalServerCommunication.addNewUser(UserInfo(Globals.globalController.googleAccount.value?.displayName ?? ' ', Globals.globalEmail, ' ', ' ', ' ', Globals.globalFavoriteCategories));
+     Globals.setFavoriteCategories(await Globals.globalServerCommunication.getFavorCategories(Globals.globalController.googleAccount.value?.email ?? ' '));
   }
 
   FloatingActionButton buildLoginButton() {

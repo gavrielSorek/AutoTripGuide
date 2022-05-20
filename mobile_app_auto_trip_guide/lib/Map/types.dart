@@ -8,7 +8,7 @@ import 'globals.dart';
 class UserInfo {
   String? name;
   String? emailAddr;
-  String? gender;
+  String gender;
   String? languages;
   String? age;
   List<String>? categories;

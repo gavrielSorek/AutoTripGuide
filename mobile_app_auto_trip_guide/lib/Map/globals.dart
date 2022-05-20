@@ -19,8 +19,7 @@ class Globals {
   static String globalEmail = "";
   static Map<String, List<String>>? globalCategories;
   static List<String> globalFavoriteCategories = [];
-  static Set<String> favoriteCategoriesSet = [] as Set<String>;
-  static Map<String, String>? globalUserInfo;
+  static Set<String> favoriteCategoriesSet = <String>{};
   static UserInfo? globalUserInfoObj;
   static Map globalInterestingPois = HashMap<String, MapPoi>(); // TODO use
   static AppLauncher globalAppLauncher = AppLauncher();
@@ -53,6 +52,7 @@ class Globals {
     globalUnhandledKeys.clear();
     globalPoisIdToMarkerIdx.clear();
     mainMapPoi = null;
+    globalUserInfoObj = null;
   }
   static clearAll() async {
     // TODO add members to close
@@ -60,6 +60,7 @@ class Globals {
     globalUnhandledKeys.clear();
     globalPoisIdToMarkerIdx.clear();
     mainMapPoi = null;
+    globalUserInfoObj = null;
   }
 
   // sort pois by user Preferences

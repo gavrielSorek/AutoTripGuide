@@ -15,8 +15,10 @@ class AccountPage extends StatelessWidget {
 
   void _navigateToNextScreen(String screenName, BuildContext context) async{
     if (screenName == "Personal details") {
-      Globals.globalUserInfo ??= await Globals.globalServerCommunication.getUserInfo(Globals.globalEmail);
-      Globals.globalUserInfoObj = UserInfo(Globals.globalUserInfo!["name"], Globals.globalEmail, Globals.globalUserInfo!["gender"], Globals.globalUserInfo!["languages"], Globals.globalUserInfo!["age"], Globals.globalFavoriteCategories);
+      if (Globals.globalUserInfoObj == null) {
+        Map<String, String> userInfo = await Globals.globalServerCommunication.getUserInfo(Globals.globalEmail);
+        Globals.globalUserInfoObj = UserInfo(userInfo["name"], Globals.globalEmail, userInfo["gender"] ?? " ", userInfo["languages"], userInfo["age"], Globals.globalFavoriteCategories);
+      }
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => PersonalDetailsPage()));
     } else if (screenName == "Favorite categories") {
