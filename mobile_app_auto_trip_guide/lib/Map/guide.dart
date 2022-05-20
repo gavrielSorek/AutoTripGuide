@@ -150,6 +150,7 @@ class GuideDialogBox extends StatefulWidget {
 
   void setMapPoi(MapPoi poi) {
     guideDialogBoxState!.setMapPoi(poi);
+    stopLoading = false;
   }
 
   void updateGuideStatus(GuideStatus status) {
