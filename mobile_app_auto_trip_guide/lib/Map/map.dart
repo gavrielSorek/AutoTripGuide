@@ -134,7 +134,6 @@ class _UserMapState extends State<UserMap> {
           if (!Globals.globalAllPois.containsKey(poi.id)) {
             MapPoi mapPoi = MapPoi(poi);
             Globals.globalAllPois[poi.id] = mapPoi;
-            Globals.globalUnhandledPois[poi.id] = mapPoi;
             Globals.globalUnhandledKeys.add(poi.id);
             Globals.globalPoisIdToMarkerIdx[poi.id] = markersList.length;
             markersList.add(mapPoi.marker!);
@@ -142,7 +141,8 @@ class _UserMapState extends State<UserMap> {
         }
       });
 
-      Globals.globalUnhandledKeys.sort(Globals.sortPoisByUserPreferences); //TODO improve complexity
+      Globals.globalUnhandledKeys
+          .sort(Globals.sortPoisByUserPreferences); //TODO improve complexity
       // if there is new pois and guideTool waiting
       if (pois.isNotEmpty && guideTool.state == GuideState.waiting) {
         guideTool.handlePois();
@@ -253,8 +253,7 @@ class _UserMapState extends State<UserMap> {
                             Icons.navigation_rounded,
                             color: Colors.white,
                           ),
-                        )))
-                ,
+                        ))),
                 // guide state button
                 Container(
                     color: Colors.transparent,

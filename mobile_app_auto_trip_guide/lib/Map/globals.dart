@@ -13,7 +13,6 @@ class Globals {
   static ServerCommunication globalServerCommunication = ServerCommunication();
   static AudioApp globalAudioPlayer = AudioApp();
   static Map globalAllPois = HashMap<String, MapPoi>();
-  static Map<String, MapPoi> globalUnhandledPois = HashMap<String, MapPoi>();
   static List<String> globalUnhandledKeys = [];
   static Map globalPoisIdToMarkerIdx = HashMap<String, int>();
   static String globalDefaultLanguage = "eng";
@@ -48,7 +47,6 @@ class Globals {
     // initialization order is very important
     await UserMap.mapInit();
     globalAllPois.clear();
-    globalUnhandledPois.clear();
     globalUnhandledKeys.clear();
     globalPoisIdToMarkerIdx.clear();
     mainMapPoi = null;
@@ -56,7 +54,6 @@ class Globals {
   static clearAll() async {
     // TODO add members to close
     globalAllPois.clear();
-    globalUnhandledPois.clear();
     globalUnhandledKeys.clear();
     globalPoisIdToMarkerIdx.clear();
     mainMapPoi = null;
@@ -64,8 +61,8 @@ class Globals {
 
   // sort pois by user Preferences
   static int sortPoisByUserPreferences(String idA, String idB) {
-    List<String> categoriesA = globalUnhandledPois[idA]!.poi.Categories;
-    List<String> categoriesB = globalUnhandledPois[idB]!.poi.Categories;
+    List<String> categoriesA = globalAllPois[idA]!.poi.Categories;
+    List<String> categoriesB = globalAllPois[idB]!.poi.Categories;
     int intersectionsWithA = favoriteCategoriesSet.intersection(categoriesA.toSet()).length;
     int intersectionsWithB = favoriteCategoriesSet.intersection(categoriesB.toSet()).length;
     return intersectionsWithB - intersectionsWithA;

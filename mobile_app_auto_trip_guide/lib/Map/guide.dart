@@ -66,9 +66,7 @@ class Guide {
       return;
     }
     // MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
-    MapPoi mapPoiElement = Globals.globalUnhandledPois[Globals.globalUnhandledKeys[0]]!;
-
-    Globals.globalUnhandledPois.remove(mapPoiElement.poi.id); // handling poi so remove from UnhandledPois
+    MapPoi mapPoiElement = Globals.globalAllPois[Globals.globalUnhandledKeys[0]]!;
     Globals.globalUnhandledKeys.removeAt(0);
     askPoi(mapPoiElement);
   }
