@@ -10,7 +10,7 @@ class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
   // String serverUrl = "autotripguidemobile.loca.lt";
 
-  String serverUrl = "351c-77-126-184-189.ngrok.io";
+  String serverUrl = "b989-84-94-109-213.ngrok.io";
 
   var client = RetryClient(http.Client());
 
@@ -208,6 +208,28 @@ class ServerCommunication {
         // If the server did not return a 200 OK response,
         // then throw an exception.
         throw Exception('Failed to update favorite categories');
+      }
+    } finally {
+      // client.close();
+    }
+  }
+
+  Future<Map<String, String>> getUserInfo(String emailAddr) async {
+    Uri newUri =
+    addMailToUrl(serverUrl, '/getUserInfo', emailAddr);
+    try {
+      var response = await client.get(newUri);
+      if (response.statusCode == 200 && response.contentLength! > 0) {
+        final UserInfoMap = jsonDecode(response.body);
+        Map<String, String> newMap = Map<String, String>.from(UserInfoMap);
+        return newMap;
+      } else {
+        if (response.contentLength == 0) {
+          return {};
+        }
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        throw Exception('Failed to get user info');
       }
     } finally {
       // client.close();

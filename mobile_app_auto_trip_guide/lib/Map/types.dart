@@ -9,8 +9,8 @@ class UserInfo {
   String? name;
   String? emailAddr;
   String? gender;
-  List<String>? languages;
-  int? age;
+  String? languages;
+  String? age;
   List<String>? categories;
 
   UserInfo(this.name, this.emailAddr, this.gender, this.languages, this.age,

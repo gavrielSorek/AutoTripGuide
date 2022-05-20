@@ -16,9 +16,12 @@ class Globals {
   static List<String> globalUnhandledKeys = [];
   static Map globalPoisIdToMarkerIdx = HashMap<String, int>();
   static String globalDefaultLanguage = "eng";
+  static String globalEmail = "";
   static Map<String, List<String>>? globalCategories;
   static List<String> globalFavoriteCategories = [];
   static Set<String> favoriteCategoriesSet = [] as Set<String>;
+  static Map<String, String>? globalUserInfo;
+  static UserInfo? globalUserInfoObj;
   static Map globalInterestingPois = HashMap<String, MapPoi>(); // TODO use
   static AppLauncher globalAppLauncher = AppLauncher();
   static MapPoi? mainMapPoi; // spoken poi

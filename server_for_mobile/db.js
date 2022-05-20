@@ -1,4 +1,4 @@
-module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength ,getFavorCategories, updateFavorCategories};
+module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength ,getFavorCategories, updateFavorCategories, getUserInfo};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -108,7 +108,7 @@ async function getCategories(client, lang) {
     }
 }
 
-// The function inserts a return the favorite categories of specific user from the db
+// The function return the favorite categories of specific user from the db
 async function getFavorCategories(client, email) {
     var emailAddress = email.emailAddr;
     var res = await client.db("testDb").collection("mobileUsers").find({emailAddr: emailAddress});
@@ -122,6 +122,7 @@ async function getFavorCategories(client, email) {
     }
 }
 
+// The function update the favorite categories of specific user
 async function updateFavorCategories(client, userInfo) {
     var emailAddress = userInfo.emailAddr;
     var favorCategories = userInfo.favorCategories;
@@ -132,6 +133,24 @@ async function updateFavorCategories(client, userInfo) {
         categories: favorCategories
     }});
     return 1;
+}
+
+// The function return the user info from the db
+async function getUserInfo(client, userInfo) {
+    var emailAddress = userInfo.emailAddr;
+    var res = await client.db("testDb").collection("mobileUsers").find({emailAddr: emailAddress});
+    var resArr = await res.toArray();
+    const userInfoMap = new Map();
+    if (resArr.length > 0) {
+        console.log("found user info for the reuired email")
+        userInfoMap.set('name', resArr[0].name);
+        userInfoMap.set('gender', resArr[0].gender);
+        userInfoMap.set('languages', resArr[0].languages);
+        userInfoMap.set('age', resArr[0].age);
+    }
+    const userInfoMapJson = Object.fromEntries(userInfoMap);
+    console.log(userInfoMapJson);
+    return userInfoMapJson;
 }
 
 // check if object is empty

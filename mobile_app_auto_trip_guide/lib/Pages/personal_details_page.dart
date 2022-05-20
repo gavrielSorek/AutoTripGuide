@@ -9,8 +9,7 @@ class PersonalDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserInfo userInfo = UserInfo(Globals.globalController.googleAccount.value?.displayName ?? '', Globals.globalController.googleAccount.value?.email ?? '', "", [""], 0, [""]);
-    //chnage userInfo with get info req from db
+    UserInfo userInfo = Globals.globalUserInfoObj ?? UserInfo("error", "error", "error", "error", "error", ["error"]);
 
     return Scaffold(
         backgroundColor: Color.fromRGBO(0, 26, 51, 1.0),
@@ -68,7 +67,7 @@ class PersonalDetailsPage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text('Languages           ', style: TextStyle(color: Colors.white),),
+              child: Text(userInfo.languages?? '', style: TextStyle(color: Colors.white),),
             ),
           ), decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(20)),border: Border.all(width: 1.0, color: Colors.white)),
         ),
@@ -81,7 +80,7 @@ class PersonalDetailsPage extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text('Age                         ', style: TextStyle(color: Colors.white),),
+              child: Text(userInfo.age?? '', style: TextStyle(color: Colors.white),),
             ),
           ), decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(20)),border: Border.all(width: 1.0, color: Colors.white)),
         ),

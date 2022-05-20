@@ -8,12 +8,15 @@ import 'package:final_project/Pages/favorite_categories_page.dart';
 
 import '../Map/events.dart';
 import '../Map/globals.dart';
+import '../Map/types.dart';
 
 class AccountPage extends StatelessWidget {
   AccountPage({Key? key}) : super(key: key);
 
   void _navigateToNextScreen(String screenName, BuildContext context) async{
     if (screenName == "Personal details") {
+      Globals.globalUserInfo ??= await Globals.globalServerCommunication.getUserInfo(Globals.globalEmail);
+      Globals.globalUserInfoObj = UserInfo(Globals.globalUserInfo!["name"], Globals.globalEmail, Globals.globalUserInfo!["gender"], Globals.globalUserInfo!["languages"], Globals.globalUserInfo!["age"], Globals.globalFavoriteCategories);
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => PersonalDetailsPage()));
     } else if (screenName == "Favorite categories") {

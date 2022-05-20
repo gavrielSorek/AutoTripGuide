@@ -132,11 +132,21 @@ app.get("/getFavorCategories", async function (req, res) { //next requrie (the f
     res.end();
  })
 
-  // update favorite categories for specific user
+// update favorite categories for specific user
 app.get("/updateFavorCategories", async function (req, res) { //next requrie (the function will not stop the program)
     console.log("inside update of favorite Categories - server side")
     userInfo = {'emailAddr': req.query.email, 'favorCategories': req.query.categories};
     result = await db.updateFavorCategories(dbClientSearcher, userInfo)
+    res.status(200);
+    res.json(result);
+    res.end();
+ })
+
+// get user info
+app.get("/getUserInfo", async function (req, res) { //next requrie (the function will not stop the program)
+    console.log("inside get of User Info - server side")
+    userInfo = {'emailAddr': req.query.email};
+    result = await db.getUserInfo(dbClientSearcher, userInfo)
     res.status(200);
     res.json(result);
     res.end();
