@@ -135,6 +135,8 @@ class Guide {
 class GuideDialogBox extends StatefulWidget {
   dynamic onPressOk, onPressNext, onLoadingFinished;
   int loadingAnimationTime = 10; // default
+  bool stopLoading = false;
+
 
   GuideDialogBox(
       {Key? key,
@@ -203,6 +205,9 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
     double progressEveryStep = 1 / numberOfSteps;
     int stepTime = (widget.loadingAnimationTime / numberOfSteps).round();
     Future.delayed(Duration(seconds: stepTime), () {
+      if (widget.stopLoading) {
+        return;
+      }
       progress += progressEveryStep;
       dialogBox?.setProgress(progress);
       if (progress <= 1) {
@@ -257,7 +262,10 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
       img: Image.network(mainPoi?.poi.pic ??
           "https://assets.hyatt.com/content/dam/hyatt/hyattdam/images/2019/02/07/1127/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.jpg/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.16x9.jpg"),
       key: UniqueKey(),
-      onPressLeft: widget.onPressOk,
+      onPressLeft: () {
+        widget.stopLoading = true;
+        widget.onPressOk();
+      },
       onPressRight: widget.onPressNext,
     );
 

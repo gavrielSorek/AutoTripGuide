@@ -104,10 +104,14 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
               buildCategoriesChips(),
             ),
             SizedBox(height:MediaQuery.of(context).size.height / 3.5),
+            const Spacer(),
             Row( // menu row
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                buildApplyButton(context)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 20.0),
+                  child: buildApplyButton(context),
+                )
               ],
             ),
           ],

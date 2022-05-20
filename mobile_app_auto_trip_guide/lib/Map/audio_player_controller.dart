@@ -11,6 +11,7 @@ class AudioApp extends StatefulWidget {
   void playAudio() {
     _audioAppState?.play();
   }
+
   void stopAudio() {
     _audioAppState?.stop();
   }
@@ -193,32 +194,36 @@ class _AudioAppState extends State<AudioApp> {
             icon: playPauseIcon,
             color: Colors.cyan,
           ),
-          IconButton(
-            onPressed: isPlaying || isPaused ? () => stop() : null,
-            iconSize: 30.0,
-            icon: Icon(Icons.stop),
-            color: Colors.cyan,
-          ),
+          // IconButton(
+          //   onPressed: isPlaying || isPaused ? () => stop() : null,
+          //   iconSize: 30.0,
+          //   icon: Icon(Icons.stop),
+          //   color: Colors.cyan,
+          // ),
           if (duration != null)
-            Slider(
-                value: position.inMilliseconds.toDouble(),
-                onChanged: (double value) {
-                  audioPlayer.seek(Duration(milliseconds: value.round()));
-                },
-                min: 0.0,
-                max: duration.inMilliseconds.toDouble()),
+            Expanded(
+              child: Slider(
+                  value: position.inMilliseconds.toDouble(),
+                  onChanged: (double value) {
+                    audioPlayer.seek(Duration(milliseconds: value.round()));
+                  },
+                  min: 0.0,
+                  max: duration.inMilliseconds.toDouble()),
+            ),
           if (position != null) _buildProgressView()
         ]),
       );
 
   Row _buildProgressView() => Row(mainAxisSize: MainAxisSize.min, children: [
-        Text(
-          position != null
-              ? "${positionText ?? ''} / ${durationText ?? ''}"
-              : duration != null
-                  ? durationText
-                  : '',
-          style: TextStyle(fontSize: 12.0),
-        )
+        Container(
+            margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+            child: Text(
+              position != null
+                  ? "${positionText ?? ''} / ${durationText ?? ''}"
+                  : duration != null
+                      ? durationText
+                      : '',
+              style: TextStyle(fontSize: 12.0),
+            ))
       ]);
 }
