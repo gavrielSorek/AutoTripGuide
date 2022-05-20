@@ -45,6 +45,8 @@ class PersonalDetailsPage extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           DropDownWidget(<String>['Men', 'Women', ' '], userInfo.gender),
+          // DropDownWidget(<String>['Men', 'Women', ' '], userInfo.gender),
+
           const SizedBox(height: 20),
           TextFieldWidget(
             label: 'Age',
@@ -255,9 +257,9 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
 }
 
 class DropDownWidget extends StatefulWidget {
+  final List<String> dropDownList;
+  final String oldValue;
   DropDownWidget(this.dropDownList, this.oldValue, {Key? key}) : super(key: key);
-  List<String> dropDownList;
-  String oldValue;
 
   @override
   State<DropDownWidget> createState() => _DropDownWidgetState();
@@ -265,9 +267,13 @@ class DropDownWidget extends StatefulWidget {
 
 class _DropDownWidgetState extends State<DropDownWidget> {
   String? dropdownValue;
-  _DropDownWidgetState(){
+
+  @override
+  void initState() {
     dropdownValue = widget.oldValue;
+    print("init _DropDownWidgetState");
   }
+
 
   @override
   Widget build(BuildContext context) {
