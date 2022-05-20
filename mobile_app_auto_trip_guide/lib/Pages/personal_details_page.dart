@@ -3,22 +3,23 @@ import 'package:flutter/material.dart';
 import '../Map/globals.dart';
 import '../Map/types.dart';
 
-
 class PersonalDetailsPage extends StatelessWidget {
   PersonalDetailsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    UserInfo userInfo = Globals.globalUserInfoObj ?? UserInfo("", "", "", "", "", [""]);
+    UserInfo userInfo =
+        Globals.globalUserInfoObj ?? UserInfo("", "", "", "", "", [""]);
 
     return Scaffold(
       appBar: buildAppBar(context),
       body: ListView(
-        padding: EdgeInsets.symmetric(horizontal: 32),
-        physics: BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        physics: const BouncingScrollPhysics(),
         children: [
           ProfileWidget(
-            imagePath: Globals.globalController.googleAccount.value?.photoUrl ?? '',
+            imagePath:
+                Globals.globalController.googleAccount.value?.photoUrl ?? '',
             onClicked: () async {},
           ),
           const SizedBox(height: 15),
@@ -26,7 +27,7 @@ class PersonalDetailsPage extends StatelessWidget {
           const SizedBox(height: 15),
           TextFieldWidget(
             label: 'Full Name',
-            text: userInfo.name?? '',
+            text: userInfo.name ?? '',
             isEdit: true,
             onChanged: (name) {
               Globals.globalUserInfoObj?.name = name;
@@ -35,7 +36,7 @@ class PersonalDetailsPage extends StatelessWidget {
           const SizedBox(height: 15),
           TextFieldWidget(
             label: 'Email',
-            text: userInfo.emailAddr?? '',
+            text: userInfo.emailAddr ?? '',
             isEdit: false,
             onChanged: (email) {},
           ),
@@ -48,18 +49,18 @@ class PersonalDetailsPage extends StatelessWidget {
           const SizedBox(height: 15),
           TextFieldWidget(
             label: 'Age',
-            text: userInfo.age?? '',
+            text: userInfo.age ?? '',
             isEdit: true,
             onChanged: (age) {
               Globals.globalUserInfoObj?.age = age;
             },
           ),
           const SizedBox(height: 15),
-          Text(
+          const Text(
             'Language',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          DropDownWidget(<String>['English', ' '], userInfo.languages),
+          DropDownWidget(const <String>['English', ' '], userInfo.languages),
           Container(
             margin: const EdgeInsets.only(top: 20.0),
             child: buildApplyButton(context),
@@ -70,20 +71,20 @@ class PersonalDetailsPage extends StatelessWidget {
   }
 
   Widget buildName(UserInfo userInfo) => Column(
-    children: [
-      Text(
-        userInfo.name?? '',
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24, color: Colors.black),
-      ),
-      const SizedBox(height: 4),
-      Text(
-        userInfo.emailAddr?? '',
-        style: const TextStyle(color: Colors.grey),
-      )
-    ],
-  );
+        children: [
+          Text(
+            userInfo.name ?? '',
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, fontSize: 24, color: Colors.black),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            userInfo.emailAddr ?? '',
+            style: const TextStyle(color: Colors.grey),
+          )
+        ],
+      );
 }
-
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
@@ -94,7 +95,7 @@ AppBar buildAppBar(BuildContext context) {
   );
 }
 
-ElevatedButton buildApplyButton(BuildContext context){
+ElevatedButton buildApplyButton(BuildContext context) {
   return ElevatedButton(
     child: const Text('Apply'),
     onPressed: () {
@@ -105,15 +106,14 @@ ElevatedButton buildApplyButton(BuildContext context){
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     },
     style: ElevatedButton.styleFrom(
-        primary: Color.fromRGBO(135,88,244, 1.0),
-        padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 5, vertical: MediaQuery.of(context).size.height / 500),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15)),
-        textStyle:
-        const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+        primary: const Color.fromRGBO(135, 88, 244, 1.0),
+        padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width / 5,
+            vertical: MediaQuery.of(context).size.height / 500),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
   );
 }
-
 
 class ProfileWidget extends StatelessWidget {
   final String imagePath;
@@ -140,7 +140,7 @@ class ProfileWidget extends StatelessWidget {
 
   Widget buildImage() {
     if (imagePath == "") {
-      return ClipOval(
+      return const ClipOval(
         child: Material(
           color: Colors.transparent,
         ),
@@ -164,18 +164,18 @@ class ProfileWidget extends StatelessWidget {
   }
 
   Widget buildEditIcon(Color color) => buildCircle(
-    color: Colors.white,
-    all: 3,
-    child: buildCircle(
-      color: color,
-      all: 8,
-      child: const Icon(
-        Icons.edit,
         color: Colors.white,
-        size: 20,
-      ),
-    ),
-  );
+        all: 3,
+        child: buildCircle(
+          color: color,
+          all: 8,
+          child: const Icon(
+            Icons.edit,
+            color: Colors.white,
+            size: 20,
+          ),
+        ),
+      );
 
   Widget buildCircle({
     required Widget child,
@@ -230,31 +230,34 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
 
   @override
   Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        widget.label,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-      ),
-      const SizedBox(height: 8),
-      TextField(
-        enabled: widget.isEdit,
-        controller: controller,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.label,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-        ),
-        maxLines: widget.maxLines,
-      ),
-    ],
-  );
+          const SizedBox(height: 8),
+          TextField(
+            onChanged: widget.onChanged,
+            enabled: widget.isEdit,
+            controller: controller,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            maxLines: widget.maxLines,
+          ),
+        ],
+      );
 }
 
 class DropDownWidget extends StatefulWidget {
   final List<String> dropDownList;
   final String oldValue;
-  DropDownWidget(this.dropDownList, this.oldValue, {Key? key}) : super(key: key);
+
+  DropDownWidget(this.dropDownList, this.oldValue, {Key? key})
+      : super(key: key);
 
   @override
   State<DropDownWidget> createState() => _DropDownWidgetState();
@@ -292,7 +295,3 @@ class _DropDownWidgetState extends State<DropDownWidget> {
     );
   }
 }
-
-
-
-
