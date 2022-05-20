@@ -45,7 +45,10 @@ class PersonalDetailsPage extends StatelessWidget {
             'Gender',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          DropDownWidget(const <String>['Men', 'Women', ' '], userInfo.gender),
+          DropDownWidget(const <String>['Men', 'Women', ' '], userInfo.gender,
+              (String newVal) {
+            Globals.globalUserInfoObj?.gender = newVal;
+          }),
           const SizedBox(height: 15),
           TextFieldWidget(
             label: 'Age',
@@ -60,7 +63,10 @@ class PersonalDetailsPage extends StatelessWidget {
             'Language',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          DropDownWidget(const <String>['English', ' '], userInfo.languages),
+          DropDownWidget(const <String>['English', ' '], userInfo.languages,
+                  (String newVal) {
+                Globals.globalUserInfoObj?.languages = newVal;
+              }),
           Container(
             margin: const EdgeInsets.only(top: 20.0),
             child: buildApplyButton(context),
@@ -255,8 +261,9 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
 class DropDownWidget extends StatefulWidget {
   final List<String> dropDownList;
   final String oldValue;
+  final dynamic onUpdated;
 
-  DropDownWidget(this.dropDownList, this.oldValue, {Key? key})
+  DropDownWidget(this.dropDownList, this.oldValue, this.onUpdated, {Key? key})
       : super(key: key);
 
   @override
@@ -283,8 +290,9 @@ class _DropDownWidgetState extends State<DropDownWidget> {
       ),
       onChanged: (String? newValue) {
         setState(() {
-          dropdownValue = newValue!;
+          dropdownValue = newValue ?? ' ';
         });
+        widget.onUpdated(newValue);
       },
       items: widget.dropDownList.map((String value) {
         return DropdownMenuItem<String>(
