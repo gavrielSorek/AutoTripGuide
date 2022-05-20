@@ -21,9 +21,9 @@ class PersonalDetailsPage extends StatelessWidget {
             imagePath: Globals.globalController.googleAccount.value?.photoUrl ?? '',
             onClicked: () async {},
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
           buildName(userInfo),
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
           TextFieldWidget(
             label: 'Full Name',
             text: userInfo.name?? '',
@@ -32,22 +32,20 @@ class PersonalDetailsPage extends StatelessWidget {
               Globals.globalUserInfoObj?.name = name;
             },
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 15),
           TextFieldWidget(
             label: 'Email',
             text: userInfo.emailAddr?? '',
             isEdit: false,
             onChanged: (email) {},
           ),
-          const SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 15),
+          const Text(
             'Gender',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-          DropDownWidget(<String>['Men', 'Women', ' '], userInfo.gender),
-          // DropDownWidget(<String>['Men', 'Women', ' '], userInfo.gender),
-
-          const SizedBox(height: 20),
+          DropDownWidget(const <String>['Men', 'Women', ' '], userInfo.gender),
+          const SizedBox(height: 15),
           TextFieldWidget(
             label: 'Age',
             text: userInfo.age?? '',
@@ -56,15 +54,12 @@ class PersonalDetailsPage extends StatelessWidget {
               Globals.globalUserInfoObj?.age = age;
             },
           ),
-          const SizedBox(height: 20),
-          TextFieldWidget(
-            label: 'Language',
-            text: userInfo.languages?? '',
-            isEdit: true,
-            onChanged: (languages) {
-              Globals.globalUserInfoObj?.languages = languages;
-            },
+          const SizedBox(height: 15),
+          Text(
+            'Language',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
+          DropDownWidget(<String>['English', ' '], userInfo.languages),
           Container(
             margin: const EdgeInsets.only(top: 20.0),
             child: buildApplyButton(context),
@@ -103,9 +98,9 @@ ElevatedButton buildApplyButton(BuildContext context){
   return ElevatedButton(
     child: const Text('Apply'),
     onPressed: () {
-      Globals.globalServerCommunication.updateFavorCategories(Globals.globalController.googleAccount.value?.email ?? '');
-      final snackBar = SnackBar(
-        content: const Text('Your Favorite Categories Saved!'),
+      Globals.globalServerCommunication.updateUserInfo();
+      const snackBar = SnackBar(
+        content: Text('Your Favorite Categories Saved!'),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     },
@@ -271,9 +266,7 @@ class _DropDownWidgetState extends State<DropDownWidget> {
   @override
   void initState() {
     dropdownValue = widget.oldValue;
-    print("init _DropDownWidgetState");
   }
-
 
   @override
   Widget build(BuildContext context) {

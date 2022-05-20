@@ -9,7 +9,7 @@ class UserInfo {
   String? name;
   String? emailAddr;
   String gender;
-  String? languages;
+  String languages;
   String? age;
   List<String>? categories;
 

@@ -152,6 +152,16 @@ app.get("/getUserInfo", async function (req, res) { //next requrie (the function
     res.end();
  })
 
+ // update favorite categories for specific user
+app.get("/updateUserInfo", async function (req, res) { //next requrie (the function will not stop the program)
+    console.log("inside update of user info - server side")
+    userInfo = {'emailAddr': req.query.email, 'name': req.query.name, 'gender': req.query.gender, 'languages': req.query.languages, 'age': req.query.age};
+    result = await db.updateUserInfo(dbClientSearcher, userInfo)
+    res.status(200);
+    res.json(result);
+    res.end();
+ })
+
  app.listen(port, async ()=>{
     await init()
     console.log(`Server is runing on port ${port}`)

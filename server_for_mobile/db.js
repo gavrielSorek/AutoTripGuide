@@ -1,4 +1,4 @@
-module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength ,getFavorCategories, updateFavorCategories, getUserInfo};
+module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength ,getFavorCategories, updateFavorCategories, getUserInfo, updateUserInfo};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -151,6 +151,16 @@ async function getUserInfo(client, userInfo) {
     const userInfoMapJson = Object.fromEntries(userInfoMap);
     console.log(userInfoMapJson);
     return userInfoMapJson;
+}
+
+// The function update the favorite categories of specific user
+async function updateUserInfo(client, userInfo) {
+    var emailAddress = userInfo.emailAddr;
+    const res = await client.db("testDb").collection("mobileUsers").updateOne({emailAddr: emailAddress}, { $set: {
+        name: userInfo.name, gender: userInfo.gender, languages: userInfo.languages, age: userInfo.age
+    }});
+    console.log("after updateUserInfo in the server side");
+    return 1;
 }
 
 // check if object is empty

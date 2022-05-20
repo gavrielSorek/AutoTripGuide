@@ -17,7 +17,7 @@ class AccountPage extends StatelessWidget {
     if (screenName == "Personal details") {
       if (Globals.globalUserInfoObj == null) {
         Map<String, String> userInfo = await Globals.globalServerCommunication.getUserInfo(Globals.globalEmail);
-        Globals.globalUserInfoObj = UserInfo(userInfo["name"], Globals.globalEmail, userInfo["gender"] ?? " ", userInfo["languages"], userInfo["age"], Globals.globalFavoriteCategories);
+        Globals.globalUserInfoObj = UserInfo(userInfo["name"], Globals.globalEmail, userInfo["gender"] ?? " ", userInfo["languages"] ?? " ", userInfo["age"], Globals.globalFavoriteCategories);
       }
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => PersonalDetailsPage()));

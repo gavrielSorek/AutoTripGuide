@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:final_project/Map/types.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
@@ -230,6 +231,34 @@ class ServerCommunication {
         // If the server did not return a 200 OK response,
         // then throw an exception.
         throw Exception('Failed to get user info');
+      }
+    } finally {
+      // client.close();
+    }
+  }
+
+  static Uri addUpdatedUserInfoToUrl(String url, String path, UserInfo? userInfo) {
+    final queryParameters = {
+      'email': userInfo?.emailAddr.toString(),
+      'name': userInfo?.name.toString(),
+      'gender': userInfo?.gender.toString(),
+      'languages': userInfo?.languages.toString(),
+      'age': userInfo?.age.toString()
+    };
+    final uri = Uri.https(url, path, queryParameters);
+    return uri;
+  }
+
+  void updateUserInfo() async {
+    Uri newUri = addUpdatedUserInfoToUrl(serverUrl, '/updateUserInfo', Globals.globalUserInfoObj);
+    try {
+      var response = await client.get(newUri);
+      if (response.statusCode == 200 && response.contentLength! > 0) {
+        print("the user info update successfully");
+      } else {
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        throw Exception('Failed to update favorite categories');
       }
     } finally {
       // client.close();
