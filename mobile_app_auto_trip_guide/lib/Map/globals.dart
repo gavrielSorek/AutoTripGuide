@@ -13,16 +13,22 @@ class Globals {
   static ServerCommunication globalServerCommunication = ServerCommunication();
   static AudioApp globalAudioPlayer = AudioApp();
   static Map globalAllPois = HashMap<String, MapPoi>();
-  static Map globalUnhandledPois = HashMap<String, MapPoi>();
+  static Map<String, MapPoi> globalUnhandledPois = HashMap<String, MapPoi>();
+  static List<String> globalUnhandledKeys = [];
   static Map globalPoisIdToMarkerIdx = HashMap<String, int>();
   static String globalDefaultLanguage = "eng";
   static Map<String, List<String>>? globalCategories;
   static List<String> globalFavoriteCategories = [];
+  static Set<String> favoriteCategoriesSet = [] as Set<String>;
   static Map globalInterestingPois = HashMap<String, MapPoi>(); // TODO use
   static AppLauncher globalAppLauncher = AppLauncher();
   static MapPoi? mainMapPoi; // spoken poi
   static final globalController = Get.put(LoginController());
 
+  static setFavoriteCategories(List<String> newFavoriteCategories) {
+    globalFavoriteCategories = newFavoriteCategories;
+    favoriteCategoriesSet = newFavoriteCategories.toSet();
+  }
 
   static setMainMapPoi(var mapPoi) {
     if (Globals.globalUserMap.userMapState != null && mapPoi != null) {
@@ -43,17 +49,27 @@ class Globals {
     await UserMap.mapInit();
     globalAllPois.clear();
     globalUnhandledPois.clear();
+    globalUnhandledKeys.clear();
     globalPoisIdToMarkerIdx.clear();
     mainMapPoi = null;
-
-
   }
   static clearAll() async {
     // TODO add members to close
     globalAllPois.clear();
     globalUnhandledPois.clear();
+    globalUnhandledKeys.clear();
     globalPoisIdToMarkerIdx.clear();
     mainMapPoi = null;
+  }
+
+  // sort pois by user Preferences
+  static int sortPoisByUserPreferences(String idA, String idB) {
+    List<String> categoriesA = globalUnhandledPois[idA]!.poi.Categories;
+    List<String> categoriesB = globalUnhandledPois[idB]!.poi.Categories;
+    int intersectionsWithA = favoriteCategoriesSet.intersection(categoriesA.toSet()).length;
+    int intersectionsWithB = favoriteCategoriesSet.intersection(categoriesB.toSet()).length;
+    return intersectionsWithB - intersectionsWithA;
+
   }
 
 }

@@ -27,7 +27,7 @@ class LocationInfo {
 }
 
 class Poi {
-  String? id;
+  String id;
   String? poiName;
   double latitude;
   double longitude;
@@ -43,10 +43,10 @@ class Poi {
   String? country;
   String? pic;
 
-  List<String>? Categories;
+  List<String> Categories;
 
   Poi({
-    this.id,
+    required this.id,
     this.poiName,
     required this.latitude,
     required this.longitude,
@@ -60,7 +60,7 @@ class Poi {
     this.UpdatedBy,
     this.LastUpdatedDate,
     this.country,
-    this.Categories,
+    required this.Categories,
     this.pic
   });
 
@@ -81,7 +81,7 @@ class Poi {
       LastUpdatedDate: (json['_LastUpdatedDate'] ?? "?") as String,
       country: (json['_country'] ?? "?") as String,
       pic: (json['_pic'] ?? "?") as String,
-      Categories: ((json['_Categories'] ?? ['?']) as List<dynamic>).cast<String>());
+      Categories: ((json['_Categories'] ?? []) as List<dynamic>).cast<String>());
   }
 }
 

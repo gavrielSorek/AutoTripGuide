@@ -135,14 +135,16 @@ class _UserMapState extends State<UserMap> {
             MapPoi mapPoi = MapPoi(poi);
             Globals.globalAllPois[poi.id] = mapPoi;
             Globals.globalUnhandledPois[poi.id] = mapPoi;
+            Globals.globalUnhandledKeys.add(poi.id);
             Globals.globalPoisIdToMarkerIdx[poi.id] = markersList.length;
             markersList.add(mapPoi.marker!);
           }
         }
       });
 
+      Globals.globalUnhandledKeys.sort(Globals.sortPoisByUserPreferences); //TODO improve complexity
       // if there is new pois and guideTool waiting
-      if (!pois.isEmpty && guideTool.state == GuideState.waiting) {
+      if (pois.isNotEmpty && guideTool.state == GuideState.waiting) {
         guideTool.handlePois();
       }
     }

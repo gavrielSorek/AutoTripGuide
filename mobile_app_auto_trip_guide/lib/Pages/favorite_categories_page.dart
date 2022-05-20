@@ -53,7 +53,7 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
       child: const Text('Apply'),
       onPressed: () {
         if(favorChanged) {
-          Globals.globalFavoriteCategories = favorCategories;
+          Globals.setFavoriteCategories(favorCategories);
           Globals.globalServerCommunication.updateFavorCategories(Globals.globalController.googleAccount.value?.email ?? '');
           final snackBar = SnackBar(
             content: const Text('Your Favorite Categories Saved!'),

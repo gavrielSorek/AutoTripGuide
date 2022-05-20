@@ -31,7 +31,7 @@ class Guide {
 
   Future<void> handleMapPoiVoice(MapPoi mapPoi) async {
     Audio audio =
-        await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id!);
+        await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id);
 
     List<int> intList = audio.audio.cast<int>().toList();
     Uint8List byteData =
@@ -61,13 +61,15 @@ class Guide {
   }
 
   void askNextPoi() {
-    if (state == GuideState.working || Globals.globalUnhandledPois.isEmpty) {
+    if (state == GuideState.working || Globals.globalUnhandledKeys.isEmpty) {
       print("error in handleNextPoi in Guide or pois map is empty");
       return;
     }
-    MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
-    Globals.globalUnhandledPois.remove(
-        mapPoiElement.poi.id); // handling poi so remove from UnhandledPois
+    // MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
+    MapPoi mapPoiElement = Globals.globalUnhandledPois[Globals.globalUnhandledKeys[0]]!;
+
+    Globals.globalUnhandledPois.remove(mapPoiElement.poi.id); // handling poi so remove from UnhandledPois
+    Globals.globalUnhandledKeys.removeAt(0);
     askPoi(mapPoiElement);
   }
 
