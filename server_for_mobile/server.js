@@ -162,6 +162,16 @@ app.get("/updateUserInfo", async function (req, res) { //next requrie (the funct
     res.end();
  })
 
+ // update favorite categories for specific user
+app.get("/insertPoiToHistory", async function (req, res) { //next requrie (the function will not stop the program)
+    console.log("inside insert poi to history - server side")
+    poiInfo = {'id': req.query.id, 'poiName': req.query.poiName, 'emailAddr': req.query.emailAddr, 'time': req.query.time};
+    result = await db.insertPoiToHistory(dbClientSearcher, poiInfo)
+    res.status(200);
+    res.json(result);
+    res.end();
+ })
+
  app.listen(port, async ()=>{
     await init()
     console.log(`Server is runing on port ${port}`)

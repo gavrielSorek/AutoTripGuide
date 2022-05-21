@@ -11,7 +11,7 @@ class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
   // String serverUrl = "autotripguidemobile.loca.lt";
 
-  String serverUrl = "4348-84-94-109-213.ngrok.io";
+  String serverUrl = "ed98-84-94-109-213.ngrok.io";
 
   var client = RetryClient(http.Client());
 
@@ -259,6 +259,33 @@ class ServerCommunication {
         // If the server did not return a 200 OK response,
         // then throw an exception.
         throw Exception('Failed to update favorite categories');
+      }
+    } finally {
+      // client.close();
+    }
+  }
+
+  static Uri addVisitedPoiToUrl(String url, String path, VisitedPoi visitedPoi) {
+    final queryParameters = {
+      'id': visitedPoi.id.toString(),
+      'poiName': visitedPoi.poiName.toString(),
+      'emailAddr': visitedPoi.emailAddr.toString(),
+      'time': visitedPoi.time.toString(),
+    };
+    final uri = Uri.https(url, path, queryParameters);
+    return uri;
+  }
+
+  void insertPoiToHistory(VisitedPoi visitedPoi) async {
+    Uri newUri = addVisitedPoiToUrl(serverUrl, '/insertPoiToHistory', visitedPoi);
+    try {
+      var response = await client.get(newUri);
+      if (response.statusCode == 200 && response.contentLength! > 0) {
+        print("the poi insert to history");
+      } else {
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        throw Exception('Failed insert poi to history');
       }
     } finally {
       // client.close();

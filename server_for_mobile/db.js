@@ -1,4 +1,4 @@
-module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength ,getFavorCategories, updateFavorCategories, getUserInfo, updateUserInfo};
+module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength ,getFavorCategories, updateFavorCategories, getUserInfo, updateUserInfo, insertPoiToHistory};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -160,6 +160,15 @@ async function updateUserInfo(client, userInfo) {
         name: userInfo.name, gender: userInfo.gender, languages: userInfo.languages, age: userInfo.age
     }});
     console.log("after updateUserInfo in the server side");
+    return 1;
+}
+
+// The function update the favorite categories of specific user
+async function insertPoiToHistory(client, poiInfo) {
+    var emailAddress = poiInfo.emailAddr;
+    const res = await client.db("testDb").collection("mobileUsers").updateOne({emailAddr: emailAddress}, { $push: { poisHistory: 
+        {poiId: poiInfo.id, poiName: poiInfo.poiName, time: poiInfo.time}}});
+    console.log("after insertPoiToHistory in the server side");
     return 1;
 }
 

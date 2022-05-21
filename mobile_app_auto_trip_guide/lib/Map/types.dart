@@ -17,6 +17,15 @@ class UserInfo {
       this.categories);
 }
 
+class VisitedPoi {
+  String id;
+  String? poiName;
+  String emailAddr;
+  String time;
+
+  VisitedPoi(this.id, this.poiName, this.emailAddr, this.time);
+}
+
 class LocationInfo {
   double lat;
   double lng;
