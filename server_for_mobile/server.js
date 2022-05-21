@@ -162,11 +162,21 @@ app.get("/updateUserInfo", async function (req, res) { //next requrie (the funct
     res.end();
  })
 
- // update favorite categories for specific user
+ // insert Poi To the history pois of specific user
 app.get("/insertPoiToHistory", async function (req, res) { //next requrie (the function will not stop the program)
     console.log("inside insert poi to history - server side")
-    poiInfo = {'id': req.query.id, 'poiName': req.query.poiName, 'emailAddr': req.query.emailAddr, 'time': req.query.time};
+    poiInfo = {'id': req.query.id, 'poiName': req.query.poiName, 'emailAddr': req.query.emailAddr, 'time': req.query.time, 'pic': req.query.pic};
     result = await db.insertPoiToHistory(dbClientSearcher, poiInfo)
+    res.status(200);
+    res.json(result);
+    res.end();
+ })
+
+ // get the history pois of specific user
+app.get("/getPoisHistory", async function (req, res) { //next requrie (the function will not stop the program)
+    console.log("inside get pois history - server side")
+    emailAddr = {'emailAddr': req.query.emailAddr};
+    result = await db.getPoisHistory(dbClientSearcher, emailAddr)
     res.status(200);
     res.json(result);
     res.end();

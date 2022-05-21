@@ -22,8 +22,18 @@ class VisitedPoi {
   String? poiName;
   String emailAddr;
   String time;
+  String? pic;
 
-  VisitedPoi(this.id, this.poiName, this.emailAddr, this.time);
+  VisitedPoi({required this.id, this.poiName, required this.emailAddr, required this.time, this.pic});
+
+  factory VisitedPoi.fromJson(Map<String, dynamic> json) {
+    return VisitedPoi(
+        id: json['id'] as String,
+        poiName: json['poiName'] as String,
+        emailAddr: json['emailAddr'] as String,
+        time: json['time'] as String,
+        pic: json['pic'] as String);
+  }
 }
 
 class LocationInfo {

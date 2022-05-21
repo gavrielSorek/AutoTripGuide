@@ -271,6 +271,7 @@ class ServerCommunication {
       'poiName': visitedPoi.poiName.toString(),
       'emailAddr': visitedPoi.emailAddr.toString(),
       'time': visitedPoi.time.toString(),
+      'pic' : visitedPoi.pic.toString(),
     };
     final uri = Uri.https(url, path, queryParameters);
     return uri;
@@ -286,6 +287,26 @@ class ServerCommunication {
         // If the server did not return a 200 OK response,
         // then throw an exception.
         throw Exception('Failed insert poi to history');
+      }
+    } finally {
+      // client.close();
+    }
+  }
+
+  Future<List<VisitedPoi>> getPoisHistory(String emailAddr) async {
+    Uri newUri = addMailToUrl(serverUrl, '/getPoisHistory', emailAddr);
+    try {
+      var response = await client.get(newUri);
+      if (response.statusCode == 200 && response.contentLength! > 0) {
+        final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
+        return parsed.map<VisitedPoi>((json) => VisitedPoi.fromJson(json)).toList();
+      } else {
+        if (response.contentLength == 0) {
+          return [];
+        }
+        // If the server did not return a 200 OK response,
+        // then throw an exception.
+        throw Exception('Failed to get pois history');
       }
     } finally {
       // client.close();

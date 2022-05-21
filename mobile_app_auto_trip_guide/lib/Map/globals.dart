@@ -21,6 +21,7 @@ class Globals {
   static List<String> globalFavoriteCategories = [];
   static Set<String> favoriteCategoriesSet = <String>{};
   static UserInfo? globalUserInfoObj;
+  static List<VisitedPoi>? globalVisitedPoi;
   static Map globalInterestingPois = HashMap<String, MapPoi>(); // TODO use
   static AppLauncher globalAppLauncher = AppLauncher();
   static MapPoi? mainMapPoi; // spoken poi
