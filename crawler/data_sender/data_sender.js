@@ -1,10 +1,10 @@
 var XMLHttpRequest = require('xhr2');
 var xhr = new XMLHttpRequest();
-var geo = require("./services/countryByPosition");
+var geo = require("../../services/countryByPosition");
 var tokenGetter = require("./services/serverTokenGetter");
 const serverUrl = 'https://autotripguide.loca.lt';
 var globalCategories = []
-var serverCategories = []
+var serverCategories = [] //TODO USE text analysis module instead
 
 // The function returns the date of today
 function getTodayDate() {
