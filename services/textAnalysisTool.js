@@ -1,6 +1,8 @@
 var XMLHttpRequest = require('xhr2');
-
+var gtts = require('node-gtts')('en');
 module.exports = { convertArrayToServerCategories, convertToServerCategories};
+
+
 const serverUrl = 'https://autotripguide.loca.lt';
 
 var globalServerCategories = undefined;
@@ -77,13 +79,33 @@ async function convertToServerCategories(categoriesToConvert) {
 }
 
 
+
+
+
+//************************************************************************************************** */ text to speech
+
+async function textToVoice(text, language = undefined) {
+    const chunks = [];
+    return new Promise((resolve, reject) => {
+        var stream = gtts.stream(text)
+        stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+        stream.on('error', (err) => reject(err));
+        stream.on('end', () => resolve(Buffer.concat(chunks)));
+    }) 
+    //   const result = await streamToString(stream)
+}
+
+
+
+
 //______________________________________________________________________________________________________________________________//
 // debug
 
 // async function main() {
-//     var debugCategories = ['buildings', 'museums in Israel'];
-//     var categories = await convertArrayToServerCategories(debugCategories);
-//     console.log(categories);
+//     // var debugCategories = ['buildings', 'museums in Israel'];
+//     // var categories = await convertArrayToServerCategories(debugCategories);
+//     // console.log(categories);
+//     var voice = await textToVoice('hello world');
 // }
 
 // main()
