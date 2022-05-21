@@ -126,9 +126,17 @@ class Guide {
     }
   }
 
+  String getTime() {
+    DateTime now = new DateTime.now();
+    DateTime date = new DateTime(now.year, now.month, now.day, now.hour, now.minute);
+    String dateToday = date.toString().substring(0,16);
+    return dateToday;
+  }
+
   void onUserClickedOk() {
     handleMapPoi(guideDialogBox.getMapPoi()!);
     guideDialogBox.hideDialog();
+    Globals.globalServerCommunication.insertPoiToHistory(VisitedPoi(guideDialogBox.getMapPoi()!.poi.id, guideDialogBox.getMapPoi()?.poi.poiName, Globals.globalEmail, getTime()));
   }
 }
 
