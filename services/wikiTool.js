@@ -16,7 +16,6 @@ async function getPoiWikiCategoriesByName(poiName) {
     }
 
 
-    var response = await axios.get(reqUrl)
     var temp = response.data.query.pages;
     var categories = temp[Object.keys(temp)[0]].categories;
     var retCategories = [];
@@ -28,8 +27,31 @@ async function getPoiWikiCategoriesByName(poiName) {
     return retCategories;
 }
 
+//https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts|categories&exintro&explaintext&redirects=1&titles=masada
+
+async function getPoiDescByName(poiName) {
+    var reqUrl = wikiApiUrl + `?format=json&action=query&prop=extracts|categories&exintro&explaintext&redirects=1&titles=${poiName}`;
+    console.log(reqUrl);
+
+    var response = undefined;
+    try {
+        var response = await axios.get(reqUrl)
+
+    } catch {
+        console.log('error in getPoiDescByName');
+    }
+
+    var temp = response.data.query.pages;
+    var shortDesc = temp[Object.keys(temp)[0]].extract;
+    return shortDesc;
+}
 
 
 //______________________________________________________________________________________________________//
 // debug
-// getPoiWikiCategoriesByName('Masada')
+
+//  async function main() {
+//     console.log( await getPoiWikiCategoriesByName('Masada'));
+//     console.log( await getPoiDescByName('Masada'));
+//  }
+//  main();
