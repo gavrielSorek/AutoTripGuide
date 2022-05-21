@@ -1,4 +1,4 @@
-module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength ,getFavorCategories, updateFavorCategories, getUserInfo, updateUserInfo, insertPoiToHistory};
+module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength ,getFavorCategories, updateFavorCategories, getUserInfo, updateUserInfo, insertPoiToHistory, getPoisHistory};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -167,9 +167,22 @@ async function updateUserInfo(client, userInfo) {
 async function insertPoiToHistory(client, poiInfo) {
     var emailAddress = poiInfo.emailAddr;
     const res = await client.db("testDb").collection("mobileUsers").updateOne({emailAddr: emailAddress}, { $push: { poisHistory: 
-        {poiId: poiInfo.id, poiName: poiInfo.poiName, time: poiInfo.time}}});
+        {poiId: poiInfo.id, poiName: poiInfo.poiName, time: poiInfo.time, pic: poiInfo.pic}}});
     console.log("after insertPoiToHistory in the server side");
     return 1;
+}
+
+// The function return the favorite categories of specific user from the db
+async function getPoisHistory(client, email) {
+    var emailAddress = email.emailAddr;
+    var res = await client.db("testDb").collection("mobileUsers").find({emailAddr: emailAddress});
+    var resArr = await res.toArray();
+    if (resArr.length > 0) {
+        console.log("found pois history for the reuired user")
+        return resArr[0].poisHistory;
+    } else {
+        return [];
+    }
 }
 
 // check if object is empty
