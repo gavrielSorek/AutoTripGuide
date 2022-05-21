@@ -15,31 +15,27 @@ async function getPoisList(bounds, language) {
     var lightPois = (await getlightPois(bounds, language)).data;
 
     var pois = []
-    for (var i = 0; i < 20; i++) { // TODO CHANGE TO LENGTH WHEN NOT DEBUGING
+    for (var i = 0; i < Math.min(3, lightPois.features.length); i++) { // TODO CHANGE TO LENGTH WHEN NOT DEBUGING
         var lightPoi = lightPois.features[i];
-        var poiName = lightPoi.properties.name;
-        var poiData = (await wikiTool.getPoiDescByName(poiName)); //TODO check if there is data
-        if (!poiData.description) { // if didn't find in wikipedia
-            continue;
-        }
+        var fullPoi = (await getPoiInfo(lightPoi.properties.xid, language)).data;
         //console.log(fullPoi); // debug
-        //(lat = 32.0295, lng = 34.7518)
+
         poi = {
-            _poiName : poiName , 
-            _latitude : lightPoi.geometry.coordinates[1], 
-            _longitude : lightPoi.geometry.coordinates[0], 
-            _shortDesc : poiData.description,
+            _poiName : fullPoi.name , 
+            _latitude : fullPoi.point.lat, 
+            _longitude : fullPoi.point.lon, 
+            _shortDesc : fullPoi.wikipedia_extracts.text,
             _language : language,
             _audio : 'no audio',
-            _source : await wikiTool.getPoiUrlByMediaWikiId(poiData.wikiId),
+            _source : fullPoi.wikipedia,
             _Contributor : "online pois finder",
             _CreatedDate : getTodayDate(),
             _ApprovedBy: "ApprovedBy ??",
             _UpdatedBy : "online pois finder",
             _LastUpdatedDate : getTodayDate(),
-            _country : geo.getCountry(lightPoi.geometry.coordinates[1], lightPoi.geometry.coordinates[0]),
-            _Categories : await textAnalysisTool.convertArrayToServerCategories(await wikiTool.getPoiWikiCategoriesByName(poiName)),
-            _pic : await internetServices.nameToPicUrl(poiName)
+            _country : geo.getCountry(fullPoi['lat'], fullPoi['lon']),
+            _Categories : await textAnalysisTool.convertArrayToServerCategories(await wikiTool.getPoiWikiCategoriesByName(fullPoi.name)),
+            _pic : fullPoi.image
         }
         pois.push(poi);
     }
@@ -52,11 +48,11 @@ async function getlightPois(bounds, language) {
     return axios.get(reqUrl)    
 }
 
-// function getPoiInfo(poiId, language) {
-//     const apiUrl = `http://api.opentripmap.com/0.1/${language}/places/xid/${poiId}`;
-//     var reqUrl = apiUrl + `?apikey=${apiKey}`;
-//     return axios.get(reqUrl);
-// }
+function getPoiInfo(poiId, language) {
+    const apiUrl = `http://api.opentripmap.com/0.1/${language}/places/xid/${poiId}`;
+    var reqUrl = apiUrl + `?apikey=${apiKey}`;
+    return axios.get(reqUrl);
+}
 
 // The function returns the date of today
 function getTodayDate(){
