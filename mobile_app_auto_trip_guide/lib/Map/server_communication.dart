@@ -269,7 +269,6 @@ class ServerCommunication {
     final queryParameters = {
       'id': visitedPoi.id.toString(),
       'poiName': visitedPoi.poiName.toString(),
-      'emailAddr': visitedPoi.emailAddr.toString(),
       'time': visitedPoi.time.toString(),
       'pic' : visitedPoi.pic.toString(),
     };

@@ -20,17 +20,15 @@ class UserInfo {
 class VisitedPoi {
   String id;
   String? poiName;
-  String emailAddr;
   String time;
   String? pic;
 
-  VisitedPoi({required this.id, this.poiName, required this.emailAddr, required this.time, this.pic});
+  VisitedPoi({required this.id, this.poiName, required this.time, this.pic});
 
   factory VisitedPoi.fromJson(Map<String, dynamic> json) {
     return VisitedPoi(
-        id: json['id'] as String,
+        id: json['poiId'] as String,
         poiName: json['poiName'] as String,
-        emailAddr: json['emailAddr'] as String,
         time: json['time'] as String,
         pic: json['pic'] as String);
   }
