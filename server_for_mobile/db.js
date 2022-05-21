@@ -174,6 +174,7 @@ async function insertPoiToHistory(client, poiInfo) {
 
 // The function return the favorite categories of specific user from the db
 async function getPoisHistory(client, email) {
+    console.log("inside getPoisHistory - db side")
     var emailAddress = email.emailAddr;
     var res = await client.db("testDb").collection("mobileUsers").find({emailAddr: emailAddress});
     var resArr = await res.toArray();

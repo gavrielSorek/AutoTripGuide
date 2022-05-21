@@ -175,7 +175,7 @@ app.get("/insertPoiToHistory", async function (req, res) { //next requrie (the f
  // get the history pois of specific user
 app.get("/getPoisHistory", async function (req, res) { //next requrie (the function will not stop the program)
     console.log("inside get pois history - server side")
-    emailAddr = {'emailAddr': req.query.emailAddr};
+    emailAddr = {'emailAddr': req.query.email};
     result = await db.getPoisHistory(dbClientSearcher, emailAddr)
     res.status(200);
     res.json(result);
