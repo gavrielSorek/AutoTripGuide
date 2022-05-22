@@ -18,16 +18,18 @@ async function InsertPois(client, newPois) {
         console.log(e)
     }
 }
-async function findDataByParams(client, queryObject, relevantBounds, MaxCount, searchOutsideTheBoundery) {
-    var latBT = relevantBounds.southWest.lat; //latitude bigger than
-    var latST = relevantBounds.northEast.lat; //latitude smaller than
-    var lngBT = relevantBounds.southWest.lng; //longtitude bigger than
-    var lngST = relevantBounds.northEast.lng; //longtitude smaller than
-    queryObject['_latitude'] = {$gt: latBT, $lt: latST};
-    queryObject['_longitude'] = {$gt: lngBT, $lt: lngST};
+async function findDataByParams(client, queryObject, relevantBounds = undefined, MaxCount, searchOutsideTheBoundery = true) {
+    if (relevantBounds) {
+        var latBT = relevantBounds.southWest.lat; //latitude bigger than
+        var latST = relevantBounds.northEast.lat; //latitude smaller than
+        var lngBT = relevantBounds.southWest.lng; //longtitude bigger than
+        var lngST = relevantBounds.northEast.lng; //longtitude smaller than
+        queryObject['_latitude'] = {$gt: latBT, $lt: latST};
+        queryObject['_longitude'] = {$gt: lngBT, $lt: lngST};
+    }
     var res = await client.db("testDb").collection("testCollection").find(queryObject).limit(MaxCount);
     var results = await res.toArray();
-    if (results.length == 0 && searchOutsideTheBoundery) { //if can search outside the bounderies and didm't find pois in the boundery
+    if (results.length == 0 && searchOutsideTheBoundery && relevantBounds) { //if can search outside the bounderies and didm't find pois in the boundery
         delete queryObject._latitude;
         delete queryObject._longitude;
         res = await client.db("testDb").collection("testCollection").find(queryObject).limit(MaxCount);
@@ -43,7 +45,7 @@ async function findDataByParams(client, queryObject, relevantBounds, MaxCount, s
 }
 
 // The function find a pois 
-async function findPois(client, poiParams , relevantBounds, MaxCount, searchOutsideTheBoundery) {
+async function findPois(client, poiParams , relevantBounds = undefined, MaxCount, searchOutsideTheBoundery = true) {
     return findDataByParams(client, poiParams, relevantBounds, MaxCount, searchOutsideTheBoundery)
 }
 // The function insert audio to the db

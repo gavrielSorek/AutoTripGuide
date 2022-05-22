@@ -136,21 +136,28 @@ async function sendPoiInfoToServer() {
     Http.send(poiInfoJson);
     messages.showLoadingMessage();
     Http.onreadystatechange = (e) => {  
-        if (Http.readyState == 4 && Http.status == 200) {
-            dataUploadingFinished();
-            var response = Http.responseText;
-            if(response.length > 0) {
-                console.log("response from the server is recieved")
-                console.log(jsonResponse)
-                var jsonResponse = JSON.parse(Http.responseText);
-                console.log(jsonResponse);
+        if (Http.readyState == 4) {
+            if (Http.status == 200) {
+                dataUploadingFinished();
+                var response = Http.responseText;
+                if(response.length > 0) {
+                    console.log("response from the server is recieved")
+                    console.log(jsonResponse)
+                    var jsonResponse = JSON.parse(Http.responseText);
+                    console.log(jsonResponse);
+                }
+            } else if (Http.status == 420) {
+                poiAlreadyExist();
             }
         }
     }
     
 }
 
-
+function poiAlreadyExist() {
+    messages.createPoiFailedAlreadyExist()
+    // setTimeout(messages.deleteEverything, 1500);
+}
 function dataUploadingFinished() {
     messages.createPoiSeccess()
     setTimeout(messages.deleteEverything, 1500);

@@ -53,6 +53,14 @@
     global.messages.createPoiSeccess = function() {
         Swal.fire("Created!", "Your request to create new poi has been sent.", "success");
     }
+    global.messages.createPoiFailedAlreadyExist = function() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Poi with the same name already exist',
+        }).then((result) => {
+        });
+    }
     global.messages.editPoiSeccess = function() {
         Swal.fire("Poi was edited!",  "Your request to edit poi has been sent.", "success");
     }

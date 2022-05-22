@@ -66,14 +66,32 @@ async function closeServer(){
 }
 
 
-// Route that handles create New Pois logic
+// create new pois return true if and only if all pois added without errors to db
 async function createNewPois(pois) {
+    var isPoisAdded = true;
     try {
-        pois.every(poiHandler)
+        await pois.every(async (poi) => {
+            if (!poi._poiName) {
+                console.log('error in createNewPois, poi missing name didnt create poi');
+                isPoisAdded = false;
+                return;
+            }
+            var poiSearchParams = {_poiName: poi._poiName.toLowerCase()};
+            var poisInfo = await db.findPois(dbClientSearcher, poiSearchParams, relevantBounds = undefined, MaxCount = 1, searchOutsideTheBounds = undefined);
+            if (poisInfo) { // if poi already exist, error
+                console.log('error in createNewPois, poi already exist');
+                isPoisAdded = false;
+                return;
+            }
+            // if everthing is ok
+            poiHandler(poi);
+        })
         await db.InsertPois(dbClientInsertor, pois);
     } catch (e) {
         console.error(e); 
+        var isPoisAdded = false;
     } 
+    return isPoisAdded;
 }
 // Route that handles edit poi logic
 async function editPoi(poi) {
@@ -184,7 +202,7 @@ app.get("/contactPage", function (req, res) { //next requrie (the function will 
  })
 
 //Route that create new pois logic
-app.post('/createPois', permissions.authContributor, (req, res, next) =>{
+app.post('/createPois', permissions.authContributor,async (req, res, next) =>{
     console.log("Pois info is recieved")
     const data = req.body; 
     var json_res = {
@@ -192,9 +210,14 @@ app.post('/createPois', permissions.authContributor, (req, res, next) =>{
         y: "2",
         z: "3"
      }
-    createNewPois(data['poisArray'])
-    res.status(200);
-    res.json(json_res);
+    var isSuccess = await createNewPois(data['poisArray'])
+    if (isSuccess) {
+        res.status(200);
+        res.json(json_res);
+    }
+    else {
+        res.status(420); //failed
+    }
     res.end();
     next();
 })
