@@ -1,7 +1,7 @@
 var XMLHttpRequest = require('xhr2');
 var xhr = new XMLHttpRequest();
 var geo = require("../../services/countryByPosition");
-var tokenGetter = require("./services/serverTokenGetter");
+var tokenGetter = require("../../services/serverTokenGetter");
 const serverUrl = 'https://autotripguide.loca.lt';
 var globalCategories = []
 var serverCategories = [] //TODO USE text analysis module instead
@@ -39,9 +39,8 @@ async function sendPoisToServer(pois) {
             console.log("all the data was sent")
         }
     }
-
-
 }
+
 //convert dms coordinated to dd
 function ConvertDMSToDD(degrees, minutes, seconds, direction) {
     var dd = Number(degrees) + Number(minutes) / 60 + Number(seconds) / (60 * 60);

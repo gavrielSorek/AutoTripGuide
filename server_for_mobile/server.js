@@ -1,5 +1,7 @@
 const fs = require('fs')
 const db = require("./db");
+const onlinePoisFinder = require("./onlinePoisFinder");
+const serverCommunication = require("../services/serverCommunication");
 
 const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
@@ -43,11 +45,23 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
     userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language}
     searchParams = {}
     addUserDataTosearchParams(searchParams, userData)
-    pois = await db.findPois(dbClientSearcher, searchParams, getBounds(userData), MAX_POIS_FOR_USER, false)
+    var bounds = getBounds(userData)
+    pois = await db.findPois(dbClientSearcher, searchParams, bounds, MAX_POIS_FOR_USER, false)
     res.status(200);
     res.json(pois);
     res.end();
+
+    // if not enough pois search online
+    var enoughPoisNum = 4;
+    if(pois.length < enoughPoisNum) { // TODO FIND BETTER LOGIC
+        updateDbWithOnlinePois(bounds, userData.language);
+    }
  })
+
+ async function updateDbWithOnlinePois(bounds, language) {
+    var pois = await onlinePoisFinder.getPoisList(bounds, 'en'); //TODO change language to user language
+    serverCommunication.sendPoisToServer(pois);
+ }
 
   // get audio
 app.get("/getAudio", async function (req, res) { //next requrie (the function will not stop the program)
@@ -187,6 +201,20 @@ app.get("/getPoisHistory", async function (req, res) { //next requrie (the funct
     console.log(`Server is runing on port ${port}`)
 })
 
+
+//__________________________________________________________________________//
+//debug
+
+
+
+async function tryModule() {
+    var user_data = {lat : 32.1245, lng : 34.7954} 
+    var bounds = getBounds(user_data)
+    await updateDbWithOnlinePois(bounds, 'en');
+    
+}
+// tryModule();
+
 // if localtunnel doing problems
 // http://localhost.run/ 
 
@@ -195,3 +223,5 @@ app.get("/getPoisHistory", async function (req, res) { //next requrie (the funct
 // install ngrok globaly : "npm install ngrok -g" 
 // and then : "ngrok http 5600"
 //ngrok authtoken 27ZMPFvj1rAMBK80Sxm7pjJuQGd_7TSnsVtTyy5NELsRvJ856
+
+

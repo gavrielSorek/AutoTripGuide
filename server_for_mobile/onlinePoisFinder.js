@@ -3,6 +3,7 @@ var geo = require("../services/countryByPosition");
 var wikiTool = require("../services/wikiTool");
 var textAnalysisTool = require("../services/textAnalysisTool");
 var internetServices = require("../services/generalInternetServices");
+module.exports = { getPoisList};
 
 
 // http://api.opentripmap.com/0.1/en/places/bbox?lon_min=38.364285&lat_min=59.855685&lon_max=38.372809&lat_max=59.859052&kinds=churches&format=geojson&apikey=5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e
@@ -15,7 +16,7 @@ async function getPoisList(bounds, language) {
     var lightPois = (await getlightPois(bounds, language)).data;
 
     var pois = []
-    for (var i = 0; i < Math.min(3, lightPois.features.length); i++) { // TODO CHANGE TO LENGTH WHEN NOT DEBUGING
+    for (var i = 0; i < Math.min(5, lightPois.features.length); i++) { // TODO CHANGE TO LENGTH WHEN NOT DEBUGING
         var lightPoi = lightPois.features[i];
         var fullPoi = (await getPoiInfo(lightPoi.properties.xid, language)).data;
         //console.log(fullPoi); // debug
@@ -33,7 +34,7 @@ async function getPoisList(bounds, language) {
             _ApprovedBy: "ApprovedBy ??",
             _UpdatedBy : "online pois finder",
             _LastUpdatedDate : getTodayDate(),
-            _country : geo.getCountry(fullPoi['lat'], fullPoi['lon']),
+            _country : geo.getCountry(fullPoi.point['lat'], fullPoi.point['lon']),
             _Categories : await textAnalysisTool.convertArrayToServerCategories(await wikiTool.getPoiWikiCategoriesByName(fullPoi.name)),
             _pic : fullPoi.image
         }
@@ -85,4 +86,4 @@ async function tryModule() {
     console.log(data);
     
 }
-tryModule();
+// tryModule();
