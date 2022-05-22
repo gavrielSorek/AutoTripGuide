@@ -97,7 +97,7 @@ class Poi {
       UpdatedBy: (json['_UpdatedBy'] ?? "?") as String,
       LastUpdatedDate: (json['_LastUpdatedDate'] ?? "?") as String,
       country: (json['_country'] ?? "?") as String,
-      pic: (json['_pic'] ?? "?") as String,
+      pic: (json['_pic']) as String,
       Categories: ((json['_Categories'] ?? []) as List<dynamic>).cast<String>());
   }
 }

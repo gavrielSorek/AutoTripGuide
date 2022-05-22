@@ -136,7 +136,9 @@ class Guide {
   void onUserClickedOk() {
     handleMapPoi(guideDialogBox.getMapPoi()!);
     guideDialogBox.hideDialog();
-    Globals.globalServerCommunication.insertPoiToHistory(VisitedPoi(id: guideDialogBox.getMapPoi()!.poi.id, poiName: guideDialogBox.getMapPoi()?.poi.poiName, time: getTime(), pic: guideDialogBox.getMapPoi()?.poi.pic));
+    VisitedPoi currentPoi = VisitedPoi(id: guideDialogBox.getMapPoi()!.poi.id, poiName: guideDialogBox.getMapPoi()?.poi.poiName, time: getTime(), pic: guideDialogBox.getMapPoi()?.poi.pic);
+    Globals.globalVisitedPoi.add(currentPoi);
+    Globals.globalServerCommunication.insertPoiToHistory(currentPoi);
   }
 }
 

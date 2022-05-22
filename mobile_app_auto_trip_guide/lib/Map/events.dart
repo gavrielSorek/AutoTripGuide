@@ -3,6 +3,7 @@ import 'package:final_project/Pages/setting_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Pages/account_page.dart';
+import '../Pages/history_page.dart';
 import '../Pages/reviews_page.dart';
 import 'globals.dart';
 
@@ -35,7 +36,7 @@ void accountButtonClickedEvent(BuildContext context) {
 void reviewsButtonClickedEvent(BuildContext context) {
   returnToHomePage(context);
   Navigator.of(context)
-      .push(MaterialPageRoute(builder: (context) => ReviewsPage()));
+      .push(MaterialPageRoute(builder: (context) => HistoryPage()));
 }
 
 void settingButtonClickedEvent(BuildContext context) {
