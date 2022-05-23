@@ -5,7 +5,7 @@ var XMLHttpRequest = require('xhr2');
 module.exports = { sendPoisToServer };
 
 const serverUrl = 'https://autotripguide.loca.lt/';
-
+//const serverUrl = 'http://localhost:5500';
 // The function send the poi info request to the server
 async function sendPoisToServer(pois) {
     const Http = new XMLHttpRequest();
@@ -25,7 +25,11 @@ async function sendPoisToServer(pois) {
         var response = Http.responseText;
         if (Http.readyState == XMLHttpRequest.DONE && Http.status == 200) {
             // successful
-            console.log("all the data was sent")
+            console.log("all the data was sent");
+        }
+        if (Http.readyState == XMLHttpRequest.DONE && Http.status == 420) {
+            // successful
+            console.log("some of the pois already exist");
         }
     }
 }

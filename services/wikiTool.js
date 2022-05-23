@@ -15,6 +15,10 @@ async function getPoiWikiCategoriesByName(poiName) {
         console.log('error in getPoiWikiCategoriesByName');
     }
 
+    // IF 
+    if (!response) { //TODO FIND BETTER LOGIC
+        return [];
+    }
 
     var temp = response.data.query.pages;
     var categories = temp[Object.keys(temp)[0]].categories;

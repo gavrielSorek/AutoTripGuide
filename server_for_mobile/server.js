@@ -53,7 +53,7 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
 
     // if not enough pois search online
     var enoughPoisNum = 4;
-    if(pois.length < enoughPoisNum) { // TODO FIND BETTER LOGIC
+    if(!pois || pois.length < enoughPoisNum) { // TODO FIND BETTER LOGIC
         updateDbWithOnlinePois(bounds, userData.language);
     }
  })
@@ -79,7 +79,7 @@ app.get("/getAudio", async function (req, res) { //next requrie (the function wi
  }
 
  function getBounds(user_data){
-    var epsilon = 0.07
+    var epsilon = 0.04
     var relevantBounds = {}
     relevantBounds['southWest'] = {lat : user_data.lat - epsilon, lng : user_data.lng - epsilon}
     relevantBounds['northEast'] = {lat : user_data.lat + epsilon, lng : user_data.lng + epsilon}

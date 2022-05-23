@@ -16,9 +16,12 @@ async function getPoisList(bounds, language) {
     var lightPois = (await getlightPois(bounds, language)).data;
 
     var pois = []
-    for (var i = 0; i < Math.min(5, lightPois.features.length); i++) { // TODO CHANGE TO LENGTH WHEN NOT DEBUGING
+    for (var i = 0; i < Math.min(15, lightPois.features.length); i++) { // TODO CHANGE TO LENGTH WHEN NOT DEBUGING
         var lightPoi = lightPois.features[i];
         var fullPoi = (await getPoiInfo(lightPoi.properties.xid, language)).data;
+        if (!fullPoi.wikipedia_extracts) { // if not contains wikipedia content
+            continue;
+        }
         //console.log(fullPoi); // debug
 
         poi = {
@@ -36,7 +39,7 @@ async function getPoisList(bounds, language) {
             _LastUpdatedDate : getTodayDate(),
             _country : geo.getCountry(fullPoi.point['lat'], fullPoi.point['lon']),
             _Categories : await textAnalysisTool.convertArrayToServerCategories(await wikiTool.getPoiWikiCategoriesByName(fullPoi.name)),
-            _pic : fullPoi.image
+            _pic : await internetServices.nameToPicUrl(fullPoi.name)
         }
         pois.push(poi);
     }
