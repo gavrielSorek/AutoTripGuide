@@ -2,6 +2,7 @@ const fs = require('fs')
 const db = require("./db");
 const onlinePoisFinder = require("./onlinePoisFinder");
 const serverCommunication = require("../services/serverCommunication");
+var tokenGetter = require("../services/serverTokenGetter");
 
 const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
@@ -23,13 +24,18 @@ const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstData
 
 const dbClientSearcher = new MongoClient(uri);
 const dbClientAudio = new MongoClient(uri);
+var globaltokenAndPermission = undefined;
+
 
 //init
 async function init() {
     try {
         await dbClientSearcher.connect();
         await dbClientAudio.connect();
+        globaltokenAndPermission = await tokenGetter.getToken('crawler@gmail.com', '1234', serverCommunication.getServerUrl()) //get tokens and permissions for web server
         console.log("Connected to search DB")
+        //tryModule()
+        
     } catch (e) {
         console.error(e); 
     }
@@ -54,13 +60,17 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
     // if not enough pois search online
     var enoughPoisNum = 4;
     if(!pois || pois.length < enoughPoisNum) { // TODO FIND BETTER LOGIC
-        updateDbWithOnlinePois(bounds, userData.language);
+        //updateDbWithOnlinePois(bounds, userData.language);
+        updateDbWithOnlinePois(bounds, 'en');
     }
  })
 
  async function updateDbWithOnlinePois(bounds, language) {
-    var pois = await onlinePoisFinder.getPoisList(bounds, 'en'); //TODO change language to user language
-    serverCommunication.sendPoisToServer(pois);
+    // async call for faster rsults
+    onlinePoisFinder.getPoisList(bounds, language,(poi)=>{
+        serverCommunication.sendPoisToServer([poi], globaltokenAndPermission)
+    }); //TODO change language to user language
+    // serverCommunication.sendPoisToServer(pois);
  }
 
   // get audio
@@ -79,7 +89,7 @@ app.get("/getAudio", async function (req, res) { //next requrie (the function wi
  }
 
  function getBounds(user_data){
-    var epsilon = 0.04
+    var epsilon = 0.03
     var relevantBounds = {}
     relevantBounds['southWest'] = {lat : user_data.lat - epsilon, lng : user_data.lng - epsilon}
     relevantBounds['northEast'] = {lat : user_data.lat + epsilon, lng : user_data.lng + epsilon}
@@ -213,7 +223,6 @@ async function tryModule() {
     await updateDbWithOnlinePois(bounds, 'en');
     
 }
-// tryModule();
 
 // if localtunnel doing problems
 // http://localhost.run/ 

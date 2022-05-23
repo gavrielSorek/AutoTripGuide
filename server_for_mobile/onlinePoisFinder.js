@@ -12,14 +12,17 @@ module.exports = { getPoisList};
 
 const apiKey = '5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e'
 
-async function getPoisList(bounds, language) {
+async function getPoisList(bounds, language, onSinglePoiFound = undefined) {
     var lightPois = (await getlightPois(bounds, language)).data;
 
     var pois = []
-    for (var i = 0; i < Math.min(15, lightPois.features.length); i++) { // TODO CHANGE TO LENGTH WHEN NOT DEBUGING
+    for (var i = 0; i < Math.min(10, lightPois.features.length); i++) { // TODO CHANGE TO LENGTH WHEN NOT DEBUGING
         var lightPoi = lightPois.features[i];
         var fullPoi = (await getPoiInfo(lightPoi.properties.xid, language)).data;
         if (!fullPoi.wikipedia_extracts) { // if not contains wikipedia content
+            continue;
+        }
+        if (!(fullPoi.wikipedia_extracts.title).includes(`${language}:`)) { // if its not the wanted language 
             continue;
         }
         //console.log(fullPoi); // debug
@@ -42,7 +45,11 @@ async function getPoisList(bounds, language) {
             _pic : await internetServices.nameToPicUrl(fullPoi.name)
         }
         pois.push(poi);
+        if(onSinglePoiFound) {
+            onSinglePoiFound(poi);
+        }
     }
+    console.log(`Found ${pois.length.toString()} new pois`)
     return pois;
 }
 
