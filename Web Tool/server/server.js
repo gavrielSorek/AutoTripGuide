@@ -84,7 +84,7 @@ async function createNewPois(pois) {
                 return;
             }
             // if everthing is ok
-            await poiHandler(pois[i]);
+            pois[i] = await poiHandler(pois[i]);
         }
         await db.InsertPois(dbClientInsertor, pois);
     } catch (e) {
@@ -134,6 +134,7 @@ async function poiHandler(poi) {
         await db.deleteAudio(dbClientAudio, poi._id);
         db.insertAudio(dbClientAudio, Object.values(audio), poi._poiName, poi._id);
     } 
+    return poi;
 }
 
 // get home page
