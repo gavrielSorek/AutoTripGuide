@@ -70,13 +70,13 @@ async function closeServer(){
 async function createNewPois(pois) {
     var isPoisAdded = true;
     try {
-        await pois.every(async (poi) => {
-            if (!poi._poiName) {
+        for (var i = 0; i < Object.keys(pois).length; i++) {
+            if (!pois[i]._poiName) {
                 console.log('error in createNewPois, poi missing name didnt create poi');
                 isPoisAdded = false;
                 return;
             }
-            var poiSearchParams = {_poiName: poi._poiName.toLowerCase()};
+            var poiSearchParams = {_poiName: pois[i]._poiName.toLowerCase()};
             var poisInfo = await db.findPois(dbClientSearcher, poiSearchParams, relevantBounds = undefined, MaxCount = 1, searchOutsideTheBounds = undefined);
             if (poisInfo) { // if poi already exist, error
                 console.log('error in createNewPois, poi already exist');
@@ -84,8 +84,8 @@ async function createNewPois(pois) {
                 return;
             }
             // if everthing is ok
-            poiHandler(poi);
-        })
+            await poiHandler(pois[i]);
+        }
         await db.InsertPois(dbClientInsertor, pois);
     } catch (e) {
         console.error(e); 
@@ -99,7 +99,7 @@ async function editPoi(poi) {
         if (poi._delete) {
             await db.deletePoi(dbClientInsertor, poi, poi._id);
         } else {
-            poiHandler(poi)
+            await poiHandler(poi)
             await db.editPoi(dbClientInsertor, poi, poi._id);
         }
     } catch (e) {

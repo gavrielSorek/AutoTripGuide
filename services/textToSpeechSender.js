@@ -1,5 +1,5 @@
 
-var tokenGetter = require("./services/serverTokenGetter");
+var tokenGetter = require("./serverTokenGetter");
 var XMLHttpRequest = require('xhr2');
 // Imports the Google Cloud client library
 // const client = new textToSpeech.TextToSpeechClient();
@@ -9,15 +9,16 @@ let fs = require("fs");
 const gTTS = require('gtts');
 var gtts = require('node-gtts')('en');
 var path = require('path');
+const serverCommunication = require("./serverCommunication");
 
  //const serverUrl = 'https://autotripguide.loca.lt';
-
+//const serverUrl = serverCommunication.getServerUrl()
 const serverUrl = 'http://localhost:5500'
-
 
 //init
 var globalTokenAndPermission = undefined
 
+var globalIsTextToSpechWorking =false;
 
 async function init() {
     globalTokenAndPermission = await tokenGetter.getToken('crawler@gmail.com', '1234', serverUrl)
@@ -45,7 +46,7 @@ async function getPoisWithNoVoice() {
     const poisPromise = new Promise((resolve, reject) => {
         Http.onreadystatechange = (e) => {
             if(Http.readyState == 4 && Http.status == 553) { //if no permission
-                communication.openLoginPage()
+                console.log('failed')
             } else if (Http.readyState == 4) { //if the operation is complete.
                 var response = Http.responseText
                 if (response.length > 0) {
@@ -93,7 +94,7 @@ async function updatePoiOnServer(poi) {
     Http.onerror = function (e) {
         console.log(e);
     };
-    const url = serverUrl +'/editPois';
+    const url = serverUrl +'editPois';
     // const url = '/editPois';
     Http.open("POST", url);
     Http.withCredentials = false;
@@ -129,6 +130,7 @@ async function updatePoiOnServer(poi) {
 }
 
 async function handleAllPois() {
+    globalIsTextToSpechWorking = true;
     var poisWithNoVoice = await getPoisWithNoVoice();
 
     for (var i =0; i < poisWithNoVoice.length; i++)
@@ -161,6 +163,7 @@ async function main() {
     console.log('start text to speech')
     await init();
     await handleAllPois();
+    globalIsTextToSpechWorking = false;
     console.log('finished')
 }
 main();
@@ -174,4 +177,7 @@ addTokensToObject = function (object) {
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+function isTextToSpeechWorking() {
+    return globalIsTextToSpechWorking
 }
