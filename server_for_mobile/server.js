@@ -3,6 +3,7 @@ const db = require("./db");
 const onlinePoisFinder = require("./onlinePoisFinder");
 const serverCommunication = require("../services/serverCommunication");
 var tokenGetter = require("../services/serverTokenGetter");
+var textToSpeech = require("../services/textToSpeechSender");
 
 const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
@@ -34,7 +35,7 @@ async function init() {
         await dbClientAudio.connect();
         globaltokenAndPermission = await tokenGetter.getToken('crawler@gmail.com', '1234', serverCommunication.getServerUrl()) //get tokens and permissions for web server
         console.log("Connected to search DB")
-        //tryModule()
+        // tryModule()
         
     } catch (e) {
         console.error(e); 
@@ -67,9 +68,14 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
 
  async function updateDbWithOnlinePois(bounds, language) {
     // async call for faster rsults
-    onlinePoisFinder.getPoisList(bounds, language,(poi)=>{
+    await onlinePoisFinder.getPoisList(bounds, language,(poi)=>{
         serverCommunication.sendPoisToServer([poi], globaltokenAndPermission)
-    }); //TODO change language to user language
+    }); 
+    if (!textToSpeech.isTextToSpeechWorking()) {
+        textToSpeech.startTextToSpeechSender();
+    }
+    
+    //TODO change language to user language
     // serverCommunication.sendPoisToServer(pois);
  }
 

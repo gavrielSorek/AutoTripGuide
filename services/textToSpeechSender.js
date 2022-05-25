@@ -1,6 +1,9 @@
 
+module.exports = {startTextToSpeechSender, isTextToSpeechWorking};
+
 var tokenGetter = require("./serverTokenGetter");
 var XMLHttpRequest = require('xhr2');
+
 // Imports the Google Cloud client library
 // const client = new textToSpeech.TextToSpeechClient();
 // var Speech = require('speak-tts') //if you use es5
@@ -94,7 +97,7 @@ async function updatePoiOnServer(poi) {
     Http.onerror = function (e) {
         console.log(e);
     };
-    const url = serverUrl +'editPois';
+    const url = serverUrl +'/editPois';
     // const url = '/editPois';
     Http.open("POST", url);
     Http.withCredentials = false;
@@ -147,7 +150,8 @@ async function handleAllPois() {
                 var res = await updatePoiOnServer(poi);
                 console.log(res)
 
-            } catch {
+            } 
+            catch {
                 console.log('error in poi ' + poi._poiName)
 
             }
@@ -157,7 +161,7 @@ async function handleAllPois() {
     handleAllPois()
 }
 
-async function main() {
+async function startTextToSpeechSender() {
     sleep(100000000) // this fixes the bug that js exit when it waits for HTTP request
 
     console.log('start text to speech')
@@ -166,7 +170,7 @@ async function main() {
     globalIsTextToSpechWorking = false;
     console.log('finished')
 }
-main();
+// startTextToSpeechSender();
 
 
 addTokensToObject = function (object) {
