@@ -1,6 +1,6 @@
 var XMLHttpRequest = require('xhr2');
 var gtts = require('node-gtts')('en');
-module.exports = { convertArrayToServerCategories, convertToServerCategories};
+module.exports = { convertArrayToServerCategories, convertToServerCategories, splitMulti};
 
 
 const serverUrl = 'https://autotripguide.loca.lt';
@@ -77,7 +77,15 @@ async function convertToServerCategories(categoriesToConvert) {
     });
     return filterServerCategories;
 }
-
+// split a string with multiple separators
+function splitMulti(str, tokens){
+    var tempChar = tokens[0]; // We can use the first token as a temporary join character
+    for(var i = 1; i < tokens.length; i++){
+        str = str.split(tokens[i]).join(tempChar);
+    }
+    str = str.split(tempChar);
+    return str;
+}
 
 
 

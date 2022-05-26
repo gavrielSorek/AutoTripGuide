@@ -2,6 +2,8 @@
 module.exports = {startTextToSpeechSender, isTextToSpeechWorking};
 
 var tokenGetter = require("./serverTokenGetter");
+var textAnalaysisTool = require("./textAnalysisTool");
+
 var XMLHttpRequest = require('xhr2');
 
 // Imports the Google Cloud client library
@@ -132,6 +134,16 @@ async function updatePoiOnServer(poi) {
 
 }
 
+async function textToVoiceWithStops(text ,language) {
+    var splitedText = textAnalaysisTool.splitMulti(text, [',', '.']);
+    var voiceBuffer = [];
+    for (var i = 0; i < splitedText.length; i++) {
+        var partialVoice = await textToVoice(splitedText[i], language);
+        voiceBuffer.push(Buffer.from(partialVoice));
+    }
+    return Buffer.concat(voiceBuffer);
+}
+
 async function handleAllPois() {
     globalIsTextToSpechWorking = true;
     var poisWithNoVoice = await getPoisWithNoVoice();
@@ -143,7 +155,7 @@ async function handleAllPois() {
             console.log('handle : ' + poi._poiName)
             poiShortDesc = poi._shortDesc.replace(/ *\([^)]*\) */g, ""); //remove parenthesis
             try {
-                poi._audio = await textToVoice(poiShortDesc ,poi._language)
+                poi._audio = await textToVoiceWithStops(poiShortDesc ,poi._language)
                 poi._audio = new Uint8Array(poi._audio)
                 console.log(poi._poiName + ' converted')
     
@@ -185,3 +197,9 @@ function sleep(ms) {
 function isTextToSpeechWorking() {
     return globalIsTextToSpechWorking
 }
+
+
+
+//______________________________________________________________________________________________________//
+// debug
+ //startTextToSpeechSender();
