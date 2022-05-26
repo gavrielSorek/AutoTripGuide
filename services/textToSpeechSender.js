@@ -64,6 +64,7 @@ async function getPoisWithNoVoice() {
                         resolve(poisInfo);
                     }
                 } else {
+                    reject("not found")
                     console.log("not found");
                 }
             } 
@@ -138,15 +139,24 @@ async function textToVoiceWithStops(text ,language) {
     var splitedText = textAnalaysisTool.splitMulti(text, [',', '.']);
     var voiceBuffer = [];
     for (var i = 0; i < splitedText.length; i++) {
-        var partialVoice = await textToVoice(splitedText[i], language);
-        voiceBuffer.push(Buffer.from(partialVoice));
+        try {
+            var partialVoice = await textToVoice(splitedText[i], language);
+            voiceBuffer.push(Buffer.from(partialVoice));
+        } catch {
+            // do nothing
+        }
     }
     return Buffer.concat(voiceBuffer);
 }
 
 async function handleAllPois() {
     globalIsTextToSpechWorking = true;
-    var poisWithNoVoice = await getPoisWithNoVoice();
+    try {
+        var poisWithNoVoice = await getPoisWithNoVoice();
+    } catch {
+        globalIsTextToSpechWorking = false;
+        return;
+    }
 
     for (var i =0; i < poisWithNoVoice.length; i++)
     {
@@ -174,12 +184,11 @@ async function handleAllPois() {
 }
 
 async function startTextToSpeechSender() {
-    sleep(100000000) // this fixes the bug that js exit when it waits for HTTP request
+    sleep(900000000) // this fixes the bug that js exit when it waits for HTTP request
 
     console.log('start text to speech')
     await init();
     await handleAllPois();
-    globalIsTextToSpechWorking = false;
     console.log('finished')
 }
 // startTextToSpeechSender();
@@ -202,4 +211,4 @@ function isTextToSpeechWorking() {
 
 //______________________________________________________________________________________________________//
 // debug
- //startTextToSpeechSender();
+//startTextToSpeechSender();
