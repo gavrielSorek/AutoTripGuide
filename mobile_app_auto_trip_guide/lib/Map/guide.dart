@@ -67,7 +67,7 @@ class Guide {
     }
     // MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
     MapPoi mapPoiElement = Globals.globalAllPois[Globals.globalUnhandledKeys[0]]!;
-    Globals.globalUnhandledKeys.removeAt(0);
+    Globals.removeUnhandledPoiKey(0);
     askPoi(mapPoiElement);
   }
 

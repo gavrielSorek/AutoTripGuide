@@ -168,7 +168,6 @@ class _AudioAppState extends State<AudioApp> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     return Center(
       child: Center(
         child: Column(

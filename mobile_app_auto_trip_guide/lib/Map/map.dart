@@ -6,6 +6,7 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
 import 'package:final_project/Map/types.dart';
+import '../UsefulWidgets/progress_indicator.dart';
 import 'guide.dart';
 
 class UserMap extends StatefulWidget {
@@ -73,6 +74,8 @@ class _UserMapState extends State<UserMap> {
   late Guide guideTool;
   WidgetVisibility navButtonState = WidgetVisibility.hide;
   WidgetVisibility nextButtonState = WidgetVisibility.hide;
+  WidgetVisibility loadingPois = WidgetVisibility.view;
+
 
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
@@ -138,7 +141,7 @@ class _UserMapState extends State<UserMap> {
           if (!Globals.globalAllPois.containsKey(poi.id)) {
             MapPoi mapPoi = MapPoi(poi);
             Globals.globalAllPois[poi.id] = mapPoi;
-            Globals.globalUnhandledKeys.add(poi.id);
+            Globals.addUnhandledPoiKey(poi.id);
             Globals.globalPoisIdToMarkerIdx[poi.id] = markersList.length;
             markersList.add(mapPoi.marker!);
           }
@@ -224,6 +227,18 @@ class _UserMapState extends State<UserMap> {
                   height: 48,
                   color: Colors.green,
                   child: Globals.globalAudioPlayer,
+                )),
+            // loader
+            AnimatedOpacity(
+                opacity: loadingPois == WidgetVisibility.view
+                    ? 1.0
+                    : 0.0,
+                duration: const Duration(milliseconds: 500),
+                child: Container(
+                  width: 128,
+                  height: 59,
+                  color: Colors.transparent,
+                  child: const UserProgressIndicator(),
                 )),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

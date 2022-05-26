@@ -27,6 +27,19 @@ class Globals {
   static MapPoi? mainMapPoi; // spoken poi
   static final globalController = Get.put(LoginController());
 
+  static void addUnhandledPoiKey(String key) {
+    if (globalUnhandledKeys.isEmpty) {
+      globalUserMap.userMapState?.loadingPois = WidgetVisibility.hide;
+    }
+    globalUnhandledKeys.add(key);
+  }
+  static void removeUnhandledPoiKey(int index) {
+    globalUnhandledKeys.removeAt(index);
+    if (globalUnhandledKeys.isEmpty) {
+      globalUserMap.userMapState?.loadingPois = WidgetVisibility.view;
+    }
+
+  }
   static setFavoriteCategories(List<String> newFavoriteCategories) {
     globalFavoriteCategories = newFavoriteCategories;
     favoriteCategoriesSet = newFavoriteCategories.toSet();
