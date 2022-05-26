@@ -93,6 +93,10 @@ class _UserMapState extends State<UserMap> {
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
     guideTool = Guide(context, guideData, Globals.globalAudioPlayer);
+    Globals.globalAudioPlayer.setOnPlayerFinishedFunc(() {
+      guideTool.stop();
+      guideTool.askNextPoi();
+    });
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       guideTool.handlePois();
     });
@@ -159,7 +163,7 @@ class _UserMapState extends State<UserMap> {
   bool isNewPoisNeeded() {
     if (isNewPoisNeededFlag) {
       isNewPoisNeededFlag = false;
-      poisNeededFlagChange(5, true);
+      poisNeededFlagChange(20, true);
       print("hello from isNewPoisNeeded");
       return true;
     }

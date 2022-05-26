@@ -1,10 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Map/events.dart';
 import '../Map/globals.dart';
 import '../Map/types.dart';
-import '../Map/globals.dart';
-import '../UsefulWidgets/AppBarTool.dart';
 
 
 class HistoryPage extends StatefulWidget {

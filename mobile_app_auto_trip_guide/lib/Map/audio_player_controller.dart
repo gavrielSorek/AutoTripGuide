@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 typedef void OnError(Exception exception);
 
 class AudioApp extends StatefulWidget {
+  dynamic onPlayerFinishedFunc;
   Uint8List byteData = Uint8List(0);
 
   void playAudio() {
@@ -19,6 +20,10 @@ class AudioApp extends StatefulWidget {
   clearPlayer() {
     // byteData = Uint8List(0);
     _audioAppState!.clearPlayer();
+  }
+
+  void setOnPlayerFinishedFunc(dynamic func) {
+    onPlayerFinishedFunc = func;
   }
 
   _AudioAppState? _audioAppState;
@@ -104,6 +109,11 @@ class _AudioAppState extends State<AudioApp> {
       // if (playerState == PlayerState.PLAYING) {
       //   setState(() => duration = newDuration);
       // }
+    });
+    audioPlayer.onPlayerCompletion.listen((event) {
+      if(widget.onPlayerFinishedFunc != null) {
+        widget.onPlayerFinishedFunc();
+      }
     });
   }
 
