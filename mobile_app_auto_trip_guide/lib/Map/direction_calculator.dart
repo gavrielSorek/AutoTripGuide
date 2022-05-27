@@ -13,7 +13,10 @@ class DirectionCalculator {
    -1: 'Undefined'
   };
 
-  static String getDirection(double lat1, double lng1, double lat2, double lng2) {
+  static String getDirection(double? lat1, double? lng1, double? lat2, double? lng2) {
+    if (lat1 == null || lng1 == null || lat2 == null || lng2 == null) {
+      return 'Undefined';
+    }
     double angle = Math.atan2(lat2 - lat1, lng2 - lng1);
     angle += Math.pi;
     angle /= Math.pi / 4;

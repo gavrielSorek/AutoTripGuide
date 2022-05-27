@@ -4,8 +4,11 @@ import 'package:final_project/Map/audio_player_controller.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
 import '../Pages/poi_reading_page.dart';
+import '../UsefulWidgets/intro_audio.dart';
 import 'dialog_box.dart';
+import 'direction_calculator.dart';
 import 'globals.dart';
+import 'map.dart';
 
 class Guide {
   BuildContext context;
@@ -32,11 +35,23 @@ class Guide {
   Future<void> handleMapPoiVoice(MapPoi mapPoi) async {
     Audio audio =
         await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id);
-
     List<int> intList = audio.audio.cast<int>().toList();
-    Uint8List byteData =
+
+    // build the poi audio
+    Uint8List poiAudioBytes =
         Uint8List.fromList(intList); // Load audio as a byte array here.
-    audioPlayer.byteData = byteData;
+    var audiBuilder = BytesBuilder();
+    String directionString = DirectionCalculator.getDirection(
+        guideDialogBox.getMapPoi()?.poi.latitude,
+        guideDialogBox.getMapPoi()?.poi.longitude,
+        UserMap.USER_LOCATION_DATA?.latitude,
+        UserMap.USER_LOCATION_DATA?.longitude);
+    Uint8List directionAudio = IntroAudio.getAudioByDirection(directionString);
+
+
+    audiBuilder.add(directionAudio);
+    audiBuilder.add(poiAudioBytes);
+    audioPlayer.byteData = audiBuilder.takeBytes();
     audioPlayer.playAudio();
   }
 
@@ -66,7 +81,8 @@ class Guide {
       return;
     }
     // MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
-    MapPoi mapPoiElement = Globals.globalAllPois[Globals.globalUnhandledKeys[0]]!;
+    MapPoi mapPoiElement =
+        Globals.globalAllPois[Globals.globalUnhandledKeys[0]]!;
     Globals.removeUnhandledPoiKey(0);
     askPoi(mapPoiElement);
   }
@@ -109,7 +125,6 @@ class Guide {
     lastMapPoiHandled = mapPoi;
   }
 
-
   void postPoiHandling() {
     // if (Globals.globalUnhandledPois.isNotEmpty && state == GuideState.waiting) {
     //   askNextPoi();
@@ -119,6 +134,7 @@ class Guide {
     //   }
     // }
   }
+
   void guideStateChanged() {
     if (state == GuideState.working) {
       stop();
@@ -128,15 +144,20 @@ class Guide {
 
   String getTime() {
     DateTime now = new DateTime.now();
-    DateTime date = new DateTime(now.year, now.month, now.day, now.hour, now.minute);
-    String dateToday = date.toString().substring(0,16);
+    DateTime date =
+        DateTime(now.year, now.month, now.day, now.hour, now.minute);
+    String dateToday = date.toString().substring(0, 16);
     return dateToday;
   }
 
   void onUserClickedOk() {
     handleMapPoi(guideDialogBox.getMapPoi()!);
     guideDialogBox.hideDialog();
-    VisitedPoi currentPoi = VisitedPoi(id: guideDialogBox.getMapPoi()!.poi.id, poiName: guideDialogBox.getMapPoi()?.poi.poiName, time: getTime(), pic: guideDialogBox.getMapPoi()?.poi.pic);
+    VisitedPoi currentPoi = VisitedPoi(
+        id: guideDialogBox.getMapPoi()!.poi.id,
+        poiName: guideDialogBox.getMapPoi()?.poi.poiName,
+        time: getTime(),
+        pic: guideDialogBox.getMapPoi()?.poi.pic);
     Globals.globalVisitedPoi.add(currentPoi);
     Globals.globalServerCommunication.insertPoiToHistory(currentPoi);
   }
@@ -146,7 +167,6 @@ class GuideDialogBox extends StatefulWidget {
   dynamic onPressOk, onPressNext, onLoadingFinished;
   int loadingAnimationTime = 10; // default
   bool stopLoading = false;
-
 
   GuideDialogBox(
       {Key? key,
@@ -189,7 +209,6 @@ class GuideDialogBox extends StatefulWidget {
   void startLoading() {
     guideDialogBoxState?.startLoading();
   }
-
 
   @override
   _GuideDialogBoxState createState() {
