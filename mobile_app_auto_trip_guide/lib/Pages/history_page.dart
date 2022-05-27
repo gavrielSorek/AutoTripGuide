@@ -12,6 +12,7 @@ class HistoryPage extends StatefulWidget {
 
 class _HistoryPageState extends State<HistoryPage> {
   List<VisitedPoi> visitedPoisList = Globals.globalVisitedPoi;
+  int visitedPoisListLength = Globals.globalVisitedPoi.length;
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +24,10 @@ class _HistoryPageState extends State<HistoryPage> {
               leading: CircleAvatar(backgroundColor: Colors.transparent, child: ClipRRect(
                                 borderRadius:
                                 const BorderRadius.all(Radius.circular(15)),
-                                child: Image.network(visitedPoisList[index].pic ?? ""),
+                                child: Image.network(visitedPoisList[visitedPoisListLength - index].pic ?? ""),
                               )),
-              title: Text(visitedPoisList[index].poiName ?? "https://assets.hyatt.com/content/dam/hyatt/hyattdam/images/2019/02/07/1127/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.jpg/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.16x9.jpg"),
-              subtitle: Text(visitedPoisList[index].time),
+              title: Text(visitedPoisList[visitedPoisListLength - index].poiName ?? "https://assets.hyatt.com/content/dam/hyatt/hyattdam/images/2019/02/07/1127/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.jpg/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.16x9.jpg"),
+              subtitle: Text(visitedPoisList[visitedPoisListLength - index].time),
             );
           },
           separatorBuilder: (BuildContext,index)
