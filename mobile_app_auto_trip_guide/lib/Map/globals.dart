@@ -90,11 +90,11 @@ class Globals {
   }
 
   // get distance of poi from user
-  static int getDistanceInKm(String id) {
+  static double getDistanceInKm(String id) {
     LocationData? userLocation = UserMap.USER_LOCATION_DATA;
     double latitude = globalAllPois[id]!.poi.latitude;
     double longitude = globalAllPois[id]!.poi.longitude;
-    int dist = calculateDistance(userLocation?.latitude ?? latitude, userLocation?.longitude ?? longitude, latitude, longitude).round();
+    double dist = calculateDistance(userLocation?.latitude ?? latitude, userLocation?.longitude ?? longitude, latitude, longitude);
     return dist;
   }
 
@@ -102,8 +102,8 @@ class Globals {
   static int getPreferenceScore(String id) {
     List<String> categories = globalAllPois[id]!.poi.Categories;
     int intersections = favoriteCategoriesSet.intersection(categories.toSet()).length;
-    int totalCategoriesLength = globalCategories?.length ?? 0;
-    return totalCategoriesLength - intersections;
+    int favoriteCategoriesLength = favoriteCategoriesSet.length;
+    return favoriteCategoriesLength - intersections;
   }
 
   // sort pois by user Preferences
@@ -118,12 +118,12 @@ class Globals {
 
   // sort pois by weighted score of preferences and distance
   static int sortPoisByWeightedScore(String idA, String idB) {
-    int distanceA = getDistanceInKm(idA);
-    int distanceB = getDistanceInKm(idB);
+    double distanceA = getDistanceInKm(idA);
+    double distanceB = getDistanceInKm(idB);
     int preferencesScoreA = getPreferenceScore(idA);
     int preferencesScoreB = getPreferenceScore(idB);
-    int weightedScoreA = (0.7 * distanceA + 0.3 * preferencesScoreA).round();
-    int weightedScoreB = (0.7 * distanceB + 0.3 * preferencesScoreB).round();
-    return weightedScoreB - weightedScoreA;
+    int weightedScoreA = ((0.7 * distanceA + 0.3 * preferencesScoreA) * 1000).round();
+    int weightedScoreB = ((0.7 * distanceB + 0.3 * preferencesScoreB) * 1000).round();
+    return weightedScoreA - weightedScoreB;
   }
 }
