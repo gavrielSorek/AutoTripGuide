@@ -90,6 +90,7 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
             ),
           ],),
         body: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height:MediaQuery.of(context).size.height / 20),
             Text("Choose your favorite categories", style: TextStyle(
@@ -97,19 +98,27 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
                 fontSize: 20),
                 ),
             SizedBox(height:MediaQuery.of(context).size.height / 20),
-            Wrap( // menu row
-              spacing: 8,
-              direction: Axis.horizontal,
-              children:
-              buildCategoriesChips(),
+            Container(
+              height: MediaQuery.of(context).size.height / 1.75,
+              margin: const EdgeInsets.only(bottom: 20.0),
+              child: ListView(
+                  primary: true,
+                  shrinkWrap: true,
+                  children: <Widget>[
+                    Wrap( // menu row
+                      spacing: 4,
+                      runSpacing: 0.0,
+                      //direction: Axis.horizontal,
+                      children:
+                      buildCategoriesChips(),
+                    )]),
             ),
-            SizedBox(height:MediaQuery.of(context).size.height / 3.5),
             const Spacer(),
             Row( // menu row
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
-                  margin: const EdgeInsets.only(bottom: 20.0),
+                  margin: const EdgeInsets.only(bottom: 35.0),
                   child: buildApplyButton(context),
                 )
               ],
