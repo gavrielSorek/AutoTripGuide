@@ -24,6 +24,10 @@ class AudioApp extends StatefulWidget {
     _audioAppState?.stop();
   }
 
+  void pauseAudio() {
+    _audioAppState?.pause();
+  }
+
   clearPlayer() {
     // byteData = Uint8List(0);
     _audioAppState!.clearPlayer();

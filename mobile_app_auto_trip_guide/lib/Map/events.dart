@@ -28,18 +28,21 @@ void mapButtonLongClickedEvent(BuildContext context) {
 }
 
 void accountButtonClickedEvent(BuildContext context) {
+  Globals.globalAudioPlayer.pauseAudio();
   returnToHomePage(context);
   Navigator.of(context)
       .push(MaterialPageRoute(builder: (context) => AccountPage()));
 }
 
 void reviewsButtonClickedEvent(BuildContext context) {
+  Globals.globalAudioPlayer.pauseAudio();
   returnToHomePage(context);
   Navigator.of(context)
       .push(MaterialPageRoute(builder: (context) => HistoryPage()));
 }
 
 void settingButtonClickedEvent(BuildContext context) {
+  Globals.globalAudioPlayer.pauseAudio();
   returnToHomePage(context);
   Navigator.of(context)
       .push(MaterialPageRoute(builder: (context) => SettingsPage()));
