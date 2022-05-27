@@ -41,7 +41,7 @@ async function getPoisList(bounds, language, onSinglePoiFound = undefined) {
             _UpdatedBy : "online pois finder",
             _LastUpdatedDate : getTodayDate(),
             _country : geo.getCountry(fullPoi.point['lat'], fullPoi.point['lon']),
-            _Categories : await textAnalysisTool.convertArrayToServerCategories(await wikiTool.getPoiWikiCategoriesByName(fullPoi.name)),
+            _Categories : await textAnalysisTool.convertToServerCategories(fullPoi.kinds),
             _pic : await internetServices.nameToPicUrl(fullPoi.name)
         }
         pois.push(poi);
@@ -82,7 +82,7 @@ function getTodayDate(){
 // debug
 
 function getBounds(){
-    user_data = {lat : 32.1245, lng : 34.7954} 
+    user_data = {lat : 32.0787778, lng : 34.775215} 
     var epsilon = 0.02
     var relevantBounds = {}
     relevantBounds['southWest'] = {lat : user_data.lat - epsilon, lng : user_data.lng - epsilon}
@@ -96,4 +96,4 @@ async function tryModule() {
     console.log(data);
     
 }
-// tryModule();
+tryModule();

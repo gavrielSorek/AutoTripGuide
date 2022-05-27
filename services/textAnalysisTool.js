@@ -63,6 +63,7 @@ async function convertArrayToServerCategories(categoriesToConvert) {
     return await convertToServerCategories(categoriesStr)
 
 }
+
 async function convertToServerCategories(categoriesToConvert) {
     if (!globalServerCategories) {
             globalServerCategories = await getServerCategories();
@@ -73,6 +74,14 @@ async function convertToServerCategories(categoriesToConvert) {
         category = element.toLowerCase();
         if(categoriesToConvert.includes(category)) {
             filterServerCategories.push(element);
+        } else if(category.indexOf(' ') >= 0) { //the category name include more than one word
+            const categoryArray = category.split(" ");
+            for(var i=0; i<categoryArray.length; i++) {
+                if(categoriesToConvert.includes(categoryArray[i])) {
+                    filterServerCategories.push(element);
+                    return;
+                }
+            }
         }
     });
     return filterServerCategories;
@@ -110,10 +119,10 @@ async function textToVoice(text, language = undefined) {
 // debug
 
 // async function main() {
-//     // var debugCategories = ['buildings', 'museums in Israel'];
-//     // var categories = await convertArrayToServerCategories(debugCategories);
-//     // console.log(categories);
-//     var voice = await textToVoice('hello world');
+//     var debugCategories = ['Geological', 'Bridges'];
+//     var categories = await convertArrayToServerCategories(debugCategories);
+//     console.log(categories);
+//     //var voice = await textToVoice('hello world');
 // }
 
-// main()
+//main()
