@@ -48,10 +48,9 @@ class Guide {
         guideDialogBox.getMapPoi()?.poi.latitude,
         guideDialogBox.getMapPoi()?.poi.longitude);
     Uint8List directionAudio = IntroAudio.getAudioByDirection(directionString);
-
     audiBuilder.add(directionAudio);
     audiBuilder.add(poiAudioBytes);
-    audioPlayer.byteData = audiBuilder.takeBytes();
+    audioPlayer.setAudioBytes(audiBuilder.takeBytes());
     audioPlayer.playAudio();
   }
 

@@ -9,6 +9,13 @@ class AudioApp extends StatefulWidget {
   dynamic onPlayerFinishedFunc;
   Uint8List byteData = Uint8List(0);
 
+  void setAudioBytes(Uint8List audioBytes) {
+    byteData = audioBytes;
+    if (byteData.isNotEmpty ) {
+      _audioAppState?.setPlayButtonColor(Colors.cyan);
+    }
+  }
+
   void playAudio() {
     _audioAppState?.play();
   }
@@ -42,6 +49,7 @@ class _AudioAppState extends State<AudioApp> {
   Icon pauseIcon = Icon(Icons.pause);
   Icon playPauseIcon = Icon(Icons.play_arrow); // default
   AudioPlayer audioPlayer = AudioPlayer();
+  Color playButtonColor = Colors.grey;
 
   PlayerState playerState = PlayerState.STOPPED;
 
@@ -60,6 +68,11 @@ class _AudioAppState extends State<AudioApp> {
   late StreamSubscription _positionSubscription;
   late StreamSubscription _audioPlayerStateSubscription;
 
+  void setPlayButtonColor(Color color) {
+    setState(() {
+      playButtonColor = color;
+    });
+  }
   void clearPlayer() {
     stop();
   }
@@ -201,7 +214,7 @@ class _AudioAppState extends State<AudioApp> {
             },
             iconSize: 30.0,
             icon: playPauseIcon,
-            color: Colors.cyan,
+            color: playButtonColor,
           ),
           // IconButton(
           //   onPressed: isPlaying || isPaused ? () => stop() : null,
