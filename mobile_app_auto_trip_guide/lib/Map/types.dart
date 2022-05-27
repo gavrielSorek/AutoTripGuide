@@ -2,8 +2,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-
 import 'globals.dart';
+
+extension StringExtension on String {
+  String capitalizeTotalString() {
+    String capitalizedString = "";
+    List<String> stringArray = this.split(" ");
+    for(int i=0; i<stringArray.length; i++) {
+      String capitalizedPartName = stringArray[i].capitalize();
+      capitalizedString += capitalizedPartName + " ";
+    }
+    return capitalizedString;
+  }
+
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1).toLowerCase()}";
+  }
+}
 
 class UserInfo {
   String? name;
@@ -86,9 +101,12 @@ class Poi {
     if (picUrl == 'no pic') {
       picUrl = "https://image.shutterstock.com/image-photo/no-photography-allowed-on-white-260nw-139998481.jpg";
     }
+    String poiName = json['_poiName'] as String;
+    String capitalizedPoiName = poiName.capitalizeTotalString();
+
     return Poi(
       id: json['_id'] as String,
-      poiName: json['_poiName'] as String,
+      poiName: capitalizedPoiName,
       latitude: json['_latitude'] as double,
       longitude: json['_longitude'] as double,
       shortDesc: (json['_shortDesc'] ?? "?") as String,
