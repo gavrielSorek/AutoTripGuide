@@ -149,7 +149,7 @@ class _UserMapState extends State<UserMap> {
       });
 
       Globals.globalUnhandledKeys
-          .sort(Globals.sortPoisByUserPreferences); //TODO improve complexity
+          .sort(Globals.sortPoisByWeightedScore); //TODO improve complexity
       // if there is new pois and guideTool waiting
       if (pois.isNotEmpty && guideTool.state == GuideState.waiting) {
         guideTool.handlePois();
