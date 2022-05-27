@@ -82,6 +82,10 @@ class Poi {
   });
 
   factory Poi.fromJson(Map<String, dynamic> json) {
+    String picUrl = (json['_pic'] ?? "https://image.shutterstock.com/image-photo/no-photography-allowed-on-white-260nw-139998481.jpg") as String;
+    if (picUrl == 'no pic') {
+      picUrl = "https://image.shutterstock.com/image-photo/no-photography-allowed-on-white-260nw-139998481.jpg";
+    }
     return Poi(
       id: json['_id'] as String,
       poiName: json['_poiName'] as String,
@@ -97,7 +101,7 @@ class Poi {
       UpdatedBy: (json['_UpdatedBy'] ?? "?") as String,
       LastUpdatedDate: (json['_LastUpdatedDate'] ?? "?") as String,
       country: (json['_country'] ?? "?") as String,
-      pic: (json['_pic'] ?? "https://image.shutterstock.com/image-photo/no-photography-allowed-on-white-260nw-139998481.jpg") as String,
+      pic: picUrl,
       Categories: ((json['_Categories'] ?? []) as List<dynamic>).cast<String>());
   }
 }
