@@ -20,14 +20,15 @@ class _HistoryPageState extends State<HistoryPage> {
         appBar: buildAppBar(context),
         body: ListView.separated(
           itemBuilder: (BuildContext, index){
+            int position = visitedPoisListLength - index - 1;
             return ListTile(
               leading: CircleAvatar(backgroundColor: Colors.transparent, child: ClipRRect(
                                 borderRadius:
                                 const BorderRadius.all(Radius.circular(15)),
-                                child: Image.network(visitedPoisList[visitedPoisListLength - index].pic ?? ""),
+                                child: Image.network(visitedPoisList[position].pic ?? ""),
                               )),
-              title: Text(visitedPoisList[visitedPoisListLength - index].poiName ?? "https://assets.hyatt.com/content/dam/hyatt/hyattdam/images/2019/02/07/1127/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.jpg/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.16x9.jpg"),
-              subtitle: Text(visitedPoisList[visitedPoisListLength - index].time),
+              title: Text(visitedPoisList[position].poiName ?? "https://assets.hyatt.com/content/dam/hyatt/hyattdam/images/2019/02/07/1127/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.jpg/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.16x9.jpg"),
+              subtitle: Text(visitedPoisList[position].time),
             );
           },
           separatorBuilder: (BuildContext,index)

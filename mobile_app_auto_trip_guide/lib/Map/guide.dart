@@ -41,13 +41,13 @@ class Guide {
     Uint8List poiAudioBytes =
         Uint8List.fromList(intList); // Load audio as a byte array here.
     var audiBuilder = BytesBuilder();
-    String directionString = DirectionCalculator.getDirection(
-        guideDialogBox.getMapPoi()?.poi.latitude,
-        guideDialogBox.getMapPoi()?.poi.longitude,
-        UserMap.USER_LOCATION_DATA?.latitude,
-        UserMap.USER_LOCATION_DATA?.longitude);
-    Uint8List directionAudio = IntroAudio.getAudioByDirection(directionString);
 
+    String directionString = DirectionCalculator.getDirection(
+        UserMap.USER_LOCATION_DATA?.latitude,
+        UserMap.USER_LOCATION_DATA?.longitude,
+        guideDialogBox.getMapPoi()?.poi.latitude,
+        guideDialogBox.getMapPoi()?.poi.longitude);
+    Uint8List directionAudio = IntroAudio.getAudioByDirection(directionString);
 
     audiBuilder.add(directionAudio);
     audiBuilder.add(poiAudioBytes);

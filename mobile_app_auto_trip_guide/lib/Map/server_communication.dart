@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:final_project/Map/types.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
@@ -11,7 +10,7 @@ class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
   // String serverUrl = "autotripguidemobile.loca.lt";
 
-  String serverUrl = "ed98-84-94-109-213.ngrok.io";
+  String serverUrl = "8a36-77-126-119-128.ngrok.io";
 
   var client = RetryClient(http.Client());
 
@@ -271,6 +270,7 @@ class ServerCommunication {
       'poiName': visitedPoi.poiName.toString(),
       'time': visitedPoi.time.toString(),
       'pic' : visitedPoi.pic.toString(),
+      'emailAddr': Globals.globalEmail
     };
     final uri = Uri.https(url, path, queryParameters);
     return uri;
