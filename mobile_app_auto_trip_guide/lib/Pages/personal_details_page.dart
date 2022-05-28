@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Map/globals.dart';
 import '../Map/types.dart';
+import 'account_page.dart';
 
 class PersonalDetailsPage extends StatelessWidget {
   PersonalDetailsPage({Key? key}) : super(key: key);
@@ -17,9 +18,10 @@ class PersonalDetailsPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 32),
         physics: const BouncingScrollPhysics(),
         children: [
+          const SizedBox(height: 15),
           ProfileWidget(
             imagePath:
-                Globals.globalController.googleAccount.value?.photoUrl ?? '',
+                Globals.globalController.googleAccount.value?.photoUrl ?? "",
             onClicked: () async {},
           ),
           const SizedBox(height: 15),
@@ -94,7 +96,7 @@ class PersonalDetailsPage extends StatelessWidget {
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
-    title: const Text('Personal details'),
+    title: const Text('Personal Detail'),
     centerTitle: true,
     leading: const BackButton(),
     elevation: 0,
@@ -107,7 +109,7 @@ ElevatedButton buildApplyButton(BuildContext context) {
     onPressed: () {
       Globals.globalServerCommunication.updateUserInfo();
       const snackBar = SnackBar(
-        content: Text('Your Favorite Categories Saved!'),
+        content: Text('Your Personal Detail Saved!'),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     },
@@ -119,82 +121,6 @@ ElevatedButton buildApplyButton(BuildContext context) {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
   );
-}
-
-class ProfileWidget extends StatelessWidget {
-  final String imagePath;
-  final VoidCallback onClicked;
-
-  const ProfileWidget({
-    Key? key,
-    required this.imagePath,
-    required this.onClicked,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.primary;
-
-    return Center(
-      child: Stack(
-        children: [
-          buildImage(),
-        ],
-      ),
-    );
-  }
-
-  Widget buildImage() {
-    if (imagePath == "") {
-      return const ClipOval(
-        child: Material(
-          color: Colors.transparent,
-        ),
-      );
-    }
-
-    final image = NetworkImage(imagePath);
-
-    return ClipOval(
-      child: Material(
-        color: Colors.transparent,
-        child: Ink.image(
-          image: image,
-          fit: BoxFit.cover,
-          width: 128,
-          height: 128,
-          child: InkWell(onTap: onClicked),
-        ),
-      ),
-    );
-  }
-
-  Widget buildEditIcon(Color color) => buildCircle(
-        color: Colors.white,
-        all: 3,
-        child: buildCircle(
-          color: color,
-          all: 8,
-          child: const Icon(
-            Icons.edit,
-            color: Colors.white,
-            size: 20,
-          ),
-        ),
-      );
-
-  Widget buildCircle({
-    required Widget child,
-    required double all,
-    required Color color,
-  }) =>
-      ClipOval(
-        child: Container(
-          padding: EdgeInsets.all(all),
-          color: color,
-          child: child,
-        ),
-      );
 }
 
 class TextFieldWidget extends StatefulWidget {
