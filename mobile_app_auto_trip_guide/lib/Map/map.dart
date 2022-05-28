@@ -235,7 +235,6 @@ class _UserMapState extends State<UserMap> {
                     : 0.0,
                 duration: const Duration(milliseconds: 500),
                 child: Container(
-                  width: 128,
                   height: 59,
                   color: Colors.transparent,
                   child: const UserProgressIndicator(),
