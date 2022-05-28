@@ -5,6 +5,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'dart:math';
 
 typedef void OnError(Exception exception);
 
@@ -14,7 +15,7 @@ class AudioApp extends StatefulWidget {
 
   void setAudioBytes(Uint8List audioBytes) {
     byteData = audioBytes;
-    if (byteData.isNotEmpty ) {
+    if (byteData.isNotEmpty) {
       _audioAppState?.setPlayButtonColor(Colors.cyan);
     }
   }
@@ -75,10 +76,10 @@ class _AudioAppState extends State<AudioApp> {
   late StreamSubscription _positionSubscription;
   late StreamSubscription _audioPlayerStateSubscription;
 
-  Future<String> saveAudioBytesToLocalFile(Uint8List byteData) async{
+  Future<String> saveAudioBytesToLocalFile(Uint8List byteData) async {
     final directory = await getApplicationDocumentsDirectory();
     final path = directory.path;
-    File file =  File('$path/myAudio.mp3');
+    File file = File('$path/myAudio.mp3');
     await file.writeAsBytes(byteData);
     return file.path;
   }
@@ -88,6 +89,7 @@ class _AudioAppState extends State<AudioApp> {
       playButtonColor = color;
     });
   }
+
   void clearPlayer() {
     stop();
   }
@@ -242,17 +244,16 @@ class _AudioAppState extends State<AudioApp> {
           //   icon: Icon(Icons.stop),
           //   color: Colors.cyan,
           // ),
-          if (duration != null)
-            Expanded(
-              child: Slider(
-                  value: position.inMilliseconds.toDouble(),
-                  onChanged: (double value) {
-                    audioPlayer.seek(Duration(milliseconds: value.round()));
-                  },
-                  min: 0.0,
-                  max: duration.inMilliseconds.toDouble()),
-            ),
-          if (position != null) _buildProgressView()
+          Expanded(
+            child: Slider(
+                value: position.inMilliseconds.toDouble(),
+                onChanged: (double value) {
+                  audioPlayer.seek(Duration(milliseconds: value.round()));
+                },
+                min: 0.0,
+                max: duration > position ? duration.inMilliseconds.toDouble() : position.inMilliseconds.toDouble()),
+          ),
+          _buildProgressView()
         ]),
       );
 
@@ -261,7 +262,7 @@ class _AudioAppState extends State<AudioApp> {
             margin: const EdgeInsets.only(left: 10.0, right: 10.0),
             child: Text(
               position != null
-                  ? "${positionText ?? ''} / ${durationText ?? ''}"
+                  ? "${positionText ?? ''} / ${(duration > position ? durationText: positionText)  ?? ''}"
                   : duration != null
                       ? durationText
                       : '',
