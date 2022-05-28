@@ -25,7 +25,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.505998861423-mihg5teej0n9ba48d7t5qbe1l7rotb0k</string>
+				<string>com.googleusercontent.apps.141959691870-me9msoi1adrn75p22klneo9h962sms15</string>
 			</array>
 		</dict>
 	</array>
@@ -57,6 +57,11 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+    <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>
         <true/>

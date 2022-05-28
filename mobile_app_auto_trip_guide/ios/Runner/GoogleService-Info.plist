@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>505998861423-mihg5teej0n9ba48d7t5qbe1l7rotb0k.apps.googleusercontent.com</string>
+	<string>141959691870-me9msoi1adrn75p22klneo9h962sms15.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.505998861423-mihg5teej0n9ba48d7t5qbe1l7rotb0k</string>
+	<string>com.googleusercontent.apps.141959691870-me9msoi1adrn75p22klneo9h962sms15</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>505998861423-2g2qsr209290oolmcsn7ejld6k642112.apps.googleusercontent.com</string>
+	<string>141959691870-bgt7711rfbosifs7tv4n1qoesfmlvte6.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAq0bpp6yr4ZC8tJbeT6v6EqTf08aosUnU</string>
+	<string>AIzaSyC_4r7EKviQP64pCwl5VuM-JSjwKtQsI7E</string>
 	<key>GCM_SENDER_ID</key>
-	<string>505998861423</string>
+	<string>141959691870</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.finalProject</string>
+	<string>net.codex.fluttersignin</string>
 	<key>PROJECT_ID</key>
-	<string>auto-trip-guide-auth</string>
+	<string>auto-trip-guide</string>
 	<key>STORAGE_BUCKET</key>
-	<string>auto-trip-guide-auth.appspot.com</string>
+	<string>auto-trip-guide.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:505998861423:ios:4499f4339c70463bded99a</string>
+	<string>1:141959691870:ios:186e4990c6a1fd45b17ecf</string>
 </dict>
 </plist>
