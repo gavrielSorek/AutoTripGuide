@@ -33,6 +33,7 @@ class AutoGuideApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: generateMaterialColor(Color.fromRGBO(38, 77, 115,1.0)),
+        fontFamily: 'Roboto',
       ),
       home: LoginPage(), //const HomePage()
     );
