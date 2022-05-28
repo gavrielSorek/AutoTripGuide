@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 typedef void OnError(Exception exception);
 
@@ -72,6 +75,14 @@ class _AudioAppState extends State<AudioApp> {
   late StreamSubscription _positionSubscription;
   late StreamSubscription _audioPlayerStateSubscription;
 
+  Future<String> saveAudioBytesToLocalFile(Uint8List byteData) async{
+    final directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+    File file =  File('$path/myAudio.mp3');
+    await file.writeAsBytes(byteData);
+    return file.path;
+  }
+
   void setPlayButtonColor(Color color) {
     setState(() {
       playButtonColor = color;
@@ -139,7 +150,12 @@ class _AudioAppState extends State<AudioApp> {
     if (isPaused) {
       await audioPlayer.resume();
     } else {
-      await audioPlayer.playBytes(widget.byteData);
+      if (Platform.isAndroid) {
+        await audioPlayer.playBytes(widget.byteData);
+      } else if (Platform.isIOS) {
+        String urlPath = await saveAudioBytesToLocalFile(widget.byteData);
+        await audioPlayer.play(urlPath, isLocal: true);
+      }
     }
     setState(() {
       playerState = PlayerState.PLAYING;
