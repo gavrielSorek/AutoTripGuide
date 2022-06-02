@@ -110,7 +110,6 @@ class AccountPage extends StatelessWidget {
             SizedBox(height: MediaQuery.of(context).size.height / 50),
             buildCard("Favorite Categories", context),
             Spacer(),
-            const Toolbar(),
           ],
         ));
   }

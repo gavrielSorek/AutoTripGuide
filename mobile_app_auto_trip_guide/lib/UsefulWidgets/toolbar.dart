@@ -1,50 +1,45 @@
 import 'package:final_project/Map/events.dart';
+import 'package:final_project/Pages/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Toolbar extends StatelessWidget {
-  const Toolbar({Key? key}) : super(key: key);
+import '../Pages/account_page.dart';
+import '../Pages/history_page.dart';
+
+class ToolbarWidget extends StatefulWidget {
+  const ToolbarWidget({Key? key}) : super(key: key);
+
+  @override
+  Toolbar createState() => Toolbar();
+}
+
+class Toolbar extends State<ToolbarWidget> {
+  int _selectedScreenIndex = 0;
+  final List _screens = [
+    {"screen":  HomePage(), "title": "Screen A Title"},
+    {"screen":  AccountPage(), "title": "Screen B Title"},
+    {"screen":  HistoryPage(), "title": "Screen B Title"}
+  ];
+
+  void _selectScreen(int index) {
+    setState(() {
+      _selectedScreenIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      // menu row
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        Container(
-          child: ElevatedButton(
-            onPressed: () => mapButtonClickedEvent(context),
-            child: Icon(Icons.map),
-            onLongPress: () => mapButtonLongClickedEvent(context),
-          ),
-          height: MediaQuery.of(context).size.height / 11,
-          width: MediaQuery.of(context).size.width / 4,
-        ),
-        Container(
-          child: ElevatedButton(
-            onPressed: () => accountButtonClickedEvent(context),
-            child: Icon(Icons.account_box_outlined),
-          ),
-          height: MediaQuery.of(context).size.height / 11,
-          width: MediaQuery.of(context).size.width / 4,
-        ),
-        Container(
-          child: ElevatedButton(
-            onPressed: () => reviewsButtonClickedEvent(context),
-            child: Icon(Icons.rate_review),
-          ),
-          height: MediaQuery.of(context).size.height / 11,
-          width: MediaQuery.of(context).size.width / 4,
-        ),
-        Container(
-          child: ElevatedButton(
-            onPressed: () => settingButtonClickedEvent(context),
-            child: Icon(Icons.settings),
-          ),
-          height: MediaQuery.of(context).size.height / 11,
-          width: MediaQuery.of(context).size.width / 4,
-        ),
-      ],
+    return Scaffold(
+      body: _screens[_selectedScreenIndex]["screen"],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedScreenIndex,
+        onTap: _selectScreen,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_box_outlined), label: "Account"),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: "History")
+        ],
+      ),
     );
   }
 }

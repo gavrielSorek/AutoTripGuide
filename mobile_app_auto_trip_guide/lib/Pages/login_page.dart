@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:final_project/Pages/home_page.dart';
 import '../Map/globals.dart';
 import '../Map/types.dart';
+import '../UsefulWidgets/toolbar.dart';
 
 
 class LoginPage extends StatelessWidget {
@@ -17,7 +18,7 @@ class LoginPage extends StatelessWidget {
               return buildNewLogin();
             } else {
               addUser();
-              return HomePage();
+              return const ToolbarWidget();
             }
           })
       ),

@@ -30,9 +30,8 @@ class HomePage extends StatelessWidget {
                 child: Container(
                   child: Globals.globalUserMap,
                 )),
-            const Toolbar(),
           ],
-        )
+        ),
     );
   }
 }

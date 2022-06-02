@@ -44,7 +44,6 @@ class _HistoryPageState extends State<HistoryPage> {
             padding: const EdgeInsets.all(5),
             scrollDirection: Axis.vertical,
           )),
-          const Toolbar()
         ]));
   }
 
