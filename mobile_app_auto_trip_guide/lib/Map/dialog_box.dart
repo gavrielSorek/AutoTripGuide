@@ -2,13 +2,13 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 
 class Constants {
   Constants._();
 
   static const double padding = 20;
   static const double avatarRadius = 45;
+  static const double edgesDist = 18;
 }
 
 class CustomDialogBox extends StatefulWidget {
@@ -42,21 +42,21 @@ class CustomDialogBox extends StatefulWidget {
 }
 
 class _CustomDialogBoxState extends State<CustomDialogBox> {
-  double progress = 0.11; // the smallest progress that possible
+  double progress = 0; // the smallest progress that possible
   // progress between 0 - 1
   setProgress(progress) {
     if (!mounted) {
       return; // Just do nothing if the widget is disposed.
     }
     setState(() {
-      // progress in reality can be [0.11, 1]
-      this.progress = min(1,max(progress, 0.11));
+      // progress in reality can be [0, 1]
+      this.progress = min(1,max(progress, 0));
     });
   }
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: EdgeInsets.all(0),
+      insetPadding: const EdgeInsets.all(Constants.edgesDist),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(Constants.padding),
       ),
@@ -67,6 +67,9 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
   }
 
   contentBox(context) {
+    double maxLoadingWidth = MediaQuery.of(context).size.width - 2 * Constants.edgesDist - 2 *Constants.padding;
+    double minLoadingWidth = 0;
+
     return Stack(
       children: <Widget>[
         Container(
@@ -75,7 +78,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                 top: Constants.avatarRadius + Constants.padding,
                 right: Constants.padding,
                 bottom: Constants.padding),
-            margin: EdgeInsets.only(top: Constants.avatarRadius),
+            margin: const EdgeInsets.only(top: Constants.avatarRadius),
             decoration: BoxDecoration(
                 shape: BoxShape.rectangle,
                 color: Colors.white,
@@ -83,7 +86,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                 boxShadow: const [
                   BoxShadow(
                       color: Colors.black,
-                      offset: Offset(0, 10),
+                      offset: Offset(0, 5),
                       blurRadius: 10),
                 ]),
             child: Column(children: [
@@ -94,26 +97,15 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                       left: Constants.padding,
                       right: Constants.padding,
                       top: 5,),
-                    color: Colors.black,
-                    width: progress * MediaQuery.of(context).size.width - 2 * Constants.padding,
+                    color: Colors.green,
+                    width: min(maxLoadingWidth, max(progress * MediaQuery.of(context).size.width , minLoadingWidth)),
                   ),
-                  // Container(
-                  //   padding: const EdgeInsets.only(
-                  //       left: Constants.padding,
-                  //       top: Constants.avatarRadius + Constants.padding,
-                  //       right: Constants.padding,
-                  //       bottom: Constants.padding),
-                  //   color: Colors.green,
-                  //
-                  //
-                  // )
-
                 ],
               ),
               Container(
                 padding: const EdgeInsets.only(
                     top: 5),
-                color: Colors.white,
+                color: Colors.transparent,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[

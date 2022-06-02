@@ -164,7 +164,7 @@ class Guide {
 
 class GuideDialogBox extends StatefulWidget {
   dynamic onPressOk, onPressNext, onLoadingFinished;
-  int loadingAnimationTime = 10; // default
+  int loadingAnimationTime;
   bool stopLoading = false;
 
   GuideDialogBox(
