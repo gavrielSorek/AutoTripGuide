@@ -1,16 +1,10 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:final_project/Pages/home_page.dart';
-import 'package:location/location.dart';
 import 'Map/globals.dart';
-import 'Map/map.dart';
 import 'Pages/login_page.dart';
 import 'dart:math';
-import 'package:flutter/material.dart';
 
 // inits
-
 Future<void> init() async {
   // initialization order is very important
   await Globals.init();
@@ -30,9 +24,9 @@ class AutoGuideApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Auto Trip Guide',
       theme: ThemeData(
-        primarySwatch: generateMaterialColor(Color.fromRGBO(38, 77, 115,1.0)),
+        primarySwatch: generateMaterialColor(Color.fromRGBO(97, 157, 175, 0.8)),
         fontFamily: 'Roboto',
       ),
       home: LoginPage(), //const HomePage()
