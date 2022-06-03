@@ -14,7 +14,7 @@ class LoginPage extends StatelessWidget {
       body: Center(
           child: Obx(() {
             if (Globals.globalController.googleAccount.value == null) {
-              return buildLoginWidget();
+              return buildLoginWidget(context);
             } else {
               addUser();
               return ToolbarWidget();
@@ -40,27 +40,11 @@ class LoginPage extends StatelessWidget {
      loadUserDetails();
   }
 
-  FloatingActionButton buildLoginButton() {
-    return FloatingActionButton.extended(
-      onPressed: (){
-        Globals.globalController.login();
-      },
-      icon: const Icon(
-        Icons.audiotrack,
-        size: 32.0,
-        color: Colors.green,
-      ),
-      label: const Text('Sign in with Google'),
-      backgroundColor: Colors.white,
-      foregroundColor: Colors.black,
-    );
-  }
-
-  Widget buildLoginWidget() {
+  Widget buildLoginWidget(BuildContext context) {
     return Scaffold(
       body: Container(
-          width: 1000,
-          height: 1000,
+          width: MediaQuery.of(context).size.width / 1,
+          height: MediaQuery.of(context).size.height / 1,
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/images/login_bg.jpeg"),
@@ -70,14 +54,18 @@ class LoginPage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height:80 ,),
-            Image.asset(
+        SizedBox(height: MediaQuery.of(context).size.height / 10),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(width:10 ,),
+                Image.asset(
               'assets/images/logo.png',
-              width: 400,
-              height: 200,
-              fit: BoxFit.cover,
-            ),
-            const SizedBox(height:350 ,),
+              width: MediaQuery.of(context).size.width / 1.1,
+              height: MediaQuery.of(context).size.height / 4,
+              //fit: BoxFit.cover,
+            )],),
+            SizedBox(height: MediaQuery.of(context).size.height / 2),
             FloatingActionButton.extended(
               onPressed: (){
                 Globals.globalController.login();
@@ -85,8 +73,8 @@ class LoginPage extends StatelessWidget {
               icon:
               Image.asset(
                 "assets/images/google.png",
-                width: 32,
-                height: 32,
+                width: MediaQuery.of(context).size.width / 12,
+                height: MediaQuery.of(context).size.height / 12,
               ),
               label: const Text('Sign in with Google'),
               backgroundColor: Colors.white70,
