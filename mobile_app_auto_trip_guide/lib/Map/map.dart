@@ -103,15 +103,6 @@ class _UserMapState extends State<UserMap> {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       guideTool.handlePois();
     });
-
-    // FlutterCompass.events?.listen((event) {
-    //   //TODO check
-    //   // setState(() {
-    //   //   mapHeading = 360 + event.heading!;
-    //   //   print(event.heading!);
-    //   //   _mapController.rotate(mapHeading);
-    //   // });
-    // });
   }
 
   @override
@@ -234,9 +225,7 @@ class _UserMapState extends State<UserMap> {
               children: [
                 Container(
                   margin: EdgeInsets.only(
-                      // top: MediaQuery.of(context).size.height / 30,
                       left: MediaQuery.of(context).size.width / 15),
-                  // height: MediaQuery.of(context).size.height / 0.8,
                   width: MediaQuery.of(context).size.width / 10,
                   child: FloatingActionButton(
                     heroTag: null,
@@ -246,7 +235,7 @@ class _UserMapState extends State<UserMap> {
                             () => _centerOnLocationUpdate =
                             CenterOnLocationUpdate.always,
                       );
-                      // Center the location marker on the map and zoom the map to level 15.
+                      // Center the location marker on the map and zoom the map to level 14.
                       _centerCurrentLocationStreamController.add(14);
                     },
                     child: const Icon(

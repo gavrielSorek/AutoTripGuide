@@ -107,7 +107,7 @@ class AccountPage extends StatelessWidget {
             buildCard("Personal Detail", context),
             SizedBox(height: MediaQuery.of(context).size.height / 50),
             buildCard("Favorite Categories", context),
-            Spacer(),
+            const Spacer(),
           ],
         ));
   }
