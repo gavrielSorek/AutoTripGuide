@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-import 'dart:math';
 
 typedef void OnError(Exception exception);
 
@@ -20,6 +18,12 @@ class AudioApp extends StatefulWidget {
     }
   }
 
+  bool isPlaying() {
+    if (_audioAppState == null) {
+      return false;
+    }
+    return _audioAppState!.playerState == PlayerState.PLAYING;
+  }
   void playAudio() {
     _audioAppState?.play();
   }

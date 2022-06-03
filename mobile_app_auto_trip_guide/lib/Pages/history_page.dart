@@ -1,20 +1,32 @@
 import 'package:flutter/material.dart';
-import '../Map/events.dart';
 import '../Map/globals.dart';
 import '../Map/types.dart';
-import '../UsefulWidgets/toolbar.dart';
 
 class HistoryPage extends StatefulWidget {
   HistoryPage({Key? key}) : super(key: key);
 
+  _HistoryPageState? _historyPageState;
+
+  void visitedPoisListUpdated() {
+    _historyPageState?.visitedPoisListUpdated();
+  }
   @override
-  _HistoryPageState createState() => _HistoryPageState();
+  _HistoryPageState createState() {
+    _historyPageState = _HistoryPageState();
+    return _historyPageState!;
+  }
 }
 
 class _HistoryPageState extends State<HistoryPage> {
   List<VisitedPoi> visitedPoisList = Globals.globalVisitedPoi;
   int visitedPoisListLength = Globals.globalVisitedPoi.length;
 
+  void visitedPoisListUpdated() {
+    setState(() {
+      visitedPoisList = Globals.globalVisitedPoi;
+      visitedPoisListLength = Globals.globalVisitedPoi.length;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

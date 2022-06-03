@@ -3,9 +3,13 @@ import 'dart:math';
 import 'package:final_project/Map/audio_player_controller.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:location/location.dart';
+import '../Pages/account_page.dart';
+import '../Pages/history_page.dart';
+import '../Pages/home_page.dart';
 import '../Pages/login_controller.dart';
 import 'apps_launcher.dart';
 import 'map.dart';
@@ -24,11 +28,20 @@ class Globals {
   static Set<String> favoriteCategoriesSet = <String>{};
   static UserInfo? globalUserInfoObj;
   static List<VisitedPoi> globalVisitedPoi = [];
-  static Map globalInterestingPois = HashMap<String, MapPoi>(); // TODO use
   static AppLauncher globalAppLauncher = AppLauncher();
   static MapPoi? mainMapPoi; // spoken poi
   static final globalController = Get.put(LoginController());
+  static List<Widget> globalPagesList = [HomePage(), AccountPage(), HistoryPage()];
 
+
+  static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {
+    globalVisitedPoi = visitedPoisList;
+    (globalPagesList[2] as HistoryPage).visitedPoisListUpdated();
+  }
+  static void addGlobalVisitedPoi(VisitedPoi visitedPoi) {
+    globalVisitedPoi.add(visitedPoi);
+    (globalPagesList[2] as HistoryPage).visitedPoisListUpdated();
+  }
   static void addUnhandledPoiKey(String key) {
     if (globalUnhandledKeys.isEmpty) {
       globalUserMap.userMapState?.loadingPois = WidgetVisibility.hide;

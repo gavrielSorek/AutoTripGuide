@@ -124,15 +124,6 @@ class Guide {
     lastMapPoiHandled = mapPoi;
   }
 
-  void postPoiHandling() {
-    // if (Globals.globalUnhandledPois.isNotEmpty && state == GuideState.waiting) {
-    //   askNextPoi();
-    // } else {
-    //   if (Globals.globalUnhandledPois.isEmpty) {
-    //     stop();
-    //   }
-    // }
-  }
 
   void guideStateChanged() {
     if (state == GuideState.working) {
@@ -157,7 +148,7 @@ class Guide {
         poiName: guideDialogBox.getMapPoi()?.poi.poiName,
         time: getTime(),
         pic: guideDialogBox.getMapPoi()?.poi.pic);
-    Globals.globalVisitedPoi.add(currentPoi);
+    Globals.addGlobalVisitedPoi(currentPoi);
     Globals.globalServerCommunication.insertPoiToHistory(currentPoi);
   }
 }

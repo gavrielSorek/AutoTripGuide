@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:final_project/Pages/home_page.dart';
 import '../Map/globals.dart';
 import '../Map/types.dart';
 import '../UsefulWidgets/toolbar.dart';
 
 
 class LoginPage extends StatelessWidget {
-  //LoginPage({Key? key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +17,7 @@ class LoginPage extends StatelessWidget {
               return buildNewLogin();
             } else {
               addUser();
-              return const ToolbarWidget();
+              return ToolbarWidget();
             }
           })
       ),
@@ -32,7 +31,7 @@ class LoginPage extends StatelessWidget {
     }
     Globals.globalCategories ??= await Globals.globalServerCommunication.getCategories(Globals.globalDefaultLanguage);
     Globals.setFavoriteCategories(await Globals.globalServerCommunication.getFavorCategories(Globals.globalController.googleAccount.value?.email ?? ' '));
-    Globals.globalVisitedPoi = await Globals.globalServerCommunication.getPoisHistory(Globals.globalEmail);
+    Globals.setGlobalVisitedPoisList(await Globals.globalServerCommunication.getPoisHistory(Globals.globalEmail));
   }
 
   void addUser() async {
@@ -46,12 +45,12 @@ class LoginPage extends StatelessWidget {
       onPressed: (){
         Globals.globalController.login();
       },
-      icon: Icon(
+      icon: const Icon(
         Icons.audiotrack,
         size: 32.0,
         color: Colors.green,
       ),
-      label: Text('Sign in with Google'),
+      label: const Text('Sign in with Google'),
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
     );
