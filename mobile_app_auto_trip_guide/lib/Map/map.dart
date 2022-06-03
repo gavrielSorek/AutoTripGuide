@@ -260,7 +260,6 @@ class _UserMapState extends State<UserMap> {
                     color: Colors.transparent,
                     alignment: Alignment.bottomRight,
                     margin: EdgeInsets.only(
-                        // top: MediaQuery.of(context).size.height / 15,
                         right: MediaQuery.of(context).size.width / 15),
                     height: MediaQuery.of(context).size.width / 10,
                     width: MediaQuery.of(context).size.width / 10,

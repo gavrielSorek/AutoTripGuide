@@ -109,6 +109,7 @@ class Guide {
     }
     Globals.deleteMainMapPoi();
     Globals.globalUserMap.userMapState?.hideNextButton();
+    guideDialogBox.stopLoading();
     guideDialogBox.hideDialog();
     state = GuideState.stopped;
   }
@@ -154,8 +155,9 @@ class Guide {
   void pauseGuideDialogBox() {
     guideDialogBox.pauseLoading();
   }
+
   void unpauseGuideDialogBox() {
-    if(guideDialogBox.isLoadingPaused()) {
+    if (guideDialogBox.isLoadingPaused()) {
       guideDialogBox.continueLoading();
     }
   }
@@ -164,7 +166,7 @@ class Guide {
 class GuideDialogBox extends StatefulWidget {
   dynamic onPressOk, onPressNext, onLoadingFinished;
   int loadingAnimationTime;
-  bool stopLoading = false;
+  bool _stopLoading = false;
 
   GuideDialogBox(
       {Key? key,
@@ -178,7 +180,7 @@ class GuideDialogBox extends StatefulWidget {
 
   void setMapPoi(MapPoi poi) {
     guideDialogBoxState!.setMapPoi(poi);
-    stopLoading = false;
+    _stopLoading = false;
   }
 
   void updateGuideStatus(GuideStatus status) {
@@ -216,6 +218,10 @@ class GuideDialogBox extends StatefulWidget {
     guideDialogBoxState?.pauseLoading();
   }
 
+  void stopLoading() {
+    guideDialogBoxState?.stopLoading();
+  }
+
   bool isLoadingPaused() {
     if (guideDialogBoxState == null) {
       return false;
@@ -239,18 +245,28 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
   double progress = 0;
   bool pause = false;
   int numberOfSteps = 10;
+  Timer? loadTimer;
+
 
   bool isLoadingPaused() {
     return pause;
   }
 
   void startLoading() {
+    stopLoading();
     progress = 0;
+    pause = false;
     loadStep();
   }
 
   void pauseLoading() {
+    loadTimer?.cancel();
     pause = true;
+  }
+
+  void stopLoading() {
+    progress = 0;
+    loadTimer?.cancel();
   }
 
   void continueLoading() {
@@ -259,24 +275,23 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
   }
 
   void loadStep() {
-    if (pause) {
-      return;
-    }
-    double progressEveryStep = 1 / numberOfSteps;
-    int stepTime = (widget.loadingAnimationTime / numberOfSteps).round();
-    Future.delayed(Duration(seconds: stepTime), () {
-      if (widget.stopLoading) {
-        return;
-      }
-      progress += progressEveryStep;
-      dialogBox?.setProgress(progress);
-      if (progress <= 1) {
-        loadStep();
-      } else {
-        // finished loading
-        widget.onLoadingFinished();
-      }
-    });
+    loadTimer = Timer(
+        Duration(
+            seconds: (widget.loadingAnimationTime / numberOfSteps).round()),
+            () {
+          if (widget._stopLoading) {
+            return;
+          }
+          double progressEveryStep = 1 / numberOfSteps;
+          progress += progressEveryStep;
+          dialogBox?.setProgress(progress);
+          if (progress <= 1) {
+            loadStep();
+          } else {
+            // finished loading
+            widget.onLoadingFinished();
+          }
+        });
   }
 
   MapPoi? getMapPoi() {
@@ -323,7 +338,7 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
           "https://assets.hyatt.com/content/dam/hyatt/hyattdam/images/2019/02/07/1127/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.jpg/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.16x9.jpg"),
       key: UniqueKey(),
       onPressLeft: () {
-        widget.stopLoading = true;
+        widget._stopLoading = true;
         widget.onPressOk();
       },
       onPressRight: widget.onPressNext,
