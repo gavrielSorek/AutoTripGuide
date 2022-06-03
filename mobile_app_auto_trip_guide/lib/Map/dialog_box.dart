@@ -67,7 +67,8 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
   }
 
   contentBox(context) {
-    double maxLoadingWidth = MediaQuery.of(context).size.width - 2 * Constants.edgesDist - 2 *Constants.padding;
+    double loadingDistFromEdge = 2 * Constants.edgesDist + 2 * Constants.padding;
+    double maxLoadingWidth = MediaQuery.of(context).size.width - loadingDistFromEdge;
     double minLoadingWidth = 0;
 
     return Stack(
@@ -98,7 +99,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                       right: Constants.padding,
                       top: 5,),
                     color: Colors.green,
-                    width: min(maxLoadingWidth, max(progress * MediaQuery.of(context).size.width , minLoadingWidth)),
+                    width: min(maxLoadingWidth, max(progress * (MediaQuery.of(context).size.width - loadingDistFromEdge), minLoadingWidth)),
                   ),
                 ],
               ),
