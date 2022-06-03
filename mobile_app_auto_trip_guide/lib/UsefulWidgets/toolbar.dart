@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../Map/globals.dart';
+import '../Map/map.dart';
 
 
 class ToolbarWidget extends StatefulWidget {
@@ -16,8 +17,14 @@ class Toolbar extends State<ToolbarWidget> {
 
   void _selectScreen(int index) {
     // if the index is different from map page
-    if(index != 0 && Globals.globalAudioPlayer.isPlaying()) {
-      Globals.globalAudioPlayer.pauseAudio();
+    if(index != 0) {
+      // always pause dialog box when not in the map page
+      Globals.globalUserMap.userMapState?.guideTool.pauseGuideDialogBox();
+      if (Globals.globalAudioPlayer.isPlaying()) {
+        Globals.globalAudioPlayer.pauseAudio();
+      }
+    } else {
+      Globals.globalUserMap.userMapState?.guideTool.unpauseGuideDialogBox();
     }
     setState(() {
       _selectedScreenIndex = index;

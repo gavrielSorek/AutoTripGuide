@@ -124,7 +124,6 @@ class Guide {
     lastMapPoiHandled = mapPoi;
   }
 
-
   void guideStateChanged() {
     if (state == GuideState.working) {
       stop();
@@ -150,6 +149,15 @@ class Guide {
         pic: guideDialogBox.getMapPoi()?.poi.pic);
     Globals.addGlobalVisitedPoi(currentPoi);
     Globals.globalServerCommunication.insertPoiToHistory(currentPoi);
+  }
+
+  void pauseGuideDialogBox() {
+    guideDialogBox.pauseLoading();
+  }
+  void unpauseGuideDialogBox() {
+    if(guideDialogBox.isLoadingPaused()) {
+      guideDialogBox.continueLoading();
+    }
   }
 }
 
@@ -200,6 +208,21 @@ class GuideDialogBox extends StatefulWidget {
     guideDialogBoxState?.startLoading();
   }
 
+  void continueLoading() {
+    guideDialogBoxState?.continueLoading();
+  }
+
+  void pauseLoading() {
+    guideDialogBoxState?.pauseLoading();
+  }
+
+  bool isLoadingPaused() {
+    if (guideDialogBoxState == null) {
+      return false;
+    }
+    return guideDialogBoxState!.isLoadingPaused();
+  }
+
   @override
   _GuideDialogBoxState createState() {
     guideDialogBoxState = _GuideDialogBoxState();
@@ -214,14 +237,31 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
   WidgetVisibility dialogVisibility = WidgetVisibility.hide;
   CustomDialogBox? dialogBox;
   double progress = 0;
+  bool pause = false;
+  int numberOfSteps = 10;
+
+  bool isLoadingPaused() {
+    return pause;
+  }
 
   void startLoading() {
     progress = 0;
-    int numberOfSteps = 10;
-    loadStep(numberOfSteps);
+    loadStep();
   }
 
-  void loadStep(int numberOfSteps) {
+  void pauseLoading() {
+    pause = true;
+  }
+
+  void continueLoading() {
+    pause = false;
+    loadStep();
+  }
+
+  void loadStep() {
+    if (pause) {
+      return;
+    }
     double progressEveryStep = 1 / numberOfSteps;
     int stepTime = (widget.loadingAnimationTime / numberOfSteps).round();
     Future.delayed(Duration(seconds: stepTime), () {
@@ -231,7 +271,7 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
       progress += progressEveryStep;
       dialogBox?.setProgress(progress);
       if (progress <= 1) {
-        loadStep(numberOfSteps);
+        loadStep();
       } else {
         // finished loading
         widget.onLoadingFinished();

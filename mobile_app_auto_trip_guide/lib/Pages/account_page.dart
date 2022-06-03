@@ -2,8 +2,6 @@ import 'package:final_project/Pages/personal_details_page.dart';
 import 'package:final_project/UsefulWidgets/toolbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:final_project/Pages/login_controller.dart';
-import 'package:get/get.dart';
 import 'package:final_project/Pages/favorite_categories_page.dart';
 
 import '../Map/events.dart';
@@ -66,13 +64,13 @@ class AccountPage extends StatelessWidget {
   Widget buildName() => Column(
     children: [
       Text(
-        Globals.globalUserInfoObj?.name ?? '',
+        Globals.globalController.googleAccount.value?.displayName ?? " ",
         style: const TextStyle(
             fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white),
       ),
       const SizedBox(height: 4),
       Text(
-        Globals.globalUserInfoObj?.emailAddr ?? '',
+        Globals.globalController.googleAccount.value?.email ?? " ",
         style: const TextStyle(color: Colors.grey),
       )
     ],
@@ -80,7 +78,6 @@ class AccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //loadUserDetails();
     return Scaffold(
         backgroundColor: Color.fromRGBO(0, 26, 51, 1.0),
         appBar: AppBar(
