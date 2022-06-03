@@ -216,7 +216,7 @@ class _MutableMapIconButton extends State<StatefulWidget> {
   @override
   Widget build(BuildContext) {
     return IconButton(
-      icon: Icon(Icons.location_on),
+      icon: const Icon(Icons.location_on_outlined),
       iconSize: _iconSize,
       color: _iconColor,
       onPressed: onPressedFunc,

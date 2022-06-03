@@ -228,17 +228,7 @@ class _UserMapState extends State<UserMap> {
                   color: Colors.green,
                   child: Globals.globalAudioPlayer,
                 )),
-            // loader
-            AnimatedOpacity(
-                opacity: loadingPois == WidgetVisibility.view
-                    ? 1.0
-                    : 0.0,
-                duration: const Duration(milliseconds: 500),
-                child: Container(
-                  height: 59,
-                  color: Colors.transparent,
-                  child: const UserProgressIndicator(),
-                )),
+            const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -265,6 +255,17 @@ class _UserMapState extends State<UserMap> {
                     ),
                   ),
                 ),
+                // loader
+                AnimatedOpacity(
+                    opacity: loadingPois == WidgetVisibility.view
+                        ? 1.0
+                        : 0.0,
+                    duration: const Duration(milliseconds: 500),
+                    child: Container(
+                      height: 59,
+                      color: Colors.transparent,
+                      child: const UserProgressIndicator(),
+                    )),
                 // guide state button
                 Container(
                     color: Colors.transparent,

@@ -15,15 +15,7 @@ class HomePage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Auto Trip Guide'),
           centerTitle: true,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: () {
-                UserMap.preUnmountMap();
-                logOut(context);
-              },
-            ),
-          ],),
+          ),
         body: Column(
           children: [
             Expanded(

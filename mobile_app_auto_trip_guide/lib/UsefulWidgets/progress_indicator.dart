@@ -25,12 +25,15 @@ class _UserProgressIndicator extends State<UserProgressIndicator> {
       // transform: Matrix4.diagonal3Values(_size, _size, 1.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
+        children: const <Widget>[
           Text(
             'Searching For Pois...',
-
+            style: TextStyle(
+                fontWeight: FontWeight.bold
+            ),
           ),
-          const CircularProgressIndicator(),
+          SizedBox(height: 5),
+          CircularProgressIndicator(),
         ],
       ),
     );

@@ -8,6 +8,7 @@ import 'package:final_project/Pages/favorite_categories_page.dart';
 
 import '../Map/events.dart';
 import '../Map/globals.dart';
+import '../Map/map.dart';
 import '../Map/types.dart';
 
 class AccountPage extends StatelessWidget {
@@ -84,12 +85,12 @@ class AccountPage extends StatelessWidget {
         backgroundColor: Color.fromRGBO(0, 26, 51, 1.0),
         appBar: AppBar(
           title: const Text('Account'),
-          leading: const BackButton(),
           centerTitle: true,
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.logout),
               onPressed: () {
+                UserMap.preUnmountMap();
                 logOut(context);
               },
             ),

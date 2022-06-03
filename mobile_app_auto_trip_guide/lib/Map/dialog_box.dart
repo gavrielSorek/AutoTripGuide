@@ -129,7 +129,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        FlatButton(
+                        ElevatedButton(
                             onPressed: () {
                               if (widget.onPressLeft != null) {
                                 widget.onPressLeft();
@@ -137,9 +137,9 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                             },
                             child: Text(
                               widget.leftButtonText,
-                              style: TextStyle(fontSize: 18),
+                              style: const TextStyle(fontSize: 18),
                             )),
-                        FlatButton(
+                        OutlinedButton(
                             onPressed: () {
                               if (widget.onPressRight != null) {
                                 widget.onPressRight();
@@ -147,7 +147,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                             },
                             child: Text(
                               widget.rightButtonText,
-                              style: TextStyle(fontSize: 18),
+                              style: const TextStyle(fontSize: 18),
                             )),
                       ],
                     )

@@ -51,16 +51,7 @@ class _HistoryPageState extends State<HistoryPage> {
     return AppBar(
       title: const Text('History'),
       centerTitle: true,
-      leading: const BackButton(),
       elevation: 0,
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.logout),
-          onPressed: () {
-            logOut(context);
-          },
-        ),
-      ],
     );
   }
 }

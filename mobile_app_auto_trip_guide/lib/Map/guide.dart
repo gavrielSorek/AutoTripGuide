@@ -286,7 +286,7 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
     dialogBox = CustomDialogBox(
       title: mainPoi?.poi.poiName ?? "No information",
       descriptions: ask + (mainPoi?.poi.poiName ?? "No information") + "?",
-      leftButtonText: "Ok",
+      leftButtonText: "  Ok  ",
       rightButtonText: "Next",
       img: Image.network(mainPoi?.poi.pic ??
           "https://assets.hyatt.com/content/dam/hyatt/hyattdam/images/2019/02/07/1127/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.jpg/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.16x9.jpg"),
