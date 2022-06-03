@@ -10,7 +10,7 @@ class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
   // String serverUrl = "autotripguidemobile.loca.lt";
 
-  String serverUrl = "8a36-77-126-119-128.ngrok.io";
+  String serverUrl = "autotripguidemobile.loca.lt";
 
   var client = RetryClient(http.Client());
 

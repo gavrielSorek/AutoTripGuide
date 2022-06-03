@@ -14,7 +14,7 @@ class LoginPage extends StatelessWidget {
       body: Center(
           child: Obx(() {
             if (Globals.globalController.googleAccount.value == null) {
-              return buildNewLogin();
+              return buildLoginWidget();
             } else {
               addUser();
               return ToolbarWidget();
@@ -56,22 +56,28 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Container buildNewLogin() {
-    return Container(
-        width: 1000,
-        height: 1000,
-        color: Colors.white,
+  Widget buildLoginWidget() {
+    return Scaffold(
+      body: Container(
+          width: 1000,
+          height: 1000,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/login_bg.jpeg"),
+            fit: BoxFit.cover,
+          ),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height:100 ,),
+            const SizedBox(height:80 ,),
             Image.asset(
-              'assets/images/auto_trip_guide_logo.png',
-              width: 300,
+              'assets/images/logo.png',
+              width: 400,
               height: 200,
               fit: BoxFit.cover,
             ),
-            SizedBox(height:80 ,),
+            const SizedBox(height:350 ,),
             FloatingActionButton.extended(
               onPressed: (){
                 Globals.globalController.login();
@@ -82,12 +88,13 @@ class LoginPage extends StatelessWidget {
                 width: 32,
                 height: 32,
               ),
-              label: Text('Sign in with Google'),
-              backgroundColor: Colors.white,
+              label: const Text('Sign in with Google'),
+              backgroundColor: Colors.white70,
               foregroundColor: Colors.black,
             ),
           ],
         )
+      ),
     );
   }
 
