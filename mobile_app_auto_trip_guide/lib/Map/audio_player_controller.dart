@@ -29,6 +29,20 @@ class AudioApp extends StatefulWidget {
     return _audioAppState!.playerState == PlayerState.PLAYING;
   }
 
+  bool isPlayingIntro() {
+    if (_audioAppState == null) {
+      return false;
+    }
+    return _audioAppState!.playerState == PlayerState.PLAYING_INTRO;
+  }
+
+  bool isIntroPaused() {
+    if (_audioAppState == null) {
+      return false;
+    }
+    return _audioAppState!.isInIntro == true;
+  }
+
   void playAudio() {
     _audioAppState?.playIntro();
   }
@@ -39,6 +53,10 @@ class AudioApp extends StatefulWidget {
 
   void pauseAudio() {
     _audioAppState?.pause();
+  }
+
+  void unPauseAudio() async {
+    await _audioAppState?.audioPlayer.resume();
   }
 
   clearPlayer() {
@@ -62,6 +80,7 @@ class AudioApp extends StatefulWidget {
 class _AudioAppState extends State<AudioApp> {
   Duration duration = Duration(seconds: 0);
   Duration position = Duration(seconds: 0);
+
   // Icon playPauseIcon =
   //     Icon(Icons.play_arrow, color: Globals.globalColor); // default
   AudioPlayer audioPlayer = AudioPlayer();
@@ -138,7 +157,7 @@ class _AudioAppState extends State<AudioApp> {
       } else if (s == PlayerState.STOPPED) {
         onComplete();
         setState(() {
-          position = duration;
+          position = Duration(milliseconds: 0);
         });
       }
     }, onError: (msg) {
@@ -175,13 +194,17 @@ class _AudioAppState extends State<AudioApp> {
   Future playIntro() async {
     disablePlayerButton();
     isInIntro = true;
-    playerState == PlayerState.STOPPED;
     if (Platform.isAndroid) {
       await audioPlayer.playBytes(widget.introData);
     } else if (Platform.isIOS) {
       String urlPath = await saveAudioBytesToLocalFile(widget.introData);
       await audioPlayer.play(urlPath, isLocal: true);
     }
+
+    setState(() {
+      playerState = PlayerState.PLAYING_INTRO;
+      playerState == PlayerState.STOPPED;
+    });
   }
 
   Future play() async {
@@ -219,7 +242,7 @@ class _AudioAppState extends State<AudioApp> {
     await audioPlayer.stop();
     setState(() {
       playerState = PlayerState.STOPPED;
-      position = Duration();
+      // position = Duration(milliseconds: 0);
       playPauseIcon = playIcon;
     });
   }
@@ -241,7 +264,6 @@ class _AudioAppState extends State<AudioApp> {
     setState(() {
       // playButtonColor = Globals.globalColor;
       playButtonColor = Globals.globalColor;
-
     });
   }
 
@@ -251,6 +273,7 @@ class _AudioAppState extends State<AudioApp> {
       playButtonColor = Colors.grey;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -270,20 +293,22 @@ class _AudioAppState extends State<AudioApp> {
         width: double.infinity,
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           IconButton(
-            onPressed: isPlayerButtonDisabled ? null : () {
-              if (widget.byteData.isEmpty) {
-                return;
-              }
-              if (!isPlaying) {
-                setState(() {
-                  play();
-                });
-              } else {
-                setState(() {
-                  pause();
-                });
-              }
-            },
+            onPressed: isPlayerButtonDisabled
+                ? null
+                : () {
+                    if (widget.byteData.isEmpty) {
+                      return;
+                    }
+                    if (!isPlaying) {
+                      setState(() {
+                        play();
+                      });
+                    } else {
+                      setState(() {
+                        pause();
+                      });
+                    }
+                  },
             iconSize: 30.0,
             icon: playPauseIcon,
             color: playButtonColor,
