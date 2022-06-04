@@ -11,7 +11,7 @@ import '../Map/types.dart';
 
 class AccountPage extends StatelessWidget {
   AccountPage({Key? key}) : super(key: key);
-  String personalDetailsStr = "PERSONAL DETAILS";
+  String personalDetailsStr = " PERSONAL DETAILS  ";
   String favoriteCategoriesStr = "FAVORITE CATEGORIES";
 
 
@@ -55,7 +55,8 @@ class AccountPage extends StatelessWidget {
         child:
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-                primary: Color.fromRGBO(225, 245, 246, 0.8)
+                primary: Color.fromRGBO(225, 245, 246, 0.8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             ),
           onPressed: () {
             _navigateToNextScreen(cardName, context);
@@ -84,13 +85,47 @@ class AccountPage extends StatelessWidget {
     ],
   );
 
+  Container buildLogOutButton(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height / 22,
+      color: Colors.transparent,
+      child:
+      Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            SizedBox(height: MediaQuery.of(context).size.height / 50),
+            Container(
+              margin: EdgeInsets.only(
+                  right: MediaQuery.of(context).size.width / 20),
+              width: MediaQuery.of(context).size.width / 10,
+              child: FloatingActionButton(
+                backgroundColor: Color.fromRGBO(225, 245, 246, 0.8),
+                heroTag: null,
+                onPressed: () {
+                  UserMap.preUnmountMap();
+                  logOut(context);
+                },
+                child: const Icon(
+                  Icons.logout,
+                  color: Color.fromRGBO(97, 157, 175, 1),
+                ),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15.0))
+                ),
+              ),
+            ),
+          ],));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          toolbarHeight: 0.0,
           title: const Text('Account'),
           centerTitle: true,
+          elevation: 0,
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.logout),
@@ -102,7 +137,12 @@ class AccountPage extends StatelessWidget {
           ],
         ),
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            SizedBox(height: MediaQuery.of(context).size.height / 50),
+            buildLogOutButton(context),
             SizedBox(height: MediaQuery.of(context).size.height / 50),
             ProfileWidget(
               imagePath:
@@ -117,7 +157,7 @@ class AccountPage extends StatelessWidget {
               padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
               shape: BoxShape.rectangle,
-              color: Colors.white,
+              color: Colors.transparent,
               borderRadius: BorderRadius.only(
               topLeft: Radius.circular(100.0),
               topRight: Radius.circular(100.0),

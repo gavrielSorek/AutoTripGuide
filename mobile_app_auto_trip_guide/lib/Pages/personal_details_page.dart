@@ -19,6 +19,8 @@ class PersonalDetailsPage extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         children: [
           SizedBox(height: MediaQuery.of(context).size.height / 50),
+          buildBackButton(context),
+          SizedBox(height: MediaQuery.of(context).size.height / 50),
           ProfileWidget(
             imagePath:
                 Globals.globalController.googleAccount.value?.photoUrl ?? "",
@@ -95,11 +97,43 @@ class PersonalDetailsPage extends StatelessWidget {
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
+    toolbarHeight: 0.0,
     title: const Text('Personal Details'),
     centerTitle: true,
     leading: const BackButton(),
     elevation: 0,
   );
+}
+
+Container buildBackButton(BuildContext context) {
+  return Container(
+      height: MediaQuery.of(context).size.height / 22,
+      color: Colors.transparent,
+      child:
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width / 30),
+            width: MediaQuery.of(context).size.width / 10,
+            child: FloatingActionButton(
+              backgroundColor: Color.fromRGBO(225, 245, 246, 0.8),
+              heroTag: null,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Icon(
+                Icons.arrow_back,
+                color: Color.fromRGBO(97, 157, 175, 1),
+              ),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15.0))
+              ),
+            ),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height / 50),
+        ],));
 }
 
 ElevatedButton buildApplyButton(BuildContext context) {

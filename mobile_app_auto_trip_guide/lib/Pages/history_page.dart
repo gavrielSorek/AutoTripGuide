@@ -61,6 +61,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
+      toolbarHeight: 0.0,
       title: const Text('History'),
       centerTitle: true,
       elevation: 0,

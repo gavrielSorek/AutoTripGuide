@@ -13,7 +13,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+            toolbarHeight: 0.0,
           title: const Text('Auto Trip Guide'),
+          elevation: 0,
           centerTitle: true,
           ),
         body: Column(
