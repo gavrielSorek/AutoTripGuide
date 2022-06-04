@@ -32,6 +32,7 @@ class Globals {
   static MapPoi? mainMapPoi; // spoken poi
   static final globalController = Get.put(LoginController());
   static List<Widget> globalPagesList = [HomePage(), AccountPage(), HistoryPage()];
+  static var globalColor = Color.fromRGBO(51, 153, 255, 0.8);
 
 
   static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {

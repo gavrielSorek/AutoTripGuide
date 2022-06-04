@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
+import 'globals.dart';
+
 typedef void OnError(Exception exception);
 
 class AudioApp extends StatefulWidget {
@@ -14,7 +16,7 @@ class AudioApp extends StatefulWidget {
   void setAudioBytes(Uint8List audioBytes) {
     byteData = audioBytes;
     if (byteData.isNotEmpty) {
-      _audioAppState?.setPlayButtonColor(Colors.cyan);
+      _audioAppState?.setPlayButtonColor(Globals.globalColor);
     }
   }
 
@@ -57,11 +59,11 @@ class AudioApp extends StatefulWidget {
 class _AudioAppState extends State<AudioApp> {
   Duration duration = Duration(seconds: 0);
   Duration position = Duration(seconds: 0);
-  Icon playIcon = Icon(Icons.play_arrow);
-  Icon pauseIcon = Icon(Icons.pause);
-  Icon playPauseIcon = Icon(Icons.play_arrow); // default
+  Icon playIcon = Icon(Icons.play_arrow, color: Globals.globalColor);
+  Icon pauseIcon = Icon(Icons.pause, color: Globals.globalColor);
+  Icon playPauseIcon = Icon(Icons.play_arrow, color: Globals.globalColor); // default
   AudioPlayer audioPlayer = AudioPlayer();
-  Color playButtonColor = Colors.grey;
+  Color playButtonColor = Globals.globalColor;
 
   PlayerState playerState = PlayerState.STOPPED;
 

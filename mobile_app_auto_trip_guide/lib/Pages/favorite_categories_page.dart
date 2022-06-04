@@ -21,14 +21,14 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
         padding: const EdgeInsets.only(left:10, right: 5),
         child: FilterChip(
           backgroundColor: Colors.white38,
-          shape: StadiumBorder(side: BorderSide(color: Color.fromRGBO(97, 157, 175, 0.8))),
+          shape: StadiumBorder(side: BorderSide(color: Globals.globalColor)),
         avatar: CircleAvatar(
-            backgroundColor: favorCategories.contains(category)?Colors.white:Color.fromRGBO(0, 128, 128, 0.6),
+            backgroundColor: favorCategories.contains(category)?Globals.globalColor:Globals.globalColor,
             child: Text(category[0].toUpperCase(),style: TextStyle(color: Colors.white),),
           ),
           label: Text(category,style: TextStyle(color: Colors.black)),
           selected: favorCategories.contains(category),
-          selectedColor: Color.fromRGBO(97, 157, 175, 1),
+          selectedColor: Globals.globalColor,
           onSelected: (bool selected) {
             setState(() {
               if (selected) {
@@ -61,14 +61,14 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
                   left: MediaQuery.of(context).size.width / 15),
               width: MediaQuery.of(context).size.width / 10,
               child: FloatingActionButton(
-                backgroundColor: Color.fromRGBO(225, 245, 246, 0.8),
+                backgroundColor: Globals.globalColor,
                 heroTag: null,
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
                 child: const Icon(
                   Icons.arrow_back,
-                  color: Color.fromRGBO(97, 157, 175, 1),
+                  color: Colors.white,
                 ),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15.0))
@@ -94,7 +94,7 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
         }
       },
       style: ElevatedButton.styleFrom(
-          primary: Color.fromRGBO(97, 157, 175, 1),
+          primary: Globals.globalColor,
           padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 2.5, vertical: MediaQuery.of(context).size.height / 100),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15)),

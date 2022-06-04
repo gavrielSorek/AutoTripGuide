@@ -26,7 +26,7 @@ class AutoGuideApp extends StatelessWidget {
     return MaterialApp(
       title: 'Auto Trip Guide',
       theme: ThemeData(
-        primarySwatch: generateMaterialColor(Color.fromRGBO(97, 157, 175, 0.8)),
+        primarySwatch: generateMaterialColor(Globals.globalColor),
         fontFamily: 'Roboto',
       ),
       home: LoginPage(), //const HomePage()

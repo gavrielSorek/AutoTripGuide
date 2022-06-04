@@ -118,14 +118,14 @@ Container buildBackButton(BuildContext context) {
                 right: MediaQuery.of(context).size.width / 30),
             width: MediaQuery.of(context).size.width / 10,
             child: FloatingActionButton(
-              backgroundColor: Color.fromRGBO(225, 245, 246, 0.8),
+              backgroundColor: Globals.globalColor,
               heroTag: null,
               onPressed: () {
                 Navigator.of(context).pop();
               },
               child: const Icon(
                 Icons.arrow_back,
-                color: Color.fromRGBO(97, 157, 175, 1),
+                color: Colors.white
               ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(15.0))
@@ -147,7 +147,7 @@ ElevatedButton buildApplyButton(BuildContext context) {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     },
     style: ElevatedButton.styleFrom(
-        primary: Color.fromRGBO(97, 157, 175, 1),
+        primary: Globals.globalColor,
         padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width / 5,
             vertical: MediaQuery.of(context).size.height / 500),
@@ -245,7 +245,7 @@ class _DropDownWidgetState extends State<DropDownWidget> {
       style: const TextStyle(color: Colors.black),
       underline: Container(
         height: 4,
-        color: Color.fromRGBO(97, 157, 175, 1),
+        color: Globals.globalColor,
       ),
       onChanged: (String? newValue) {
         setState(() {

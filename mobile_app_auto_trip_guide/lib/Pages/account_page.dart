@@ -12,7 +12,7 @@ import '../Map/types.dart';
 class AccountPage extends StatelessWidget {
   AccountPage({Key? key}) : super(key: key);
   String personalDetailsStr = " PERSONAL DETAILS  ";
-  String favoriteCategoriesStr = "FAVORITE CATEGORIES";
+  String favoriteCategoriesStr = "  FAVORITE CATEGORIES";
 
 
   void loadUserDetails() async{
@@ -39,24 +39,23 @@ class AccountPage extends StatelessWidget {
       iconCard = Icon( // <-- Icon
         Icons.person_outline,
         size: 30.0,
-        color: Color.fromRGBO(97, 157, 175, 1),
+        color: Colors.white,
       );
     } else {
       iconCard = Icon( // <-- Icon
         Icons.favorite_border_outlined,
         size: 30.0,
-        color: Color.fromRGBO(97, 157, 175, 1),
+        color: Colors.white,
       );
     }
     return Container(
         height: MediaQuery.of(context).size.height / 7,
         width: MediaQuery.of(context).size.width / 0.8,
-        color: Color.fromRGBO(225, 245, 246, 0.8),
         child:
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-                primary: Color.fromRGBO(225, 245, 246, 0.8),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                primary: Globals.globalColor,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             ),
           onPressed: () {
             _navigateToNextScreen(cardName, context);
@@ -64,7 +63,7 @@ class AccountPage extends StatelessWidget {
           icon: iconCard,
           label: Text(cardName,
                 style: const TextStyle(
-                    color: Colors.black87,
+                    color: Colors.white,
                     fontSize: 20),
                 textAlign: TextAlign.center), // <-- Text
           ),);
@@ -99,7 +98,7 @@ class AccountPage extends StatelessWidget {
                   right: MediaQuery.of(context).size.width / 20),
               width: MediaQuery.of(context).size.width / 10,
               child: FloatingActionButton(
-                backgroundColor: Color.fromRGBO(225, 245, 246, 0.8),
+                backgroundColor: Globals.globalColor,
                 heroTag: null,
                 onPressed: () {
                   UserMap.preUnmountMap();
@@ -107,7 +106,7 @@ class AccountPage extends StatelessWidget {
                 },
                 child: const Icon(
                   Icons.logout,
-                  color: Color.fromRGBO(97, 157, 175, 1),
+                  color: Colors.white,
                 ),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15.0))
