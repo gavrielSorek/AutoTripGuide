@@ -11,6 +11,9 @@ import '../Map/types.dart';
 
 class AccountPage extends StatelessWidget {
   AccountPage({Key? key}) : super(key: key);
+  String personalDetailsStr = "PERSONAL DETAILS";
+  String favoriteCategoriesStr = "FAVORITE CATEGORIES";
+
 
   void loadUserDetails() async{
     if (Globals.globalUserInfoObj == null) {
@@ -21,44 +24,49 @@ class AccountPage extends StatelessWidget {
   }
 
   void _navigateToNextScreen(String screenName, BuildContext context) async{
-    if (screenName == "Personal Detail") {
+    if (screenName == personalDetailsStr) {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => PersonalDetailsPage()));
-    } else if (screenName == "Favorite Categories") {
+    } else if (screenName == favoriteCategoriesStr) {
       Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => FavoriteCategoriesPage()));
     }
   }
 
   Container buildCard(String cardName, BuildContext context) {
+    Icon iconCard;
+    if (cardName == personalDetailsStr) {
+      iconCard = Icon( // <-- Icon
+        Icons.person_outline,
+        size: 30.0,
+        color: Color.fromRGBO(97, 157, 175, 1),
+      );
+    } else {
+      iconCard = Icon( // <-- Icon
+        Icons.favorite_border_outlined,
+        size: 30.0,
+        color: Color.fromRGBO(97, 157, 175, 1),
+      );
+    }
     return Container(
-        height: MediaQuery.of(context).size.height / 8,
-        width: MediaQuery.of(context).size.width / 0.5,
-        child: Card(
-          color: const Color.fromRGBO(30, 61, 123, 1.0),
-          semanticContainer: true,
-          clipBehavior: Clip.antiAliasWithSaveLayer,
-          child: Center(
-            child: InkWell(
-              onTap: () {
-                _navigateToNextScreen(cardName, context);
-              },
-              child: Center(
-                child: Text(cardName,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
-                    textAlign: TextAlign.center),
-              ),
+        height: MediaQuery.of(context).size.height / 7,
+        width: MediaQuery.of(context).size.width / 0.8,
+        color: Color.fromRGBO(225, 245, 246, 0.8),
+        child:
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+                primary: Color.fromRGBO(225, 245, 246, 0.8)
             ),
-          ),
-          elevation: 8,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-          //shadowColor: Colors.white,
-          margin: const EdgeInsets.all(20),
-        ));
+          onPressed: () {
+            _navigateToNextScreen(cardName, context);
+          },
+          icon: iconCard,
+          label: Text(cardName,
+                style: const TextStyle(
+                    color: Colors.black87,
+                    fontSize: 20),
+                textAlign: TextAlign.center), // <-- Text
+          ),);
   }
 
   Widget buildName() => Column(
@@ -66,12 +74,12 @@ class AccountPage extends StatelessWidget {
       Text(
         Globals.globalController.googleAccount.value?.displayName ?? " ",
         style: const TextStyle(
-            fontWeight: FontWeight.bold, fontSize: 24, color: Colors.white),
+          fontWeight: FontWeight.bold, fontSize: 26, color: Colors.black87,),
       ),
       const SizedBox(height: 4),
       Text(
         Globals.globalController.googleAccount.value?.email ?? " ",
-        style: const TextStyle(color: Colors.grey),
+        style: const TextStyle(color: Colors.black54),
       )
     ],
   );
@@ -79,7 +87,7 @@ class AccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color.fromRGBO(0, 26, 51, 1.0),
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text('Account'),
           centerTitle: true,
@@ -95,19 +103,35 @@ class AccountPage extends StatelessWidget {
         ),
         body: Column(
           children: [
-            SizedBox(height: MediaQuery.of(context).size.height / 30),
+            SizedBox(height: MediaQuery.of(context).size.height / 50),
             ProfileWidget(
               imagePath:
               Globals.globalController.googleAccount.value?.photoUrl ?? "",
               onClicked: () async {},
             ),
-            SizedBox(height: MediaQuery.of(context).size.height / 30),
             buildName(),
-            SizedBox(height: MediaQuery.of(context).size.height / 30),
-            buildCard("Personal Detail", context),
-            SizedBox(height: MediaQuery.of(context).size.height / 50),
-            buildCard("Favorite Categories", context),
             const Spacer(),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 1.9,
+              padding: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(100.0),
+              topRight: Radius.circular(100.0),
+              bottomLeft: Radius.zero,
+              bottomRight: Radius.zero,
+              ),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height / 20),
+                  buildCard(personalDetailsStr, context),
+                  SizedBox(height: MediaQuery.of(context).size.height / 20),
+                  buildCard(favoriteCategoriesStr, context),]),
+            ),
           ],
         ));
   }
