@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'globals.dart';
+
 class Constants {
   Constants._();
 
@@ -98,7 +100,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
                       left: Constants.padding,
                       right: Constants.padding,
                       top: 5,),
-                    color: Colors.green,
+                    color: Globals.globalColor,
                     width: min(maxLoadingWidth, max(progress * (MediaQuery.of(context).size.width - loadingDistFromEdge), minLoadingWidth)),
                   ),
                 ],
