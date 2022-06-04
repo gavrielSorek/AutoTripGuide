@@ -16,6 +16,8 @@ var categoriesDiv = document.getElementById('categories');
 var globalIsAudioReady = true;
 var globalAudioData = undefined;
 var globalCategories = [];
+var globalAudioStartTime;
+
 document.getElementById("submit_button").addEventListener("click",submitPoi);
 recordButton.addEventListener("mousedown", record);
 recordButton.addEventListener("mouseup", stopRecord);
@@ -240,6 +242,7 @@ async function readFileAsData(file) {
 
 var mediaRecorder = undefined
 var audioChunks = [];
+
 //record 
 async function initRecord() {
     await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -249,19 +252,20 @@ async function initRecord() {
       mediaRecorder.addEventListener("dataavailable", event => {
         audioChunks.push(event.data);
       });
-      mediaRecorder.addEventListener("stop", () => {
-          globalIsAudioReady = false;
-          const audioBlob = new Blob(audioChunks);
-          // load audio that has been collected
-          audio.src = window.URL.createObjectURL(audioBlob)
-          audio.load();
-          //assign the audio to global audio
-          blobToArrayBuffer(audioBlob).then((buff)=>{globalAudioData = new Uint8Array(buff)
-            globalIsAudioReady = true;
-        })
 
-        });
-    });
+    mediaRecorder.addEventListener("stop", async () => {
+        globalIsAudioReady = false;
+        const audioBlob = new Blob(audioChunks);
+        var duration = Date.now() - globalAudioStartTime;
+        fixedBlob = await ysFixWebmDuration(audioBlob, duration, {logger: false})
+        audio.src = window.URL.createObjectURL(fixedBlob)
+        audio.load();
+        //assign the audio to global audio
+        blobToArrayBuffer(fixedBlob).then((buff)=>{globalAudioData = new Uint8Array(buff)
+          globalIsAudioReady = true;
+      })
+      });
+  });
 
 
 }
@@ -272,6 +276,7 @@ async function record() {
     }
     audioChunks = [];
     mediaRecorder.start();
+    globalAudioStartTime = Date.now()
     recordButton.style = "background-color: cyan;"
     console.log("media recorder started")
 }
