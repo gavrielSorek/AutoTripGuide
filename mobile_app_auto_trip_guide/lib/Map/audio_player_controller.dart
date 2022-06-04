@@ -11,13 +11,15 @@ typedef void OnError(Exception exception);
 
 class AudioApp extends StatefulWidget {
   dynamic onPlayerFinishedFunc;
+  Uint8List introData = Uint8List(0);
   Uint8List byteData = Uint8List(0);
+
+  void setIntroBytes(Uint8List introBytes) {
+    introData = introBytes;
+  }
 
   void setAudioBytes(Uint8List audioBytes) {
     byteData = audioBytes;
-    if (byteData.isNotEmpty) {
-      _audioAppState?.setPlayButtonColor(Globals.globalColor);
-    }
   }
 
   bool isPlaying() {
@@ -26,8 +28,9 @@ class AudioApp extends StatefulWidget {
     }
     return _audioAppState!.playerState == PlayerState.PLAYING;
   }
+
   void playAudio() {
-    _audioAppState?.play();
+    _audioAppState?.playIntro();
   }
 
   void stopAudio() {
@@ -59,12 +62,15 @@ class AudioApp extends StatefulWidget {
 class _AudioAppState extends State<AudioApp> {
   Duration duration = Duration(seconds: 0);
   Duration position = Duration(seconds: 0);
-  Icon playIcon = Icon(Icons.play_arrow, color: Globals.globalColor);
-  Icon pauseIcon = Icon(Icons.pause, color: Globals.globalColor);
-  Icon playPauseIcon = Icon(Icons.play_arrow, color: Globals.globalColor); // default
+  // Icon playPauseIcon =
+  //     Icon(Icons.play_arrow, color: Globals.globalColor); // default
   AudioPlayer audioPlayer = AudioPlayer();
-  Color playButtonColor = Globals.globalColor;
-
+  Color playButtonColor = Colors.grey;
+  Icon playIcon = Icon(Icons.play_arrow);
+  Icon pauseIcon = Icon(Icons.pause);
+  Icon playPauseIcon = Icon(Icons.play_arrow);
+  bool isPlayerButtonDisabled = false;
+  bool isInIntro = false;
   PlayerState playerState = PlayerState.STOPPED;
 
   get isPlaying => playerState == PlayerState.PLAYING;
@@ -116,8 +122,12 @@ class _AudioAppState extends State<AudioApp> {
 
   void initAudioPlayer() {
     // audioPlayer = AudioPlayer();
-    _positionSubscription = audioPlayer.onAudioPositionChanged
-        .listen((p) => setState(() => position = p));
+    _positionSubscription =
+        audioPlayer.onAudioPositionChanged.listen((p) => setState(() {
+              if (!isInIntro) {
+                position = p;
+              }
+            }));
     _audioPlayerStateSubscription =
         audioPlayer.onPlayerStateChanged.listen((s) async {
       if (s == PlayerState.PLAYING) {
@@ -139,22 +149,45 @@ class _AudioAppState extends State<AudioApp> {
       });
     });
     audioPlayer.onDurationChanged.listen((Duration newDuration) {
-      // duration = newDuration;
-      setState(() => duration = newDuration);
+      if (isInIntro) {
+        setState(() => duration = Duration(milliseconds: 0));
+      } else {
+        // duration = newDuration;
+        setState(() => duration = newDuration);
+      }
 
       // if (playerState == PlayerState.PLAYING) {
       //   setState(() => duration = newDuration);
       // }
     });
     audioPlayer.onPlayerCompletion.listen((event) {
-      if(widget.onPlayerFinishedFunc != null) {
-        widget.onPlayerFinishedFunc();
+      if (isInIntro) {
+        isInIntro = false;
+        play();
+      } else {
+        if (widget.onPlayerFinishedFunc != null) {
+          widget.onPlayerFinishedFunc();
+        }
       }
     });
   }
 
+  Future playIntro() async {
+    disablePlayerButton();
+    isInIntro = true;
+    playerState == PlayerState.STOPPED;
+    if (Platform.isAndroid) {
+      await audioPlayer.playBytes(widget.introData);
+    } else if (Platform.isIOS) {
+      String urlPath = await saveAudioBytesToLocalFile(widget.introData);
+      await audioPlayer.play(urlPath, isLocal: true);
+    }
+  }
+
   Future play() async {
     playPauseIcon = pauseIcon;
+    enablePlayerButton();
+
     if (isPaused) {
       await audioPlayer.resume();
     } else {
@@ -203,10 +236,21 @@ class _AudioAppState extends State<AudioApp> {
     setState(() => playerState = PlayerState.STOPPED);
   }
 
-  // Future _loadFile() async {
-  //   print("load file!!!!!!!!!!!! pressed");
-  // }
+  void enablePlayerButton() {
+    isPlayerButtonDisabled = false;
+    setState(() {
+      // playButtonColor = Globals.globalColor;
+      playButtonColor = Globals.globalColor;
 
+    });
+  }
+
+  void disablePlayerButton() {
+    isPlayerButtonDisabled = true;
+    setState(() {
+      playButtonColor = Colors.grey;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -226,7 +270,7 @@ class _AudioAppState extends State<AudioApp> {
         width: double.infinity,
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           IconButton(
-            onPressed: () {
+            onPressed: isPlayerButtonDisabled ? null : () {
               if (widget.byteData.isEmpty) {
                 return;
               }
@@ -257,7 +301,9 @@ class _AudioAppState extends State<AudioApp> {
                   audioPlayer.seek(Duration(milliseconds: value.round()));
                 },
                 min: 0.0,
-                max: duration > position ? duration.inMilliseconds.toDouble() : position.inMilliseconds.toDouble()),
+                max: duration > position
+                    ? duration.inMilliseconds.toDouble()
+                    : position.inMilliseconds.toDouble()),
           ),
           _buildProgressView()
         ]),
@@ -268,7 +314,7 @@ class _AudioAppState extends State<AudioApp> {
             margin: const EdgeInsets.only(left: 10.0, right: 10.0),
             child: Text(
               position != null
-                  ? "${positionText ?? ''} / ${(duration > position ? durationText: positionText)  ?? ''}"
+                  ? "${positionText ?? ''} / ${(duration > position ? durationText : positionText) ?? ''}"
                   : duration != null
                       ? durationText
                       : '',
