@@ -19,7 +19,7 @@ class PoiReadingPage extends StatelessWidget {
           style: const TextStyle(
             fontFamily: 'custom font', // remove this if don't have custom font
             fontSize: 26.0, // text size
-            color: Colors.white, // text color
+            color: Colors.black, // text color
           ),
         ),
       );
