@@ -20,14 +20,15 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
       Widget item =  Padding(
         padding: const EdgeInsets.only(left:10, right: 5),
         child: FilterChip(
-          backgroundColor: Color.fromRGBO(0, 204, 204, 1.0),
-          avatar: CircleAvatar(
-            backgroundColor: favorCategories.contains(category)?Color.fromRGBO(89, 0, 179, 1.0):Color.fromRGBO(0, 128, 128, 1.0),
+          backgroundColor: Colors.white38,
+          shape: StadiumBorder(side: BorderSide(color: Color.fromRGBO(97, 157, 175, 0.8))),
+        avatar: CircleAvatar(
+            backgroundColor: favorCategories.contains(category)?Colors.white:Color.fromRGBO(0, 128, 128, 0.6),
             child: Text(category[0].toUpperCase(),style: TextStyle(color: Colors.white),),
           ),
-          label: Text(category,style: TextStyle(color: Colors.white)),
+          label: Text(category,style: TextStyle(color: Colors.black)),
           selected: favorCategories.contains(category),
-          selectedColor: Color.fromRGBO(135,88,244, 1.0),
+          selectedColor: Color.fromRGBO(97, 157, 175, 1),
           onSelected: (bool selected) {
             setState(() {
               if (selected) {
@@ -47,6 +48,37 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
     return chips;
   }
 
+  Container buildBackButton(BuildContext context) {
+    return Container(
+        height: MediaQuery.of(context).size.height / 22,
+        color: Colors.transparent,
+        child:
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width / 15),
+              width: MediaQuery.of(context).size.width / 10,
+              child: FloatingActionButton(
+                backgroundColor: Color.fromRGBO(225, 245, 246, 0.8),
+                heroTag: null,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Icon(
+                  Icons.arrow_back,
+                  color: Color.fromRGBO(97, 157, 175, 1),
+                ),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(15.0))
+                ),
+              ),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height / 50),
+          ],));
+  }
+
 
   ElevatedButton buildApplyButton(BuildContext context){
     return ElevatedButton(
@@ -62,7 +94,7 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
         }
       },
       style: ElevatedButton.styleFrom(
-          primary: Color.fromRGBO(135,88,244, 1.0),
+          primary: Color.fromRGBO(97, 157, 175, 1),
           padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 2.5, vertical: MediaQuery.of(context).size.height / 100),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15)),
@@ -74,39 +106,40 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(0, 26, 51, 1.0),
+        backgroundColor: Colors.white,
         appBar: AppBar(
+          toolbarHeight: 0.0,
           title: const Text('Favorite Categories'),
           titleSpacing: MediaQuery.of(context).size.width / 50,
-          backgroundColor: Color.fromRGBO(38, 77, 115,1.0),
+          elevation: 0,
           leading: const BackButton(),
-          centerTitle: true,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: () {
-                logOut(context);
-              }
-            ),
-          ],),
+          centerTitle: true,),
         body: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height:MediaQuery.of(context).size.height / 20),
-            Text("Choose your favorite categories", style: TextStyle(
-                color: Colors.white,
-                fontSize: 20),
+            SizedBox(height: MediaQuery.of(context).size.height / 50),
+            buildBackButton(context),
+            SizedBox(height:MediaQuery.of(context).size.height / 50),
+            Text("Choose your favorite categories", textAlign: TextAlign.center, style: TextStyle(
+                color: Colors.black,
+                fontSize: 25, fontWeight: FontWeight.bold),
                 ),
-            SizedBox(height:MediaQuery.of(context).size.height / 20),
+            SizedBox(height:MediaQuery.of(context).size.height / 80),
+            Text("You can choose more than one", textAlign: TextAlign.center, style: TextStyle(
+                color: Colors.black54,
+                fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height:MediaQuery.of(context).size.height / 40),
             Container(
+              margin: EdgeInsets.only(
+                  left: MediaQuery.of(context).size.width / 15, right: MediaQuery.of(context).size.width / 15),
               height: MediaQuery.of(context).size.height / 1.75,
-              margin: const EdgeInsets.only(bottom: 20.0),
               child: ListView(
                   primary: true,
                   shrinkWrap: true,
                   children: <Widget>[
                     Wrap( // menu row
-                      spacing: 4,
+                      spacing: 3,
                       runSpacing: 0.0,
                       //direction: Axis.horizontal,
                       children:

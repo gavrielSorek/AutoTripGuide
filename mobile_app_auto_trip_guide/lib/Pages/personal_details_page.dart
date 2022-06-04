@@ -18,15 +18,16 @@ class PersonalDetailsPage extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 32),
         physics: const BouncingScrollPhysics(),
         children: [
-          const SizedBox(height: 15),
+          SizedBox(height: MediaQuery.of(context).size.height / 50),
+          buildBackButton(context),
+          SizedBox(height: MediaQuery.of(context).size.height / 50),
           ProfileWidget(
             imagePath:
                 Globals.globalController.googleAccount.value?.photoUrl ?? "",
             onClicked: () async {},
           ),
-          const SizedBox(height: 15),
           buildName(userInfo),
-          const SizedBox(height: 15),
+          SizedBox(height: MediaQuery.of(context).size.height / 60),
           TextFieldWidget(
             label: 'Full Name',
             text: userInfo.name ?? '',
@@ -35,14 +36,14 @@ class PersonalDetailsPage extends StatelessWidget {
               Globals.globalUserInfoObj?.name = name;
             },
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: MediaQuery.of(context).size.height / 60),
           TextFieldWidget(
             label: 'Email',
             text: userInfo.emailAddr ?? '',
             isEdit: false,
             onChanged: (email) {},
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: MediaQuery.of(context).size.height / 60),
           const Text(
             'Gender',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -51,7 +52,7 @@ class PersonalDetailsPage extends StatelessWidget {
               (String newVal) {
             Globals.globalUserInfoObj?.gender = newVal;
           }),
-          const SizedBox(height: 15),
+          SizedBox(height: MediaQuery.of(context).size.height / 60),
           TextFieldWidget(
             label: 'Age',
             text: userInfo.age ?? '',
@@ -60,7 +61,7 @@ class PersonalDetailsPage extends StatelessWidget {
               Globals.globalUserInfoObj?.age = age;
             },
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: MediaQuery.of(context).size.height / 60),
           const Text(
             'Language',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -70,7 +71,7 @@ class PersonalDetailsPage extends StatelessWidget {
                 Globals.globalUserInfoObj?.languages = newVal;
               }),
           Container(
-            margin: const EdgeInsets.only(top: 20.0),
+            margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
             child: buildApplyButton(context),
           )
         ],
@@ -83,12 +84,12 @@ class PersonalDetailsPage extends StatelessWidget {
           Text(
             userInfo.name ?? '',
             style: const TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 24, color: Colors.black),
+              fontWeight: FontWeight.bold, fontSize: 26, color: Colors.black87,),
           ),
           const SizedBox(height: 4),
           Text(
             userInfo.emailAddr ?? '',
-            style: const TextStyle(color: Colors.grey),
+            style: const TextStyle(color: Colors.black54),
           )
         ],
       );
@@ -96,11 +97,43 @@ class PersonalDetailsPage extends StatelessWidget {
 
 AppBar buildAppBar(BuildContext context) {
   return AppBar(
-    title: const Text('Personal Detail'),
+    toolbarHeight: 0.0,
+    title: const Text('Personal Details'),
     centerTitle: true,
     leading: const BackButton(),
     elevation: 0,
   );
+}
+
+Container buildBackButton(BuildContext context) {
+  return Container(
+      height: MediaQuery.of(context).size.height / 22,
+      color: Colors.transparent,
+      child:
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width / 30),
+            width: MediaQuery.of(context).size.width / 10,
+            child: FloatingActionButton(
+              backgroundColor: Color.fromRGBO(225, 245, 246, 0.8),
+              heroTag: null,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Icon(
+                Icons.arrow_back,
+                color: Color.fromRGBO(97, 157, 175, 1),
+              ),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15.0))
+              ),
+            ),
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height / 50),
+        ],));
 }
 
 ElevatedButton buildApplyButton(BuildContext context) {
@@ -109,12 +142,12 @@ ElevatedButton buildApplyButton(BuildContext context) {
     onPressed: () {
       Globals.globalServerCommunication.updateUserInfo();
       const snackBar = SnackBar(
-        content: Text('Your Personal Detail Saved!'),
+        content: Text('Your Personal Details Saved!'),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     },
     style: ElevatedButton.styleFrom(
-        primary: const Color.fromRGBO(135, 88, 244, 1.0),
+        primary: Color.fromRGBO(97, 157, 175, 1),
         padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width / 5,
             vertical: MediaQuery.of(context).size.height / 500),
@@ -209,10 +242,10 @@ class _DropDownWidgetState extends State<DropDownWidget> {
     return DropdownButton<String>(
       value: dropdownValue,
       elevation: 30,
-      style: const TextStyle(color: Colors.deepPurple),
+      style: const TextStyle(color: Colors.black),
       underline: Container(
         height: 4,
-        color: Colors.deepPurpleAccent,
+        color: Color.fromRGBO(97, 157, 175, 1),
       ),
       onChanged: (String? newValue) {
         setState(() {
