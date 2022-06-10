@@ -290,7 +290,9 @@ function getGeneralEditFile() {
     var editPoiHtml = generalEditFile.repeat(1);
     const parser = new DOMParser();
     var htmlDoc = parser.parseFromString(editPoiHtml, 'text/html');
-    htmlDoc.getElementById("operation_type").innerHTML = "Edit poi: " + poi[0]._poiName;
+    const _poiName = poi[0]._poiName;
+    const _poiNameUpper = _poiName.charAt(0).toUpperCase() + _poiName.slice(1);
+    htmlDoc.getElementById("operation_type").innerHTML = "Edit POI: " + _poiNameUpper;
     htmlDoc.getElementById("PoiName").name = poiId
     return htmlDoc.documentElement.innerHTML;
  }

@@ -192,13 +192,16 @@ function showPoi(item) {
     elem1.attr("target","_blank");
     var elem2 = $('<li>');
     elem2.append($('<div style="white-space: pre">'));
-    elem2.append($('<h3>').text(item._poiName));
+    const _poiName = item._poiName;
+    const _poiNameUpper = _poiName.charAt(0).toUpperCase() + _poiName.slice(1);
+    elem2.append($('<h3>').text(_poiNameUpper));
     if (permissions.isPermitted('approver')) {
         elem2.append($('<button id="edit_button" class="button edit_button">').text("EDIT"));
         elem2.append($('<button id="approve_button" class="button approve_button">').text("APPROVE"));
         //add edit button listener
     }
-    elem2.append($('<p>').text("Name: " + item._poiName));
+    
+    elem2.append($('<p>').text("Name: " + _poiNameUpper));
     elem2.append($('<p>').text("Latitude: " + item._latitude));
     elem2.append($('<p>').text("Longtitude: " + item._longitude));
     elem2.append($('<p>').text("Short Description: " + item._shortDesc));

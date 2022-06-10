@@ -341,17 +341,16 @@ function setPoiDataOnPage(poi) {
         globalContributor = poi[0]._Contributor
         globalApprover = poi[0]._ApprovedBy
         console.log(poi[0])
-        document.getElementById("PoiName").defaultValue = poi[0]._poiName;
+        const _poiName = poi[0]._poiName;
+        const _poiNameUpper = _poiName.charAt(0).toUpperCase() + _poiName.slice(1);
+        document.getElementById("PoiName").defaultValue = _poiNameUpper;
         document.getElementById("latitude").defaultValue = poi[0]._latitude;
         document.getElementById("longitude").defaultValue = poi[0]._longitude;
         document.getElementById("source").defaultValue = poi[0]._source;
         document.getElementById("shortDesc").defaultValue = poi[0]._shortDesc;
         document.getElementById('languages').value = poi[0]._language;
         poi_categories = poi[0]._Categories
-        console.log("inside checked categories - 1")
-        console.log(poi_categories.length)
         for(i=0; i < poi_categories.length; i++) {
-            console.log("inside checked categories")
             checkBox = document.getElementsByName(poi_categories[i]);
             // Set the `checked` field to `true`
             checkBox[0].checked = true
