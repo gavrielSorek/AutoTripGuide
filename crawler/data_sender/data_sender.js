@@ -3,6 +3,8 @@ var xhr = new XMLHttpRequest();
 var geo = require("../../services/countryByPosition");
 var tokenGetter = require("../../services/serverTokenGetter");
 const serverUrl = 'https://autotripguide.loca.lt';
+const serverCommunication = require("../../services/serverCommunication");
+
 var globalCategories = []
 var serverCategories = [] //TODO USE text analysis module instead
 
@@ -15,30 +17,6 @@ function getTodayDate() {
 
     today = dd + '/' + mm + '/' + yyyy;
     return today
-}
-
-// The function send the poi info request to the server
-async function sendPoisToServer(pois) {
-    const Http = new XMLHttpRequest();
-    const url = serverUrl + '/createPois';
-    Http.open("POST", url);
-    Http.withCredentials = false;
-    Http.setRequestHeader("Content-Type", "application/json");
-    var objectToSend = {}
-    var tokenAndPermission = await tokenGetter.getToken('crawler@gmail.com', '1234', serverUrl)
-    objectToSend["poisArray"] = pois
-    objectToSend["permissionStatus"] = tokenAndPermission.permissionStatus
-    objectToSend["PermissionToken"] = tokenAndPermission.PermissionToken
-
-    var poisInfoJson = JSON.stringify(objectToSend);
-    Http.send(poisInfoJson);
-    Http.onreadystatechange = (e) => {  
-        var response = Http.responseText;
-        if (Http.readyState == XMLHttpRequest.DONE && Http.status == 200) {
-            // successful
-            console.log("all the data was sent")
-        }
-    }
 }
 
 //convert dms coordinated to dd
@@ -149,6 +127,6 @@ async function main() {
     var args = process.argv.slice(2);
     const jsonData = require(args[0]);
     var serverPois = convertFromCrawlerToServerPoi(jsonData)
-    sendPoisToServer(serverPois)
+    serverCommunication.sendPoisToServer(serverPois)
 }
 main()
