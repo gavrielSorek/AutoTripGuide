@@ -276,20 +276,6 @@ async function initRecord() {
             mediaRecorder.addEventListener("dataavailable", event => {
                 audioChunks.push(event.data);
             });
-            // mediaRecorder.addEventListener("stop", () => {
-            //     globalIsAudioReady = false;
-            //     const audioBlob = new Blob(audioChunks);
-            //     // load audio that has been collected
-            //     audio.src = window.URL.createObjectURL(audioBlob)
-            //     audio.load();
-            //     //assign the audio to global audio
-            //     blobToArrayBuffer(audioBlob).then((buff) => {
-            //         globalAudioData = new Uint8Array(buff)
-            //         globalIsAudioReady = true;
-            //     })
-
-            // });
-
             mediaRecorder.addEventListener("stop", async () => {
                 globalIsAudioReady = false;
                 const audioBlob = new Blob(audioChunks);
@@ -345,6 +331,7 @@ function dataUploadingFinished() {
 }
 //TODO ADD CONDITION TO SEND POI IF AND ONLY IF AUDIO IS READY
 function setPoiDataOnPage(poi) {
+    console.log("inside setPoiDataOnPage")
     messages.closeMessages(); //close loading data
     if (!poi) {
         console.log('error in setPoiDataOnPage')
@@ -360,7 +347,15 @@ function setPoiDataOnPage(poi) {
         document.getElementById("source").defaultValue = poi[0]._source;
         document.getElementById("shortDesc").defaultValue = poi[0]._shortDesc;
         document.getElementById('languages').value = poi[0]._language;
-        
+        poi_categories = poi[0]._Categories
+        console.log("inside checked categories - 1")
+        console.log(poi_categories.length)
+        for(i=0; i < poi_categories.length; i++) {
+            console.log("inside checked categories")
+            checkBox = document.getElementsByName(poi_categories[i]);
+            // Set the `checked` field to `true`
+            checkBox[0].checked = true
+        }
         addMarkerOnMap(poi[0]._latitude, poi[0]._longitude, poi[0]._poiName)
 
         if (poi[0]._audio != "no audio") {
@@ -396,8 +391,6 @@ function startEditLogic() {
 
 }
 
-startEditLogic();
-
 function createCategoriesSection(){
     var lang = {
         language : "eng", //TODO::ADAPT LANGUAGE TO CATEGORIES LANGUAGE
@@ -419,6 +412,7 @@ function createCategoriesSection(){
                 // console.log(Object.keys(jsonResponse));
                 globalCategories = Object.keys(jsonResponse);
                 addCategories();
+                startEditLogic();
             } else {
                 messages.showNotFoundMessage()
             }
@@ -431,7 +425,8 @@ function addCategories(){
     for(var i=0, n=globalCategories.length;i<n;i++) {
         var checkbox = document.createElement('input');
         checkbox.type = "checkbox";
-        checkbox.name = "category";
+        console.log("checkbox.name = globalCategories[i]: " + globalCategories[i])
+        checkbox.name = globalCategories[i];
         checkbox.id = i;
         checkbox.onchange=function () {
             console.log("test clicked");
@@ -447,17 +442,18 @@ function addCategories(){
 }
 
 function toggle(source) {
-    checkboxes = document.getElementsByName('category');
-    for(var i=0, n=checkboxes.length;i<n;i++) {
-      checkboxes[i].checked = source.checked;
+    for(var i=0, n=globalCategories.length;i<n;i++) {
+        checkbox = document.getElementByName(globalCategories[i]);
+        checkbox[0].checked = source.checked;
     }
 }
 
 function getCheckedCategories(){
     checkedCategories = [];
-    checkboxes = document.getElementsByName('category');
-    for(var i=0, n=checkboxes.length;i<n;i++) {
-        if(checkboxes[i].checked) {
+
+    for(var i=0, n=globalCategories.length;i<n;i++) {
+        checkbox = document.getElementsByName(globalCategories[i]);
+        if(checkbox[0].checked) {
             checkedCategories.push(globalCategories[i])
         }
     }
