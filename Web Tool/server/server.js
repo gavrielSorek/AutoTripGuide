@@ -68,30 +68,32 @@ async function closeServer(){
 
 // create new pois return true if and only if all pois added without errors to db
 async function createNewPois(pois) {
-    var isPoisAdded = true;
+    var isAllPoisAdded = true;
+    var filteredPois = []
     try {
         for (var i = 0; i < Object.keys(pois).length; i++) {
             if (!pois[i]._poiName) {
                 console.log('error in createNewPois, poi missing name didnt create poi');
-                isPoisAdded = false;
-                return;
+                isAllPoisAdded = false;
+                continue;
             }
             var poiSearchParams = {_poiName: pois[i]._poiName.toLowerCase()};
             var poisInfo = await db.findPois(dbClientSearcher, poiSearchParams, relevantBounds = undefined, MaxCount = 1, searchOutsideTheBounds = undefined);
             if (poisInfo) { // if poi already exist, error
                 console.log('error in createNewPois, poi already exist');
-                isPoisAdded = false;
-                return;
+                isAllPoisAdded = false;
+                continue;
             }
             // if everthing is ok
             pois[i] = await poiHandler(pois[i]);
+            filteredPois.push(pois[i])
         }
-        await db.InsertPois(dbClientInsertor, pois);
+        await db.InsertPois(dbClientInsertor, filteredPois);
     } catch (e) {
         console.error(e); 
-        var isPoisAdded = false;
+        var isAllPoisAdded = false;
     } 
-    return isPoisAdded;
+    return isAllPoisAdded;
 }
 // Route that handles edit poi logic
 async function editPoi(poi) {

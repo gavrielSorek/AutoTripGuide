@@ -21,6 +21,7 @@ var globalIsAudioReady = true;
 var globalAudioData = undefined;
 var globalContributor = undefined;
 var globalApprover = undefined;
+var globalAudioStartTime = undefined;
 
 document.getElementById("submit_button").addEventListener("click", submitPoi);
 recordButton.addEventListener("mousedown", record);
@@ -275,19 +276,32 @@ async function initRecord() {
             mediaRecorder.addEventListener("dataavailable", event => {
                 audioChunks.push(event.data);
             });
-            mediaRecorder.addEventListener("stop", () => {
+            // mediaRecorder.addEventListener("stop", () => {
+            //     globalIsAudioReady = false;
+            //     const audioBlob = new Blob(audioChunks);
+            //     // load audio that has been collected
+            //     audio.src = window.URL.createObjectURL(audioBlob)
+            //     audio.load();
+            //     //assign the audio to global audio
+            //     blobToArrayBuffer(audioBlob).then((buff) => {
+            //         globalAudioData = new Uint8Array(buff)
+            //         globalIsAudioReady = true;
+            //     })
+
+            // });
+
+            mediaRecorder.addEventListener("stop", async () => {
                 globalIsAudioReady = false;
                 const audioBlob = new Blob(audioChunks);
-                // load audio that has been collected
-                audio.src = window.URL.createObjectURL(audioBlob)
+                var duration = Date.now() - globalAudioStartTime;
+                fixedBlob = await ysFixWebmDuration(audioBlob, duration, {logger: false})
+                audio.src = window.URL.createObjectURL(fixedBlob)
                 audio.load();
                 //assign the audio to global audio
-                blobToArrayBuffer(audioBlob).then((buff) => {
-                    globalAudioData = new Uint8Array(buff)
-                    globalIsAudioReady = true;
-                })
-
-            });
+                blobToArrayBuffer(fixedBlob).then((buff)=>{globalAudioData = new Uint8Array(buff)
+                  globalIsAudioReady = true;
+              })
+              });
         });
 }
 
@@ -297,6 +311,8 @@ async function record() {
     }
     audioChunks = [];
     mediaRecorder.start();
+    globalAudioStartTime = Date.now()
+
     recordButton.style = "background-color: cyan;"
     console.log("media recorder started")
 }
