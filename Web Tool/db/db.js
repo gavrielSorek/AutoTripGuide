@@ -1,4 +1,4 @@
-module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi, deletePoi, changePermission, deleteAudio, getAudioStream, getCategories};
+module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi, deletePoi, changePermission, deleteAudio, getAudioStream, getCategories, approvePoi};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -216,7 +216,12 @@ async function getCategories(client, lang) {
     }
 }
 
-
+// The function approves poi
+async function approvePoi(client, poi_id, approver_name) {
+    const res = await client.db("testDb").collection("testCollection").updateOne({_id: poi_id}, { $set: {
+        _ApprovedBy: approver_name
+    }});
+}
 
 
 

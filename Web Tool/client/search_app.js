@@ -254,13 +254,12 @@ function approveButtonClicked() {
     removeObjectFromArray(lastShownPoi, lastShownPois)
     lastShownPoi['_ApprovedBy'] = localStorage['userName']
     lastShownPois.push(lastShownPoi);
-    communication.editPoi(lastShownPoi, successCallbackFunc = ()=>{
+    communication.approvePoi(lastShownPoi['_id'], lastShownPoi['_ApprovedBy'], successCallbackFunc = ()=>{
         markerSet.clear()
         greenMarkerGroup.clearLayers();
         redMarkerGroup.clearLayers();
         showPoisOnMap(lastShownPois);
     })
-    
 }
 
 // The function perform the search according to the user request

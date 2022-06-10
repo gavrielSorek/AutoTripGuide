@@ -113,6 +113,36 @@
         }
     }
 
+     // The function edit poi
+     global.communication.approvePoi = function(id, apprverName, successCallbackFunc = undefined, failureCallbackFunc = undefined) {
+        objectToSend = {}
+        objectToSend['_ApprovedBy'] = apprverName;
+        objectToSend['_id'] = id;
+        communication.addTokensToObject(objectToSend);
+        var poiInfoJson= JSON.stringify(objectToSend);
+        const Http = new XMLHttpRequest();
+        Http.onerror = function (e) {
+            if (failureCallbackFunc)
+                failureCallbackFunc()
+        };
+        const url = '/approvePoi';
+        Http.open("POST", url);
+        Http.withCredentials = false;
+        Http.setRequestHeader("Content-Type", "application/json");
+        Http.send(poiInfoJson);
+        messages.showLoadingMessage ();
+        Http.onreadystatechange = (e) => {
+            if (Http.readyState == 4 && Http.status == 200) {
+                messages.closeMessages()
+                if (successCallbackFunc) {
+                    successCallbackFunc()
+                }
+            } else if(Http.readyState == 4 && Http.status == 553) { //if no permission
+                communication.openLoginPage()
+        }
+    }
+}
+
      // The function get the poi info for pois that waiting for approval
      global.communication.openEditPage = function (poiId) { //TODO need to fix
         basicUrl = communication.uriBeginning + 'editPoi';

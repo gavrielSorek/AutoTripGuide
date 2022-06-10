@@ -186,6 +186,18 @@ app.get("/editPoi", permissions.authApprover,async function (req, res, next) { /
     res.end()
  })
 
+ //Route approve poi
+app.post("/approvePoi", permissions.authApprover,async function (req, res, next) { //next requrie (the function will not stop the program)
+    console.log("in approve Poi")
+    const data = req.body;
+    var approverName = data._ApprovedBy;
+    var id = data._id;
+    db.approvePoi(dbClientInsertor, id, approverName)
+    res.status(200)
+    res.end()
+    next();
+ })
+
 // get about page
 app.get("/aboutUsPage", function (req, res) { //next requrie (the function will not stop the program)
     res.sendFile(path.resolve(__dirname, '../client/about.html'), function(err) {
