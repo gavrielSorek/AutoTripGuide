@@ -29,18 +29,12 @@ class AudioApp extends StatefulWidget {
     return _audioAppState!.playerState == PlayerState.PLAYING;
   }
 
-  bool isPlayingIntro() {
-    if (_audioAppState == null) {
-      return false;
-    }
-    return _audioAppState!.playerState == PlayerState.PLAYING_INTRO;
-  }
-
   bool isIntroPaused() {
     if (_audioAppState == null) {
       return false;
     }
-    return _audioAppState!.isInIntro == true;
+    return _audioAppState!.isInIntro == true &&
+        _audioAppState!.playerState == PlayerState.PAUSED;
   }
 
   void playAudio() {
@@ -53,6 +47,14 @@ class AudioApp extends StatefulWidget {
 
   void pauseAudio() {
     _audioAppState?.pause();
+  }
+
+  bool isPlayingIntro() {
+    if (_audioAppState?.playerState == PlayerState.PLAYING &&
+        _audioAppState?.isInIntro == true) {
+      return true;
+    }
+    return false;
   }
 
   void unPauseAudio() async {
@@ -200,10 +202,8 @@ class _AudioAppState extends State<AudioApp> {
       String urlPath = await saveAudioBytesToLocalFile(widget.introData);
       await audioPlayer.play(urlPath, isLocal: true);
     }
-
     setState(() {
-      playerState = PlayerState.PLAYING_INTRO;
-      playerState == PlayerState.STOPPED;
+      playerState = PlayerState.PLAYING;
     });
   }
 
