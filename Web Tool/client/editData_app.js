@@ -22,6 +22,7 @@ var globalAudioData = undefined;
 var globalContributor = undefined;
 var globalApprover = undefined;
 var globalAudioStartTime = undefined;
+var globalPic = undefined
 
 document.getElementById("submit_button").addEventListener("click", submitPoi);
 recordButton.addEventListener("mousedown", record);
@@ -139,7 +140,9 @@ async function sendPoiInfoToServer() {
         _ApprovedBy: getApprover(),
         _UpdatedBy: localStorage['userName'],
         _LastUpdatedDate: getTodayDate(),
-        _Categories : getCheckedCategories()
+        _Categories : getCheckedCategories(),
+        _pic : getPic(),
+
     }
     if (deleteCheckbox.checked) { // if user wants to delete the poi
         poiInfo['_delete'] = 'true'
@@ -187,6 +190,14 @@ function getApprover() {
         return globalApprover;
     }
     return "ApprovedBy ??";
+}
+
+function getPic(){
+    if (globalPic) {
+        console.log(globalPic)
+        return globalPic;
+    }
+    return "no pic";
 }
 
 /* -------------------------- map function -------------------- */
@@ -338,6 +349,7 @@ function setPoiDataOnPage(poi) {
     }
     // console.log(poi)
     if (poi[0]) {
+        globalPic = poi[0]._pic
         globalContributor = poi[0]._Contributor
         globalApprover = poi[0]._ApprovedBy
         console.log(poi[0])
