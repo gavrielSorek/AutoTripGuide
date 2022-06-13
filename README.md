@@ -4,6 +4,9 @@
 <td>
 Traveling is a great way to learn about an area.  <br />
 Unfortunately, we often pass by interesting sites and miss them. Missing experiences.
+   <br />
+   <br />
+We make it easy for you to personalize your guided tour with optional experiences and recommendations.
 </td>
 </tr>
 </table>
@@ -26,8 +29,6 @@ The application turn your phone into a personal and automatic tourist guide. <br
 * **History:** Save the places where the user have been.
 
 
-
-
 ## Third-party services
 
 | Application             | Description                                      |
@@ -36,6 +37,9 @@ The application turn your phone into a personal and automatic tourist guide. <br
 | Text to speech          | Convert text to voice                            |
 | Online POIs finder      | Find new POIs in runtime                         |
 
+## Architecture
+<img width="782" alt="Screen Shot 2022-06-13 at 6 28 04 PM" src="https://user-images.githubusercontent.com/73112796/173389393-d766d142-bd65-41d9-9c1c-fe6bc7eb9044.png">
+
 
 ## Development Environment (Local)
 ### System Requirements
@@ -43,6 +47,11 @@ The application turn your phone into a personal and automatic tourist guide. <br
 :bulb: Before you begin, make sure you have all the below installed:
 
 - [Node.js v14 or above](https://nodejs.org/en/download/)
+- [Flutter v2.10.4 or above](https://docs.flutter.dev/get-started/install)
+- [Android SDK v30.0.3 or above](https://developer.android.com/studio)
+- [Xcode v13.3 or above - for iOS](https://developer.apple.com/xcode/)
+- [Android Studio v4.2 or above](https://developer.android.com/studio)
+- [Dart](https://dart.dev/get-dart)
 
 ## Demo
 
