@@ -38,7 +38,7 @@ The application turn your phone into a personal and automatic tourist guide. <br
 | Online POIs finder      | Find new POIs in runtime                         |
 
 ## Architecture
-<img width="782" alt="Screen Shot 2022-06-13 at 6 28 04 PM" src="https://user-images.githubusercontent.com/73112796/173389393-d766d142-bd65-41d9-9c1c-fe6bc7eb9044.png">
+<img width="785" alt="Screen Shot 2022-06-13 at 6 41 40 PM" src="https://user-images.githubusercontent.com/73112796/173392087-456b1b61-2a05-4d17-b67c-e1d2a54d09f9.png">
 
 
 ## Development Environment (Local)
