@@ -156,6 +156,7 @@ function login(){
                 }
             }
         } else if(Http.readyState == 4 && Http.status == 553) { //if no permission
+            console.log('No permission')
             communication.openLoginPage()
         }
     }
@@ -206,7 +207,12 @@ function createAccount() {
                 console.log("response from the server is recieved")
                 var jsonResponse = JSON.parse(Http.responseText);
                 if (jsonResponse == 0) {
-                    console.log("The user created");
+                    console.log("The user was created");
+                    setFormMessage(createAccountForm, "Success", "The user was created successfully");
+                    signinUserNameOrEmail.value = userInfo.userName;
+                    signinPassword.value = userInfo.password;
+                    login()
+                    // communication.openSearchPage()
                 } else if (jsonResponse == 1) {
                     console.log("The user name and the email address exist in the system");
                     setFormMessage(createAccountForm, "error", "The user name and the email address exist in the system");

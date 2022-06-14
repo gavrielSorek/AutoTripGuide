@@ -580,12 +580,12 @@ async function readFileAsData(file) {
 // }
 
 // async function InsertPoi(client, newPoi) {
-//     const res = await client.db("testDb").collection("testCollection").insertOne(newPoi);
+//     const res = await client.db("auto_trip_guide_db").collection("poisCollection").insertOne(newPoi);
 //      console.log(`new poi created with the following id: ${res.insertedId}`);
 //  }
 
 //  async function findPoiByName(client, nameOfPoi) {
-//     const res = await client.db("testDb").collection("testCollection").find({_poiName: nameOfPoi});
+//     const res = await client.db("auto_trip_guide_db").collection("poisCollection").find({_poiName: nameOfPoi});
 //     const results = await res.toArray();
 
 //     if(res) {

@@ -7,7 +7,7 @@ const mongodb = require('mongodb');
 // The function insert a new pois to the db
 async function InsertPois(client, newPois) {
     try {
-        const res = await client.db("testDb").collection("testCollection").insertMany(newPois);
+        const res = await client.db("auto_trip_guide_db").collection("poisCollection").insertMany(newPois);
         num_of_object = 0
         for (const id in res.insertedIds) {
             num_of_object += 1
@@ -27,12 +27,12 @@ async function findDataByParams(client, queryObject, relevantBounds = undefined,
         queryObject['_latitude'] = {$gt: latBT, $lt: latST};
         queryObject['_longitude'] = {$gt: lngBT, $lt: lngST};
     }
-    var res = await client.db("testDb").collection("testCollection").find(queryObject).limit(MaxCount);
+    var res = await client.db("auto_trip_guide_db").collection("poisCollection").find(queryObject).limit(MaxCount);
     var results = await res.toArray();
     if (results.length == 0 && searchOutsideTheBoundery && relevantBounds) { //if can search outside the bounderies and didm't find pois in the boundery
         delete queryObject._latitude;
         delete queryObject._longitude;
-        res = await client.db("testDb").collection("testCollection").find(queryObject).limit(MaxCount);
+        res = await client.db("auto_trip_guide_db").collection("poisCollection").find(queryObject).limit(MaxCount);
         results = await res.toArray();
     }
     if (results.length != 0) {
@@ -50,8 +50,8 @@ async function findPois(client, poiParams , relevantBounds = undefined, MaxCount
 }
 // The function insert audio to the db
 async function insertAudio(dbClient, audio, audioName, idOfPoi) {
-    const db = await dbClient.db("testDb");
-    const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myCustomBucket' });
+    const db = await dbClient.db("auto_trip_guide_db");
+    const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myAudioBucket' });
 
     var uploadStream = bucket.openUploadStream(idOfPoi, { chunkSizeBytes: 1048576, metadata: { _poiName: audioName} })
     uploadStream.write(audio);
@@ -59,8 +59,8 @@ async function insertAudio(dbClient, audio, audioName, idOfPoi) {
 }
 // The function returns audio promise
 async function getAudio(dbClient, audioId) {
-    const db = await dbClient.db("testDb");
-    const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myCustomBucket' });
+    const db = await dbClient.db("auto_trip_guide_db");
+    const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myAudioBucket' });
     var downloadStream = bucket.openDownloadStreamByName(audioId);
     const audioPromise = new Promise((resolve, reject)=> {
     downloadStream.on('data', (chunk) =>{
@@ -73,8 +73,8 @@ async function getAudio(dbClient, audioId) {
 
 // this function return audio stream
 async function getAudioStream(dbClient, audioId) {
-    const db = await dbClient.db("testDb");
-    const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myCustomBucket' });
+    const db = await dbClient.db("auto_trip_guide_db");
+    const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myAudioBucket' });
     var downloadStream = bucket.openDownloadStreamByName(audioId);
     return downloadStream
 }
@@ -83,7 +83,7 @@ async function getAudioStream(dbClient, audioId) {
 async function deletePoi(client, updatedPoi, id) {
     deleteAudio(client, id);
     var queryObject = {_id: id}
-    client.db("testDb").collection("testCollection").deleteOne(queryObject, function(err, res){
+    client.db("auto_trip_guide_db").collection("poisCollection").deleteOne(queryObject, function(err, res){
         if(err) {
             console.log("problem in update function-db")
         }
@@ -94,12 +94,12 @@ async function deletePoi(client, updatedPoi, id) {
 }
 //update audio in db
 async function deleteAudio(client, id) {
-    var audioFile = await client.db("testDb").collection("myCustomBucket.files").findOne({'filename': id});
+    var audioFile = await client.db("auto_trip_guide_db").collection("myAudioBucket.files").findOne({'filename': id});
     if (audioFile != null) { //if the poi has audio
         console.log(audioFile);
         // const obj_id = new mongoose.Types.ObjectId(audioFile);
-        const db = await client.db("testDb");
-        const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myCustomBucket' });
+        const db = await client.db("auto_trip_guide_db");
+        const bucket = new mongodb.GridFSBucket(db, { bucketName: 'myAudioBucket' });
         console.log(typeof audioFile._id)
         try  {
             bucket.delete(audioFile._id, ()=>{console.log("audio was deleted")})
@@ -114,7 +114,7 @@ async function deleteAudio(client, id) {
 //delete poi
 async function editPoi(client, updatedPoi, id) {
     var queryObject = {_id: id}
-    client.db("testDb").collection("testCollection").replaceOne(queryObject, updatedPoi, mongoHandler)
+    client.db("auto_trip_guide_db").collection("poisCollection").replaceOne(queryObject, updatedPoi, mongoHandler)
 }
 // mongo ans handler
 function mongoHandler(err, res) {
@@ -130,8 +130,8 @@ function mongoHandler(err, res) {
 async function checkInfo(client, userInfo) {
     var userNameVal = userInfo.userName;
     var emailAddrVal = userInfo.emailAddr;
-    var resUserName = await client.db("testDb").collection("users").find({userName: userNameVal});
-    var resEmailAddr = await client.db("testDb").collection("users").find({emailAddr: emailAddrVal});
+    var resUserName = await client.db("auto_trip_guide_db").collection("users").find({userName: userNameVal});
+    var resEmailAddr = await client.db("auto_trip_guide_db").collection("users").find({emailAddr: emailAddrVal});
     var resUserNameArr = await resUserName.toArray();
     var resEmailAddrArr = await resEmailAddr.toArray();
     var resUserNameLen = resUserNameArr.length;
@@ -157,7 +157,7 @@ async function checkInfo(client, userInfo) {
 async function createNewUser(client, newUserInfo) {
     checkCode = await checkInfo(client, newUserInfo);
     if(checkCode == 0) {    //the user's info not exist in the db
-        const res = await client.db("testDb").collection("users").insertOne(newUserInfo);
+        const res = await client.db("auto_trip_guide_db").collection("users").insertOne(newUserInfo);
         console.log(`new user created with the following id: ${res.insertedId}`);
     }
     return checkCode;
@@ -167,8 +167,8 @@ async function createNewUser(client, newUserInfo) {
 async function login(client, userInfo) {
     var userNameVal = userInfo.userName
     var emailAddrVal = userInfo.emailAddr
-    var resUserName = await client.db("testDb").collection("users").find({userName: userNameVal});
-    var resEmailAddr = await client.db("testDb").collection("users").find({emailAddr: emailAddrVal});
+    var resUserName = await client.db("auto_trip_guide_db").collection("users").find({userName: userNameVal});
+    var resEmailAddr = await client.db("auto_trip_guide_db").collection("users").find({emailAddr: emailAddrVal});
     var resUserNameArr = await resUserName.toArray();
     var resEmailAddrArr = await resEmailAddr.toArray();
     var resUserNameLen = resUserNameArr.length;
@@ -192,9 +192,9 @@ async function changePermission(client, userInfo) {
     if(checkCode == 0) {    //the user's info not exist in the db
         return checkCode;
     } else {
-        var user = await client.db("testDb").collection("users").findOne({emailAddr: userEmailAddr});
+        var user = await client.db("auto_trip_guide_db").collection("users").findOne({emailAddr: userEmailAddr});
         var user_id = user._id 
-        const res = await client.db("testDb").collection("users").updateOne({_id: user_id}, { $set: {
+        const res = await client.db("auto_trip_guide_db").collection("users").updateOne({_id: user_id}, { $set: {
             permission: newPermission
         }});
         return 1;
@@ -204,7 +204,7 @@ async function changePermission(client, userInfo) {
 // The function inserts a return the categories from the db
 async function getCategories(client, lang) {
     var categoryLang = lang.language;
-    var res = await client.db("testDb").collection("Categories").find({language: categoryLang});
+    var res = await client.db("auto_trip_guide_db").collection("Categories").find({language: categoryLang});
     var resArr = await res.toArray();
     if (resArr.length > 0) {
         //console.log(resArr[0].categories);
@@ -218,7 +218,7 @@ async function getCategories(client, lang) {
 
 // The function approves poi
 async function approvePoi(client, poi_id, approver_name) {
-    const res = await client.db("testDb").collection("testCollection").updateOne({_id: poi_id}, { $set: {
+    const res = await client.db("auto_trip_guide_db").collection("poisCollection").updateOne({_id: poi_id}, { $set: {
         _ApprovedBy: approver_name
     }});
 }
