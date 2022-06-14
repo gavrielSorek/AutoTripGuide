@@ -1,15 +1,15 @@
 
 var gis = require('g-i-s');
-var tokenGetter = require("./services/serverTokenGetter");
+var tokenGetter = require("../../services/serverTokenGetter");
 var XMLHttpRequest = require('xhr2');
 let fs = require("fs");
 const gTTS = require('gtts');
 var gtts = require('node-gtts')('en');
 var path = require('path');
 
- //const serverUrl = 'https://autotripguide.loca.lt';
+const serverUrl = 'https://autotripguide.loca.lt';
 
-const serverUrl = 'http://localhost:5500'
+// const serverUrl = 'http://localhost:5500'
 
 
 //init
