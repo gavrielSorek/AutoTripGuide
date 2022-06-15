@@ -259,6 +259,12 @@ function approveButtonClicked() {
         greenMarkerGroup.clearLayers();
         redMarkerGroup.clearLayers();
         showPoisOnMap(lastShownPois);
+        marker = L.marker([lastShownPoi._latitude,  lastShownPoi._longitude], {icon: greenIcon}).addTo(greenMarkerGroup);
+        marker.bindPopup("<b>Welcome to </b><br>" + lastShownPoi._poiName)
+        marker.on('dblclick', function(){
+            showPoi(item)
+        })
+        map.addLayer(greenMarkerGroup);
     })
 }
 
