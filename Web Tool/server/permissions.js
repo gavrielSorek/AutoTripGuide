@@ -97,10 +97,3 @@ function sendLoginPage(req, res, next) {
         Location: `http://localhost:5500`
       }).end();
 }
-// newUrl.searchParams.append('PermissionToken', localStorage['PermissionToken'])
-// newUrl.searchParams.append('emailAddr', localStorage['emailAddr'])
-// newUrl.searchParams.append('password', localStorage['password'])
-// newUrl.searchParams.append('permissionStatus', localStorage['permissionStatus'])
-// newUrl.searchParams.append('userName', localStorage['userName'])
-
-//example

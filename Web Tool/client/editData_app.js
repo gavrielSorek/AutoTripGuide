@@ -1,5 +1,4 @@
 /* -------------------------- insert function -------------------- */
-// const db = require("./serverCommunication");
 //variables definition
 var poiName = document.getElementById("PoiName");
 var longitude = document.getElementById("longitude");
@@ -14,8 +13,6 @@ var deleteCheckbox = document.getElementById('deletePoi')
 var approveCheckbox = document.getElementById('approvePoi')
 var categoriesDiv = document.getElementById('categories');
 
-
-
 //init
 var globalIsAudioReady = true;
 var globalAudioData = undefined;
@@ -28,7 +25,6 @@ document.getElementById("submit_button").addEventListener("click", submitPoi);
 recordButton.addEventListener("mousedown", record);
 recordButton.addEventListener("mouseup", stopRecord);
 createCategoriesSection();
-
 
 // initRecord()
 //add events
@@ -97,17 +93,6 @@ function findPoiPosition() {
         }
     }
 }
-
-// // The function show a not found message when the user ask for a poi that not exist
-// function showNotFoundMessage() {
-//     Swal.fire({
-//         icon: 'error',
-//         title: 'Oops...',
-//         text: 'The POI according to your request is not found',
-//       }).then((result) => {
-//         setTimeout(deleteEverything, 500);
-//       });
-// }
 
 // The function returns the date of today
 function getTodayDate() {
@@ -263,7 +248,6 @@ async function handleFiles(event) {
     globalIsAudioReady = true;
 }
 
-// let data = await readFileAsData(document.getElementById("upload").files[0])
 //read data from file
 async function readFileAsData(file) {
     let result = await new Promise((resolve) => {
@@ -274,7 +258,6 @@ async function readFileAsData(file) {
     bytesRes = new Int8Array(result);
     return bytesRes;
 }
-
 
 var mediaRecorder = undefined
 var audioChunks = [];
@@ -321,8 +304,6 @@ function stopRecord() {
     recordButton.style = "background-color: cornsilk;"
 }
 
-
-
 async function blobToArrayBuffer(blob) {
     if ('arrayBuffer' in blob) return await blob.arrayBuffer();
     return new Promise((resolve, reject) => {
@@ -347,7 +328,6 @@ function setPoiDataOnPage(poi) {
     if (!poi) {
         console.log('error in setPoiDataOnPage')
     }
-    // console.log(poi)
     if (poi[0]) {
         globalPic = poi[0]._pic
         globalContributor = poi[0]._Contributor
@@ -419,8 +399,6 @@ function createCategoriesSection(){
             if(response.length > 0) {
                 console.log("response from the server is recieved")
                 var jsonResponse = JSON.parse(Http.responseText);
-                // console.log(jsonResponse);
-                // console.log(Object.keys(jsonResponse));
                 globalCategories = Object.keys(jsonResponse);
                 addCategories();
                 startEditLogic();
@@ -470,6 +448,3 @@ function getCheckedCategories(){
     }
     return checkedCategories;
 }
-
-
-

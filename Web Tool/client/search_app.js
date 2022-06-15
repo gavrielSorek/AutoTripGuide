@@ -217,10 +217,7 @@ function showPoi(item) {
     if (audio == "no audio") {
         console.log("no audio for this poi")
     } else {
-        //elem2.append($('<audio controls>'));
-        // audioFromDb = getAudioById(item._id)
         communication.getAudioById(item._id, loadAudio, undefined)
-        
         elem2.append(poiAudio);
     }
     elem1.append(elem2);
@@ -316,18 +313,6 @@ function getSearchInfo() {
       }
 }
 
-// searchButton.click(function(){
-//     keyword = searchBar.val();
-//     resultArea.empty();
-//     var elem0 = $('<li>');
-//     elem0.append($('<h3>').text("searching..."));
-//     resultArea.append(elem0);
-//     $("footer").empty();
-//     // displayResults(); 
-//     $("#searchBox").animate({'padding-top':"0"}, 600);
-//     $(".container-fluid").animate({height:"30vh"}, 600);
-//   });
-
 /* -------------------------- map function -------------------- */
 function getRelevantBounds(dist) {
     var relevantBounds = {}
@@ -347,7 +332,6 @@ function updatePoisOnMap() {
     if (lastParameterSearched) { //if already the user searched in the map
         getPoisInfo(lastParameterSearched,lastUserQuery, false, getRelevantBounds(secClipRange))
     }
-    
     console.log(currentMapBounds)
     console.log(lastMapZoom)
 

@@ -74,18 +74,13 @@ document.querySelectorAll(".form__input").forEach(inputElement => {
 });
 
 function onGoogleSignIn(googleUser) {
+    console.log("inside onGoogleSignIn - 1")
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.disconnect();
+    console.log("inside onGoogleSignIn - 2")
     var profile = googleUser.getBasicProfile();
-    // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    // console.log('Name: ' + profile.getName());
-    // console.log('Image URL: ' + profile.getImageUrl());
-    // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
     var id_token = googleUser.getAuthResponse().id_token;
-    // save token in local storage
-    // localStorage["google_token"] = id_token;
-
-
+    console.log("inside onGoogleSignIn - 3")
 
     const Http = new XMLHttpRequest();
     const url=communication.uriBeginning +'googlelogin';
@@ -93,18 +88,19 @@ function onGoogleSignIn(googleUser) {
     Http.withCredentials = false;
     Http.setRequestHeader("Content-Type", "application/json");
     Http.send(JSON.stringify({token : id_token}));
+    console.log("inside onGoogleSignIn - 4")
 
     Http.onreadystatechange = (e) => {  
         if (Http.readyState == 4) { //if the operation is complete.
             var response = Http.responseText
             if(response.length > 0) {
-                if (response == "success") {
-                    console.log("the user login with google auth");
-                    window.location.href = communication.uriBeginning + "searchPoisPage";
-                } else {
-                    console.log("the user not login with google auth");
-                }
+                console.log("inside onGoogleSignIn - 5")
+
+                setServerTokens(jsonResponse)
+                communication.openSearchPage()
             }
+            console.log("inside onGoogleSignIn - 6")
+
         }
     }
 }
@@ -123,11 +119,7 @@ function login(){
         userName  : signinUserNameOrEmailVal,
         emailAddr : signinUserNameOrEmailVal, 
         password  : signinPasswordVal
-    }
-    //save the data in local storage
-    // localStorage["userName"] = signinUserNameOrEmailVal;
-    // localStorage["emailAddr"] = signinUserNameOrEmailVal;
-    // localStorage["password"] = signinPasswordVal;
+    }   
     var userInfoJson= JSON.stringify(userInfo);
     const Http = new XMLHttpRequest();
     Http.HTTPS=true
@@ -263,15 +255,4 @@ document.addEventListener("DOMContentLoaded", () => {
         loginForm.classList.remove("form--hidden");
         createAccountForm.classList.add("form--hidden");
     });
-
-    // loginForm.addEventListener("submit", e => {
-    //     e.preventDefault();
-
-    //     // Perform your AJAX/Fetch login
-
-    //     setFormMessage(loginForm, "error", "Invalid username/password combination");
-    // });
-
-
-    
 });
