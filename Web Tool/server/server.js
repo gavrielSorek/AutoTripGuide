@@ -175,7 +175,7 @@ app.get("/dataInPage",permissions.authContributor, function (req, res) { //next 
  })
 
 
-//Route get edit pois logic
+//Route get edit pois logic - need to accept full data of poi
 app.get("/editPoi", permissions.authApprover,async function (req, res, next) { //next requrie (the function will not stop the program)
     console.log("in get edit poi")
     console.log(req.query.id)
@@ -252,6 +252,19 @@ app.post('/editPois', permissions.authApprover, (req, res, next) =>{
     res.end();
     next();
 })
+
+ //Need to get specific filed to replace - dont use it to change audio!
+ app.post("/editPoiSpecific", permissions.authApprover,async function (req, res, next) { //next requrie (the function will not stop the program)
+    console.log("in get edit poi specific")
+    const data = req.body; 
+    const dataToReplace = data.replaceObj
+    const id = data.id;
+    db.editPoiSpecificData(dbClientInsertor,id, dataToReplace)
+    res.status(200);
+    res.json(json_res);
+    res.end();
+    next();
+ })
 
 //search poi logic
 app.post('/searchPois', permissions.authContributor,async function(req, res) {

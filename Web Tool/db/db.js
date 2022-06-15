@@ -1,4 +1,4 @@
-module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi, deletePoi, changePermission, deleteAudio, getAudioStream, getCategories, approvePoi};
+module.exports = {InsertPois, insertAudio, getAudio, findPois, createNewUser, login, editPoi, deletePoi, changePermission, deleteAudio, getAudioStream, getCategories, approvePoi, editPoiSpecificData};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -223,27 +223,8 @@ async function approvePoi(client, poi_id, approver_name) {
     }});
 }
 
+// The function edit specific poi data - does'nt change audio
+async function editPoiSpecificData(client, poi_id, poiFieldsToChange) {
+    const res = await client.db("auto_trip_guide_db").collection("poisCollection").updateOne({_id: poi_id}, { $set: poiFieldsToChange});
 
-
-
-
-
-// //init
-// async function init() {
-//     try {
-//         const dbClientAudio = new MongoClient('mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority');
-//         await dbClientAudio.connect();
-//         // ppp = await findDataByParams(dbClientAudio, {_poiName: 'Masada'}, getDefaultBounds(), 10, true)
-//         mmm = await findPois(dbClientAudio, '_poiName' ,'Masada', getDefaultBounds(), 10, true)
-//         console.log(mmm)
-//     } catch (e) {
-//         console.error(e); 
-//     }
-// }
-// init()
-// function getDefaultBounds(){
-//     var relevantBounds = {}
-//     relevantBounds['southWest'] = {lat : 31.31610138349565, lng : 35.35400390625001}
-//     relevantBounds['northEast'] = {lat : 31.83303, lng : 36.35400390625001}
-//     return relevantBounds;
-// }
+}

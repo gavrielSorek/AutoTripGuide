@@ -7,7 +7,7 @@ const gTTS = require('gtts');
 var gtts = require('node-gtts')('en');
 var path = require('path');
 
-const serverUrl = 'https://autotripguide.loca.lt';
+const serverUrl = 'https://autotripguide1.loca.lt';
 
 // const serverUrl = 'http://localhost:5500'
 
@@ -80,16 +80,19 @@ async function nameToPicUrl(name) {
 
 // The function send the poi info request to the server
 async function updatePoiOnServer(poi) {
-    poiArray = [poi] //thats what the server expected
     objectToSend = {}
-    objectToSend['poisArray'] = poiArray;
+    // objectToSend['replaceObj'] = {_pic: poi._pic};
+    objectToSend['replaceObj'] = {_pic: '123456'};
+
+    objectToSend['id'] = poi._id
+
     addTokensToObject(objectToSend);
     var poiInfoJson= JSON.stringify(objectToSend);
     const Http = new XMLHttpRequest();
     Http.onerror = function (e) {
         console.log(e);
     };
-    const url = serverUrl +'/editPois';
+    const url = serverUrl +'/editPoiSpecific';
     // const url = '/editPois';
     Http.open("POST", url);
     Http.withCredentials = false;
