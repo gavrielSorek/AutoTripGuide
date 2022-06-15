@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:final_project/Map/globals.dart';
+import 'package:final_project/Map/personalize_recommendation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -140,7 +141,7 @@ class _UserMapState extends State<UserMap> {
       });
 
       Globals.globalUnhandledKeys
-          .sort(Globals.sortPoisByWeightedScore); //TODO improve complexity
+          .sort(PersonalizeRecommendation.sortPoisByWeightedScore);
       // if there is new pois and guideTool waiting
       if (pois.isNotEmpty && guideTool.state == GuideState.waiting) {
         guideTool.handlePois();
