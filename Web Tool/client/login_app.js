@@ -43,6 +43,17 @@ function disableLogin() {
 //query selector
 document.querySelectorAll(".form__input").forEach(inputElement => {
     console.log(inputElement)
+    inputElement.addEventListener("keyup", e => {
+        if(signupUsername.value.length > 9 && signupPassword.value.length !=0 && signupPassword.value == signupConfirmPassword.value) {
+            enableContinue();
+        }
+        if(signinUserNameOrEmail.value.length == 0 || signinPassword.value.length == 0) {
+            disableLogin();
+        }
+        if(signinUserNameOrEmail.value.length > 0 && signinPassword.value.length > 0) {
+            enableLogin();
+        }
+    });
     inputElement.addEventListener("blur", e => {
         // Integrity check for signUp user name
         if (e.target.id === "signupUsername" && e.target.value.length > 0 && e.target.value.length < 10) {
@@ -53,15 +64,6 @@ document.querySelectorAll(".form__input").forEach(inputElement => {
         if (e.target.id === "signupConfirmPassword" && e.target.value != signupPassword.value) {
             setInputError(inputElement, "The passwords do not match");
             disableContinue();
-        }
-        if(signupUsername.value.length > 9 && signupPassword.value.length !=0 && signupPassword.value == signupConfirmPassword.value) {
-            enableContinue();
-        }
-        if(signinUserNameOrEmail.value.length == 0 || signinPassword.value.length == 0) {
-            disableLogin();
-        }
-        if(signinUserNameOrEmail.value.length > 0 && signinPassword.value.length > 0) {
-            enableLogin();
         }
     });
     inputElement.addEventListener("input", e => {
