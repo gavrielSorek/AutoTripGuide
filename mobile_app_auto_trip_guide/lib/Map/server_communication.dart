@@ -8,8 +8,6 @@ import 'globals.dart';
 
 class ServerCommunication {
   // String serverUrl = "https://autotripguidemobile.loca.lt";
-  // String serverUrl = "autotripguidemobile.loca.lt";
-
   String serverUrl = "autotripguidemobile.loca.lt";
 
   var client = RetryClient(http.Client());
