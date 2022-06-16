@@ -13,6 +13,7 @@ We make it easy for you to personalize your guided tour with optional experience
 
 ## Web App
 The application will be used to add sites to the system by authorized persons. <br /><br />
+*POI = Point Of Interesrt <br /><br />
 **Features:**
 * **Search:** Search for POIs by categories.
 * **Add:** Add new POI.
@@ -22,6 +23,7 @@ The application will be used to add sites to the system by authorized persons. <
 
 ## Mobile App
 The application turn your phone into a personal and automatic tourist guide. <br /><br />
+*POI = Point Of Interesrt <br /><br />
 **Features:**
 * **Interactive Map:** Map with the nearest sites marked and an indication of the recommended sites and current user location.
 * **Site Information:** Provide variety types of information about the sites - hearing, reading, navigation.
