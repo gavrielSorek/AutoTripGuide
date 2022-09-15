@@ -26,7 +26,7 @@ class AudioApp extends StatefulWidget {
     if (_audioAppState == null) {
       return false;
     }
-    return _audioAppState!.playerState == PlayerState.PLAYING;
+    return _audioAppState!.playerState == PlayerState.playing;
   }
 
   bool isIntroPaused() {
@@ -34,7 +34,7 @@ class AudioApp extends StatefulWidget {
       return false;
     }
     return _audioAppState!.isInIntro == true &&
-        _audioAppState!.playerState == PlayerState.PAUSED;
+        _audioAppState!.playerState == PlayerState.paused;
   }
 
   void playAudio() {
@@ -50,7 +50,7 @@ class AudioApp extends StatefulWidget {
   }
 
   bool isPlayingIntro() {
-    if (_audioAppState?.playerState == PlayerState.PLAYING &&
+    if (_audioAppState?.playerState == PlayerState.playing &&
         _audioAppState?.isInIntro == true) {
       return true;
     }
@@ -92,11 +92,11 @@ class _AudioAppState extends State<AudioApp> {
   Icon playPauseIcon = Icon(Icons.play_arrow);
   bool isPlayerButtonDisabled = false;
   bool isInIntro = false;
-  PlayerState playerState = PlayerState.STOPPED;
+  PlayerState playerState = PlayerState.stopped;
 
-  get isPlaying => playerState == PlayerState.PLAYING;
+  get isPlaying => playerState == PlayerState.playing;
 
-  get isPaused => playerState == PlayerState.PAUSED;
+  get isPaused => playerState == PlayerState.paused;
 
   get durationText =>
       duration != null ? duration.toString().split('.').first : '';
@@ -144,19 +144,19 @@ class _AudioAppState extends State<AudioApp> {
   void initAudioPlayer() {
     // audioPlayer = AudioPlayer();
     _positionSubscription =
-        audioPlayer.onAudioPositionChanged.listen((p) => setState(() {
+        audioPlayer.onPositionChanged.listen((p) => setState(() {
               if (!isInIntro) {
                 position = p;
               }
             }));
     _audioPlayerStateSubscription =
         audioPlayer.onPlayerStateChanged.listen((s) async {
-      if (s == PlayerState.PLAYING) {
+      if (s == PlayerState.playing) {
         // print("-------------------------------");
         // int ddd = await audioPlayer.getDuration();
         // print(ddd);
         // setState(() => duration = Duration(seconds: 1000));
-      } else if (s == PlayerState.STOPPED) {
+      } else if (s == PlayerState.stopped) {
         onComplete();
         setState(() {
           position = Duration(milliseconds: 0);
@@ -164,7 +164,7 @@ class _AudioAppState extends State<AudioApp> {
       }
     }, onError: (msg) {
       setState(() {
-        playerState = PlayerState.STOPPED;
+        playerState = PlayerState.stopped;
         duration = Duration(seconds: 0);
         position = Duration(seconds: 0);
       });
@@ -181,7 +181,7 @@ class _AudioAppState extends State<AudioApp> {
       //   setState(() => duration = newDuration);
       // }
     });
-    audioPlayer.onPlayerCompletion.listen((event) {
+    audioPlayer.onPlayerComplete.listen((event) {
       if (isInIntro) {
         isInIntro = false;
         play();
@@ -196,14 +196,17 @@ class _AudioAppState extends State<AudioApp> {
   Future playIntro() async {
     disablePlayerButton();
     isInIntro = true;
-    if (Platform.isAndroid) {
-      await audioPlayer.playBytes(widget.introData);
-    } else if (Platform.isIOS) {
-      String urlPath = await saveAudioBytesToLocalFile(widget.introData);
-      await audioPlayer.play(urlPath, isLocal: true);
-    }
+    // if (Platform.isAndroid) {
+    //   // await audioPlayer.setSourceBytes(widget.introData);
+    //   await audioPlayer.playBytes(widget.introData);
+    // } else if (Platform.isIOS) {
+    //   String urlPath = await saveAudioBytesToLocalFile(widget.introData);
+    //   await audioPlayer.play(UrlSource(urlPath));
+    // }
+    String urlPath = await saveAudioBytesToLocalFile(widget.introData);
+    await audioPlayer.play(UrlSource(urlPath));
     setState(() {
-      playerState = PlayerState.PLAYING;
+      playerState = PlayerState.playing;
     });
   }
 
@@ -214,15 +217,17 @@ class _AudioAppState extends State<AudioApp> {
     if (isPaused) {
       await audioPlayer.resume();
     } else {
-      if (Platform.isAndroid) {
-        await audioPlayer.playBytes(widget.byteData);
-      } else if (Platform.isIOS) {
+      // if (Platform.isAndroid) {
+      //   await audioPlayer.playBytes(widget.byteData);
+      // } else if (Platform.isIOS) {
+      //   String urlPath = await saveAudioBytesToLocalFile(widget.byteData);
+      //   await audioPlayer.play(urlPath, isLocal: true);
+      // }
         String urlPath = await saveAudioBytesToLocalFile(widget.byteData);
-        await audioPlayer.play(urlPath, isLocal: true);
-      }
+        await audioPlayer.play(UrlSource(urlPath));
     }
     setState(() {
-      playerState = PlayerState.PLAYING;
+      playerState = PlayerState.playing;
     });
   }
 
@@ -235,13 +240,13 @@ class _AudioAppState extends State<AudioApp> {
   Future pause() async {
     playPauseIcon = playIcon;
     await audioPlayer.pause();
-    setState(() => playerState = PlayerState.PAUSED);
+    setState(() => playerState = PlayerState.paused);
   }
 
   Future stop() async {
     await audioPlayer.stop();
     setState(() {
-      playerState = PlayerState.STOPPED;
+      playerState = PlayerState.stopped;
       // position = Duration(milliseconds: 0);
       playPauseIcon = playIcon;
     });
@@ -256,7 +261,7 @@ class _AudioAppState extends State<AudioApp> {
   // }
 
   void onComplete() {
-    setState(() => playerState = PlayerState.STOPPED);
+    setState(() => playerState = PlayerState.stopped);
   }
 
   void enablePlayerButton() {
