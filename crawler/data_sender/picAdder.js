@@ -7,7 +7,7 @@ const gTTS = require('gtts');
 var gtts = require('node-gtts')('en');
 var path = require('path');
 
-const serverUrl = 'https://autotripguide1.loca.lt';
+const serverUrl = 'https://autotripguide.loca.lt';
 
 // const serverUrl = 'http://localhost:5500'
 
@@ -46,7 +46,8 @@ async function getPoisWithNoPic() {
             } else if (Http.readyState == 4) { //if the operation is complete.
                 var response = Http.responseText
                 if (response.length > 0) {
-                    //console.log("response from the server is recieved")
+                    console.log("response from the server is recieved")
+                    console.log(Http.responseText)
                     var poisInfo = JSON.parse(Http.responseText);
                     if(poisInfo.length == 0) {
                         console.log("not found");
@@ -82,7 +83,7 @@ async function nameToPicUrl(name) {
 async function updatePoiOnServer(poi) {
     objectToSend = {}
     // objectToSend['replaceObj'] = {_pic: poi._pic};
-    objectToSend['replaceObj'] = {_pic: '123456'};
+    objectToSend['replaceObj'] = {_pic: poi._pic};
 
     objectToSend['id'] = poi._id
 

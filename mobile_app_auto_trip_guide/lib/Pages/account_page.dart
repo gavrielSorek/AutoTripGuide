@@ -1,5 +1,4 @@
 import 'package:final_project/Pages/personal_details_page.dart';
-import 'package:final_project/UsefulWidgets/toolbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:final_project/Pages/favorite_categories_page.dart';
@@ -14,16 +13,23 @@ class AccountPage extends StatelessWidget {
   String personalDetailsStr = " PERSONAL DETAILS  ";
   String favoriteCategoriesStr = "  FAVORITE CATEGORIES";
 
-
-  void loadUserDetails() async{
+  void loadUserDetails() async {
     if (Globals.globalUserInfoObj == null) {
-      Map<String, String> userInfo = await Globals.globalServerCommunication.getUserInfo(Globals.globalEmail);
-      Globals.globalUserInfoObj = UserInfo(userInfo["name"], Globals.globalEmail, userInfo["gender"] ?? " ", userInfo["languages"] ?? " ", userInfo["age"], Globals.globalFavoriteCategories);
+      Map<String, String> userInfo = await Globals.globalServerCommunication
+          .getUserInfo(Globals.globalEmail);
+      Globals.globalUserInfoObj = UserInfo(
+          userInfo["name"],
+          Globals.globalEmail,
+          userInfo["gender"] ?? " ",
+          userInfo["languages"] ?? " ",
+          userInfo["age"],
+          Globals.globalFavoriteCategories);
     }
-    Globals.globalCategories ??= await Globals.globalServerCommunication.getCategories(Globals.globalDefaultLanguage);
+    Globals.globalCategories ??= await Globals.globalServerCommunication
+        .getCategories(Globals.globalDefaultLanguage);
   }
 
-  void _navigateToNextScreen(String screenName, BuildContext context) async{
+  void _navigateToNextScreen(String screenName, BuildContext context) async {
     if (screenName == personalDetailsStr) {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => PersonalDetailsPage()));
@@ -36,60 +42,63 @@ class AccountPage extends StatelessWidget {
   Container buildCard(String cardName, BuildContext context) {
     Icon iconCard;
     if (cardName == personalDetailsStr) {
-      iconCard = Icon( // <-- Icon
+      iconCard = Icon(
+        // <-- Icon
         Icons.person_outline,
         size: 30.0,
         color: Colors.white,
       );
     } else {
-      iconCard = Icon( // <-- Icon
+      iconCard = Icon(
+        // <-- Icon
         Icons.favorite_border_outlined,
         size: 30.0,
         color: Colors.white,
       );
     }
     return Container(
-        height: MediaQuery.of(context).size.height / 7,
-        width: MediaQuery.of(context).size.width / 0.8,
-        child:
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-                primary: Globals.globalColor,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-            ),
-          onPressed: () {
-            _navigateToNextScreen(cardName, context);
-          },
-          icon: iconCard,
-          label: Text(cardName,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20),
-                textAlign: TextAlign.center), // <-- Text
-          ),);
+      height: MediaQuery.of(context).size.height / 7,
+      width: MediaQuery.of(context).size.width / 0.8,
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          primary: Globals.globalColor,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        ),
+        onPressed: () {
+          _navigateToNextScreen(cardName, context);
+        },
+        icon: iconCard,
+        label: Text(cardName,
+            style: const TextStyle(color: Colors.white, fontSize: 20),
+            textAlign: TextAlign.center), // <-- Text
+      ),
+    );
   }
 
   Widget buildName() => Column(
-    children: [
-      Text(
-        Globals.globalController.googleAccount.value?.displayName ?? " ",
-        style: const TextStyle(
-          fontWeight: FontWeight.bold, fontSize: 26, color: Colors.black87,),
-      ),
-      const SizedBox(height: 4),
-      Text(
-        Globals.globalController.googleAccount.value?.email ?? " ",
-        style: const TextStyle(color: Colors.black54),
-      )
-    ],
-  );
+        children: [
+          Text(
+            Globals.globalController.googleAccount.value?.displayName ?? " ",
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 26,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            Globals.globalController.googleAccount.value?.email ?? " ",
+            style: const TextStyle(color: Colors.black54),
+          )
+        ],
+      );
 
   Container buildLogOutButton(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height / 22,
-      color: Colors.transparent,
-      child:
-      Row(
+        height: MediaQuery.of(context).size.height / 22,
+        color: Colors.transparent,
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             SizedBox(height: MediaQuery.of(context).size.height / 50),
@@ -109,11 +118,11 @@ class AccountPage extends StatelessWidget {
                   color: Colors.white,
                 ),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15.0))
-                ),
+                    borderRadius: BorderRadius.all(Radius.circular(15.0))),
               ),
             ),
-          ],));
+          ],
+        ));
   }
 
   @override
@@ -145,7 +154,7 @@ class AccountPage extends StatelessWidget {
             SizedBox(height: MediaQuery.of(context).size.height / 50),
             ProfileWidget(
               imagePath:
-              Globals.globalController.googleAccount.value?.photoUrl ?? "",
+                  Globals.globalController.googleAccount.value?.photoUrl ?? "",
               onClicked: () async {},
             ),
             buildName(),
@@ -155,21 +164,21 @@ class AccountPage extends StatelessWidget {
               height: MediaQuery.of(context).size.height / 1.9,
               padding: const EdgeInsets.all(20.0),
               decoration: BoxDecoration(
-              shape: BoxShape.rectangle,
-              color: Colors.transparent,
-              borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(100.0),
-              topRight: Radius.circular(100.0),
-              bottomLeft: Radius.zero,
-              bottomRight: Radius.zero,
+                shape: BoxShape.rectangle,
+                color: Colors.transparent,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(100.0),
+                  topRight: Radius.circular(100.0),
+                  bottomLeft: Radius.zero,
+                  bottomRight: Radius.zero,
+                ),
               ),
-              ),
-              child: Column(
-                children: [
-                  SizedBox(height: MediaQuery.of(context).size.height / 20),
-                  buildCard(personalDetailsStr, context),
-                  SizedBox(height: MediaQuery.of(context).size.height / 20),
-                  buildCard(favoriteCategoriesStr, context),]),
+              child: Column(children: [
+                SizedBox(height: MediaQuery.of(context).size.height / 20),
+                buildCard(personalDetailsStr, context),
+                SizedBox(height: MediaQuery.of(context).size.height / 20),
+                buildCard(favoriteCategoriesStr, context),
+              ]),
             ),
           ],
         ));
@@ -223,18 +232,18 @@ class ProfileWidget extends StatelessWidget {
   }
 
   Widget buildEditIcon(Color color) => buildCircle(
-    color: Colors.white,
-    all: 3,
-    child: buildCircle(
-      color: color,
-      all: 8,
-      child: const Icon(
-        Icons.edit,
         color: Colors.white,
-        size: 20,
-      ),
-    ),
-  );
+        all: 3,
+        child: buildCircle(
+          color: color,
+          all: 8,
+          child: const Icon(
+            Icons.edit,
+            color: Colors.white,
+            size: 20,
+          ),
+        ),
+      );
 
   Widget buildCircle({
     required Widget child,

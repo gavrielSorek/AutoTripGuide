@@ -1,9 +1,7 @@
 import json
 import re
-import time
 import wikipediaapi
 import threading
-import sys
 import requests
 from bs4 import BeautifulSoup
 import redis
@@ -145,18 +143,17 @@ class Crawler:
         # if page is invalid
         self.check_and_insert_wiki_page(wiki_page=wiki_page)
         links = wiki_page.links
-        while self.continue_crawl:
-            for title in sorted(links.keys()):
-                if not self.continue_crawl:
-                    break
-                wiki_page_l = links[title]  # the wikipedia page from the link
-                self.check_and_insert_wiki_page(wiki_page=wiki_page_l)
-            # crawling in all the links of wiki_page
-            for title in sorted(links.keys()):
-                if not self.continue_crawl:
-                    break
-                wiki_page_l = links[title]  # the wikipedia page from the link
-                self.crawl(wiki_page=wiki_page_l)
+        for title in sorted(links.keys()):
+            if not self.continue_crawl:
+                break
+            wiki_page_l = links[title]  # the wikipedia page from the link
+            self.check_and_insert_wiki_page(wiki_page=wiki_page_l)
+        # crawling in all the links of wiki_page
+        for title in sorted(links.keys()):
+            if not self.continue_crawl:
+                break
+            wiki_page_l = links[title]  # the wikipedia page from the link
+            self.crawl(wiki_page=wiki_page_l)
 
     def crawl_with_thread(self):
         self.crawler_thread = threading.Thread(target=self.crawl, args=(self.start_wiki_page,))
@@ -197,17 +194,14 @@ def start_logic():
                               , output_json_f_name='data_sender/json_file_' + str(i) + ".json")
     for i in range(num_of_thread):
         crawlers[i].crawl_with_thread()
-    # time.sleep(1000)
     userVal = 'continue'
     while userVal != 'q':
         userVal = input("Enter q to exit: \n")
 
-
-
-
-    # add the last page that the crawlers crawled
+    # add the last page that the crawlers have crawled
     crawlers_last_title = []
     for i in range(num_of_thread):
+        # add the last title that the crawler was
         crawlers_last_title.append(crawlers[i].stop_crawler())
     add_crawlers_last_title_file("crawlers_last_title.json", crawlers_last_title)
 
