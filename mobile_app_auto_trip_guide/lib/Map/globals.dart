@@ -1,12 +1,9 @@
 import 'dart:collection';
-import 'dart:math';
 import 'package:final_project/Map/audio_player_controller.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:location/location.dart';
 import '../Pages/account_page.dart';
 import '../Pages/history_page.dart';
 import '../Pages/home_page.dart';

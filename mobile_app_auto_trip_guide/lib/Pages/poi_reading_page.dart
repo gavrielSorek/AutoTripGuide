@@ -1,5 +1,3 @@
-import 'package:final_project/UsefulWidgets/toolbar.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Map/types.dart';

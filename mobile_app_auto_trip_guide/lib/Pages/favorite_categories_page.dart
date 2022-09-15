@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../Map/events.dart';
 import '../Map/globals.dart';
 
 class FavoriteCategoriesPage extends StatefulWidget {
