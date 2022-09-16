@@ -101,7 +101,7 @@ class _UserMapState extends State<UserMap> {
       guideTool.stop();
       guideTool.askNextPoi();
     });
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       guideTool.handlePois();
     });
   }
