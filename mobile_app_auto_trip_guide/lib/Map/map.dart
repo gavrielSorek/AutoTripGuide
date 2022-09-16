@@ -12,38 +12,14 @@ import 'guide.dart';
 
 class UserMap extends StatefulWidget {
   // inits
-  static Location? USER_LOCATION;
+  // static dynamic? USER_LOCATION;
   static LocationData? USER_LOCATION_DATA;
   static List userChangeLocationFuncs = [];
 
   static Future<void> mapInit() async {
     // initialization order is very important
-    USER_LOCATION = await getLocation();
-    USER_LOCATION_DATA = await USER_LOCATION!.getLocation();
-    USER_LOCATION!.onLocationChanged.listen(locationChangedEvent);
-  }
-
-  static Future<Location?> getLocation() async {
-    Location location = Location();
-
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return null;
-      }
-    }
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return null;
-      }
-    }
-    return location;
+    USER_LOCATION_DATA = await getLocation();
+    onLocationChanged().listen((locationChangedEvent));
   }
 
   static void locationChangedEvent(LocationData currentLocation) async {
@@ -123,7 +99,7 @@ class _UserMapState extends State<UserMap> {
           LocationInfo(
               UserMap.USER_LOCATION_DATA!.latitude!,
               UserMap.USER_LOCATION_DATA!.longitude!,
-              UserMap.USER_LOCATION_DATA!.heading!,
+              UserMap.USER_LOCATION_DATA!.bearing!,
               UserMap.USER_LOCATION_DATA!.speed!));
 
       setState(() {
