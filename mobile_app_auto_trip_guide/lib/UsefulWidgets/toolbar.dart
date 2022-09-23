@@ -24,11 +24,7 @@ class Toolbar extends State<ToolbarWidget> {
       }
     } else {
       // if map page
-      if (Globals.globalAudioPlayer.isIntroPaused()) {
-        Globals.globalAudioPlayer.playAudio();
-      } else {
         Globals.globalUserMap.userMapState?.guideTool.unpauseGuideDialogBox();
-      }
     }
     setState(() {
       _selectedScreenIndex = index;

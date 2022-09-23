@@ -37,7 +37,7 @@ class Guide {
         UserMap.USER_LOCATION_DATA?.longitude,
         guideDialogBox.getMapPoi()?.poi.latitude,
         guideDialogBox.getMapPoi()?.poi.longitude);
-    audioPlayer.setText(mapPoi.poi.shortDesc ?? "No description");
+    audioPlayer.setText(mapPoi.poi.shortDesc ?? "No description", mapPoi.poi.language ?? 'en');
     audioPlayer.playAudio();
   }
 

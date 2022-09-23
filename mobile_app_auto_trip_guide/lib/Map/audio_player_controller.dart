@@ -14,10 +14,12 @@ class AudioApp extends StatefulWidget {
   FlutterTts flutterTts = FlutterTts();
   dynamic onPlayerFinishedFunc;
   String text = "";
+  String languageCode = "";
+  var langToTtsLangCode = {'en':'en-GB'};
 
-
-  void setText(String text) {
+  void setText(String text, String language) {
     this.text = text;
+    this.languageCode = langToTtsLangCode[language]!;
     _audioAppState?.enablePlayerButton();
   }
 
@@ -225,8 +227,10 @@ class _AudioAppState extends State<AudioApp> {
   Future play() async {
     playPauseIcon = icons[PlayerState.playing.index];
     enablePlayerButton();
+    // TODO MOVE THIS SECTION
     await widget.flutterTts.setSpeechRate(speechRate);
     await widget.flutterTts.setPitch(pitch);
+    await widget.flutterTts.setLanguage(widget.languageCode);
 
     if (isPaused) {
       await widget.audioPlayer.resume();
