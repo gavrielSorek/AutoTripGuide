@@ -1,25 +1,24 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:flutter_tts/flutter_tts.dart';
 
 import 'globals.dart';
 
 typedef void OnError(Exception exception);
 
 class AudioApp extends StatefulWidget {
+  AudioPlayer audioPlayer = AudioPlayer();
+  FlutterTts flutterTts = FlutterTts();
   dynamic onPlayerFinishedFunc;
-  Uint8List introData = Uint8List(0);
-  Uint8List byteData = Uint8List(0);
+  String text = "";
 
-  void setIntroBytes(Uint8List introBytes) {
-    introData = introBytes;
-  }
 
-  void setAudioBytes(Uint8List audioBytes) {
-    byteData = audioBytes;
+  void setText(String text) {
+    this.text = text;
+    _audioAppState?.enablePlayerButton();
   }
 
   bool isPlaying() {
@@ -29,16 +28,8 @@ class AudioApp extends StatefulWidget {
     return _audioAppState!.playerState == PlayerState.playing;
   }
 
-  bool isIntroPaused() {
-    if (_audioAppState == null) {
-      return false;
-    }
-    return _audioAppState!.isInIntro == true &&
-        _audioAppState!.playerState == PlayerState.paused;
-  }
-
   void playAudio() {
-    _audioAppState?.playIntro();
+    _audioAppState?.play();
   }
 
   void stopAudio() {
@@ -49,21 +40,13 @@ class AudioApp extends StatefulWidget {
     _audioAppState?.pause();
   }
 
-  bool isPlayingIntro() {
-    if (_audioAppState?.playerState == PlayerState.playing &&
-        _audioAppState?.isInIntro == true) {
-      return true;
-    }
-    return false;
-  }
-
   void unPauseAudio() async {
-    await _audioAppState?.audioPlayer.resume();
+    await _audioAppState?.resume();
   }
 
   clearPlayer() {
-    // byteData = Uint8List(0);
-    _audioAppState!.clearPlayer();
+    text = "";
+    _audioAppState?.clearPlayer();
   }
 
   void setOnPlayerFinishedFunc(dynamic func) {
@@ -83,15 +66,14 @@ class _AudioAppState extends State<AudioApp> {
   Duration duration = Duration(seconds: 0);
   Duration position = Duration(seconds: 0);
 
-  // Icon playPauseIcon =
-  //     Icon(Icons.play_arrow, color: Globals.globalColor); // default
-  AudioPlayer audioPlayer = AudioPlayer();
-  Color playButtonColor = Colors.grey;
-  Icon playIcon = Icon(Icons.play_arrow);
-  Icon pauseIcon = Icon(Icons.pause);
+  List<Icon> icons = [Icon(Icons.play_arrow), Icon(Icons.pause) , Icon(Icons.play_arrow) , Icon(Icons.play_arrow)];
   Icon playPauseIcon = Icon(Icons.play_arrow);
+
+  double speechRate = 0.4;
+  double pitch = 1;
+
+  Color playButtonColor = Colors.grey;
   bool isPlayerButtonDisabled = false;
-  bool isInIntro = false;
   PlayerState playerState = PlayerState.stopped;
 
   get isPlaying => playerState == PlayerState.playing;
@@ -109,12 +91,17 @@ class _AudioAppState extends State<AudioApp> {
   late StreamSubscription _positionSubscription;
   late StreamSubscription _audioPlayerStateSubscription;
 
-  Future<String> saveAudioBytesToLocalFile(Uint8List byteData) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final path = directory.path;
-    File file = File('$path/myAudio.mp3');
-    await file.writeAsBytes(byteData);
-    return file.path;
+  Future<String> convertTextToAudioFile(String text) async {
+    String fileName = Platform.isAndroid ? "tts.wav" : "tts.caf";
+    String? path;
+    if (Platform.isAndroid) {
+      path = (await getExternalStorageDirectory())?.path;
+    } else {
+
+      path = (await getApplicationSupportDirectory()).path;
+    }
+    await widget.flutterTts.synthesizeToFile(widget.text, fileName);
+    return '$path/$fileName';
   }
 
   void setPlayButtonColor(Color color) {
@@ -125,42 +112,98 @@ class _AudioAppState extends State<AudioApp> {
 
   void clearPlayer() {
     stop();
+    disablePlayerButton();
   }
 
   @override
   void initState() {
     super.initState();
     initAudioPlayer();
+    initTts();
+  }
+
+  initTts() {
+    widget.flutterTts.awaitSynthCompletion(true);
+
+    // _setAwaitOptions();
+    //
+    // if (isAndroid) {
+    //   _getDefaultEngine();
+    //   _getDefaultVoice();
+    // }
+    //
+    // flutterTts.setStartHandler(() {
+    //   setState(() {
+    //     print("Playing");
+    //     ttsState = TtsState.playing;
+    //   });
+    // });
+    //
+    // flutterTts.setCompletionHandler(() {
+    //   setState(() {
+    //     print("Complete");
+    //     ttsState = TtsState.stopped;
+    //   });
+    // });
+    //
+    // flutterTts.setCancelHandler(() {
+    //   setState(() {
+    //     print("Cancel");
+    //     ttsState = TtsState.stopped;
+    //   });
+    // });
+    //
+    // if (isWeb || isIOS || isWindows) {
+    //   flutterTts.setPauseHandler(() {
+    //     setState(() {
+    //       print("Paused");
+    //       ttsState = TtsState.paused;
+    //     });
+    //   });
+    //
+    //   flutterTts.setContinueHandler(() {
+    //     setState(() {
+    //       print("Continued");
+    //       ttsState = TtsState.continued;
+    //     });
+    //   });
+    // }
+    //
+    // flutterTts.setErrorHandler((msg) {
+    //   setState(() {
+    //     print("error: $msg");
+    //     ttsState = TtsState.stopped;
+    //   });
+    // });
   }
 
   @override
   void dispose() {
     _positionSubscription.cancel();
     _audioPlayerStateSubscription.cancel();
-    audioPlayer.stop();
+    widget.audioPlayer.stop();
     super.dispose();
   }
 
   void initAudioPlayer() {
-    // audioPlayer = AudioPlayer();
     _positionSubscription =
-        audioPlayer.onPositionChanged.listen((p) => setState(() {
-              if (!isInIntro) {
-                position = p;
-              }
+        widget.audioPlayer.onPositionChanged.listen((p) => setState(() {
+          position = p;
             }));
     _audioPlayerStateSubscription =
-        audioPlayer.onPlayerStateChanged.listen((s) async {
-      if (s == PlayerState.playing) {
-        // print("-------------------------------");
-        // int ddd = await audioPlayer.getDuration();
-        // print(ddd);
-        // setState(() => duration = Duration(seconds: 1000));
-      } else if (s == PlayerState.stopped) {
-        onComplete();
+        widget.audioPlayer.onPlayerStateChanged.listen((newState) async {
+      if (newState == PlayerState.playing) {
+        this.playerState = PlayerState.playing;
+        this.playPauseIcon = icons[PlayerState.playing.index];
+      } else if (newState == PlayerState.stopped) {
+        this.playerState = PlayerState.stopped;
+        this.playPauseIcon = icons[PlayerState.stopped.index];
         setState(() {
           position = Duration(milliseconds: 0);
         });
+      } else if(newState == PlayerState.paused) {
+        this.playerState = PlayerState.paused;
+        this.playPauseIcon = icons[PlayerState.paused.index];
       }
     }, onError: (msg) {
       setState(() {
@@ -169,114 +212,53 @@ class _AudioAppState extends State<AudioApp> {
         position = Duration(seconds: 0);
       });
     });
-    audioPlayer.onDurationChanged.listen((Duration newDuration) {
-      if (isInIntro) {
-        setState(() => duration = Duration(milliseconds: 0));
-      } else {
-        // duration = newDuration;
+    widget.audioPlayer.onDurationChanged.listen((Duration newDuration) {
         setState(() => duration = newDuration);
-      }
-
-      // if (playerState == PlayerState.PLAYING) {
-      //   setState(() => duration = newDuration);
-      // }
     });
-    audioPlayer.onPlayerComplete.listen((event) {
-      if (isInIntro) {
-        isInIntro = false;
-        play();
-      } else {
+    widget.audioPlayer.onPlayerComplete.listen((event) {
         if (widget.onPlayerFinishedFunc != null) {
           widget.onPlayerFinishedFunc();
         }
-      }
-    });
-  }
-
-  Future playIntro() async {
-    disablePlayerButton();
-    isInIntro = true;
-    // if (Platform.isAndroid) {
-    //   // await audioPlayer.setSourceBytes(widget.introData);
-    //   await audioPlayer.playBytes(widget.introData);
-    // } else if (Platform.isIOS) {
-    //   String urlPath = await saveAudioBytesToLocalFile(widget.introData);
-    //   await audioPlayer.play(UrlSource(urlPath));
-    // }
-    String urlPath = await saveAudioBytesToLocalFile(widget.introData);
-    await audioPlayer.play(UrlSource(urlPath));
-    setState(() {
-      playerState = PlayerState.playing;
     });
   }
 
   Future play() async {
-    playPauseIcon = pauseIcon;
+    playPauseIcon = icons[PlayerState.playing.index];
     enablePlayerButton();
+    await widget.flutterTts.setSpeechRate(speechRate);
+    await widget.flutterTts.setPitch(pitch);
 
     if (isPaused) {
-      await audioPlayer.resume();
+      await widget.audioPlayer.resume();
     } else {
-      // if (Platform.isAndroid) {
-      //   await audioPlayer.playBytes(widget.byteData);
-      // } else if (Platform.isIOS) {
-      //   String urlPath = await saveAudioBytesToLocalFile(widget.byteData);
-      //   await audioPlayer.play(urlPath, isLocal: true);
-      // }
-        String urlPath = await saveAudioBytesToLocalFile(widget.byteData);
-        await audioPlayer.play(UrlSource(urlPath));
+        print("finish");
+        String urlPath = await convertTextToAudioFile(widget.text);
+       await widget.audioPlayer.play(UrlSource(urlPath));
     }
-    setState(() {
-      playerState = PlayerState.playing;
-    });
   }
 
-  // Future _playLocal() async {
-  //   print("play local");
-  //   // await audioPlayer.play(localFilePath, isLocal: true);
-  //   setState(() => playerState = PlayerState.PLAYING);
-  // }
-
   Future pause() async {
-    playPauseIcon = playIcon;
-    await audioPlayer.pause();
-    setState(() => playerState = PlayerState.paused);
+    playPauseIcon = icons[PlayerState.paused.index];
+    await widget.audioPlayer.pause();
+  }
+
+  Future resume() async {
+    playPauseIcon = icons[PlayerState.playing.index];
+    await widget.audioPlayer.resume();
   }
 
   Future stop() async {
-    await audioPlayer.stop();
-    setState(() {
-      playerState = PlayerState.stopped;
-      // position = Duration(milliseconds: 0);
-      playPauseIcon = playIcon;
-    });
-  }
-
-  // Future mute(bool muted) async {
-  //   await audioPlayer.setVolume(0.0);
-  //   // await audioPlayer.mute(muted);
-  //   setState(() {
-  //     isMuted = muted;
-  //   });
-  // }
-
-  void onComplete() {
-    setState(() => playerState = PlayerState.stopped);
+    await widget.audioPlayer.stop();
   }
 
   void enablePlayerButton() {
     isPlayerButtonDisabled = false;
-    setState(() {
-      // playButtonColor = Globals.globalColor;
-      playButtonColor = Globals.globalColor;
-    });
+    setPlayButtonColor(Globals.globalColor);
   }
 
   void disablePlayerButton() {
     isPlayerButtonDisabled = true;
-    setState(() {
-      playButtonColor = Colors.grey;
-    });
+    setPlayButtonColor(Colors.grey);
   }
 
   @override
@@ -301,9 +283,6 @@ class _AudioAppState extends State<AudioApp> {
             onPressed: isPlayerButtonDisabled
                 ? null
                 : () {
-                    if (widget.byteData.isEmpty) {
-                      return;
-                    }
                     if (!isPlaying) {
                       setState(() {
                         play();
@@ -318,17 +297,11 @@ class _AudioAppState extends State<AudioApp> {
             icon: playPauseIcon,
             color: playButtonColor,
           ),
-          // IconButton(
-          //   onPressed: isPlaying || isPaused ? () => stop() : null,
-          //   iconSize: 30.0,
-          //   icon: Icon(Icons.stop),
-          //   color: Colors.cyan,
-          // ),
           Expanded(
             child: Slider(
                 value: position.inMilliseconds.toDouble(),
                 onChanged: (double value) {
-                  audioPlayer.seek(Duration(milliseconds: value.round()));
+                  widget.audioPlayer.seek(Duration(milliseconds: value.round()));
                 },
                 min: 0.0,
                 max: duration > position

@@ -1,10 +1,8 @@
 import 'dart:async';
-import 'dart:typed_data';
 import 'package:final_project/Map/audio_player_controller.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
 import '../Pages/poi_reading_page.dart';
-import '../UsefulWidgets/intro_audio.dart';
 import 'dialog_box.dart';
 import 'direction_calculator.dart';
 import 'globals.dart';
@@ -33,21 +31,13 @@ class Guide {
   }
 
   Future<void> handleMapPoiVoice(MapPoi mapPoi) async {
-    Audio audio =
-        await Globals.globalServerCommunication.getAudioById(mapPoi.poi.id);
-    List<int> intList = audio.audio.cast<int>().toList();
 
-    // build the poi audio
-    Uint8List poiAudioBytes =
-        Uint8List.fromList(intList); // Load audio as a byte array here.
     String directionString = DirectionCalculator.getDirection(
         UserMap.USER_LOCATION_DATA?.latitude,
         UserMap.USER_LOCATION_DATA?.longitude,
         guideDialogBox.getMapPoi()?.poi.latitude,
         guideDialogBox.getMapPoi()?.poi.longitude);
-    // sets the direction bytes in the player
-    audioPlayer.setIntroBytes(await IntroAudio.getAudioByDirection(directionString));
-    audioPlayer.setAudioBytes(poiAudioBytes);
+    audioPlayer.setText(mapPoi.poi.shortDesc ?? "No description");
     audioPlayer.playAudio();
   }
 
@@ -102,7 +92,7 @@ class Guide {
           ?.unHighlightMapPoi(Globals.mainMapPoi!);
     }
     if (guideData.status == GuideStatus.voice) {
-      audioPlayer.stopAudio();
+      audioPlayer.clearPlayer();
     }
     Globals.deleteMainMapPoi();
     Globals.globalUserMap.userMapState?.hideNextButton();
