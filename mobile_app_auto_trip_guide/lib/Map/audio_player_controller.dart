@@ -20,7 +20,6 @@ class AudioApp extends StatefulWidget {
   void setText(String text, String language) {
     this.text = text;
     this.languageCode = langToTtsLangCode[language]!;
-    _audioAppState?.enablePlayerButton();
   }
 
   bool isPlaying() {
@@ -197,6 +196,7 @@ class _AudioAppState extends State<AudioApp> {
       if (newState == PlayerState.playing) {
         this.playerState = PlayerState.playing;
         this.playPauseIcon = icons[PlayerState.playing.index];
+        enablePlayerButton();
       } else if (newState == PlayerState.stopped) {
         this.playerState = PlayerState.stopped;
         this.playPauseIcon = icons[PlayerState.stopped.index];
@@ -226,7 +226,6 @@ class _AudioAppState extends State<AudioApp> {
 
   Future play() async {
     playPauseIcon = icons[PlayerState.playing.index];
-    enablePlayerButton();
     // TODO MOVE THIS SECTION
     await widget.flutterTts.setSpeechRate(speechRate);
     await widget.flutterTts.setPitch(pitch);
