@@ -31,11 +31,11 @@ dependencies:
   audioplayers: ^1.0.1
   flutter_compass: ^0.7.0
   location: ^5.0.0-dev.8
-  flutter_map:
+  flutter_map: ^3.0.0
   flutter:
     sdk: flutter
   http: ^0.13.4
-  flutter_map_location_marker: any
+  flutter_map_location_marker: 5.0.0+1
   webview_flutter: ^3.0.4
   path_provider: ^2.0.1
   flutter_tts: ^3.5.3

@@ -151,30 +151,18 @@ class _UserMapState extends State<UserMap> {
               );
             }
           },
-          plugins: [
-            LocationMarkerPlugin(),
-          ],
           center: LatLng(UserMap.USER_LOCATION_DATA!.latitude ?? 0.0,
               UserMap.USER_LOCATION_DATA!.longitude ?? 0.0),
           minZoom: 5.0),
       // ignore: sort_child_properties_last
       children: [
-        TileLayerWidget(
-          options: TileLayerOptions(
-            urlTemplate: 'https://a.tile.openstreetmap.de/{z}/{x}/{y}.png',
-            subdomains: ['a', 'b', 'c'],
-            maxZoom: 19,
-          ),
+        TileLayer(
+          urlTemplate: 'https://a.tile.openstreetmap.de/{z}/{x}/{y}.png',
+          subdomains: ['a', 'b', 'c'],
+          maxZoom: 19,
         ),
-        // MarkerLayerWidget(options: MarkerLayerOptions(markers: markersList)
-        // ),
-        LocationMarkerLayerWidget(
-          plugin: LocationMarkerPlugin(
-            centerCurrentLocationStream:
-                _centerCurrentLocationStreamController.stream,
-            centerOnLocationUpdate: _centerOnLocationUpdate,
-          ),
-        ),
+        MarkerLayer(markers: markersList),
+        CurrentLocationLayer()
       ],
       nonRotatedChildren: [
         Column(
@@ -316,9 +304,6 @@ class _UserMapState extends State<UserMap> {
             guideTool.guideDialogBox
           ],
         )
-      ],
-      layers: [
-        MarkerLayerOptions(markers: markersList),
       ],
     );
   }
