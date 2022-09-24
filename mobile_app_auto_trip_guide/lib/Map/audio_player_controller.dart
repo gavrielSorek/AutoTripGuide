@@ -29,8 +29,8 @@ class AudioApp extends StatefulWidget {
     return _audioAppState!.playerState == PlayerState.playing;
   }
 
-  void playAudio() {
-    _audioAppState?.play();
+  void playAudio({bool playWithProgressBar = true}) {
+    _audioAppState?.play(playWithProgressBar: playWithProgressBar);
   }
 
   void stopAudio() {
@@ -80,6 +80,7 @@ class _AudioAppState extends State<AudioApp> {
 
   Color playButtonColor = Colors.grey;
   bool isPlayerButtonDisabled = false;
+  bool _playWithProgressBar = false;
   PlayerState playerState = PlayerState.stopped;
 
   get isPlaying => playerState == PlayerState.playing;
@@ -192,11 +193,13 @@ class _AudioAppState extends State<AudioApp> {
   void initAudioPlayer() {
     _positionSubscription =
         widget.audioPlayer.onPositionChanged.listen((p) => setState(() {
-              position = p;
+          if(!_playWithProgressBar) {return;}
+          position = p;
             }));
     _audioPlayerStateSubscription =
         widget.audioPlayer.onPlayerStateChanged.listen((newState) async {
-      if (newState == PlayerState.playing) {
+          if(!_playWithProgressBar) {return;}
+          if (newState == PlayerState.playing) {
         this.playerState = PlayerState.playing;
         this.playPauseIcon = icons[PlayerState.playing.index];
         enablePlayerButton();
@@ -218,6 +221,7 @@ class _AudioAppState extends State<AudioApp> {
       });
     });
     widget.audioPlayer.onDurationChanged.listen((Duration newDuration) {
+      if(!_playWithProgressBar) {return;}
       setState(() => duration = newDuration);
     });
     widget.audioPlayer.onPlayerComplete.listen((event) {
@@ -227,8 +231,8 @@ class _AudioAppState extends State<AudioApp> {
     });
   }
 
-  Future play() async {
-    playPauseIcon = icons[PlayerState.playing.index];
+  Future play({bool playWithProgressBar = true}) async {
+    _playWithProgressBar = playWithProgressBar;
     // TODO MOVE THIS SECTION
     await widget.flutterTts.setSpeechRate(speechRate);
     await widget.flutterTts.setPitch(pitch);
