@@ -53,7 +53,6 @@ class _UserMapState extends State<UserMap> {
   WidgetVisibility nextButtonState = WidgetVisibility.hide;
   WidgetVisibility loadingPois = WidgetVisibility.view;
 
-
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
   final MapController _mapController = MapController();
@@ -162,7 +161,10 @@ class _UserMapState extends State<UserMap> {
           maxZoom: 19,
         ),
         MarkerLayer(markers: markersList),
-        CurrentLocationLayer()
+        CurrentLocationLayer(
+            centerCurrentLocationStream:
+                _centerCurrentLocationStreamController.stream,
+            centerOnLocationUpdate: _centerOnLocationUpdate)
       ],
       nonRotatedChildren: [
         Column(
@@ -193,7 +195,7 @@ class _UserMapState extends State<UserMap> {
                     onPressed: () {
                       // Automatically center the location marker on the map when location updated until user interact with the map.
                       setState(
-                            () => _centerOnLocationUpdate =
+                        () => _centerOnLocationUpdate =
                             CenterOnLocationUpdate.always,
                       );
                       // Center the location marker on the map and zoom the map to level 14.
@@ -207,9 +209,7 @@ class _UserMapState extends State<UserMap> {
                 ),
                 // loader
                 AnimatedOpacity(
-                    opacity: loadingPois == WidgetVisibility.view
-                        ? 1.0
-                        : 0.0,
+                    opacity: loadingPois == WidgetVisibility.view ? 1.0 : 0.0,
                     duration: const Duration(milliseconds: 500),
                     child: Container(
                       height: 59,
@@ -254,7 +254,7 @@ class _UserMapState extends State<UserMap> {
                     width: MediaQuery.of(context).size.width / 10,
                     child: AnimatedOpacity(
                         opacity:
-                        WidgetVisibility.view == navButtonState ? 1.0 : 0.0,
+                            WidgetVisibility.view == navButtonState ? 1.0 : 0.0,
                         duration: const Duration(milliseconds: 500),
                         child: FloatingActionButton(
                           heroTag: null,
