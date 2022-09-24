@@ -17,14 +17,10 @@ class Toolbar extends State<ToolbarWidget> {
     // if the index is different from map page
     if (index != 0) {
       // always pause dialog box when not in the map page
-      Globals.globalUserMap.userMapState?.guideTool.pauseGuideDialogBox();
-
-      if (Globals.globalAudioPlayer.isPlaying()) {
-        Globals.globalAudioPlayer.pauseAudio();
-      }
+      Globals.globalUserMap.userMapState?.guideTool.pauseGuide(); // TODO DELETE - SHOULDN'T BE HERE
     } else {
       // if map page
-        Globals.globalUserMap.userMapState?.guideTool.unpauseGuideDialogBox();
+        Globals.globalUserMap.userMapState?.guideTool.resumeGuide(); // TODO DELETE - SHOULDN'T BE HERE
     }
     setState(() {
       _selectedScreenIndex = index;

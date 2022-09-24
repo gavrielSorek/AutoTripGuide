@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'package:final_project/Map/audio_player_controller.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +13,6 @@ import 'map.dart';
 class Globals {
   static UserMap globalUserMap = UserMap();
   static ServerCommunication globalServerCommunication = ServerCommunication();
-  static AudioApp globalAudioPlayer = AudioApp();
   static Map globalAllPois = HashMap<String, MapPoi>();
   static List<String> globalUnhandledKeys = [];
   static Map globalPoisIdToMarkerIdx = HashMap<String, int>();

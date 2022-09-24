@@ -11,13 +11,14 @@ import 'map.dart';
 class Guide {
   BuildContext context;
   GuideData guideData;
-  AudioApp audioPlayer;
+  AudioApp audioPlayer = AudioApp();
   GuideState state = GuideState.waiting;
   MapPoi? lastMapPoiHandled;
   late GuideDialogBox guideDialogBox;
   int loadingAnimationTime = 10; // default
+  bool _inIntro = false;
 
-  Guide(this.context, this.guideData, this.audioPlayer) {
+  Guide(this.context, this.guideData) {
     guideDialogBox = GuideDialogBox(
         onPressOk: onUserClickedOk,
         onPressNext: () {
@@ -31,14 +32,28 @@ class Guide {
   }
 
   Future<void> handleMapPoiVoice(MapPoi mapPoi) async {
-
     String directionString = DirectionCalculator.getDirection(
         UserMap.USER_LOCATION_DATA?.latitude,
         UserMap.USER_LOCATION_DATA?.longitude,
         guideDialogBox.getMapPoi()?.poi.latitude,
         guideDialogBox.getMapPoi()?.poi.longitude);
-    audioPlayer.setText(mapPoi.poi.shortDesc ?? "No description", mapPoi.poi.language ?? 'en');
-    audioPlayer.playAudio();
+    // sets intro text
+    audioPlayer.setText(directionString, 'en');
+    audioPlayer.setOnPlayerFinishedFunc(() {
+      _inIntro = false;
+      audioPlayer.setText(mapPoi.poi.shortDesc ?? "No description",
+          mapPoi.poi.language ?? 'en');
+      audioPlayer.setOnPlayerFinishedFunc(() {
+        stop();
+        askNextPoi();
+      });
+      // play poi info
+      audioPlayer.playAudio();
+    });
+
+    _inIntro = true;
+    // play intro
+    audioPlayer.playAudio(playWithProgressBar: false);
   }
 
   Future<void> handleMapPoiText(MapPoi mapPoi) async {
@@ -99,6 +114,20 @@ class Guide {
     guideDialogBox.stopLoading();
     guideDialogBox.hideDialog();
     state = GuideState.stopped;
+  }
+
+  void pauseGuide() {
+    audioPlayer.pauseAudio();
+    pauseGuideDialogBox();
+  }
+
+  void resumeGuide() {
+    if (_inIntro) {
+      _inIntro = false;
+      stop();
+      handleMapPoiVoice(guideDialogBox.getMapPoi()!);
+    }
+    unpauseGuideDialogBox();
   }
 
   // lunch before handle poi
@@ -234,7 +263,6 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
   int numberOfSteps = 10;
   Timer? loadTimer;
 
-
   bool isLoadingPaused() {
     return pause;
   }
@@ -265,20 +293,20 @@ class _GuideDialogBoxState extends State<GuideDialogBox> {
     loadTimer = Timer(
         Duration(
             seconds: (widget.loadingAnimationTime / numberOfSteps).round()),
-            () {
-          if (widget._stopLoading) {
-            return;
-          }
-          double progressEveryStep = 1 / numberOfSteps;
-          progress += progressEveryStep;
-          dialogBox?.setProgress(progress);
-          if (progress <= 1) {
-            loadStep();
-          } else {
-            // finished loading
-            widget.onLoadingFinished();
-          }
-        });
+        () {
+      if (widget._stopLoading) {
+        return;
+      }
+      double progressEveryStep = 1 / numberOfSteps;
+      progress += progressEveryStep;
+      dialogBox?.setProgress(progress);
+      if (progress <= 1) {
+        loadStep();
+      } else {
+        // finished loading
+        widget.onLoadingFinished();
+      }
+    });
   }
 
   MapPoi? getMapPoi() {

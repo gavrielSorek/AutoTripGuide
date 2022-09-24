@@ -193,25 +193,32 @@ class _AudioAppState extends State<AudioApp> {
   void initAudioPlayer() {
     _positionSubscription =
         widget.audioPlayer.onPositionChanged.listen((p) => setState(() {
-          if(!_playWithProgressBar) {return;}
-          position = p;
+              if (!_playWithProgressBar) {
+                return;
+              }
+              position = p;
             }));
     _audioPlayerStateSubscription =
         widget.audioPlayer.onPlayerStateChanged.listen((newState) async {
-          if(!_playWithProgressBar) {return;}
-          if (newState == PlayerState.playing) {
+      if (!_playWithProgressBar) {
+        return;
+      }
+      if (newState == PlayerState.playing) {
         this.playerState = PlayerState.playing;
         this.playPauseIcon = icons[PlayerState.playing.index];
         enablePlayerButton();
       } else if (newState == PlayerState.stopped) {
-        this.playerState = PlayerState.stopped;
         this.playPauseIcon = icons[PlayerState.stopped.index];
         setState(() {
+          this.playerState = PlayerState.stopped;
           position = Duration(milliseconds: 0);
         });
       } else if (newState == PlayerState.paused) {
         this.playerState = PlayerState.paused;
         this.playPauseIcon = icons[PlayerState.paused.index];
+        setState(() {
+          this.playerState = PlayerState.paused;
+        });
       }
     }, onError: (msg) {
       setState(() {
@@ -221,7 +228,9 @@ class _AudioAppState extends State<AudioApp> {
       });
     });
     widget.audioPlayer.onDurationChanged.listen((Duration newDuration) {
-      if(!_playWithProgressBar) {return;}
+      if (!_playWithProgressBar) {
+        return;
+      }
       setState(() => duration = newDuration);
     });
     widget.audioPlayer.onPlayerComplete.listen((event) {
@@ -248,12 +257,10 @@ class _AudioAppState extends State<AudioApp> {
   }
 
   Future pause() async {
-    playPauseIcon = icons[PlayerState.paused.index];
     await widget.audioPlayer.pause();
   }
 
   Future resume() async {
-    playPauseIcon = icons[PlayerState.playing.index];
     await widget.audioPlayer.resume();
   }
 

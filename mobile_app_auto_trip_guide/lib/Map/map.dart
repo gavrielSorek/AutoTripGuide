@@ -72,11 +72,7 @@ class _UserMapState extends State<UserMap> {
     print("init _UserMapState");
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
-    guideTool = Guide(context, guideData, Globals.globalAudioPlayer);
-    Globals.globalAudioPlayer.setOnPlayerFinishedFunc(() {
-      guideTool.stop();
-      guideTool.askNextPoi();
-    });
+    guideTool = Guide(context, guideData);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       guideTool.handlePois();
     });
@@ -194,7 +190,7 @@ class _UserMapState extends State<UserMap> {
                   width: MediaQuery.of(context).size.width,
                   height: 48,
                   color: Colors.green,
-                  child: Globals.globalAudioPlayer,
+                  child: guideTool.audioPlayer,
                 )),
             const SizedBox(height: 5),
             Row(
@@ -246,7 +242,7 @@ class _UserMapState extends State<UserMap> {
                         setState(() {
                           guideData.changeGuideType();
                           if (guideData.status == GuideStatus.text) {
-                            Globals.globalAudioPlayer.clearPlayer();
+                            guideTool.audioPlayer.clearPlayer();
                           }
                           guideTool.guideStateChanged();
                         });
