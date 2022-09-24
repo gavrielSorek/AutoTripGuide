@@ -15,7 +15,7 @@ class AudioApp extends StatefulWidget {
   dynamic onPlayerFinishedFunc;
   String text = "";
   String languageCode = "";
-  var langToTtsLangCode = {'en':'en-GB'};
+  var langToTtsLangCode = {'en': 'en-GB'};
 
   void setText(String text, String language) {
     this.text = text;
@@ -67,7 +67,12 @@ class _AudioAppState extends State<AudioApp> {
   Duration duration = Duration(seconds: 0);
   Duration position = Duration(seconds: 0);
 
-  List<Icon> icons = [Icon(Icons.play_arrow), Icon(Icons.pause) , Icon(Icons.play_arrow) , Icon(Icons.play_arrow)];
+  List<Icon> icons = [
+    Icon(Icons.play_arrow),
+    Icon(Icons.pause),
+    Icon(Icons.play_arrow),
+    Icon(Icons.play_arrow)
+  ];
   Icon playPauseIcon = Icon(Icons.play_arrow);
 
   double speechRate = 0.4;
@@ -98,7 +103,6 @@ class _AudioAppState extends State<AudioApp> {
     if (Platform.isAndroid) {
       path = (await getExternalStorageDirectory())?.path;
     } else {
-
       path = (await getApplicationSupportDirectory()).path;
     }
     await widget.flutterTts.synthesizeToFile(widget.text, fileName);
@@ -125,7 +129,6 @@ class _AudioAppState extends State<AudioApp> {
 
   initTts() {
     widget.flutterTts.awaitSynthCompletion(true);
-
     // _setAwaitOptions();
     //
     // if (isAndroid) {
@@ -189,7 +192,7 @@ class _AudioAppState extends State<AudioApp> {
   void initAudioPlayer() {
     _positionSubscription =
         widget.audioPlayer.onPositionChanged.listen((p) => setState(() {
-          position = p;
+              position = p;
             }));
     _audioPlayerStateSubscription =
         widget.audioPlayer.onPlayerStateChanged.listen((newState) async {
@@ -203,7 +206,7 @@ class _AudioAppState extends State<AudioApp> {
         setState(() {
           position = Duration(milliseconds: 0);
         });
-      } else if(newState == PlayerState.paused) {
+      } else if (newState == PlayerState.paused) {
         this.playerState = PlayerState.paused;
         this.playPauseIcon = icons[PlayerState.paused.index];
       }
@@ -215,12 +218,12 @@ class _AudioAppState extends State<AudioApp> {
       });
     });
     widget.audioPlayer.onDurationChanged.listen((Duration newDuration) {
-        setState(() => duration = newDuration);
+      setState(() => duration = newDuration);
     });
     widget.audioPlayer.onPlayerComplete.listen((event) {
-        if (widget.onPlayerFinishedFunc != null) {
-          widget.onPlayerFinishedFunc();
-        }
+      if (widget.onPlayerFinishedFunc != null) {
+        widget.onPlayerFinishedFunc();
+      }
     });
   }
 
@@ -234,9 +237,9 @@ class _AudioAppState extends State<AudioApp> {
     if (isPaused) {
       await widget.audioPlayer.resume();
     } else {
-        print("finish");
-        String urlPath = await convertTextToAudioFile(widget.text);
-       await widget.audioPlayer.play(UrlSource(urlPath));
+      print("finish");
+      String urlPath = await convertTextToAudioFile(widget.text);
+      await widget.audioPlayer.play(UrlSource(urlPath));
     }
   }
 
@@ -304,7 +307,8 @@ class _AudioAppState extends State<AudioApp> {
             child: Slider(
                 value: position.inMilliseconds.toDouble(),
                 onChanged: (double value) {
-                  widget.audioPlayer.seek(Duration(milliseconds: value.round()));
+                  widget.audioPlayer
+                      .seek(Duration(milliseconds: value.round()));
                 },
                 min: 0.0,
                 max: duration > position
