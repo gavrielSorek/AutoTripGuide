@@ -9,17 +9,19 @@ import 'package:location/location.dart';
 import 'package:final_project/Map/types.dart';
 import '../UsefulWidgets/progress_indicator.dart';
 import 'guide.dart';
+import 'package:flutter/foundation.dart';
 
 class UserMap extends StatefulWidget {
   // inits
   // static dynamic? USER_LOCATION;
+  static final Location USER_LOCATION = Location();
   static LocationData? USER_LOCATION_DATA;
   static List userChangeLocationFuncs = [];
 
   static Future<void> mapInit() async {
     // initialization order is very important
-    USER_LOCATION_DATA = await getLocation();
-    onLocationChanged().listen((locationChangedEvent));
+    USER_LOCATION_DATA = await USER_LOCATION.getLocation();
+    USER_LOCATION.onLocationChanged.listen(locationChangedEvent);
   }
 
   static void locationChangedEvent(LocationData currentLocation) async {
@@ -94,7 +96,7 @@ class _UserMapState extends State<UserMap> {
           LocationInfo(
               UserMap.USER_LOCATION_DATA!.latitude!,
               UserMap.USER_LOCATION_DATA!.longitude!,
-              UserMap.USER_LOCATION_DATA!.bearing!,
+              UserMap.USER_LOCATION_DATA!.heading!,
               UserMap.USER_LOCATION_DATA!.speed!));
 
       setState(() {
