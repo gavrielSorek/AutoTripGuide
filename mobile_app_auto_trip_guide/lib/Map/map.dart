@@ -174,11 +174,11 @@ class _UserMapState extends State<UserMap> {
           subdomains: ['a', 'b', 'c'],
           maxZoom: 19,
         ),
-        MarkerLayer(markers: markersList),
         CurrentLocationLayer(
             centerCurrentLocationStream:
                 _centerCurrentLocationStreamController.stream,
-            centerOnLocationUpdate: _centerOnLocationUpdate)
+            centerOnLocationUpdate: _centerOnLocationUpdate),
+        MarkerLayer(markers: markersList)
       ],
       nonRotatedChildren: [
         Column(
