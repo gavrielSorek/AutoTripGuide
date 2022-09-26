@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:final_project/Map/types.dart';
 import '../UsefulWidgets/progress_indicator.dart';
 import 'guide.dart';
@@ -13,19 +13,31 @@ import 'package:flutter/foundation.dart';
 
 class UserMap extends StatefulWidget {
   // inits
-  // static dynamic? USER_LOCATION;
-  static final Location USER_LOCATION = Location();
-  static LocationData? USER_LOCATION_DATA;
+  static late Position USER_LOCATION;
   static List userChangeLocationFuncs = [];
 
+
   static Future<void> mapInit() async {
+
+    //permissions handling
+    LocationPermission permission = await Geolocator.checkPermission();
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      return Future.error('Location permissions are denied');
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    USER_LOCATION = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
     // initialization order is very important
-    USER_LOCATION_DATA = await USER_LOCATION.getLocation();
-    USER_LOCATION.onLocationChanged.listen(locationChangedEvent);
+    Geolocator.getPositionStream().listen(locationChangedEvent);
   }
 
-  static void locationChangedEvent(LocationData currentLocation) async {
-    USER_LOCATION_DATA = currentLocation;
+  static void locationChangedEvent(Position currentLocation) async {
+    USER_LOCATION = currentLocation;
     for (int i = 0; i < UserMap.userChangeLocationFuncs.length; i++) {
       userChangeLocationFuncs[i](currentLocation);
     }
@@ -87,17 +99,17 @@ class _UserMapState extends State<UserMap> {
   }
 
   // add new pois if location changed
-  void onLocationChanged(LocationData currentLocation) async {
+  void onLocationChanged(Position currentLocation) async {
     print("hello from location changed");
     List<Poi> pois;
     // TODO add a condition that won't crazy the server
     if (isNewPoisNeeded()) {
       pois = await Globals.globalServerCommunication.getPoisByLocation(
           LocationInfo(
-              UserMap.USER_LOCATION_DATA!.latitude!,
-              UserMap.USER_LOCATION_DATA!.longitude!,
-              UserMap.USER_LOCATION_DATA!.heading!,
-              UserMap.USER_LOCATION_DATA!.speed!));
+              currentLocation.latitude,
+              currentLocation.longitude,
+              currentLocation.heading,
+              currentLocation.speed));
 
       setState(() {
         // add all the new poi
@@ -152,8 +164,8 @@ class _UserMapState extends State<UserMap> {
               );
             }
           },
-          center: LatLng(UserMap.USER_LOCATION_DATA!.latitude ?? 0.0,
-              UserMap.USER_LOCATION_DATA!.longitude ?? 0.0),
+          center: LatLng(UserMap.USER_LOCATION.latitude,
+              UserMap.USER_LOCATION.longitude),
           minZoom: 5.0),
       // ignore: sort_child_properties_last
       children: [

@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:final_project/Map/globals.dart';
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
 import 'map.dart';
 
 class PersonalizeRecommendation {
@@ -17,7 +17,7 @@ class PersonalizeRecommendation {
 
   // get distance of poi from user
   static double getDistanceInKm(String id) {
-    LocationData? userLocation = UserMap.USER_LOCATION_DATA;
+    Position userLocation = UserMap.USER_LOCATION;
     double latitude = Globals.globalAllPois[id]!.poi.latitude;
     double longitude = Globals.globalAllPois[id]!.poi.longitude;
     double dist = calculateDistance(userLocation?.latitude ?? latitude, userLocation?.longitude ?? longitude, latitude, longitude);

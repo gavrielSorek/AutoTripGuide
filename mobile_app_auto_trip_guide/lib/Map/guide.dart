@@ -33,8 +33,8 @@ class Guide {
 
   Future<void> handleMapPoiVoice(MapPoi mapPoi) async {
     String directionString = DirectionCalculator.getDirection(
-        UserMap.USER_LOCATION_DATA?.latitude,
-        UserMap.USER_LOCATION_DATA?.longitude,
+        UserMap.USER_LOCATION.latitude,
+        UserMap.USER_LOCATION.longitude,
         guideDialogBox.getMapPoi()?.poi.latitude,
         guideDialogBox.getMapPoi()?.poi.longitude);
     // sets intro text
