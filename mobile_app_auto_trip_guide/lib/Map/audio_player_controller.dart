@@ -318,8 +318,11 @@ class _AudioAppState extends State<AudioApp> {
             child: Slider(
                 value: position.inMilliseconds.toDouble(),
                 onChanged: (double value) {
+                  setState(() {
+                    position = Duration(milliseconds: value.round());
+                  });
                   widget.audioPlayer
-                      .seek(Duration(milliseconds: value.round()));
+                      .seek(position);
                 },
                 min: 0.0,
                 max: duration > position
