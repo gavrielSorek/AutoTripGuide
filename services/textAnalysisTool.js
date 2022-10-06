@@ -1,5 +1,4 @@
 var XMLHttpRequest = require('xhr2');
-var gtts = require('node-gtts')('en');
 module.exports = { convertArrayToServerCategories, convertToServerCategories, splitMulti, translate, detectLanguage, translateIfNotInTargetLanguage};
 
 
@@ -98,22 +97,24 @@ function splitMulti(str, tokens){
 
 
 //************************************************************************************************** */ translation tool
-const cld = require('cld');
+// const cld = require('cld');
 const translatte = require('translatte');
+const franc = require('franc');
+const convert3To1 = require('iso-639-3-to-1')
 
 async function translate(stringToTranslate, langToTranslate) {
     return (await translatte(stringToTranslate, {to: langToTranslate})).text;
 }  
 
 async function detectLanguage(text) {
-    const result = await cld.detect(text);
-    return result;
+    var result = franc(text);
+    return convert3To1(result); // convert to iso-639-1 language code (from iso-639-3)
   }
 
 async function isInLanguage(text, languageCode) {
     const result = await detectLanguage(text);
     if (result) {
-        return result.languages[0].code === languageCode;
+        return result === languageCode;
     } else  {
         return false;
     }
@@ -126,11 +127,6 @@ async function translateIfNotInTargetLanguage(text, desiredLanguageCode){
         return await translate(text, desiredLanguageCode);
     }
 }
-
-
-
-
-
 
 
 
@@ -161,12 +157,6 @@ async function main() {
     //var voice = await textToVoice('hello world');
 }
 
-async function testCld() {
-    const result = await cld.detect('This is a language recognition example . זוהי דוגמה לזיהוי שפה, דוגמה זו כתובה בשפה העברית ובשפה האנגלית.');
-    console.log(result.languages[0]);
-  }
-
-
 // async function testTranslate() {
 //     var result = await translatte('אתה מדבר אנגלית תקינה?', {to: 'en'});
 //     console.log(result.text)
@@ -180,3 +170,4 @@ async function testCld() {
 // testCld();
 //main()
 //testTranslate()
+
