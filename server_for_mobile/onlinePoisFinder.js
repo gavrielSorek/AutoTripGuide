@@ -4,7 +4,7 @@ var wikiTool = require("../services/wikiTool");
 var textAnalysisTool = require("../services/textAnalysisTool");
 var internetServices = require("../services/generalInternetServices");
 module.exports = { getPoisList};
-
+const maxPois = 20;
 
 // http://api.opentripmap.com/0.1/en/places/bbox?lon_min=38.364285&lat_min=59.855685&lon_max=38.372809&lat_max=59.859052&kinds=churches&format=geojson&apikey=5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e
 // http://api.opentripmap.com/0.1/en/places/xid/Q372040?apikey=5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e
@@ -12,27 +12,27 @@ module.exports = { getPoisList};
 
 const apiKey = '5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e'
 
-async function getPoisList(bounds, language, onSinglePoiFound = undefined) {
-    var lightPois = (await getlightPois(bounds, language)).data;
+async function getPoisList(bounds, languageCode, onSinglePoiFound = undefined) {
+    var lightPois = (await getlightPois(bounds, languageCode)).data;
 
     var pois = []
-    for (var i = 0; i < Math.min(10, lightPois.features.length); i++) { // TODO CHANGE TO LENGTH WHEN NOT DEBUGING
+    for (var i = 0; i < Math.min(maxPois, lightPois.features.length); i++) {
         var lightPoi = lightPois.features[i];
-        var fullPoi = (await getPoiInfo(lightPoi.properties.xid, language)).data;
-        if (!fullPoi.wikipedia_extracts) { // if not contains wikipedia content
-            continue;
+        if (lightPoi.properties.name === '') {continue;} // filter unknown pois
+        var fullPoi = (await getPoiInfo(lightPoi.properties.xid, languageCode)).data;
+        var description = fullPoi.name
+        //description = await wikiTool.getPoiDescByName(fullPoi.name) //TODO DELETE
+        if (fullPoi.wikipedia_extracts) { // if not contains wikipedia content
+            description = fullPoi.wikipedia_extracts.text;
+            description = await textAnalysisTool.translateIfNotInTargetLanguage(description, languageCode);
         }
-        if (!(fullPoi.wikipedia_extracts.title).includes(`${language}:`)) { // if its not the wanted language 
-            continue;
-        }
-        //console.log(fullPoi); // debug
 
         poi = {
             _poiName : fullPoi.name , 
             _latitude : fullPoi.point.lat, 
             _longitude : fullPoi.point.lon, 
-            _shortDesc : fullPoi.wikipedia_extracts.text,
-            _language : language,
+            _shortDesc : description,
+            _language : languageCode,
             _audio : 'no audio',
             _source : fullPoi.wikipedia,
             _Contributor : "online pois finder",
@@ -82,7 +82,7 @@ function getTodayDate(){
 // debug
 
 function getBounds(){
-    user_data = {lat : 32.0787778, lng : 34.775215} 
+    user_data = {lat : 32.80, lng : 35.114} 
     var epsilon = 0.02
     var relevantBounds = {}
     relevantBounds['southWest'] = {lat : user_data.lat - epsilon, lng : user_data.lng - epsilon}
@@ -93,7 +93,7 @@ function getBounds(){
 
 async function tryModule() {
     var data = await getPoisList(getBounds(), 'en');
-    console.log(data);
-    
+    for (var i=0; i<data.length; i++)
+        console.log(i + ". " + JSON.stringify(data[i]));
 }
-tryModule();
+//tryModule();

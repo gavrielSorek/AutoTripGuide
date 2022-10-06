@@ -1,6 +1,6 @@
 var XMLHttpRequest = require('xhr2');
 var gtts = require('node-gtts')('en');
-module.exports = { convertArrayToServerCategories, convertToServerCategories, splitMulti};
+module.exports = { convertArrayToServerCategories, convertToServerCategories, splitMulti, translate, detectLanguage, translateIfNotInTargetLanguage};
 
 
 const serverUrl = 'https://autotripguide.loca.lt';
@@ -97,20 +97,43 @@ function splitMulti(str, tokens){
 }
 
 
+//************************************************************************************************** */ translation tool
+const cld = require('cld');
+const translatte = require('translatte');
 
+async function translate(stringToTranslate, langToTranslate) {
+    return (await translatte(stringToTranslate, {to: langToTranslate})).text;
+}  
 
-//************************************************************************************************** */ text to speech
+async function detectLanguage(text) {
+    const result = await cld.detect(text);
+    return result;
+  }
 
-async function textToVoice(text, language = undefined) {
-    const chunks = [];
-    return new Promise((resolve, reject) => {
-        var stream = gtts.stream(text)
-        stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-        stream.on('error', (err) => reject(err));
-        stream.on('end', () => resolve(Buffer.concat(chunks)));
-    }) 
-    //   const result = await streamToString(stream)
+async function isInLanguage(text, languageCode) {
+    const result = await detectLanguage(text);
+    if (result) {
+        return result.languages[0].code === languageCode;
+    } else  {
+        return false;
+    }
 }
+
+async function translateIfNotInTargetLanguage(text, desiredLanguageCode){
+    if (await isInLanguage(text, desiredLanguageCode)) {
+        return text;
+    } else {
+        return await translate(text, desiredLanguageCode);
+    }
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -118,11 +141,42 @@ async function textToVoice(text, language = undefined) {
 //______________________________________________________________________________________________________________________________//
 // debug
 
-// async function main() {
-//     var debugCategories = ['Geological', 'Bridges'];
-//     var categories = await convertArrayToServerCategories(debugCategories);
-//     console.log(categories);
-//     //var voice = await textToVoice('hello world');
-// }
+async function testTranslate() {
+    // var temp = await translate('שלום לכולם', 'en');
+    // console.log(temp);
+    // var temp2 = await translate('this is a test', 'he');
+    // console.log(temp2);
+    // var temp3 = await translateIfNotInTargetLanguage('This is try number one', 'en');
+    // console.log(temp3);
+    var temp4 = await translateIfNotInTargetLanguage('This is try number one', 'he');
+    console.log(temp4);
 
+
+}
+
+async function main() {
+    var debugCategories = ['Geological', 'Bridges'];
+    var categories = await convertArrayToServerCategories(debugCategories);
+    console.log(categories);
+    //var voice = await textToVoice('hello world');
+}
+
+async function testCld() {
+    const result = await cld.detect('This is a language recognition example . זוהי דוגמה לזיהוי שפה, דוגמה זו כתובה בשפה העברית ובשפה האנגלית.');
+    console.log(result.languages[0]);
+  }
+
+
+// async function testTranslate() {
+//     var result = await translatte('אתה מדבר אנגלית תקינה?', {to: 'en'});
+//     console.log(result.text)
+//     // translatte('תקינה אתה מדבר אנגלית?', {to: 'en'}).then(res => {
+//     //     console.log(res.text);
+//     // }).catch(err => {
+//     //     console.error(err);
+//     // });
+// }  
+
+// testCld();
 //main()
+//testTranslate()

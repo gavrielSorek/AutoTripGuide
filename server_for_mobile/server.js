@@ -3,7 +3,6 @@ const db = require("./db");
 const onlinePoisFinder = require("./onlinePoisFinder");
 const serverCommunication = require("../services/serverCommunication");
 var tokenGetter = require("../services/serverTokenGetter");
-var textToSpeech = require("../services/textToSpeechSender");
 
 const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
@@ -71,22 +70,7 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
     await onlinePoisFinder.getPoisList(bounds, language,(poi)=>{
         serverCommunication.sendPoisToServer([poi], globaltokenAndPermission)
     }); 
-    if (!textToSpeech.isTextToSpeechWorking()) {
-        textToSpeech.startTextToSpeechSender();
-    }
-    
-    //TODO change language to user language
-    // serverCommunication.sendPoisToServer(pois);
  }
-
-  // get audio
-app.get("/getAudio", async function (req, res) { //next requrie (the function will not stop the program)
-    console.log("inside f getAudio - server side")
-    result = await db.getAudio(dbClientSearcher, req.query.poiId).catch((error) => {console.log(error)})
-    res.status(200);
-    res.json(result);
-    res.end();
- })
  
  function addUserDataTosearchParams(searchParams, userData){
      if (userData.language) {
@@ -122,36 +106,6 @@ app.get("/getCategories", async function (req, res) { //next requrie (the functi
     res.end();
  })
 
- app.get('/getAudioStream',async function(req, res) {
-    console.log("audio stream search is recieved")
-    var length = await db.getAudioLength(dbClientSearcher, req.query.poiId)
-    var audioStream = await db.getAudioStream(dbClientSearcher, req.query.poiId)
-    // res.writeHead(200, {
-    //     'Content-Type': 'audio/mpeg',
-    //     'Accept-Ranges': 'bytes',
-    //     'Content-length' : length
-    // });
-
-    res.set('content-type', 'audio/mpeg');
-    res.set('accept-ranges', 'bytes');
-    res.set('Content-length', length)
-  
-    audioStream.on('data', (chunk) => {
-        res.write(chunk);
-      });
-
-    audioStream.on('error', () => {
-    res.sendStatus(404);
-    });  
-
-    audioStream.on('end', () => {
-        res.end();
-    });
-
-    // audioStream.pipe(res)
-    // fs.createReadStream(filePath).pipe(response);
-
-})
  // get favorite categories for specific user
 app.get("/getFavorCategories", async function (req, res) { //next requrie (the function will not stop the program)
     console.log("inside get of favorite Categories - server side")

@@ -43,6 +43,7 @@ async function getPoiDescByName(poiName) {
 
     } catch {
         console.log('error in getPoiDescByName');
+        return null
     }
 
     var temp = response.data.query.pages;
