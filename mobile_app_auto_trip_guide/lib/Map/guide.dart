@@ -38,7 +38,7 @@ class Guide {
         guideDialogBox.getMapPoi()?.poi.latitude,
         guideDialogBox.getMapPoi()?.poi.longitude);
     // sets intro text
-    audioPlayer.setText(directionString, 'en');
+    audioPlayer.setText("The poi is" + directionString + "of you", 'en');
     audioPlayer.setOnPlayerFinishedFunc(() {
       _inIntro = false;
       audioPlayer.setText(mapPoi.poi.shortDesc ?? "No description",
