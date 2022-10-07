@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/personalize_recommendation.dart';
+import 'package:final_project/Map/pois_attributes_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -14,11 +15,13 @@ import 'package:flutter/foundation.dart';
 class UserMap extends StatefulWidget {
   // inits
   static late Position USER_LOCATION;
+
+  // the last known location of the user in the old area - for new pois purposes
+  static late Position LAST_AREA_USER_LOCATION;
+  static double DISTANCE_BETWEEN_AREAS = 1000; //1000 meters
   static List userChangeLocationFuncs = [];
 
-
   static Future<void> mapInit() async {
-
     //permissions handling
     LocationPermission permission = await Geolocator.checkPermission();
     permission = await Geolocator.requestPermission();
@@ -34,6 +37,21 @@ class UserMap extends StatefulWidget {
         desiredAccuracy: LocationAccuracy.high);
     // initialization order is very important
     Geolocator.getPositionStream().listen(locationChangedEvent);
+    LAST_AREA_USER_LOCATION = USER_LOCATION;
+  }
+
+  static bool isUserInNewArea() {
+    double dist = PoisAttributesCalculator.getDistBetweenPoints(
+        LAST_AREA_USER_LOCATION.latitude,
+        LAST_AREA_USER_LOCATION.longitude,
+        USER_LOCATION.latitude,
+        USER_LOCATION.longitude);
+
+    if (dist > DISTANCE_BETWEEN_AREAS) {
+      LAST_AREA_USER_LOCATION = USER_LOCATION;
+      return true;
+    }
+    return false;
   }
 
   static void locationChangedEvent(Position currentLocation) async {
@@ -73,6 +91,13 @@ class _UserMapState extends State<UserMap> {
   double mapHeading = 0;
   List<Marker> markersList = [];
   bool isNewPoisNeededFlag = true;
+  int _numOfPoisRequests = 0;
+
+  // at new area the we snooze to the server in order to seek new pois
+  static int NEW_AREA_SNOOZE = 4;
+
+  // at new area the we snooze to the server in order to seek new pois
+  static int SECONDS_BETWEEN_SNOOZES = 10;
 
   _UserMapState() : super() {
     UserMap.userChangeLocationFuncs.add(onLocationChanged);
@@ -105,11 +130,8 @@ class _UserMapState extends State<UserMap> {
     // TODO add a condition that won't crazy the server
     if (isNewPoisNeeded()) {
       pois = await Globals.globalServerCommunication.getPoisByLocation(
-          LocationInfo(
-              currentLocation.latitude,
-              currentLocation.longitude,
-              currentLocation.heading,
-              currentLocation.speed));
+          LocationInfo(currentLocation.latitude, currentLocation.longitude,
+              currentLocation.heading, currentLocation.speed));
 
       setState(() {
         // add all the new poi
@@ -141,10 +163,15 @@ class _UserMapState extends State<UserMap> {
   }
 
   bool isNewPoisNeeded() {
+    if (UserMap.isUserInNewArea()) {
+      _numOfPoisRequests = 0; //restart the counting
+    }
     if (isNewPoisNeededFlag) {
       isNewPoisNeededFlag = false;
-      poisNeededFlagChange(20, true);
+      poisNeededFlagChange(
+          SECONDS_BETWEEN_SNOOZES, NEW_AREA_SNOOZE >= _numOfPoisRequests);
       print("hello from isNewPoisNeeded");
+      _numOfPoisRequests++;
       return true;
     }
     return false;
@@ -164,8 +191,8 @@ class _UserMapState extends State<UserMap> {
               );
             }
           },
-          center: LatLng(UserMap.USER_LOCATION.latitude,
-              UserMap.USER_LOCATION.longitude),
+          center: LatLng(
+              UserMap.USER_LOCATION.latitude, UserMap.USER_LOCATION.longitude),
           minZoom: 5.0),
       // ignore: sort_child_properties_last
       children: [
