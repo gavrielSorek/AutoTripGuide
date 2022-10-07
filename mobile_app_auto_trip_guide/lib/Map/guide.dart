@@ -4,7 +4,7 @@ import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
 import '../Pages/poi_reading_page.dart';
 import 'dialog_box.dart';
-import 'direction_calculator.dart';
+import 'pois_attributes_calculator.dart';
 import 'globals.dart';
 import 'map.dart';
 
@@ -32,13 +32,21 @@ class Guide {
   }
 
   Future<void> handleMapPoiVoice(MapPoi mapPoi) async {
-    String directionString = DirectionCalculator.getDirection(
+    Poi dialogBoxCurrentPoi = guideDialogBox.getMapPoi()!.poi;
+    String directionString = PoisAttributesCalculator.getDirection(
         UserMap.USER_LOCATION.latitude,
         UserMap.USER_LOCATION.longitude,
-        guideDialogBox.getMapPoi()?.poi.latitude,
-        guideDialogBox.getMapPoi()?.poi.longitude);
+        dialogBoxCurrentPoi.latitude,
+        dialogBoxCurrentPoi.longitude);
+
+    String distString = PoisAttributesCalculator.getDistBetweenPoints(
+        UserMap.USER_LOCATION.latitude,
+        UserMap.USER_LOCATION.longitude,
+        dialogBoxCurrentPoi.latitude,
+        dialogBoxCurrentPoi.longitude).toInt().toString();
+
     // sets intro text
-    audioPlayer.setText("The poi is" + directionString + "of you", 'en');
+    audioPlayer.setText("The poi is " + directionString + " of you" + "in distance of " + distString + " meters", 'en');
     audioPlayer.setOnPlayerFinishedFunc(() {
       _inIntro = false;
       audioPlayer.setText(mapPoi.poi.shortDesc ?? "No description",
