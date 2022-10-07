@@ -49,6 +49,7 @@ class UserMap extends StatefulWidget {
 
     if (dist > DISTANCE_BETWEEN_AREAS) {
       LAST_AREA_USER_LOCATION = USER_LOCATION;
+      print("The user is in a new area");
       return true;
     }
     return false;
@@ -165,13 +166,14 @@ class _UserMapState extends State<UserMap> {
   bool isNewPoisNeeded() {
     if (UserMap.isUserInNewArea()) {
       _numOfPoisRequests = 0; //restart the counting
+      isNewPoisNeededFlag = true;
     }
     if (isNewPoisNeededFlag) {
       isNewPoisNeededFlag = false;
       poisNeededFlagChange(
           SECONDS_BETWEEN_SNOOZES, NEW_AREA_SNOOZE >= _numOfPoisRequests);
-      print("hello from isNewPoisNeeded");
       _numOfPoisRequests++;
+      print("New pois are needed!!!!");
       return true;
     }
     return false;
