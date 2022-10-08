@@ -3,6 +3,8 @@ const db = require("./db");
 const onlinePoisFinder = require("./onlinePoisFinder");
 const serverCommunication = require("../services/serverCommunication");
 var tokenGetter = require("../services/serverTokenGetter");
+var geohash = require('ngeohash');
+
 
 const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
@@ -25,7 +27,7 @@ const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstData
 const dbClientSearcher = new MongoClient(uri);
 const dbClientAudio = new MongoClient(uri);
 var globaltokenAndPermission = undefined;
-
+const geoHashHandledByOnlineSercher  = new Set(); // TODO limit the size (like cache)
 
 //init
 async function init() {
@@ -51,7 +53,7 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
     userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language}
     searchParams = {}
     addUserDataTosearchParams(searchParams, userData)
-    var bounds = getBounds(userData)
+    var bounds = getGeoHashBounds(userData)
     pois = await db.findPois(dbClientSearcher, searchParams, bounds, MAX_POIS_FOR_USER, false)
     res.status(200);
     res.json(pois);
@@ -60,8 +62,12 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
     // if not enough pois search online
     var enoughPoisNum = 4;
     if(!pois || pois.length < enoughPoisNum) { // TODO FIND BETTER LOGIC
-        //updateDbWithOnlinePois(bounds, userData.language);
-        updateDbWithOnlinePois(bounds, 'en');
+        var geoHashString = getGeoHashBoundsString(userData);
+        //if the online searcher didn't search on this location
+        if (!geoHashHandledByOnlineSercher.has(geoHashString)) { 
+            geoHashHandledByOnlineSercher.add(geoHashString)
+            updateDbWithOnlinePois(bounds, 'en');
+        }
     }
  })
 
@@ -85,6 +91,22 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
     relevantBounds['northEast'] = {lat : user_data.lat + epsilon, lng : user_data.lng + epsilon}
     return relevantBounds;
 }
+
+function getGeoHashBoundsString(user_data){
+    var geoHashPrecition = 5; // 4.89km	× 4.89km
+    var bounds= geohash.encode(user_data.lat, user_data.lng, geoHashPrecition=5)
+    return bounds;
+}
+
+function getGeoHashBounds(user_data){
+    var geoString = getGeoHashBoundsString(user_data);
+    var geoBounds = geohash.decode_bbox(geoString)
+    relevantBounds = {}
+    relevantBounds['southWest'] = {lat : geoBounds[0], lng : geoBounds[1]}
+    relevantBounds['northEast'] = {lat : geoBounds[2], lng : geoBounds[3]}
+    return relevantBounds;
+}
+
 
 // add new user
 app.get("/addNewUser", async function (req, res) { //next requrie (the function will not stop the program)

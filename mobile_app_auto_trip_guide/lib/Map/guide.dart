@@ -46,7 +46,7 @@ class Guide {
         dialogBoxCurrentPoi.longitude).toInt().toString();
 
     // sets intro text
-    audioPlayer.setText("The poi is " + directionString + " of you" + "at a distance of " + distString + " meters", 'en');
+    audioPlayer.setText("The poi is " + directionString + " of you" + "at distance of " + distString + " meters", 'en');
     audioPlayer.setOnPlayerFinishedFunc(() {
       _inIntro = false;
       audioPlayer.setText(mapPoi.poi.shortDesc ?? "No description",
