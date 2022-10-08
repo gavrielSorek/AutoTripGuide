@@ -95,10 +95,10 @@ class _UserMapState extends State<UserMap> {
   int _numOfPoisRequests = 0;
 
   // at new area the we snooze to the server in order to seek new pois
-  static int NEW_AREA_SNOOZE = 4;
+  static int NEW_AREA_SNOOZE = 7;
 
   // at new area the we snooze to the server in order to seek new pois
-  static int SECONDS_BETWEEN_SNOOZES = 10;
+  static int SECONDS_BETWEEN_SNOOZES = 15;
 
   _UserMapState() : super() {
     UserMap.userChangeLocationFuncs.add(onLocationChanged);

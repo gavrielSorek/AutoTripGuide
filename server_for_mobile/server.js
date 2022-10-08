@@ -28,6 +28,7 @@ const dbClientSearcher = new MongoClient(uri);
 const dbClientAudio = new MongoClient(uri);
 var globaltokenAndPermission = undefined;
 const geoHashHandledByOnlineSercher  = new Set(); // TODO limit the size (like cache)
+const geoHashPrecitionLevel = 5;
 
 //init
 async function init() {
@@ -53,22 +54,30 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
     userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language}
     searchParams = {}
     addUserDataTosearchParams(searchParams, userData)
-    var bounds = getGeoHashBounds(userData)
-    pois = await db.findPois(dbClientSearcher, searchParams, bounds, MAX_POIS_FOR_USER, false)
+
+    var geoHashStrings = getGeoHashBoundsStrings(userData, geoHashPrecitionLevel);
+    var boundsArr = [];
+    // add all the bounds
+    geoHashStrings.forEach((geoHashStr)=>{
+        boundsArr.push(getGeoHashBoundsByGeoStr(geoHashStr))
+    });
+    var pois = []
+    for (let i = 0; i < boundsArr.length; i++ ) {
+        let tempPoisArr = await db.findPois(dbClientSearcher, searchParams, boundsArr[i], MAX_POIS_FOR_USER, false);
+        pois = pois.concat(tempPoisArr);
+    }
+
     res.status(200);
     res.json(pois);
     res.end();
-
-    // if not enough pois search online
-    var enoughPoisNum = 4;
-    if(!pois || pois.length < enoughPoisNum) { // TODO FIND BETTER LOGIC
-        var geoHashString = getGeoHashBoundsString(userData);
+    // update the db with new pois if needed
+    geoHashStrings.forEach((geoHashStr)=>{
         //if the online searcher didn't search on this location
-        if (!geoHashHandledByOnlineSercher.has(geoHashString)) { 
-            geoHashHandledByOnlineSercher.add(geoHashString)
-            updateDbWithOnlinePois(bounds, 'en');
-        }
-    }
+        if (!geoHashHandledByOnlineSercher.has(geoHashStr)) { 
+            geoHashHandledByOnlineSercher.add(geoHashStr);
+            updateDbWithOnlinePois(getGeoHashBoundsByGeoStr(geoHashStr), 'en');
+            }
+        })
  })
 
  async function updateDbWithOnlinePois(bounds, language) {
@@ -84,23 +93,26 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
      }
  }
 
- function getBounds(user_data){
-    var epsilon = 0.03
-    var relevantBounds = {}
-    relevantBounds['southWest'] = {lat : user_data.lat - epsilon, lng : user_data.lng - epsilon}
-    relevantBounds['northEast'] = {lat : user_data.lat + epsilon, lng : user_data.lng + epsilon}
-    return relevantBounds;
+// return same as getGeoHashBoundsString but if there is a close geohash returns it too
+function getGeoHashBoundsStrings(user_data, geoHashPrecition = 5){ 
+    var mainSpecificGeoHash = getGeoHashBoundsString(user_data, geoHashPrecition + 1)
+    var neighborsOfSpecific = geohash.neighbors(mainSpecificGeoHash)
+    let geoHashSet = new Set();
+    for (let i = 0; i < neighborsOfSpecific.length; i ++) {
+        let geoHashGeneral = neighborsOfSpecific[i].slice(0, geoHashPrecition);
+        geoHashSet.add(geoHashGeneral);
+    }
+    return geoHashSet;
 }
 
-function getGeoHashBoundsString(user_data){
-    var geoHashPrecition = 5; // 4.89km	× 4.89km
-    var bounds= geohash.encode(user_data.lat, user_data.lng, geoHashPrecition=5)
+// geoHashPrecition = 5 is the default (4.89km × 4.89km)
+function getGeoHashBoundsString(user_data, geoHashPrecition = 5){ 
+    var bounds= geohash.encode(user_data.lat, user_data.lng, geoHashPrecition)
     return bounds;
 }
 
-function getGeoHashBounds(user_data){
-    var geoString = getGeoHashBoundsString(user_data);
-    var geoBounds = geohash.decode_bbox(geoString)
+function getGeoHashBoundsByGeoStr(geohashStr) {
+    var geoBounds = geohash.decode_bbox(geohashStr);
     relevantBounds = {}
     relevantBounds['southWest'] = {lat : geoBounds[0], lng : geoBounds[1]}
     relevantBounds['northEast'] = {lat : geoBounds[2], lng : geoBounds[3]}
@@ -201,7 +213,6 @@ app.get("/getPoisHistory", async function (req, res) { //next requrie (the funct
 
 async function tryModule() {
     var user_data = {lat : 32.1245, lng : 34.7954} 
-    var bounds = getBounds(user_data)
     await updateDbWithOnlinePois(bounds, 'en');
     
 }

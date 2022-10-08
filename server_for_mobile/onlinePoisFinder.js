@@ -4,7 +4,7 @@ var wikiTool = require("../services/wikiTool");
 var textAnalysisTool = require("../services/textAnalysisTool");
 var internetServices = require("../services/generalInternetServices");
 module.exports = { getPoisList};
-const maxPois = 20;
+const maxPois = 200;
 
 // http://api.opentripmap.com/0.1/en/places/bbox?lon_min=38.364285&lat_min=59.855685&lon_max=38.372809&lat_max=59.859052&kinds=churches&format=geojson&apikey=5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e
 // http://api.opentripmap.com/0.1/en/places/xid/Q372040?apikey=5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e
@@ -49,7 +49,7 @@ async function getPoisList(bounds, languageCode, onSinglePoiFound = undefined) {
             onSinglePoiFound(poi);
         }
     }
-    console.log(`Found ${pois.length.toString()} new pois`)
+    console.log(`Found ${pois.length.toString()} new pois!!!!!!!`)
     return pois;
 }
 
