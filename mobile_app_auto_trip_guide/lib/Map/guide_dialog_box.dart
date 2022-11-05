@@ -1,0 +1,188 @@
+import 'dart:collection';
+import 'package:final_project/Map/types.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import "package:story_view/story_view.dart";
+import '../General Wigets/scrolled_text.dart';
+import 'audio_player_controller.dart';
+import 'globals.dart';
+import 'package:flutter_stories/flutter_stories.dart';
+
+class Constants {
+  Constants._();
+
+  static const double padding = 10;
+  static const double avatarRadius = 35;
+  static const double edgesDist = 18;
+}
+
+class AutoGuideDialogBox extends StatefulWidget {
+  Map<String, MapPoi> _poisToPlay = HashMap<String, MapPoi>();
+  Map<String, MapPoi> _queuedPois = HashMap<String, MapPoi>();
+  final audioApp = AudioApp();
+
+  dynamic? onPressLeft, onPressRight;
+
+  AutoGuideDialogBox({required Key key}) : super(key: key);
+
+  setPoisToPlayWhenFinished(Map<String, MapPoi> poisForQueuing) {
+    _queuedPois.addAll(poisForQueuing);
+    if (this._poisToPlay.isEmpty) {
+      setPoisToPlay(_queuedPois);
+    }
+  }
+
+  setPoisToPlay(Map<String, MapPoi> poisToPlay) {
+    this._poisToPlay.clear();
+    this._poisToPlay.addAll(poisToPlay);
+    if (_guideDialogBoxState != null) {
+      _guideDialogBoxState!.updateStories();
+    }
+  }
+
+  _GuideDialogBoxState? _guideDialogBoxState;
+
+  @override
+  _GuideDialogBoxState createState() {
+    _guideDialogBoxState = _GuideDialogBoxState();
+    return _guideDialogBoxState!;
+  }
+}
+
+class _GuideDialogBoxState extends State<AutoGuideDialogBox> {
+  final controller = StoryController();
+  Widget? _storyWidget = null;
+  MapPoi? _currentPoi = null, _lastPoi = null;
+
+  void initState() {
+    super.initState();
+    widget.audioApp.onPressNext = () {
+      widget.audioApp.stopAudio();
+      controller.pause();
+      controller.next();
+    };
+
+    widget.audioApp.onPressPrev = () {
+      widget.audioApp.stopAudio();
+      controller.previous();
+    };
+    widget.audioApp.onPause = () {
+      controller.pause();
+    };
+    widget.audioApp.onResume = () {
+      controller.play();
+    };
+  }
+
+  updateStories() {
+    _storyWidget = storyWidget();
+    updateState();
+  }
+
+  void updateState() {
+    setState(() {});
+  }
+
+  Widget storyWidget() {
+    final List<StoryItem> storyItems = [];
+    widget._poisToPlay.forEach((key, mapPoi) {
+      storyItems.add(ScrolledText.textStory(
+          title: mapPoi.poi.poiName ?? 'No Name',
+          text: mapPoi.poi.shortDesc,
+          backgroundColor: Colors.blueGrey,
+          key: Key(mapPoi.poi.id),
+          duration: Duration(seconds: 20)));
+    });
+
+    return StoryView(
+      controller: controller,
+      repeat: true,
+      progressPosition: ProgressPosition.bottom,
+      onStoryShow: (s) async {
+        String poiId =
+            s.view.key.toString().replaceAll(RegExp(r"<|>|\[|\]|'"), '');
+        _currentPoi = widget._poisToPlay[poiId];
+        controller.pause();
+        widget.audioApp.setText(
+            _currentPoi!.poi.shortDesc!, _currentPoi!.poi.language ?? 'en');
+        widget.audioApp.playAudio();
+        if (_lastPoi != null) {
+          Globals.globalUserMap.userMapState?.unHighlightMapPoi(_lastPoi!);
+        }
+        Globals.globalUserMap.userMapState?.highlightMapPoi(_currentPoi!);
+        controller.play();
+        _lastPoi = _currentPoi;
+        setState(() {});
+      },
+      onComplete: () {
+        if (!widget._queuedPois.isEmpty) {
+          widget.setPoisToPlay(widget._queuedPois);
+        }
+      },
+
+      storyItems:
+          storyItems, // To disable vertical swipe gestures, ignore this parameter.
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      insetPadding: const EdgeInsets.all(Constants.edgesDist),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Constants.padding),
+      ),
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      child: contentBox(context),
+    );
+  }
+
+  contentBox(context) {
+    Widget? stories = _storyWidget;
+    if (stories == null || widget._poisToPlay.isEmpty) {
+      stories = SizedBox.shrink();
+    }
+    return Stack(
+
+      children: <Widget>[
+        Container(
+            height: 700,
+            padding: const EdgeInsets.only(
+                left: Constants.padding,
+                top: Constants.avatarRadius + Constants.padding,
+                right: Constants.padding,
+                bottom: Constants.padding),
+            margin: const EdgeInsets.only(top: Constants.avatarRadius),
+            decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(Constants.padding),
+                boxShadow: const [
+                  BoxShadow(
+                      color: Colors.black,
+                      offset: Offset(0, 5),
+                      blurRadius: 10),
+                ]),
+            child: Column(
+              children: [
+                Expanded(child: stories),
+                Container(child: widget.audioApp, height: 56)
+              ],
+            )),
+        Positioned(
+          left: Constants.padding,
+          right: Constants.padding,
+          child: CircleAvatar(
+              backgroundColor: Colors.transparent,
+              radius: Constants.avatarRadius,
+              child: ClipRRect(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(Constants.avatarRadius)),
+                child: Image.network(_currentPoi?.poi.pic ?? ""),
+              )),
+        ),
+      ],
+    );
+  }
+}
