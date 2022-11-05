@@ -12,7 +12,12 @@ typedef void OnError(Exception exception);
 class AudioApp extends StatefulWidget {
   AudioPlayer audioPlayer = AudioPlayer();
   FlutterTts flutterTts = FlutterTts();
-  dynamic onPlayerFinishedFunc;
+  dynamic onPlayerFinishedFunc,
+      onPressNext = null,
+      onPressPrev = null,
+      onPause = null,
+      onResume = null;
+
   String text = "";
   String languageCode = "";
   var langToTtsLangCode = {'en': 'en-GB'};
@@ -22,6 +27,14 @@ class AudioApp extends StatefulWidget {
     this.languageCode = langToTtsLangCode[language]!;
   }
 
+  void setonPressNext(dynamic func) {
+    onPressNext = func;
+  }
+
+  void setonPressPrev(dynamic func) {
+    onPressPrev = func;
+  }
+
   bool isPlaying() {
     if (_audioAppState == null) {
       return false;
@@ -29,8 +42,8 @@ class AudioApp extends StatefulWidget {
     return _audioAppState!.playerState == PlayerState.playing;
   }
 
-  void playAudio({bool playWithProgressBar = true}) {
-    _audioAppState?.play(playWithProgressBar: playWithProgressBar);
+  Future<void> playAudio({bool playWithProgressBar = true}) async {
+    await _audioAppState?.play(playWithProgressBar: playWithProgressBar);
   }
 
   void stopAudio() {
@@ -248,6 +261,10 @@ class _AudioAppState extends State<AudioApp> {
     await widget.flutterTts.setLanguage(widget.languageCode);
 
     if (isPaused) {
+      if (widget.onResume != null) {
+        widget.onResume();
+      }
+      ;
       await widget.audioPlayer.resume();
     } else {
       print("finish");
@@ -257,6 +274,10 @@ class _AudioAppState extends State<AudioApp> {
   }
 
   Future pause() async {
+    if (widget.onPause != null) {
+      widget.onPause();
+    }
+    ;
     await widget.audioPlayer.pause();
   }
 
@@ -297,52 +318,43 @@ class _AudioAppState extends State<AudioApp> {
         width: double.infinity,
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           IconButton(
-            onPressed: isPlayerButtonDisabled
-                ? null
-                : () {
-                    if (!isPlaying) {
-                      setState(() {
-                        play();
-                      });
-                    } else {
-                      setState(() {
-                        pause();
-                      });
-                    }
-                  },
-            iconSize: 30.0,
-            icon: playPauseIcon,
-            color: playButtonColor,
+            onPressed: () {
+              if (widget.onPressPrev != null) {
+                widget.onPressPrev();
+              }
+              ;
+            },
+            icon: Icon(Icons.skip_previous),
+            iconSize: 40,
           ),
-          Expanded(
-            child: Slider(
-                value: position.inMilliseconds.toDouble(),
-                onChanged: (double value) {
-                  setState(() {
-                    position = Duration(milliseconds: value.round());
-                  });
-                  widget.audioPlayer
-                      .seek(position);
-                },
-                min: 0.0,
-                max: duration > position
-                    ? duration.inMilliseconds.toDouble()
-                    : position.inMilliseconds.toDouble()),
+          Spacer(),
+          IconButton(
+              onPressed: isPlayerButtonDisabled
+                  ? null
+                  : () {
+                      if (!isPlaying) {
+                        setState(() {
+                          play();
+                        });
+                      } else {
+                        setState(() {
+                          pause();
+                        });
+                      }
+                    },
+              icon: playPauseIcon,
+              iconSize: 40),
+          Spacer(),
+          IconButton(
+            onPressed: () {
+              if (widget.onPressNext != null) {
+                widget.onPressNext();
+              }
+              ;
+            },
+            icon: Icon(Icons.skip_next),
+            iconSize: 40,
           ),
-          _buildProgressView()
         ]),
       );
-
-  Row _buildProgressView() => Row(mainAxisSize: MainAxisSize.min, children: [
-        Container(
-            margin: const EdgeInsets.only(left: 10.0, right: 10.0),
-            child: Text(
-              position != null
-                  ? "${positionText ?? ''} / ${(duration > position ? durationText : positionText) ?? ''}"
-                  : duration != null
-                      ? durationText
-                      : '',
-              style: TextStyle(fontSize: 12.0),
-            ))
-      ]);
 }

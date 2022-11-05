@@ -13,7 +13,7 @@ import 'map.dart';
 class Globals {
   static UserMap globalUserMap = UserMap();
   static ServerCommunication globalServerCommunication = ServerCommunication();
-  static Map globalAllPois = HashMap<String, MapPoi>();
+  static Map<String, MapPoi> globalAllPois = HashMap<String, MapPoi>();
   static List<String> globalUnhandledKeys = [];
   static Map globalPoisIdToMarkerIdx = HashMap<String, int>();
   static String globalDefaultLanguage = "eng";
