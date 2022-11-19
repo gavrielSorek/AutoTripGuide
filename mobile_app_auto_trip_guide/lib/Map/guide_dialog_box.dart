@@ -2,11 +2,13 @@ import 'dart:collection';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import "package:story_view/story_view.dart";
+
+import 'package:final_project/Adjusted Libs/story_view/story_view.dart';
+import 'package:final_project/Adjusted Libs/story_view/story_controller.dart';
+
 import '../General Wigets/scrolled_text.dart';
 import 'audio_player_controller.dart';
 import 'globals.dart';
-import 'package:flutter_stories/flutter_stories.dart';
 
 class Constants {
   Constants._();
@@ -61,7 +63,6 @@ class _GuideDialogBoxState extends State<AutoGuideDialogBox> {
       controller.pause();
       controller.next();
     };
-
     widget.audioApp.onPressPrev = () {
       widget.audioApp.stopAudio();
       controller.previous();
@@ -71,6 +72,12 @@ class _GuideDialogBoxState extends State<AutoGuideDialogBox> {
     };
     widget.audioApp.onResume = () {
       controller.play();
+    };
+    widget.audioApp.onProgressChanged = (double progress) {
+      controller.setProgressValue(progress);
+    };
+    widget.audioApp.onPlayerFinishedFunc = () {
+      controller.next();
     };
   }
 
@@ -89,9 +96,10 @@ class _GuideDialogBoxState extends State<AutoGuideDialogBox> {
       storyItems.add(ScrolledText.textStory(
           title: mapPoi.poi.poiName ?? 'No Name',
           text: mapPoi.poi.shortDesc,
-          backgroundColor: Colors.blueGrey,
+          backgroundColor: Colors.blueGrey.shade200,
           key: Key(mapPoi.poi.id),
-          duration: Duration(seconds: 20)));
+          // duration: Duration(seconds: double.infinity.toInt()))); // infinite
+          duration: Duration(hours: 100))); // infinite
     });
 
     return StoryView(
@@ -99,20 +107,22 @@ class _GuideDialogBoxState extends State<AutoGuideDialogBox> {
       repeat: true,
       progressPosition: ProgressPosition.bottom,
       onStoryShow: (s) async {
+        controller.setProgressValue(0);
         String poiId =
             s.view.key.toString().replaceAll(RegExp(r"<|>|\[|\]|'"), '');
         _currentPoi = widget._poisToPlay[poiId];
-        controller.pause();
         widget.audioApp.setText(
             _currentPoi!.poi.shortDesc!, _currentPoi!.poi.language ?? 'en');
-        widget.audioApp.playAudio();
+        widget.audioApp.setOnStartPlaying((Duration audioDuration) {
+          controller.setCurrentDuration(audioDuration);
+          controller.play();
+          setState(() {});
+        });
         if (_lastPoi != null) {
           Globals.globalUserMap.userMapState?.unHighlightMapPoi(_lastPoi!);
         }
         Globals.globalUserMap.userMapState?.highlightMapPoi(_currentPoi!);
-        controller.play();
         _lastPoi = _currentPoi;
-        setState(() {});
       },
       onComplete: () {
         if (!widget._queuedPois.isEmpty) {
@@ -144,7 +154,6 @@ class _GuideDialogBoxState extends State<AutoGuideDialogBox> {
       stories = SizedBox.shrink();
     }
     return Stack(
-
       children: <Widget>[
         Container(
             height: 700,

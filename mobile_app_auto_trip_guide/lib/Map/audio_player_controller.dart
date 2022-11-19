@@ -16,8 +16,9 @@ class AudioApp extends StatefulWidget {
       onPressNext = null,
       onPressPrev = null,
       onPause = null,
-      onResume = null;
-
+      onResume = null,
+      onStartPlaying = null,
+      onProgressChanged = null;
   String text = "";
   String languageCode = "";
   var langToTtsLangCode = {'en': 'en-GB'};
@@ -33,6 +34,11 @@ class AudioApp extends StatefulWidget {
 
   void setonPressPrev(dynamic func) {
     onPressPrev = func;
+  }
+
+  // the function onStartPlaying should get audio duration
+  void setOnStartPlaying(dynamic func) {
+    onStartPlaying = func;
   }
 
   bool isPlaying() {
@@ -206,8 +212,14 @@ class _AudioAppState extends State<AudioApp> {
   void initAudioPlayer() {
     _positionSubscription =
         widget.audioPlayer.onPositionChanged.listen((p) => setState(() {
-              if (!_playWithProgressBar) {
-                return;
+              if (widget.onProgressChanged != null) {
+                double progress = 0;
+                if (duration.inMilliseconds != 0) {
+                  progress = p.inMilliseconds / duration.inMilliseconds;
+                } else {
+                  progress = 0;
+                }
+                widget.onProgressChanged(progress);
               }
               position = p;
             }));
@@ -264,12 +276,14 @@ class _AudioAppState extends State<AudioApp> {
       if (widget.onResume != null) {
         widget.onResume();
       }
-      ;
+
       await widget.audioPlayer.resume();
     } else {
-      print("finish");
       String urlPath = await convertTextToAudioFile(widget.text);
       await widget.audioPlayer.play(UrlSource(urlPath));
+      if (widget.onStartPlaying != null) {
+        widget.onStartPlaying(duration);
+      }
     }
   }
 

@@ -11,6 +11,7 @@ import 'package:final_project/Map/types.dart';
 import '../UsefulWidgets/progress_indicator.dart';
 import 'guide.dart';
 import 'package:flutter/foundation.dart';
+import 'guide_dialog_box.dart';
 
 class UserMap extends StatefulWidget {
   // inits
@@ -189,7 +190,8 @@ class _UserMapState extends State<UserMap> {
           onPositionChanged: (MapPosition position, bool hasGesture) {
             if (hasGesture) {
               setState(
-                () => _centerOnLocationUpdate = CenterOnLocationUpdate.never,
+                    () =>
+                _centerOnLocationUpdate = CenterOnLocationUpdate.never,
               );
             }
           },
@@ -205,146 +207,52 @@ class _UserMapState extends State<UserMap> {
         ),
         CurrentLocationLayer(
             centerCurrentLocationStream:
-                _centerCurrentLocationStreamController.stream,
+            _centerCurrentLocationStreamController.stream,
             centerOnLocationUpdate: _centerOnLocationUpdate),
         MarkerLayer(markers: markersList)
       ],
       nonRotatedChildren: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.end,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // audio player
-            AnimatedOpacity(
-                opacity: guideData.status == GuideStatus.voice ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 500),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 48,
-                  color: Colors.green,
-                  child: guideTool.audioPlayer,
-                )),
-            const SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width / 15),
-                  width: MediaQuery.of(context).size.width / 10,
-                  child: FloatingActionButton(
-                    heroTag: null,
-                    onPressed: () {
-                      // Automatically center the location marker on the map when location updated until user interact with the map.
-                      setState(
+            Container(
+              margin: EdgeInsets.only(
+                top: MediaQuery.of(context).size.width / 4,
+                  left: MediaQuery.of(context).size.width / 15),
+              width: MediaQuery.of(context).size.width / 10,
+              child: FloatingActionButton(
+                heroTag: null,
+                onPressed: () {
+                  // Automatically center the location marker on the map when location updated until user interact with the map.
+                  setState(
                         () => _centerOnLocationUpdate =
-                            CenterOnLocationUpdate.always,
-                      );
-                      // Center the location marker on the map and zoom the map to level 14.
-                      _centerCurrentLocationStreamController.add(14);
-                    },
-                    child: const Icon(
-                      Icons.my_location,
-                      color: Colors.white,
-                    ),
-                  ),
+                        CenterOnLocationUpdate.always,
+                  );
+                  // Center the location marker on the map and zoom the map to level 14.
+                  _centerCurrentLocationStreamController.add(14);
+                },
+                child: const Icon(
+                  Icons.my_location,
+                  color: Colors.white,
                 ),
-                // loader
-                AnimatedOpacity(
-                    opacity: loadingPois == WidgetVisibility.view ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    child: Container(
-                      height: 59,
-                      color: Colors.transparent,
-                      child: const UserProgressIndicator(),
-                    )),
-                // guide state button
-                Container(
-                    color: Colors.transparent,
-                    alignment: Alignment.bottomRight,
-                    margin: EdgeInsets.only(
-                        right: MediaQuery.of(context).size.width / 15),
-                    height: MediaQuery.of(context).size.width / 10,
-                    width: MediaQuery.of(context).size.width / 10,
-                    child: FloatingActionButton(
-                      heroTag: null,
-                      onPressed: () {
-                        setState(() {
-                          guideData.changeGuideType();
-                          if (guideData.status == GuideStatus.text) {
-                            guideTool.audioPlayer.clearPlayer();
-                          }
-                          guideTool.guideStateChanged();
-                        });
-                        print("change to audio or to text");
-                      },
-                      child: guideData.guideIcon,
-                    ))
-                // )
-                ,
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                    color: Colors.transparent,
-                    margin: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height / 30,
-                        left: MediaQuery.of(context).size.width / 15),
-                    height: MediaQuery.of(context).size.width / 10,
-                    width: MediaQuery.of(context).size.width / 10,
-                    child: AnimatedOpacity(
-                        opacity:
-                            WidgetVisibility.view == navButtonState ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 500),
-                        child: FloatingActionButton(
-                          heroTag: null,
-                          onPressed: () {
-                            print("navigate to poi pressed");
-
-                            if (Globals.mainMapPoi != null) {
-                              print("navigate to poi");
-                              double lat = Globals.mainMapPoi!.poi.latitude;
-                              double lng = Globals.mainMapPoi!.poi.longitude;
-                              Globals.globalAppLauncher.launchWaze(lat, lng);
-                            }
-                            // Automatically center the location marker on the map when location updated until user interact with the map.
-                            // Center the location marker on the map and zoom the map to level 15.
-                          },
-                          child: const Icon(
-                            Icons.navigation_rounded,
-                            color: Colors.white,
-                          ),
-                        ))),
-                Container(
-                    alignment: Alignment.bottomRight,
-                    margin: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height / 30,
-                        right: MediaQuery.of(context).size.width / 15),
-                    color: Colors.transparent,
-                    height: MediaQuery.of(context).size.width / 10,
-                    width: MediaQuery.of(context).size.width / 10,
-                    child: AnimatedOpacity(
-                        opacity: nextButtonState == WidgetVisibility.view
-                            ? 1.0
-                            : 0.0,
-                        duration: const Duration(milliseconds: 500),
-                        child: FloatingActionButton(
-                          heroTag: null,
-                          onPressed: () {
-                            guideTool.stop();
-                            guideTool.handlePois();
-                            print("next");
-                          },
-                          child: const Icon(Icons.navigate_next_sharp,
-                              color: Colors.white),
-                        ))),
-              ],
-            ),
-            Spacer(),
-            guideTool.guideDialogBox
+              ),
+            )
+          ],
+        ),
+        Column(
+          children: [
+            Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                    const SizedBox(height: 5),
+                Spacer(),
+                Expanded(child: guideTool.guideDialogBox)
+                // guideTool.guideDialogBox,
+                    ],
+                ))
           ],
         )
       ],
