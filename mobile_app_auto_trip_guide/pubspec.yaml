@@ -28,7 +28,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   url_launcher: ^6.1.2
-  audioplayers: ^1.0.1
+  audioplayers: ^1.1.1
   flutter_compass: ^0.7.0
   flutter_map: ^3.0.0
   flutter:
@@ -38,7 +38,7 @@ dependencies:
   webview_flutter: ^3.0.4
   path_provider: ^2.0.1
   flutter_tts: ^3.5.3
-  firebase_crashlytics: 2.8.11
+  firebase_crashlytics: 3.0.6
   geolocator: 9.0.2
 
 
@@ -52,7 +52,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.10.0
+  flutter_launcher_icons: ^0.11.0
 
 flutter_icons:
   android: "launcher_icon"
