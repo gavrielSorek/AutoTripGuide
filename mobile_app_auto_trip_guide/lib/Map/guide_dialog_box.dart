@@ -19,14 +19,13 @@ class Constants {
   static const double edgesDist = 10;
 }
 
-class AutoGuideDialogBox extends StatefulWidget {
+class StoriesDialogBox extends StatefulWidget {
   Map<String, MapPoi> _poisToPlay = HashMap<String, MapPoi>();
   Map<String, MapPoi> _queuedPois = HashMap<String, MapPoi>();
   final audioApp = AudioApp();
-
   dynamic? onPressLeft, onPressRight;
 
-  AutoGuideDialogBox({required Key key}) : super(key: key);
+  StoriesDialogBox({required Key key}) : super(key: key);
 
   setPoisToPlayWhenFinished(Map<String, MapPoi> poisForQueuing) {
     _queuedPois.addAll(poisForQueuing);
@@ -43,16 +42,16 @@ class AutoGuideDialogBox extends StatefulWidget {
     }
   }
 
-  _GuideDialogBoxState? _guideDialogBoxState;
+  _StoriesDialogBoxState? _guideDialogBoxState;
 
   @override
-  _GuideDialogBoxState createState() {
-    _guideDialogBoxState = _GuideDialogBoxState();
+  _StoriesDialogBoxState createState() {
+    _guideDialogBoxState = _StoriesDialogBoxState();
     return _guideDialogBoxState!;
   }
 }
 
-class _GuideDialogBoxState extends State<AutoGuideDialogBox> {
+class _StoriesDialogBoxState extends State<StoriesDialogBox> {
   final controller = StoryController();
   Widget? _storyWidget = null;
   MapPoi? _currentPoi = null, _lastPoi = null;

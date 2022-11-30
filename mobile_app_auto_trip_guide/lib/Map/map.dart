@@ -249,7 +249,7 @@ class _UserMapState extends State<UserMap> {
                     children: [
                     const SizedBox(height: 5),
                 Spacer(),
-                Expanded(child: guideTool.guideDialogBox)
+                Expanded(child: guideTool.storiesDialogBox)
                 // guideTool.guideDialogBox,
                     ],
                 ))

@@ -17,7 +17,7 @@ class Toolbar extends State<ToolbarWidget> {
     // if the index is different from map page
     if (index != 0) {
       // always pause dialog box when not in the map page
-      Globals.globalUserMap.userMapState?.guideTool.pauseGuide(); // TODO DELETE - SHOULDN'T BE HERE
+      // Globals.globalUserMap.userMapState?.guideTool.pauseGuide(); // TODO DELETE - SHOULDN'T BE HERE
     } else {
       // if map page
         Globals.globalUserMap.userMapState?.guideTool.resumeGuide(); // TODO DELETE - SHOULDN'T BE HERE
