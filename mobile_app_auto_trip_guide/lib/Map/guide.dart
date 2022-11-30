@@ -2,10 +2,7 @@ import 'dart:async';
 import 'package:final_project/Map/audio_player_controller.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
-import '../Pages/poi_reading_page.dart';
-import 'dialog_box.dart';
 import 'guide_dialog_box.dart';
-import 'pois_attributes_calculator.dart';
 import 'globals.dart';
 
 class Guide {

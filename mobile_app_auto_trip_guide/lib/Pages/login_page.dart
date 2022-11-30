@@ -1,9 +1,7 @@
-import 'package:final_project/Pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../Map/globals.dart';
 import '../Map/types.dart';
-import '../UsefulWidgets/toolbar.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
