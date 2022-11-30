@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:ffi';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +14,9 @@ import 'globals.dart';
 class Constants {
   Constants._();
 
-  static const double padding = 10;
-  static const double avatarRadius = 35;
-  static const double edgesDist = 18;
+  static const double padding = 2;
+  static const double avatarRadius = 50;
+  static const double edgesDist = 10;
 }
 
 class AutoGuideDialogBox extends StatefulWidget {
@@ -121,7 +122,6 @@ class _GuideDialogBoxState extends State<AutoGuideDialogBox> {
         _lastPoi = _currentPoi;
 
         setState(() {
-
         });
       },
       onComplete: () {
@@ -156,7 +156,7 @@ class _GuideDialogBoxState extends State<AutoGuideDialogBox> {
     return Stack(
       children: <Widget>[
         Container(
-            height: 700,
+            height: double.infinity,
             padding: const EdgeInsets.only(
                 left: Constants.padding,
                 top: Constants.avatarRadius + Constants.padding,
