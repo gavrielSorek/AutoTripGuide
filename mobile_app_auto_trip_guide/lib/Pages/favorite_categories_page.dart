@@ -1,30 +1,39 @@
+import 'package:final_project/General%20Wigets/menu.dart';
 import 'package:flutter/material.dart';
 import '../Map/globals.dart';
 
 class FavoriteCategoriesPage extends StatefulWidget {
   const FavoriteCategoriesPage({Key? key}) : super(key: key);
+
   @override
   FavoriteCategories createState() => FavoriteCategories();
 }
 
 class FavoriteCategories extends State<FavoriteCategoriesPage> {
+  GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
+
   List<String> categories = Globals.globalCategories?.keys.toList() ?? [];
   bool favorChanged = false;
   List<String> favorCategories = Globals.globalFavoriteCategories;
 
-  List<Widget> buildCategoriesChips () {
+  List<Widget> buildCategoriesChips() {
     List<Widget> chips = [];
     for (String category in categories) {
-      Widget item =  Padding(
-        padding: const EdgeInsets.only(left:10, right: 5),
+      Widget item = Padding(
+        padding: const EdgeInsets.only(left: 10, right: 5),
         child: FilterChip(
           backgroundColor: Colors.white38,
           shape: StadiumBorder(side: BorderSide(color: Globals.globalColor)),
-        avatar: CircleAvatar(
-            backgroundColor: favorCategories.contains(category)?Globals.globalColor:Globals.globalColor,
-            child: Text(category[0].toUpperCase(),style: TextStyle(color: Colors.white),),
+          avatar: CircleAvatar(
+            backgroundColor: favorCategories.contains(category)
+                ? Globals.globalColor
+                : Globals.globalColor,
+            child: Text(
+              category[0].toUpperCase(),
+              style: TextStyle(color: Colors.white),
+            ),
           ),
-          label: Text(category,style: TextStyle(color: Colors.black)),
+          label: Text(category, style: TextStyle(color: Colors.black)),
           selected: favorCategories.contains(category),
           selectedColor: Globals.globalColor,
           onSelected: (bool selected) {
@@ -50,13 +59,12 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
     return Container(
         height: MediaQuery.of(context).size.height / 22,
         color: Colors.transparent,
-        child:
-        Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width / 15),
+              margin:
+                  EdgeInsets.only(left: MediaQuery.of(context).size.width / 15),
               width: MediaQuery.of(context).size.width / 10,
               child: FloatingActionButton(
                 backgroundColor: Globals.globalColor,
@@ -69,22 +77,22 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
                   color: Colors.white,
                 ),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15.0))
-                ),
+                    borderRadius: BorderRadius.all(Radius.circular(15.0))),
               ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height / 50),
-          ],));
+          ],
+        ));
   }
 
-
-  ElevatedButton buildApplyButton(BuildContext context){
+  ElevatedButton buildApplyButton(BuildContext context) {
     return ElevatedButton(
       child: const Text('Apply'),
       onPressed: () {
-        if(favorChanged) {
+        if (favorChanged) {
           Globals.setFavoriteCategories(favorCategories);
-          Globals.globalServerCommunication.updateFavorCategories(Globals.globalController.googleAccount.value?.email ?? '');
+          Globals.globalServerCommunication.updateFavorCategories(
+              Globals.globalController.googleAccount.value?.email ?? '');
           final snackBar = SnackBar(
             content: const Text('Your Favorite Categories Saved!'),
           );
@@ -93,59 +101,79 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
       },
       style: ElevatedButton.styleFrom(
           primary: Globals.globalColor,
-          padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 2.5, vertical: MediaQuery.of(context).size.height / 100),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15)),
+          padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width / 2.5,
+              vertical: MediaQuery.of(context).size.height / 100),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           textStyle:
-          const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+              const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    NavigationDrawer.pageNameToScaffoldKey['/favorite-categories-screen'] =
+        _scaffoldState;
     return Scaffold(
+        key: _scaffoldState,
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          toolbarHeight: 0.0,
-          title: const Text('Favorite Categories'),
-          titleSpacing: MediaQuery.of(context).size.width / 50,
-          elevation: 0,
-          leading: const BackButton(),
-          centerTitle: true,),
+        // appBar: AppBar(
+        //   toolbarHeight: 0.0,
+        //   title: const Text('Favorite Categories'),
+        //   titleSpacing: MediaQuery.of(context).size.width / 50,
+        //   elevation: 0,
+        //   leading: const BackButton(),
+        //   centerTitle: true,),
+        drawer: NavigationDrawer(),
         body: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: MediaQuery.of(context).size.height / 50),
-            buildBackButton(context),
-            SizedBox(height:MediaQuery.of(context).size.height / 50),
-            Text("Choose your favorite categories", textAlign: TextAlign.center, style: TextStyle(
-                color: Colors.black,
-                fontSize: 25, fontWeight: FontWeight.bold),
-                ),
-            SizedBox(height:MediaQuery.of(context).size.height / 80),
-            Text("You can choose more than one", textAlign: TextAlign.center, style: TextStyle(
-                color: Colors.black54,
-                fontSize: 15, fontWeight: FontWeight.bold),
+            Container(
+                margin: const EdgeInsets.only(top: 60),
+                alignment: Alignment.topLeft,
+                child: NavigationDrawer.buildNavigationDrawerButton(context)),
+            // buildBackButton(context),
+
+            SizedBox(height: MediaQuery.of(context).size.height / 50),
+            Text(
+              "Choose your favorite categories",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold),
             ),
-            SizedBox(height:MediaQuery.of(context).size.height / 40),
+            SizedBox(height: MediaQuery.of(context).size.height / 80),
+            Text(
+              "You can choose more than one",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height / 40),
             Container(
               margin: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width / 15, right: MediaQuery.of(context).size.width / 15),
+                  left: MediaQuery.of(context).size.width / 15,
+                  right: MediaQuery.of(context).size.width / 15),
               height: MediaQuery.of(context).size.height / 1.75,
-              child: ListView(
-                  primary: true,
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    Wrap( // menu row
-                      spacing: 3,
-                      runSpacing: 0.0,
-                      //direction: Axis.horizontal,
-                      children:
-                      buildCategoriesChips(),
-                    )]),
+              child:
+                  ListView(primary: true, shrinkWrap: true, children: <Widget>[
+                Wrap(
+                  // menu row
+                  spacing: 3,
+                  runSpacing: 0.0,
+                  //direction: Axis.horizontal,
+                  children: buildCategoriesChips(),
+                )
+              ]),
             ),
             const Spacer(),
-            Row( // menu row
+            Row(
+              // menu row
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
@@ -155,7 +183,6 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
               ],
             ),
           ],
-        )
-    );
+        ));
   }
 }

@@ -78,8 +78,9 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: MediaQuery.of(context).size.height / 2),
               FloatingActionButton.extended(
-                onPressed: () {
-                  Globals.globalController.login();
+                onPressed: () async {
+                  await Globals.globalController.login();
+                  addUser();
                   Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
                 },
                 icon: Image.asset(

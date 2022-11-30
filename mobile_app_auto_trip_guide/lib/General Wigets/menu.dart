@@ -84,6 +84,18 @@ class NavigationDrawer extends StatelessWidget {
               Navigator.pushNamed(context, '/history-screen');
             },
           ),
+          ListTile(
+            leading: Icon(
+              Icons.room_preferences,
+            ),
+            title: const Text('Preferences'),
+            onTap: () {
+              closeDrawer(pageNameToScaffoldKey[ModalRoute.of(context)?.settings.name]);
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              // Navigator.of(context).pushNamedAndRemoveUntil('/history-screen', (Route<dynamic> route) => false);
+              Navigator.pushNamed(context, '/favorite-categories-screen');
+            },
+          ),
         ],
       ),
     );
