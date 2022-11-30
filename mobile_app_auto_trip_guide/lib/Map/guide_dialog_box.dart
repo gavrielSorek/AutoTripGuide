@@ -27,6 +27,14 @@ class StoriesDialogBox extends StatefulWidget {
 
   StoriesDialogBox({required Key key}) : super(key: key);
 
+  static String getTime() {
+    DateTime now = new DateTime.now();
+    DateTime date =
+        DateTime(now.year, now.month, now.day, now.hour, now.minute);
+    String dateToday = date.toString().substring(0, 16);
+    return dateToday;
+  }
+
   setPoisToPlayWhenFinished(Map<String, MapPoi> poisForQueuing) {
     _queuedPois.addAll(poisForQueuing);
     if (this._poisToPlay.isEmpty) {
@@ -107,7 +115,6 @@ class _StoriesDialogBoxState extends State<StoriesDialogBox> {
       repeat: true,
       progressPosition: ProgressPosition.bottom,
       onStoryShow: (s) async {
-
         controller.setProgressValue(0);
         String poiId =
             s.view.key.toString().replaceAll(RegExp(r"<|>|\[|\]|'"), '');
@@ -121,9 +128,12 @@ class _StoriesDialogBoxState extends State<StoriesDialogBox> {
         Globals.globalUserMap.userMapState?.highlightMapPoi(_currentPoi!);
         _lastPoi = _currentPoi;
 
-        setState(() {
-        });
-        Globals.addGlobalVisitedPoi(VisitedPoi(poiName: _currentPoi!.poi.poiName, id: _currentPoi!.poi.id, time: '1', pic: _currentPoi!.poi.pic));
+        setState(() {});
+        Globals.addGlobalVisitedPoi(VisitedPoi(
+            poiName: _currentPoi!.poi.poiName,
+            id: _currentPoi!.poi.id,
+            time: StoriesDialogBox.getTime(),
+            pic: _currentPoi!.poi.pic));
       },
       onComplete: () {
         if (!widget._queuedPois.isEmpty) {
