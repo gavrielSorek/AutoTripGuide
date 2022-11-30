@@ -1,49 +1,49 @@
-import 'package:flutter/material.dart';
-import '../Map/globals.dart';
-
-class ToolbarWidget extends StatefulWidget {
-  Toolbar? toolbar;
-
-  ToolbarWidget({Key? key}) : super(key: key);
-
-  @override
-  Toolbar createState() => Toolbar();
-}
-
-class Toolbar extends State<ToolbarWidget> {
-  int _selectedScreenIndex = 0;
-
-  void _selectScreen(int index) {
-    // if the index is different from map page
-    if (index != 0) {
-      // always pause dialog box when not in the map page
-      // Globals.globalUserMap.userMapState?.guideTool.pauseGuide(); // TODO DELETE - SHOULDN'T BE HERE
-    } else {
-      // if map page
-        Globals.globalUserMap.userMapState?.guideTool.resumeGuide(); // TODO DELETE - SHOULDN'T BE HERE
-    }
-    setState(() {
-      _selectedScreenIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _selectedScreenIndex,
-        children: Globals.globalPagesList,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedScreenIndex,
-        onTap: _selectScreen,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.account_box_outlined), label: "Account"),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: "History")
-        ],
-      ),
-    );
-  }
-}
+// import 'package:flutter/material.dart';
+// import '../Map/globals.dart';
+//
+// class ToolbarWidget extends StatefulWidget {
+//   Toolbar? toolbar;
+//
+//   ToolbarWidget({Key? key}) : super(key: key);
+//
+//   @override
+//   Toolbar createState() => Toolbar();
+// }
+//
+// class Toolbar extends State<ToolbarWidget> {
+//   int _selectedScreenIndex = 0;
+//
+//   void _selectScreen(int index) {
+//     // if the index is different from map page
+//     if (index != 0) {
+//       // always pause dialog box when not in the map page
+//       // Globals.globalUserMap.userMapState?.guideTool.pauseGuide(); // TODO DELETE - SHOULDN'T BE HERE
+//     } else {
+//       // if map page
+//         Globals.globalUserMap.userMapState?.guideTool.resumeGuide(); // TODO DELETE - SHOULDN'T BE HERE
+//     }
+//     setState(() {
+//       _selectedScreenIndex = index;
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: IndexedStack(
+//         index: _selectedScreenIndex,
+//         children: Globals.globalPagesList,
+//       ),
+//       bottomNavigationBar: BottomNavigationBar(
+//         currentIndex: _selectedScreenIndex,
+//         onTap: _selectScreen,
+//         items: const [
+//           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+//           BottomNavigationBarItem(
+//               icon: Icon(Icons.account_box_outlined), label: "Account"),
+//           BottomNavigationBarItem(icon: Icon(Icons.history), label: "History")
+//         ],
+//       ),
+//     );
+//   }
+// }

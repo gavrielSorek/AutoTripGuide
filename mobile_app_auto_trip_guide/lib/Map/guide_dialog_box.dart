@@ -107,6 +107,7 @@ class _StoriesDialogBoxState extends State<StoriesDialogBox> {
       repeat: true,
       progressPosition: ProgressPosition.bottom,
       onStoryShow: (s) async {
+
         controller.setProgressValue(0);
         String poiId =
             s.view.key.toString().replaceAll(RegExp(r"<|>|\[|\]|'"), '');
@@ -122,6 +123,7 @@ class _StoriesDialogBoxState extends State<StoriesDialogBox> {
 
         setState(() {
         });
+        Globals.addGlobalVisitedPoi(VisitedPoi(poiName: _currentPoi!.poi.poiName, id: _currentPoi!.poi.id, time: '1', pic: _currentPoi!.poi.pic));
       },
       onComplete: () {
         if (!widget._queuedPois.isEmpty) {

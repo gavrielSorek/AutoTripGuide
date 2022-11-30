@@ -1,3 +1,4 @@
+import 'package:final_project/Pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../Map/globals.dart';
@@ -9,16 +10,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Obx(() {
-        if (Globals.globalController.googleAccount.value == null) {
-          return buildLoginWidget(context);
-        } else {
-          addUser();
-          return ToolbarWidget();
-        }
-      })),
-    );
+    return buildLoginWidget(context);
   }
 
   void loadUserDetails() async {
@@ -88,6 +80,7 @@ class LoginPage extends StatelessWidget {
               FloatingActionButton.extended(
                 onPressed: () {
                   Globals.globalController.login();
+                  Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
                 },
                 icon: Image.asset(
                   "assets/images/google.png",

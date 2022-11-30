@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:final_project/General%20Wigets/menu.dart';
 import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/personalize_recommendation.dart';
 import 'package:final_project/Map/pois_attributes_calculator.dart';
+import 'package:final_project/Pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -182,6 +184,8 @@ class _UserMapState extends State<UserMap> {
 
   @override
   Widget build(BuildContext context) {
+
+
     print("hello from build map");
     return FlutterMap(
       mapController: _mapController,
@@ -215,6 +219,8 @@ class _UserMapState extends State<UserMap> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // NavigationDrawer.buildNavigationDrawerButton((Globals.globalPagesList[0] as HomePage).getScaffoldKey()),
+            NavigationDrawer.buildNavigationDrawerButton(context),
             Container(
               margin: EdgeInsets.only(
                 top: MediaQuery.of(context).size.width / 4,
