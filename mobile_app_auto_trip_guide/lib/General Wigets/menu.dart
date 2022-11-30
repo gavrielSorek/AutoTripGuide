@@ -12,9 +12,11 @@ class NavigationDrawer extends StatelessWidget {
   static void openDrawer(GlobalKey<ScaffoldState>? key) {
     key?.currentState?.openDrawer();
   }
+
   static void closeDrawer(GlobalKey<ScaffoldState>? key) {
     key?.currentState?.closeDrawer();
   }
+
   static Widget buildNavigationDrawerButton(BuildContext context) {
     return IconButton(
         onPressed: () {
@@ -39,17 +41,24 @@ class NavigationDrawer extends StatelessWidget {
             accountEmail: Text(''), // keep blank text because email is required
             accountName: Row(
               children: <Widget>[
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(shape: BoxShape.circle),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.redAccent,
-                    backgroundImage: NetworkImage(Globals
-                            .globalController.googleAccount.value?.photoUrl ??
-                        ""),
-                  ),
-                ),
+                GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                      // Navigator.of(context).pushNamedAndRemoveUntil('/history-screen', (Route<dynamic> route) => false);
+                      Navigator.pushNamed(context, '/personal-details-screen');
+                    },
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(shape: BoxShape.circle),
+
+                      child: CircleAvatar(
+                        backgroundColor: Colors.redAccent,
+                        backgroundImage: NetworkImage(Globals.globalController
+                                .googleAccount.value?.photoUrl ??
+                            ""),
+                      ),
+                    )),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -78,7 +87,8 @@ class NavigationDrawer extends StatelessWidget {
             ),
             title: const Text('History'),
             onTap: () {
-              closeDrawer(pageNameToScaffoldKey[ModalRoute.of(context)?.settings.name]);
+              closeDrawer(
+                  pageNameToScaffoldKey[ModalRoute.of(context)?.settings.name]);
               Navigator.of(context).popUntil((route) => route.isFirst);
               // Navigator.of(context).pushNamedAndRemoveUntil('/history-screen', (Route<dynamic> route) => false);
               Navigator.pushNamed(context, '/history-screen');
@@ -90,7 +100,8 @@ class NavigationDrawer extends StatelessWidget {
             ),
             title: const Text('Preferences'),
             onTap: () {
-              closeDrawer(pageNameToScaffoldKey[ModalRoute.of(context)?.settings.name]);
+              closeDrawer(
+                  pageNameToScaffoldKey[ModalRoute.of(context)?.settings.name]);
               Navigator.of(context).popUntil((route) => route.isFirst);
               // Navigator.of(context).pushNamedAndRemoveUntil('/history-screen', (Route<dynamic> route) => false);
               Navigator.pushNamed(context, '/favorite-categories-screen');
