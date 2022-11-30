@@ -113,16 +113,16 @@ class _GuideDialogBoxState extends State<AutoGuideDialogBox> {
         _currentPoi = widget._poisToPlay[poiId];
         widget.audioApp.setText(
             _currentPoi!.poi.shortDesc!, _currentPoi!.poi.language ?? 'en');
-        widget.audioApp.setOnStartPlaying((Duration audioDuration) {
-          controller.setCurrentDuration(audioDuration);
-          controller.play();
-          setState(() {});
-        });
+        widget.audioApp.playAudio();
         if (_lastPoi != null) {
           Globals.globalUserMap.userMapState?.unHighlightMapPoi(_lastPoi!);
         }
         Globals.globalUserMap.userMapState?.highlightMapPoi(_currentPoi!);
         _lastPoi = _currentPoi;
+
+        setState(() {
+
+        });
       },
       onComplete: () {
         if (!widget._queuedPois.isEmpty) {

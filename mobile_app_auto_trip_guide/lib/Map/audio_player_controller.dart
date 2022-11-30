@@ -259,6 +259,7 @@ class _AudioAppState extends State<AudioApp> {
       setState(() => duration = newDuration);
     });
     widget.audioPlayer.onPlayerComplete.listen((event) {
+      widget.stopAudio();
       if (widget.onPlayerFinishedFunc != null) {
         widget.onPlayerFinishedFunc();
       }
