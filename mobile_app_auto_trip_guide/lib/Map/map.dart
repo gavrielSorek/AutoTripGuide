@@ -3,17 +3,14 @@ import 'package:final_project/General%20Wigets/menu.dart';
 import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/personalize_recommendation.dart';
 import 'package:final_project/Map/pois_attributes_calculator.dart';
-import 'package:final_project/Pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:final_project/Map/types.dart';
-import '../UsefulWidgets/progress_indicator.dart';
 import 'guide.dart';
 import 'package:flutter/foundation.dart';
-import 'guide_dialog_box.dart';
 
 class UserMap extends StatefulWidget {
   // inits

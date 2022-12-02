@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:final_project/Adjusted Libs/story_view/story_view.dart';
 
 
-class ScrolledText extends StatelessWidget {
+class ScrolledText {
   /// Short hand to create text-only page.
   ///
   /// [title] is the text to be displayed on [backgroundColor]. The text color
@@ -73,25 +73,6 @@ class ScrolledText extends StatelessWidget {
       ),
       shown: shown,
       duration: duration ?? Duration(seconds: 3),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
-    final double itemWidth = size.width;
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Text(
-        "GeeksForGeeks : Learn Any\n \n \n \n\ n\n\\n\ n\n\n\n\ n\n\nn\thing, Anywhere",
-        style: TextStyle(
-          color: Colors.green,
-          fontWeight: FontWeight.bold,
-          fontSize: 20.0,
-        ),
-      ),
     );
   }
 }
