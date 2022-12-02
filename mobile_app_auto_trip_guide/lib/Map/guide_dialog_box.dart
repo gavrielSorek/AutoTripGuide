@@ -115,6 +115,7 @@ class _StoriesDialogBoxState extends State<StoriesDialogBox> {
       repeat: true,
       progressPosition: ProgressPosition.bottom,
       onStoryShow: (s) async {
+        widget.audioApp.stopAudio();
         controller.setProgressValue(0);
         String poiId =
             s.view.key.toString().replaceAll(RegExp(r"<|>|\[|\]|'"), '');
