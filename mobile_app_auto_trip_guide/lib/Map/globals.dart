@@ -6,11 +6,9 @@ import 'package:final_project/Map/server_communication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../Pages/account_page.dart';
-import '../Pages/history_page.dart';
-import '../Pages/home_page.dart';
 import '../Pages/login_controller.dart';
 import 'apps_launcher.dart';
+import 'audio_player_controller.dart';
 import 'map.dart';
 
 class Globals {
@@ -32,6 +30,8 @@ class Globals {
   // static List<Widget> globalPagesList = [HomePage(), AccountPage(), HistoryPage()];
   static var globalColor = Color.fromRGBO(51, 153, 255, 0.8);
   static StreamController<VisitedPoi> globalVisitedPoiStream = StreamController<VisitedPoi>.broadcast();
+  static final globalAudioApp = AudioApp();
+
 
 
   static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {

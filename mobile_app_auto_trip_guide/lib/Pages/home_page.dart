@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../General Wigets/menu.dart';
-import '../General Wigets/scrolled_text.dart';
 import '../Map/globals.dart';
-
+import '../Map/guid_bloc/guide_bloc.dart';
 
 class HomePage extends StatelessWidget {
   GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
+
   HomePage({Key? key}) : super(key: key);
 
   GlobalKey<ScaffoldState> getScaffoldKey() {
@@ -15,22 +16,31 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NavigationDrawer.pageNameToScaffoldKey['/HomePage'] = _scaffoldState;
-    return Scaffold(
-      key: _scaffoldState,
-      drawer: NavigationDrawer(),
-      body: Stack(
-        children: [
-          Column(
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) =>
+            GuideBloc()
+              ..add(ShowSearchingPoisAnimationEvent()),
+          )
+        ],
+        child: Scaffold(
+          key: _scaffoldState,
+          drawer: NavigationDrawer(),
+          body: Stack(
             children: [
-              // NavigationDrawer(),
-              Expanded(
-                  child: Container(
-                child: Globals.globalUserMap,
-              )),
+              Column(
+                children: [
+                  // NavigationDrawer(),
+                  Expanded(
+                      child: Container(
+                        child: Globals.globalUserMap,
+                      )),
+                ],
+              ),
             ],
           ),
-        ],
-      ),
+        )
     );
   }
 }

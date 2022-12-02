@@ -112,9 +112,6 @@ class _UserMapState extends State<UserMap> {
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
     guideTool = Guide(context, guideData);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      guideTool.handlePois();
-    });
   }
 
   @override
@@ -151,8 +148,8 @@ class _UserMapState extends State<UserMap> {
       Globals.globalUnhandledKeys
           .sort(PersonalizeRecommendation.sortPoisByWeightedScore);
       // if there is new pois and guideTool waiting
-      if (pois.isNotEmpty && guideTool.state == GuideState.waiting) {
-        guideTool.handlePois();
+      if (pois.isNotEmpty) {
+        guideTool.setPoisInQueue(pois);
       }
     }
   }
@@ -305,11 +302,11 @@ class _UserMapState extends State<UserMap> {
   }
 
   void triggerGuide() {
-    guideTool.handlePois();
+    // guideTool.handlePois();
   }
 
-  void guideAboutMapPoi(MapPoi mapPoi) {
-    guideTool.stop();
-    guideTool.askPoi(mapPoi);
+  void guideAboutMapPoi(MapPoi mapPoi) { //TODO ADD LOGIC
+    // guideTool.stop();
+    // guideTool.askPoi(mapPoi);
   }
 }

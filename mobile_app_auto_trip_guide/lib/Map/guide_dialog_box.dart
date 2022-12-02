@@ -64,6 +64,12 @@ class _StoriesDialogBoxState extends State<StoriesDialogBox> {
   Widget? _storyWidget = null;
   MapPoi? _currentPoi = null, _lastPoi = null;
 
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   void initState() {
     super.initState();
     widget.audioApp.onPressNext = () {
