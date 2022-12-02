@@ -33,9 +33,6 @@ class _HistoryPageState extends State<HistoryPage> {
     stream.listen((value) {
       //TODO DELETE
       visitedPoisListUpdated();
-      setState(() {
-
-      });
     });
   }
 
