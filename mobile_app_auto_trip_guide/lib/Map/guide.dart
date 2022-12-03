@@ -5,6 +5,7 @@ import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../Adjusted Libs/story_view/story_view.dart';
+import '../General Wigets/uniform_widgets.dart';
 import 'guid_bloc/guide_bloc.dart';
 import 'guide_dialog_box.dart';
 import 'globals.dart';
@@ -118,7 +119,8 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
             child: Center(
               child: Column(
                 children: [
-                  Text("Scanning...\n",
+                  Text(
+                    "Scanning...\n",
                     style: TextStyle(
                       fontFamily: 'Arial',
                       fontSize: 30,
@@ -174,7 +176,13 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                 child: Column(
                   children: [
                     Expanded(child: state.storyView),
-                    Container(child: Globals.globalAudioApp, height: 56)
+                    Container(child: Globals.globalAudioApp, height: 56),
+                    Container(
+                      child:
+                          UniformButtons.getPreferenceButton(onPressed: () {
+                            //TODO add logic
+                          }),
+                    )
                   ],
                 )),
             Positioned(
@@ -188,8 +196,10 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                         Radius.circular(Constants.avatarRadius)),
                     child: CachedNetworkImage(
                       imageUrl: state.currentPoi?.poi.pic ?? "",
-                      placeholder: (context, url) => new CircularProgressIndicator(),
-                      errorWidget: (context, url, error) => new Icon(Icons.error_outlined, size: 100),
+                      placeholder: (context, url) =>
+                          new CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          new Icon(Icons.error_outlined, size: 100),
                     ),
                   )),
             ),
