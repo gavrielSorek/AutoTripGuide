@@ -70,7 +70,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     on<SetCurrentPoiEvent>((event, emit) {
       if (state is ShowStoriesState) {
         final state = this.state as ShowStoriesState;
-        Globals.globalAudioApp.stopAudio();
+        Globals.globalAudioApp.clearPlayer();
         state.controller.setProgressValue(0);
         String poiId =
         event.storyItem.view.key.toString().replaceAll(RegExp(r"<|>|\[|\]|'"), '');
