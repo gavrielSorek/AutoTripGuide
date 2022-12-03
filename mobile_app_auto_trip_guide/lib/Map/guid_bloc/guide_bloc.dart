@@ -23,10 +23,63 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     //   // TODO: implement event handler
     // });
     on<SetStoriesListEvent>((event, emit) {
-      // final state = this.state as ShowStoriesState;
-      emit(
-          ShowStoriesState(event.poisToPlay, onFinished: event.onFinished)
+      StoryController controller = event.storyController;
+      Globals.globalAudioApp.onPressNext = () {
+        Globals.globalAudioApp.stopAudio();
+        controller.pause();
+        controller.next();
+      };
+      Globals.globalAudioApp.onPressPrev = () {
+        Globals.globalAudioApp.stopAudio();
+        controller.previous();
+      };
+      Globals.globalAudioApp.onPause = () {
+        controller.pause();
+      };
+      Globals.globalAudioApp.onResume = () {
+        controller.play();
+      };
+      Globals.globalAudioApp.onProgressChanged = (double progress) {
+        controller.setProgressValue(progress);
+      };
+      Globals.globalAudioApp.onPlayerFinishedFunc = () {
+        controller.next();
+      };
+
+      final List<StoryItem> storyItems = [];
+      event.poisToPlay.forEach((key, mapPoi) {
+        storyItems.add(ScrolledText.textStory(
+            title: mapPoi.poi.poiName ?? 'No Name',
+            text: mapPoi.poi.shortDesc,
+            backgroundColor: Colors.blueGrey.shade200,
+            key: Key(mapPoi.poi.id),
+            // duration: Duration(seconds: double.infinity.toInt()))); // infinite
+            duration: Duration(hours: 100))); // infinite
+      });
+
+      StoryView storyView = StoryView(
+        controller: controller,
+        repeat: true,
+        progressPosition: ProgressPosition.bottom,
+        onStoryShow: event.onShowStory,
+        onComplete: () {
+          event.onFinishedFunc();
+        },
+        storyItems:
+            storyItems, // To disable vertical swipe gestures, ignore this parameter.
       );
+      emit(ShowStoriesState(storyView: storyView, controller: controller));
+    });
+    on<SetCurrentPoiEvent>((event, emit) {
+      if (state is ShowStoriesState) {
+        final state = this.state as ShowStoriesState;
+
+        emit(ShowStoriesState(
+            currentPoi: event.currentPoi,
+            lastShownPoi: state.lastShownPoi,
+            storyView: state.storyView,
+        controller: state.controller));
+      }
     });
   }
 }

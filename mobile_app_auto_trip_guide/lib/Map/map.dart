@@ -13,6 +13,7 @@ import 'guide.dart';
 import 'package:flutter/foundation.dart';
 
 class UserMap extends StatefulWidget {
+  MapPoi? highlightedPoi;
   // inits
   static late Position USER_LOCATION;
 
@@ -64,6 +65,16 @@ class UserMap extends StatefulWidget {
 
   static void preUnmountMap() {
     userChangeLocationFuncs.clear();
+  }
+
+
+  void highlightPoi(MapPoi mapPoi) {
+    //TODO USE STREAM
+    if (this.highlightedPoi != null) {
+      userMapState?.unHighlightMapPoi(highlightedPoi!);
+    }
+    this.highlightedPoi = mapPoi;
+    userMapState?.highlightMapPoi(mapPoi);
   }
 
   UserMap({Key? key}) : super(key: key) {
@@ -178,8 +189,6 @@ class _UserMapState extends State<UserMap> {
 
   @override
   Widget build(BuildContext context) {
-
-
     print("hello from build map");
     return FlutterMap(
       mapController: _mapController,
