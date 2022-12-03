@@ -2,23 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../Map/globals.dart';
 import '../Map/types.dart';
-import '../UsefulWidgets/toolbar.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Obx(() {
-        if (Globals.globalController.googleAccount.value == null) {
-          return buildLoginWidget(context);
-        } else {
-          addUser();
-          return ToolbarWidget();
-        }
-      })),
-    );
+    return buildLoginWidget(context);
   }
 
   void loadUserDetails() async {
@@ -86,8 +76,10 @@ class LoginPage extends StatelessWidget {
               ),
               SizedBox(height: MediaQuery.of(context).size.height / 2),
               FloatingActionButton.extended(
-                onPressed: () {
-                  Globals.globalController.login();
+                onPressed: () async {
+                  await Globals.globalController.login();
+                  addUser();
+                  Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
                 },
                 icon: Image.asset(
                   "assets/images/google.png",

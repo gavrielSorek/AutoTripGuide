@@ -1,15 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import '../General Wigets/Menu.dart';
 import '../Map/globals.dart';
 import '../Map/types.dart';
 
 class HistoryPage extends StatefulWidget {
   HistoryPage({Key? key}) : super(key: key);
-
   _HistoryPageState? _historyPageState;
 
   void visitedPoisListUpdated() {
     _historyPageState?.visitedPoisListUpdated();
   }
+
   @override
   _HistoryPageState createState() {
     _historyPageState = _HistoryPageState();
@@ -18,20 +21,48 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
+  GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
+
   List<VisitedPoi> visitedPoisList = Globals.globalVisitedPoi;
   int visitedPoisListLength = Globals.globalVisitedPoi.length;
+  Stream stream = Globals.globalVisitedPoiStream.stream;
 
+  @override
+  void initState() {
+    super.initState();
+    stream.listen((value) {
+      //TODO DELETE
+      visitedPoisListUpdated();
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
   void visitedPoisListUpdated() {
     setState(() {
       visitedPoisList = Globals.globalVisitedPoi;
       visitedPoisListLength = Globals.globalVisitedPoi.length;
     });
   }
+
   @override
   Widget build(BuildContext context) {
+    NavigationDrawer.pageNameToScaffoldKey['/history-screen'] = _scaffoldState;
+
     return Scaffold(
-        appBar: buildAppBar(context),
+        // appBar: buildAppBar(context),
+        key: _scaffoldState,
+        drawer: NavigationDrawer(),
         body: Column(mainAxisSize: MainAxisSize.min, children: [
+          Container(
+            margin: const EdgeInsets.only(top: 60),
+            alignment: Alignment.topLeft,
+
+            child: NavigationDrawer.buildNavigationDrawerButton(context),
+          ),
           Expanded(
               child: ListView.separated(
             itemBuilder: (BuildContext, index) {

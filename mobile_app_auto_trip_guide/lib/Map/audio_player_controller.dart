@@ -12,7 +12,13 @@ typedef void OnError(Exception exception);
 class AudioApp extends StatefulWidget {
   AudioPlayer audioPlayer = AudioPlayer();
   FlutterTts flutterTts = FlutterTts();
-  dynamic onPlayerFinishedFunc;
+  dynamic onPlayerFinishedFunc,
+      onPressNext = null,
+      onPressPrev = null,
+      onPause = null,
+      onResume = null,
+      onStartPlaying = null,
+      onProgressChanged = null;
   String text = "";
   String languageCode = "";
   var langToTtsLangCode = {'en': 'en-GB'};
@@ -22,6 +28,19 @@ class AudioApp extends StatefulWidget {
     this.languageCode = langToTtsLangCode[language]!;
   }
 
+  void setonPressNext(dynamic func) {
+    onPressNext = func;
+  }
+
+  void setonPressPrev(dynamic func) {
+    onPressPrev = func;
+  }
+
+  // the function onStartPlaying should get audio duration
+  void setOnStartPlaying(dynamic func) {
+    onStartPlaying = func;
+  }
+
   bool isPlaying() {
     if (_audioAppState == null) {
       return false;
@@ -29,8 +48,8 @@ class AudioApp extends StatefulWidget {
     return _audioAppState!.playerState == PlayerState.playing;
   }
 
-  void playAudio({bool playWithProgressBar = true}) {
-    _audioAppState?.play(playWithProgressBar: playWithProgressBar);
+  Future<void> playAudio({bool playWithProgressBar = true}) async {
+    await _audioAppState?.play(playWithProgressBar: playWithProgressBar);
   }
 
   void stopAudio() {
@@ -193,8 +212,14 @@ class _AudioAppState extends State<AudioApp> {
   void initAudioPlayer() {
     _positionSubscription =
         widget.audioPlayer.onPositionChanged.listen((p) => setState(() {
-              if (!_playWithProgressBar) {
-                return;
+              if (widget.onProgressChanged != null) {
+                double progress = 0;
+                if (duration.inMilliseconds != 0) {
+                  progress = p.inMilliseconds / duration.inMilliseconds;
+                } else {
+                  progress = 0;
+                }
+                widget.onProgressChanged(progress);
               }
               position = p;
             }));
@@ -234,6 +259,7 @@ class _AudioAppState extends State<AudioApp> {
       setState(() => duration = newDuration);
     });
     widget.audioPlayer.onPlayerComplete.listen((event) {
+      widget.stopAudio();
       if (widget.onPlayerFinishedFunc != null) {
         widget.onPlayerFinishedFunc();
       }
@@ -248,15 +274,25 @@ class _AudioAppState extends State<AudioApp> {
     await widget.flutterTts.setLanguage(widget.languageCode);
 
     if (isPaused) {
+      if (widget.onResume != null) {
+        widget.onResume();
+      }
+
       await widget.audioPlayer.resume();
     } else {
-      print("finish");
       String urlPath = await convertTextToAudioFile(widget.text);
       await widget.audioPlayer.play(UrlSource(urlPath));
+      if (widget.onStartPlaying != null) {
+        widget.onStartPlaying(duration);
+      }
     }
   }
 
   Future pause() async {
+    if (widget.onPause != null) {
+      widget.onPause();
+    }
+    ;
     await widget.audioPlayer.pause();
   }
 
@@ -297,52 +333,43 @@ class _AudioAppState extends State<AudioApp> {
         width: double.infinity,
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           IconButton(
-            onPressed: isPlayerButtonDisabled
-                ? null
-                : () {
-                    if (!isPlaying) {
-                      setState(() {
-                        play();
-                      });
-                    } else {
-                      setState(() {
-                        pause();
-                      });
-                    }
-                  },
-            iconSize: 30.0,
-            icon: playPauseIcon,
-            color: playButtonColor,
+            onPressed: () {
+              if (widget.onPressPrev != null) {
+                widget.onPressPrev();
+              }
+              ;
+            },
+            icon: Icon(Icons.skip_previous),
+            iconSize: 40,
           ),
-          Expanded(
-            child: Slider(
-                value: position.inMilliseconds.toDouble(),
-                onChanged: (double value) {
-                  setState(() {
-                    position = Duration(milliseconds: value.round());
-                  });
-                  widget.audioPlayer
-                      .seek(position);
-                },
-                min: 0.0,
-                max: duration > position
-                    ? duration.inMilliseconds.toDouble()
-                    : position.inMilliseconds.toDouble()),
+          Spacer(),
+          IconButton(
+              onPressed: isPlayerButtonDisabled
+                  ? null
+                  : () {
+                      if (!isPlaying) {
+                        setState(() {
+                          play();
+                        });
+                      } else {
+                        setState(() {
+                          pause();
+                        });
+                      }
+                    },
+              icon: playPauseIcon,
+              iconSize: 40),
+          Spacer(),
+          IconButton(
+            onPressed: () {
+              if (widget.onPressNext != null) {
+                widget.onPressNext();
+              }
+              ;
+            },
+            icon: Icon(Icons.skip_next),
+            iconSize: 40,
           ),
-          _buildProgressView()
         ]),
       );
-
-  Row _buildProgressView() => Row(mainAxisSize: MainAxisSize.min, children: [
-        Container(
-            margin: const EdgeInsets.only(left: 10.0, right: 10.0),
-            child: Text(
-              position != null
-                  ? "${positionText ?? ''} / ${(duration > position ? durationText : positionText) ?? ''}"
-                  : duration != null
-                      ? durationText
-                      : '',
-              style: TextStyle(fontSize: 12.0),
-            ))
-      ]);
 }

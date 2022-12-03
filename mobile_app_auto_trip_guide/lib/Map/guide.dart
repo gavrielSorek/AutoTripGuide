@@ -1,375 +1,230 @@
 import 'dart:async';
-import 'package:final_project/Map/audio_player_controller.dart';
+import 'dart:collection';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
-import '../Pages/poi_reading_page.dart';
-import 'dialog_box.dart';
-import 'pois_attributes_calculator.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../Adjusted Libs/story_view/story_view.dart';
+import '../General Wigets/uniform_widgets.dart';
+import 'guid_bloc/guide_bloc.dart';
+import 'guide_dialog_box.dart';
 import 'globals.dart';
-import 'map.dart';
 
 class Guide {
   BuildContext context;
   GuideData guideData;
-  AudioApp audioPlayer = AudioApp();
-  GuideState state = GuideState.waiting;
-  MapPoi? lastMapPoiHandled;
-  late GuideDialogBox guideDialogBox;
-  int loadingAnimationTime = 10; // default
-  bool _inIntro = false;
+  GuideState guideState = GuideState.waiting;
+  Map<String, MapPoi> _poisToPlay = HashMap<String, MapPoi>();
+  Map<String, MapPoi> _queuedPoisToPlay = HashMap<String, MapPoi>();
+  late GuidDialogBox storiesDialogBox;
 
   Guide(this.context, this.guideData) {
-    guideDialogBox = GuideDialogBox(
-        onPressOk: onUserClickedOk,
-        onPressNext: () {
-          stop();
-          askNextPoi();
-        },
-        onLoadingFinished: () {
-          onUserClickedOk();
-        },
-        loadingAnimationTime: loadingAnimationTime);
+    storiesDialogBox = GuidDialogBox(onFinishedStories: onStoryFinished);
+    // StoriesDialogBox(key: UniqueKey());
   }
 
-  Future<void> handleMapPoiVoice(MapPoi mapPoi) async {
-    Poi dialogBoxCurrentPoi = guideDialogBox.getMapPoi()!.poi;
-    String directionString = PoisAttributesCalculator.getDirection(
-        UserMap.USER_LOCATION.latitude,
-        UserMap.USER_LOCATION.longitude,
-        dialogBoxCurrentPoi.latitude,
-        dialogBoxCurrentPoi.longitude);
+  Future<void> handleMapPoi(MapPoi mapPoi) async {}
 
-    String distString = PoisAttributesCalculator.getDistBetweenPoints(
-        UserMap.USER_LOCATION.latitude,
-        UserMap.USER_LOCATION.longitude,
-        dialogBoxCurrentPoi.latitude,
-        dialogBoxCurrentPoi.longitude).toInt().toString();
-
-    // sets intro text
-    audioPlayer.setText("The poi is " + directionString + " of you" + "at distance of " + distString + " meters", 'en');
-    audioPlayer.setOnPlayerFinishedFunc(() {
-      _inIntro = false;
-      audioPlayer.setText(mapPoi.poi.shortDesc ?? "No description",
-          mapPoi.poi.language ?? 'en');
-      audioPlayer.setOnPlayerFinishedFunc(() {
-        stop();
-        askNextPoi();
-      });
-      // play poi info
-      audioPlayer.playAudio();
-    });
-
-    _inIntro = true;
-    // play intro
-    audioPlayer.playAudio(playWithProgressBar: false);
-  }
-
-  Future<void> handleMapPoiText(MapPoi mapPoi) async {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => PoiReadingPage(
-              poi: mapPoi.poi,
-            )));
-  }
-
-  Future<void> handleMapPoi(MapPoi mapPoi) async {
-    preHandlePoi(mapPoi);
-    if (guideData.status == GuideStatus.voice) {
-      await handleMapPoiVoice(mapPoi);
-    } else {
-      await handleMapPoiText(mapPoi);
+  void setPoisInQueue(List<Poi> pois) {
+    bool poisWereEmpty = _poisToPlay.isEmpty;
+    for (Poi poi in pois) {
+      if (Globals.globalAllPois.containsKey(poi.id)) {
+        _queuedPoisToPlay[poi.id] = Globals.globalAllPois[poi.id]!;
+      }
+    }
+    if (_poisToPlay.isEmpty) {
+      _poisToPlay.addAll(_queuedPoisToPlay);
+    }
+    if (poisWereEmpty && !_poisToPlay.isEmpty) {
+      storiesDialogBox.setPoiToPlay(_poisToPlay);
     }
   }
 
-  void handlePois() async {
-    askNextPoi();
-  }
-
-  void askNextPoi() {
-    if (state == GuideState.working || Globals.globalUnhandledKeys.isEmpty) {
-      print("error in handleNextPoi in Guide or pois map is empty");
-      return;
+  void onStoryFinished() {
+    print("onStoryFinished");
+    _poisToPlay.clear();
+    _poisToPlay.addAll(_queuedPoisToPlay);
+    if (!_poisToPlay.isEmpty) {
+      storiesDialogBox.setPoiToPlay(_poisToPlay);
     }
-    // MapPoi mapPoiElement = Globals.globalUnhandledPois.values.first;
-    MapPoi mapPoiElement =
-        Globals.globalAllPois[Globals.globalUnhandledKeys[0]]!;
-    Globals.removeUnhandledPoiKey(0);
-    askPoi(mapPoiElement);
   }
 
   void askPoi(MapPoi poi) {
-    state = GuideState.working;
+    guideState = GuideState.working;
     preHandlePoi(poi);
-    guideDialogBox.updateGuideStatus(guideData.status);
-    guideDialogBox.setMapPoi(poi);
-    guideDialogBox.showDialog();
-    guideDialogBox.startLoading();
-  }
-
-  void stop() {
-    // unhighlight last map poi
-    if (lastMapPoiHandled != null) {
-      Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
-    }
-    if (Globals.mainMapPoi != null) {
-      Globals.globalUserMap.userMapState
-          ?.unHighlightMapPoi(Globals.mainMapPoi!);
-    }
-    if (guideData.status == GuideStatus.voice) {
-      audioPlayer.clearPlayer();
-    }
-    Globals.deleteMainMapPoi();
-    Globals.globalUserMap.userMapState?.hideNextButton();
-    guideDialogBox.stopLoading();
-    guideDialogBox.hideDialog();
-    state = GuideState.stopped;
-  }
-
-  void pauseGuide() {
-    audioPlayer.pauseAudio();
-    pauseGuideDialogBox();
-  }
-
-  void resumeGuide() {
-    if (_inIntro) {
-      _inIntro = false;
-      stop();
-      handleMapPoiVoice(guideDialogBox.getMapPoi()!);
-    }
-    unpauseGuideDialogBox();
   }
 
   // lunch before handle poi
   void preHandlePoi(MapPoi mapPoi) {
     Globals.setMainMapPoi(mapPoi);
-    if (lastMapPoiHandled != null) {
-      Globals.globalUserMap.userMapState?.unHighlightMapPoi(lastMapPoiHandled!);
-    }
     Globals.globalUserMap.userMapState?.highlightMapPoi(mapPoi);
     Globals.globalUserMap.userMapState?.showNextButton();
-    lastMapPoiHandled = mapPoi;
-  }
-
-  void guideStateChanged() {
-    if (state == GuideState.working) {
-      stop();
-      askPoi(lastMapPoiHandled!);
-    }
-  }
-
-  String getTime() {
-    DateTime now = new DateTime.now();
-    DateTime date =
-        DateTime(now.year, now.month, now.day, now.hour, now.minute);
-    String dateToday = date.toString().substring(0, 16);
-    return dateToday;
-  }
-
-  void onUserClickedOk() {
-    handleMapPoi(guideDialogBox.getMapPoi()!);
-    guideDialogBox.hideDialog();
-    VisitedPoi currentPoi = VisitedPoi(
-        id: guideDialogBox.getMapPoi()!.poi.id,
-        poiName: guideDialogBox.getMapPoi()?.poi.poiName,
-        time: getTime(),
-        pic: guideDialogBox.getMapPoi()?.poi.pic);
-    Globals.addGlobalVisitedPoi(currentPoi);
-    Globals.globalServerCommunication.insertPoiToHistory(currentPoi);
-  }
-
-  void pauseGuideDialogBox() {
-    guideDialogBox.pauseLoading();
-  }
-
-  void unpauseGuideDialogBox() {
-    if (guideDialogBox.isLoadingPaused()) {
-      guideDialogBox.continueLoading();
-    }
   }
 }
 
-class GuideDialogBox extends StatefulWidget {
-  dynamic onPressOk, onPressNext, onLoadingFinished;
-  int loadingAnimationTime;
-  bool _stopLoading = false;
+class GuidDialogBox extends StatefulWidget {
+  final dynamic onFinishedStories;
+  final StreamController<Map<String, MapPoi>> queuedPoisToPlayController =
+      StreamController<HashMap<String, MapPoi>>.broadcast();
 
-  GuideDialogBox(
-      {Key? key,
-      this.onPressOk,
-      this.onPressNext,
-      this.onLoadingFinished,
-      required this.loadingAnimationTime})
-      : super(key: key);
-
-  _GuideDialogBoxState? guideDialogBoxState;
-
-  void setMapPoi(MapPoi poi) {
-    guideDialogBoxState!.setMapPoi(poi);
-    _stopLoading = false;
+  GuidDialogBox({required this.onFinishedStories}) {
+    print(queuedPoisToPlayController);
   }
 
-  void updateGuideStatus(GuideStatus status) {
-    guideDialogBoxState!.updateGuideStatus(status);
-  }
-
-  void showDialog() {
-    guideDialogBoxState!.showDialog();
-  }
-
-  void hideDialog() {
-    guideDialogBoxState!.hideDialog();
-  }
-
-  MapPoi? getMapPoi() {
-    return guideDialogBoxState!.getMapPoi();
-  }
-
-  _GuideDialogBoxState getDialogBoxState() {
-    if (guideDialogBoxState == null) {
-      print("error in getDialogBoxState");
-    }
-    return guideDialogBoxState!;
-  }
-
-  void startLoading() {
-    guideDialogBoxState?.startLoading();
-  }
-
-  void continueLoading() {
-    guideDialogBoxState?.continueLoading();
-  }
-
-  void pauseLoading() {
-    guideDialogBoxState?.pauseLoading();
-  }
-
-  void stopLoading() {
-    guideDialogBoxState?.stopLoading();
-  }
-
-  bool isLoadingPaused() {
-    if (guideDialogBoxState == null) {
-      return false;
-    }
-    return guideDialogBoxState!.isLoadingPaused();
+  setPoiToPlay(Map<String, MapPoi> mapPois) {
+    queuedPoisToPlayController.add(mapPois);
   }
 
   @override
-  _GuideDialogBoxState createState() {
-    guideDialogBoxState = _GuideDialogBoxState();
-    return guideDialogBoxState!;
+  State<StatefulWidget> createState() {
+    return _GuidDialogBoxState(queuedPoisToPlayController);
   }
 }
 
-class _GuideDialogBoxState extends State<GuideDialogBox> {
-  MapPoi? mainPoi;
-  GuideStatus guideStatus = GuideStatus.voice;
-  String ask = "Do you want to hear about ";
-  WidgetVisibility dialogVisibility = WidgetVisibility.hide;
-  CustomDialogBox? dialogBox;
-  double progress = 0;
-  bool pause = false;
-  int numberOfSteps = 10;
-  Timer? loadTimer;
+class _GuidDialogBoxState extends State<GuidDialogBox> {
+  late Stream queuedPoisListStream;
 
-  bool isLoadingPaused() {
-    return pause;
-  }
+  _GuidDialogBoxState(
+      StreamController<Map<String, MapPoi>> queuedPoisToPlayController) {
+    ValueChanged<StoryItem> onShowStory = (s) async {
+      context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
+    };
 
-  void startLoading() {
-    stopLoading();
-    progress = 0;
-    pause = false;
-    loadStep();
-  }
-
-  void pauseLoading() {
-    loadTimer?.cancel();
-    pause = true;
-  }
-
-  void stopLoading() {
-    progress = 0;
-    loadTimer?.cancel();
-  }
-
-  void continueLoading() {
-    pause = false;
-    loadStep();
-  }
-
-  void loadStep() {
-    loadTimer = Timer(
-        Duration(
-            seconds: (widget.loadingAnimationTime / numberOfSteps).round()),
-        () {
-      if (widget._stopLoading) {
-        return;
-      }
-      double progressEveryStep = 1 / numberOfSteps;
-      progress += progressEveryStep;
-      dialogBox?.setProgress(progress);
-      if (progress <= 1) {
-        loadStep();
-      } else {
-        // finished loading
-        widget.onLoadingFinished();
-      }
+    queuedPoisListStream = queuedPoisToPlayController.stream;
+    queuedPoisListStream.listen((event) {
+      context.read<GuideBloc>().add(SetStoriesListEvent(
+          poisToPlay: event,
+          onShowStory: onShowStory,
+          onFinishedFunc: widget.onFinishedStories));
     });
   }
 
-  MapPoi? getMapPoi() {
-    return mainPoi;
+  Widget buildSearchingWidget() {
+    return Dialog(
+        insetPadding: const EdgeInsets.all(Constants.edgesDist),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Constants.padding),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Stack(children: <Widget>[
+          Container(
+            alignment: Alignment.topLeft,
+            // width: 240.0,
+            height: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24.0),
+              color: Colors.white.withOpacity(0.8),
+            ),
+            child: Center(
+              child: Column(
+                children: [
+                  Text(
+                    "Scanning...\n",
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 30,
+                      color: Colors.purple,
+                      height: 1,
+                    ),
+                  ),
+                  Text(
+                    "Auto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 23,
+                      color: Colors.black,
+                      height: 1,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ]));
   }
 
-  void setMapPoi(MapPoi poi) {
-    setState(() {
-      mainPoi = poi;
-    });
-  }
-
-  void updateGuideStatus(GuideStatus status) {
-    setState(() {
-      guideStatus = status;
-      if (guideStatus == GuideStatus.voice) {
-        ask = "Do you want to hear about ";
-      } else {
-        ask = "Do you want to read about ";
-      }
-    });
-  }
-
-  void showDialog() {
-    setState(() {
-      dialogVisibility = WidgetVisibility.view;
-    });
-  }
-
-  void hideDialog() {
-    setState(() {
-      dialogVisibility = WidgetVisibility.hide;
-    });
+  Widget buildStoriesWidget(state) {
+    return Dialog(
+        insetPadding: const EdgeInsets.all(Constants.edgesDist),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Constants.padding),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Stack(
+          children: <Widget>[
+            Container(
+                height: double.infinity,
+                padding: const EdgeInsets.only(
+                    left: Constants.padding,
+                    top: Constants.avatarRadius + Constants.padding,
+                    right: Constants.padding,
+                    bottom: Constants.padding),
+                margin: const EdgeInsets.only(top: Constants.avatarRadius),
+                decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(Constants.padding),
+                    boxShadow: const [
+                      BoxShadow(
+                          color: Colors.black,
+                          offset: Offset(0, 5),
+                          blurRadius: 10),
+                    ]),
+                child: Column(
+                  children: [
+                    Expanded(child: state.storyView),
+                    Container(child: Globals.globalAudioApp, height: 56),
+                    Container(
+                      child:
+                          UniformButtons.getPreferenceButton(onPressed: () {
+                            //TODO add logic
+                          }),
+                    )
+                  ],
+                )),
+            Positioned(
+              left: Constants.padding,
+              right: Constants.padding,
+              child: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  radius: Constants.avatarRadius,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(Constants.avatarRadius)),
+                    child: CachedNetworkImage(
+                      imageUrl: state.currentPoi?.poi.pic ?? "",
+                      placeholder: (context, url) =>
+                          new CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          new Icon(Icons.error_outlined, size: 100),
+                    ),
+                  )),
+            ),
+          ],
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
-    dialogBox = CustomDialogBox(
-      title: mainPoi?.poi.poiName ?? "No information",
-      descriptions: ask + (mainPoi?.poi.poiName ?? "No information") + "?",
-      leftButtonText: "  Ok  ",
-      rightButtonText: "Next",
-      img: Image.network(mainPoi?.poi.pic ??
-          "https://assets.hyatt.com/content/dam/hyatt/hyattdam/images/2019/02/07/1127/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.jpg/Andaz-Costa-Rica-P834-Aerial-Culebra-Bay-View.16x9.jpg"),
-      key: UniqueKey(),
-      onPressLeft: () {
-        widget._stopLoading = true;
-        widget.onPressOk();
+    return BlocBuilder<GuideBloc, GuideDialogState>(
+      builder: (BuildContext context, state) {
+        if (state is PoisSearchingState) {
+          return buildSearchingWidget();
+        }
+        if (state is ShowStoriesState) {
+          return buildStoriesWidget(state);
+        } else {
+          return buildSearchingWidget();
+        }
       },
-      onPressRight: widget.onPressNext,
     );
+  }
 
-    return AnimatedOpacity(
-        opacity: WidgetVisibility.view == dialogVisibility ? 1.0 : 0.0,
-        duration: Duration(milliseconds: 500),
-        child: dialogBox);
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

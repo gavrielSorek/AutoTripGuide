@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:final_project/General%20Wigets/menu.dart';
 import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/personalize_recommendation.dart';
 import 'package:final_project/Map/pois_attributes_calculator.dart';
@@ -8,11 +9,11 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:final_project/Map/types.dart';
-import '../UsefulWidgets/progress_indicator.dart';
 import 'guide.dart';
 import 'package:flutter/foundation.dart';
 
 class UserMap extends StatefulWidget {
+  MapPoi? highlightedPoi;
   // inits
   static late Position USER_LOCATION;
 
@@ -66,6 +67,16 @@ class UserMap extends StatefulWidget {
     userChangeLocationFuncs.clear();
   }
 
+
+  void highlightPoi(MapPoi mapPoi) {
+    //TODO USE STREAM
+    if (this.highlightedPoi != null) {
+      userMapState?.unHighlightMapPoi(highlightedPoi!);
+    }
+    this.highlightedPoi = mapPoi;
+    userMapState?.highlightMapPoi(mapPoi);
+  }
+
   UserMap({Key? key}) : super(key: key) {
     print("hello from ctor");
   }
@@ -112,9 +123,6 @@ class _UserMapState extends State<UserMap> {
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
     guideTool = Guide(context, guideData);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      guideTool.handlePois();
-    });
   }
 
   @override
@@ -151,8 +159,8 @@ class _UserMapState extends State<UserMap> {
       Globals.globalUnhandledKeys
           .sort(PersonalizeRecommendation.sortPoisByWeightedScore);
       // if there is new pois and guideTool waiting
-      if (pois.isNotEmpty && guideTool.state == GuideState.waiting) {
-        guideTool.handlePois();
+      if (pois.isNotEmpty) {
+        guideTool.setPoisInQueue(pois);
       }
     }
   }
@@ -189,7 +197,8 @@ class _UserMapState extends State<UserMap> {
           onPositionChanged: (MapPosition position, bool hasGesture) {
             if (hasGesture) {
               setState(
-                () => _centerOnLocationUpdate = CenterOnLocationUpdate.never,
+                    () =>
+                _centerOnLocationUpdate = CenterOnLocationUpdate.never,
               );
             }
           },
@@ -205,146 +214,54 @@ class _UserMapState extends State<UserMap> {
         ),
         CurrentLocationLayer(
             centerCurrentLocationStream:
-                _centerCurrentLocationStreamController.stream,
+            _centerCurrentLocationStreamController.stream,
             centerOnLocationUpdate: _centerOnLocationUpdate),
         MarkerLayer(markers: markersList)
       ],
       nonRotatedChildren: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.end,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // audio player
-            AnimatedOpacity(
-                opacity: guideData.status == GuideStatus.voice ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 500),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 48,
-                  color: Colors.green,
-                  child: guideTool.audioPlayer,
-                )),
-            const SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width / 15),
-                  width: MediaQuery.of(context).size.width / 10,
-                  child: FloatingActionButton(
-                    heroTag: null,
-                    onPressed: () {
-                      // Automatically center the location marker on the map when location updated until user interact with the map.
-                      setState(
+            // NavigationDrawer.buildNavigationDrawerButton((Globals.globalPagesList[0] as HomePage).getScaffoldKey()),
+            NavigationDrawer.buildNavigationDrawerButton(context),
+            Container(
+              margin: EdgeInsets.only(
+                top: MediaQuery.of(context).size.width / 4,
+                  left: MediaQuery.of(context).size.width / 15),
+              width: MediaQuery.of(context).size.width / 10,
+              child: FloatingActionButton(
+                heroTag: null,
+                onPressed: () {
+                  // Automatically center the location marker on the map when location updated until user interact with the map.
+                  setState(
                         () => _centerOnLocationUpdate =
-                            CenterOnLocationUpdate.always,
-                      );
-                      // Center the location marker on the map and zoom the map to level 14.
-                      _centerCurrentLocationStreamController.add(14);
-                    },
-                    child: const Icon(
-                      Icons.my_location,
-                      color: Colors.white,
-                    ),
-                  ),
+                        CenterOnLocationUpdate.always,
+                  );
+                  // Center the location marker on the map and zoom the map to level 14.
+                  _centerCurrentLocationStreamController.add(14);
+                },
+                child: const Icon(
+                  Icons.my_location,
+                  color: Colors.white,
                 ),
-                // loader
-                AnimatedOpacity(
-                    opacity: loadingPois == WidgetVisibility.view ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 500),
-                    child: Container(
-                      height: 59,
-                      color: Colors.transparent,
-                      child: const UserProgressIndicator(),
-                    )),
-                // guide state button
-                Container(
-                    color: Colors.transparent,
-                    alignment: Alignment.bottomRight,
-                    margin: EdgeInsets.only(
-                        right: MediaQuery.of(context).size.width / 15),
-                    height: MediaQuery.of(context).size.width / 10,
-                    width: MediaQuery.of(context).size.width / 10,
-                    child: FloatingActionButton(
-                      heroTag: null,
-                      onPressed: () {
-                        setState(() {
-                          guideData.changeGuideType();
-                          if (guideData.status == GuideStatus.text) {
-                            guideTool.audioPlayer.clearPlayer();
-                          }
-                          guideTool.guideStateChanged();
-                        });
-                        print("change to audio or to text");
-                      },
-                      child: guideData.guideIcon,
-                    ))
-                // )
-                ,
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                    color: Colors.transparent,
-                    margin: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height / 30,
-                        left: MediaQuery.of(context).size.width / 15),
-                    height: MediaQuery.of(context).size.width / 10,
-                    width: MediaQuery.of(context).size.width / 10,
-                    child: AnimatedOpacity(
-                        opacity:
-                            WidgetVisibility.view == navButtonState ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 500),
-                        child: FloatingActionButton(
-                          heroTag: null,
-                          onPressed: () {
-                            print("navigate to poi pressed");
-
-                            if (Globals.mainMapPoi != null) {
-                              print("navigate to poi");
-                              double lat = Globals.mainMapPoi!.poi.latitude;
-                              double lng = Globals.mainMapPoi!.poi.longitude;
-                              Globals.globalAppLauncher.launchWaze(lat, lng);
-                            }
-                            // Automatically center the location marker on the map when location updated until user interact with the map.
-                            // Center the location marker on the map and zoom the map to level 15.
-                          },
-                          child: const Icon(
-                            Icons.navigation_rounded,
-                            color: Colors.white,
-                          ),
-                        ))),
-                Container(
-                    alignment: Alignment.bottomRight,
-                    margin: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height / 30,
-                        right: MediaQuery.of(context).size.width / 15),
-                    color: Colors.transparent,
-                    height: MediaQuery.of(context).size.width / 10,
-                    width: MediaQuery.of(context).size.width / 10,
-                    child: AnimatedOpacity(
-                        opacity: nextButtonState == WidgetVisibility.view
-                            ? 1.0
-                            : 0.0,
-                        duration: const Duration(milliseconds: 500),
-                        child: FloatingActionButton(
-                          heroTag: null,
-                          onPressed: () {
-                            guideTool.stop();
-                            guideTool.handlePois();
-                            print("next");
-                          },
-                          child: const Icon(Icons.navigate_next_sharp,
-                              color: Colors.white),
-                        ))),
-              ],
-            ),
-            Spacer(),
-            guideTool.guideDialogBox
+              ),
+            )
+          ],
+        ),
+        Column(
+          children: [
+            Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                    const SizedBox(height: 5),
+                Spacer(),
+                Expanded(child: guideTool.storiesDialogBox)
+                // guideTool.guideDialogBox,
+                    ],
+                ))
           ],
         )
       ],
@@ -394,11 +311,11 @@ class _UserMapState extends State<UserMap> {
   }
 
   void triggerGuide() {
-    guideTool.handlePois();
+    // guideTool.handlePois();
   }
 
-  void guideAboutMapPoi(MapPoi mapPoi) {
-    guideTool.stop();
-    guideTool.askPoi(mapPoi);
+  void guideAboutMapPoi(MapPoi mapPoi) { //TODO ADD LOGIC
+    // guideTool.stop();
+    // guideTool.askPoi(mapPoi);
   }
 }

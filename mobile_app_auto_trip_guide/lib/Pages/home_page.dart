@@ -1,27 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../General Wigets/menu.dart';
 import '../Map/globals.dart';
-
+import '../Map/guid_bloc/guide_bloc.dart';
 
 class HomePage extends StatelessWidget {
+  GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
+
   HomePage({Key? key}) : super(key: key);
+
+  GlobalKey<ScaffoldState> getScaffoldKey() {
+    return _scaffoldState;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-            toolbarHeight: 0.0,
-          title: const Text('Auto Trip Guide'),
-          elevation: 0,
-          centerTitle: true,
+    NavigationDrawer.pageNameToScaffoldKey['/HomePage'] = _scaffoldState;
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) =>
+            GuideBloc()
+              ..add(ShowSearchingPoisAnimationEvent()),
+          )
+        ],
+        child: Scaffold(
+          key: _scaffoldState,
+          drawer: NavigationDrawer(),
+          body: Stack(
+            children: [
+              Column(
+                children: [
+                  // NavigationDrawer(),
+                  Expanded(
+                      child: Container(
+                        child: Globals.globalUserMap,
+                      )),
+                ],
+              ),
+            ],
           ),
-        body: Column(
-          children: [
-            Expanded(
-                child: Container(
-                  child: Globals.globalUserMap,
-                )),
-          ],
-        ),
+        )
     );
   }
 }

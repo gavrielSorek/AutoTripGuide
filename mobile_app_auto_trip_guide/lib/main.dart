@@ -1,6 +1,10 @@
 import 'dart:io';
+import 'package:final_project/Pages/history_page.dart';
+import 'package:final_project/Pages/home_page.dart';
+import 'package:final_project/Pages/personal_details_page.dart';
 import 'package:flutter/material.dart';
 import 'Map/globals.dart';
+import 'Pages/favorite_categories_page.dart';
 import 'Pages/login_page.dart';
 import 'dart:math';
 
@@ -29,7 +33,17 @@ class AutoGuideApp extends StatelessWidget {
         primarySwatch: generateMaterialColor(Globals.globalColor),
         fontFamily: 'Roboto',
       ),
-      home: LoginPage(), //const HomePage()
+      initialRoute: '/login-screen',
+      routes: {
+        // When navigating to the "/" route, build the FirstScreen widget.
+        '/login-screen': (context) => LoginPage(),
+        '/HomePage': (context) => HomePage(),
+        '/history-screen' : (context) => HistoryPage(),
+        '/favorite-categories-screen' : (context) => FavoriteCategoriesPage(),
+        '/personal-details-screen' : (context) => PersonalDetailsPage()
+
+      },
+      // routes: {'/': (BuildContext ctx) => HomePage()}
     );
   }
 }

@@ -1,19 +1,20 @@
+import 'dart:async';
 import 'dart:collection';
+import 'dart:ffi';
 import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../Pages/account_page.dart';
-import '../Pages/history_page.dart';
-import '../Pages/home_page.dart';
 import '../Pages/login_controller.dart';
 import 'apps_launcher.dart';
+import 'audio_player_controller.dart';
 import 'map.dart';
 
 class Globals {
   static UserMap globalUserMap = UserMap();
   static ServerCommunication globalServerCommunication = ServerCommunication();
-  static Map globalAllPois = HashMap<String, MapPoi>();
+  static Map<String, MapPoi> globalAllPois = HashMap<String, MapPoi>();
   static List<String> globalUnhandledKeys = [];
   static Map globalPoisIdToMarkerIdx = HashMap<String, int>();
   static String globalDefaultLanguage = "eng";
@@ -26,17 +27,19 @@ class Globals {
   static AppLauncher globalAppLauncher = AppLauncher();
   static MapPoi? mainMapPoi; // spoken poi
   static final globalController = Get.put(LoginController());
-  static List<Widget> globalPagesList = [HomePage(), AccountPage(), HistoryPage()];
+  // static List<Widget> globalPagesList = [HomePage(), AccountPage(), HistoryPage()];
   static var globalColor = Color.fromRGBO(51, 153, 255, 0.8);
+  static StreamController<VisitedPoi> globalVisitedPoiStream = StreamController<VisitedPoi>.broadcast();
+  static final globalAudioApp = AudioApp();
+
 
 
   static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {
     globalVisitedPoi = visitedPoisList;
-    (globalPagesList[2] as HistoryPage).visitedPoisListUpdated();
   }
   static void addGlobalVisitedPoi(VisitedPoi visitedPoi) {
     globalVisitedPoi.add(visitedPoi);
-    (globalPagesList[2] as HistoryPage).visitedPoisListUpdated();
+    globalVisitedPoiStream.add(visitedPoi);
   }
   static void addUnhandledPoiKey(String key) {
     if (globalUnhandledKeys.isEmpty) {
