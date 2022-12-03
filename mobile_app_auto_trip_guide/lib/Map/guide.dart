@@ -116,15 +116,27 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
               color: Colors.white.withOpacity(0.8),
             ),
             child: Center(
-              child: Text(
-                "Scanning... \nAuto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
-                style: TextStyle(
-                  fontFamily: 'Arial',
-                  fontSize: 23,
-                  color: Colors.black,
-                  height: 1,
-                ),
-                textAlign: TextAlign.center,
+              child: Column(
+                children: [
+                  Text("Scanning...\n",
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 30,
+                      color: Colors.purple,
+                      height: 1,
+                    ),
+                  ),
+                  Text(
+                    "Auto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
+                    style: TextStyle(
+                      fontFamily: 'Arial',
+                      fontSize: 23,
+                      color: Colors.black,
+                      height: 1,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
           ),
@@ -203,7 +215,6 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
 
   @override
   void dispose() {
-    // controller.dispose();
     super.dispose();
   }
 }
