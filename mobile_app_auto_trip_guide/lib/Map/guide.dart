@@ -84,12 +84,6 @@ class Guide {
     Globals.globalUserMap.userMapState?.highlightMapPoi(mapPoi);
     Globals.globalUserMap.userMapState?.showNextButton();
   }
-//
-// void guideStateChanged() {
-//   if (state == GuideState.working) {
-//     stop();
-//   }
-// }
 }
 
 class GuidDialogBox extends StatefulWidget {
@@ -118,22 +112,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   _GuidDialogBoxState(
       StreamController<Map<String, MapPoi>> queuedPoisToPlayController) {
     ValueChanged<StoryItem> onShowStory = (s) async {
-      Globals.globalAudioApp.stopAudio();
-      controller.setProgressValue(0);
-      String poiId =
-          s.view.key.toString().replaceAll(RegExp(r"<|>|\[|\]|'"), '');
-      MapPoi currentPoi = Globals.globalAllPois[poiId]!;
-      context.read<GuideBloc>().add(SetCurrentPoiEvent(currentPoi: currentPoi));
-      Globals.globalAudioApp.setText(
-          currentPoi!.poi.shortDesc!, currentPoi!.poi.language ?? 'en');
-      Globals.globalAudioApp.playAudio();
-      Globals.globalUserMap.highlightPoi(currentPoi!);
-      Globals.addGlobalVisitedPoi(VisitedPoi(
-          poiName: currentPoi!.poi.poiName,
-          id: currentPoi!.poi.id,
-          time: Generals.getTime(),
-          pic: currentPoi!.poi.pic));
+      context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s, controller: controller));
     };
+
     queuedPoisListStream = queuedPoisToPlayController.stream;
     queuedPoisListStream.listen((event) {
       context.read<GuideBloc>().add(SetStoriesListEvent(

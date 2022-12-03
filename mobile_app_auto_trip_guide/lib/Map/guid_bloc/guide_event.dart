@@ -14,8 +14,9 @@ class SetStoriesListEvent extends GuideEvent{
 }
 
 class SetCurrentPoiEvent extends GuideEvent{
-  MapPoi currentPoi;
-  SetCurrentPoiEvent({required this.currentPoi}) {}
+  StoryController controller;
+  StoryItem storyItem;
+  SetCurrentPoiEvent({required this.storyItem, required this.controller}) {}
 }
 
 class ShowStoriesFinishedEvent extends GuideEvent{}

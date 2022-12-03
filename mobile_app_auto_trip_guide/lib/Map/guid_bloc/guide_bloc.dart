@@ -73,9 +73,22 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     on<SetCurrentPoiEvent>((event, emit) {
       if (state is ShowStoriesState) {
         final state = this.state as ShowStoriesState;
-
+        Globals.globalAudioApp.stopAudio();
+        event.controller.setProgressValue(0);
+        String poiId =
+        event.storyItem.view.key.toString().replaceAll(RegExp(r"<|>|\[|\]|'"), '');
+        MapPoi currentPoi = Globals.globalAllPois[poiId]!;
+        Globals.globalAudioApp.setText(
+            currentPoi!.poi.shortDesc!, currentPoi!.poi.language ?? 'en');
+        Globals.globalAudioApp.playAudio();
+        Globals.globalUserMap.highlightPoi(currentPoi!);
+        Globals.addGlobalVisitedPoi(VisitedPoi(
+            poiName: currentPoi!.poi.poiName,
+            id: currentPoi!.poi.id,
+            time: Generals.getTime(),
+            pic: currentPoi!.poi.pic));
         emit(ShowStoriesState(
-            currentPoi: event.currentPoi,
+            currentPoi: currentPoi,
             lastShownPoi: state.lastShownPoi,
             storyView: state.storyView,
         controller: state.controller));
