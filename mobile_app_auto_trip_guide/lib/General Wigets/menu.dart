@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../Map/globals.dart';
 
-class NavigationDrawer extends StatelessWidget {
+class NavigationDrawer extends StatefulWidget {
   static Map<String, GlobalKey<ScaffoldState>> pageNameToScaffoldKey =
       HashMap();
 
@@ -30,8 +30,15 @@ class NavigationDrawer extends StatelessWidget {
   }
 
   @override
+  State<StatefulWidget> createState() {
+    return _NavigationDrawerState();
+  }
+
+}
+class _NavigationDrawerState extends State<NavigationDrawer> {
+  Color chosenTileColor = Colors.lightBlueAccent;
+  @override
   Widget build(BuildContext context) {
-    print(ModalRoute.of(context)?.settings.name);
     return Drawer(
       child: ListView(
         // Important: Remove any padding from the ListView.
@@ -53,9 +60,9 @@ class NavigationDrawer extends StatelessWidget {
                       decoration: BoxDecoration(shape: BoxShape.circle),
 
                       child: CircleAvatar(
-                        backgroundColor: Colors.redAccent,
+                        backgroundColor: Colors.blue,
                         backgroundImage: NetworkImage(Globals.globalController
-                                .googleAccount.value?.photoUrl ??
+                            .googleAccount.value?.photoUrl ??
                             ""),
                       ),
                     )),
@@ -71,6 +78,7 @@ class NavigationDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
+          tileColor: ModalRoute.of(context)?.settings.name == '/HomePage' ? chosenTileColor : null,
             leading: Icon(
               Icons.map,
             ),
@@ -82,26 +90,28 @@ class NavigationDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            tileColor: ModalRoute.of(context)?.settings.name == '/history-screen' ? chosenTileColor : null,
             leading: Icon(
               Icons.history,
             ),
             title: const Text('History'),
             onTap: () {
-              closeDrawer(
-                  pageNameToScaffoldKey[ModalRoute.of(context)?.settings.name]);
+              NavigationDrawer.closeDrawer(
+                  NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)?.settings.name]);
               Navigator.of(context).popUntil((route) => route.isFirst);
               // Navigator.of(context).pushNamedAndRemoveUntil('/history-screen', (Route<dynamic> route) => false);
               Navigator.pushNamed(context, '/history-screen');
             },
           ),
           ListTile(
+            tileColor: ModalRoute.of(context)?.settings.name == '/favorite-categories-screen' ? chosenTileColor : null,
             leading: Icon(
               Icons.room_preferences,
             ),
             title: const Text('Preferences'),
             onTap: () {
-              closeDrawer(
-                  pageNameToScaffoldKey[ModalRoute.of(context)?.settings.name]);
+              NavigationDrawer.closeDrawer(
+                  NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)?.settings.name]);
               Navigator.of(context).popUntil((route) => route.isFirst);
               // Navigator.of(context).pushNamedAndRemoveUntil('/history-screen', (Route<dynamic> route) => false);
               Navigator.pushNamed(context, '/favorite-categories-screen');
@@ -110,25 +120,5 @@ class NavigationDrawer extends StatelessWidget {
         ],
       ),
     );
-
-    // return Scaffold(
-    //   key: _scaffoldState,
-    //   drawer: DrawerView(),
-    //   body: ThemeScreen(
-    //     header: Column(
-    //       crossAxisAlignment: CrossAxisAlignment.start,
-    //       children: [
-    //         IconButton(
-    //           icon: Icon(Icons.menu,
-    //               color: Colors.white,
-    //               size: 15),
-    //           onPressed: (){
-    //             _scaffoldState.currentState.openDrawer();
-    //           },
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 }
