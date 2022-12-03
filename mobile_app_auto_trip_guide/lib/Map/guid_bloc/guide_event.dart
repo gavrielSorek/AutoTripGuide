@@ -7,16 +7,14 @@ class ShowSearchingPoisAnimationEvent extends GuideEvent{}
 class SetStoriesListEvent extends GuideEvent{
   Map<String, MapPoi> poisToPlay;
   ValueChanged<StoryItem> onShowStory;
-  StoryController storyController;
   dynamic onFinishedFunc;
-  SetStoriesListEvent({required this.poisToPlay, required this.onShowStory, required this.storyController, this.onFinishedFunc}) {
+  SetStoriesListEvent({required this.poisToPlay, required this.onShowStory, this.onFinishedFunc}) {
   }
 }
 
 class SetCurrentPoiEvent extends GuideEvent{
-  StoryController controller;
   StoryItem storyItem;
-  SetCurrentPoiEvent({required this.storyItem, required this.controller}) {}
+  SetCurrentPoiEvent({required this.storyItem}) {}
 }
 
 class ShowStoriesFinishedEvent extends GuideEvent{}

@@ -19,11 +19,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     on<ShowSearchingPoisAnimationEvent>((event, emit) {
       emit(PoisSearchingState());
     });
-    // on<ShowStoriesEvent>((event, emit) {
-    //   // TODO: implement event handler
-    // });
     on<SetStoriesListEvent>((event, emit) {
-      StoryController controller = event.storyController;
+      StoryController controller = StoryController();
       Globals.globalAudioApp.onPressNext = () {
         Globals.globalAudioApp.stopAudio();
         controller.pause();
@@ -74,7 +71,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       if (state is ShowStoriesState) {
         final state = this.state as ShowStoriesState;
         Globals.globalAudioApp.stopAudio();
-        event.controller.setProgressValue(0);
+        state.controller.setProgressValue(0);
         String poiId =
         event.storyItem.view.key.toString().replaceAll(RegExp(r"<|>|\[|\]|'"), '');
         MapPoi currentPoi = Globals.globalAllPois[poiId]!;

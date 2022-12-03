@@ -106,13 +106,12 @@ class GuidDialogBox extends StatefulWidget {
 }
 
 class _GuidDialogBoxState extends State<GuidDialogBox> {
-  final controller = StoryController();
   late Stream queuedPoisListStream;
 
   _GuidDialogBoxState(
       StreamController<Map<String, MapPoi>> queuedPoisToPlayController) {
     ValueChanged<StoryItem> onShowStory = (s) async {
-      context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s, controller: controller));
+      context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
     };
 
     queuedPoisListStream = queuedPoisToPlayController.stream;
@@ -120,7 +119,6 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
       context.read<GuideBloc>().add(SetStoriesListEvent(
           poisToPlay: event,
           onShowStory: onShowStory,
-          storyController: controller,
           onFinishedFunc: widget.onFinishedStories));
     });
   }
