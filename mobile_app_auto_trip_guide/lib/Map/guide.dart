@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:ffi';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../Adjusted Libs/story_view/story_controller.dart';
 import '../Adjusted Libs/story_view/story_view.dart';
-import '../General Wigets/generals.dart';
 import 'guid_bloc/guide_bloc.dart';
 import 'guide_dialog_box.dart';
 import 'globals.dart';
@@ -54,29 +52,6 @@ class Guide {
     guideState = GuideState.working;
     preHandlePoi(poi);
   }
-
-  // void stop() {
-  //   if (Globals.mainMapPoi != null) {
-  //     Globals.globalUserMap.userMapState
-  //         ?.unHighlightMapPoi(Globals.mainMapPoi!);
-  //   }
-  //   if (guideData.status == GuideStatus.voice) {
-  //     // audioPlayer.clearPlayer();
-  //   }
-  //   Globals.deleteMainMapPoi();
-  //   Globals.globalUserMap.userMapState?.hideNextButton();
-  //   // guideDialogBox.stopLoading();
-  //   // guideDialogBox.hideDialog();
-  //   state = GuideState.stopped;
-  // }
-
-  // void resumeGuide() {
-  //   if (_inIntro) {
-  //     _inIntro = false;
-  //     stop();
-  //     // handleMapPoiVoice(guideDialogBox.getMapPoi()!);
-  //   }
-  // }
 
   // lunch before handle poi
   void preHandlePoi(MapPoi mapPoi) {
@@ -199,7 +174,11 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(
                         Radius.circular(Constants.avatarRadius)),
-                    child: Image.network(state.currentPoi?.poi.pic ?? ""),
+                    child: CachedNetworkImage(
+                      imageUrl: state.currentPoi?.poi.pic ?? "",
+                      placeholder: (context, url) => new CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => new Icon(Icons.error_outlined, size: 100),
+                    ),
                   )),
             ),
           ],
