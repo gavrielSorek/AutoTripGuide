@@ -17,9 +17,14 @@ part 'guide_state.dart';
 class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
   GuideBloc() : super(PoisSearchingState()) {
     on<ShowSearchingPoisAnimationEvent>((event, emit) {
+      // start loading animation
+      Globals.globalUserMap.setLoadingAnimationState(true);
       emit(PoisSearchingState());
     });
     on<SetStoriesListEvent>((event, emit) {
+      // stop loading animation
+      Globals.globalUserMap.setLoadingAnimationState(false);
+
       StoryController controller = StoryController();
       Globals.globalAudioApp.onPressNext = () {
         Globals.globalAudioApp.stopAudio();

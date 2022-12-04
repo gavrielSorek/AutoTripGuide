@@ -50,6 +50,7 @@ dependencies:
   google_sign_in: ^5.2.4
   get: ^4.6.1
   cached_network_image: ^3.2.3
+  loading_animation_widget: ^1.2.0+3
 
 
 dev_dependencies:

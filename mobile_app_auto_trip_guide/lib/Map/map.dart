@@ -9,11 +9,14 @@ import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:final_project/Map/types.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'guide.dart';
 import 'package:flutter/foundation.dart';
 
 class UserMap extends StatefulWidget {
   MapPoi? highlightedPoi;
+  bool showLoadingPoisAnimation = false;
+
   // inits
   static late Position USER_LOCATION;
 
@@ -67,14 +70,19 @@ class UserMap extends StatefulWidget {
     userChangeLocationFuncs.clear();
   }
 
-
   void highlightPoi(MapPoi mapPoi) {
-    //TODO USE STREAM
+    //TODO USE BLOC
     if (this.highlightedPoi != null) {
       userMapState?.unHighlightMapPoi(highlightedPoi!);
     }
     this.highlightedPoi = mapPoi;
     userMapState?.highlightMapPoi(mapPoi);
+  }
+
+  void setLoadingAnimationState(bool isActive) {
+    //TODO USE BLOC
+    showLoadingPoisAnimation = isActive;
+    userMapState?.updateState();
   }
 
   UserMap({Key? key}) : super(key: key) {
@@ -114,6 +122,10 @@ class _UserMapState extends State<UserMap> {
   _UserMapState() : super() {
     UserMap.userChangeLocationFuncs.add(onLocationChanged);
     print("hello from ctor2");
+  }
+
+  void updateState() {
+    setState(() {});
   }
 
   @override
@@ -197,8 +209,7 @@ class _UserMapState extends State<UserMap> {
           onPositionChanged: (MapPosition position, bool hasGesture) {
             if (hasGesture) {
               setState(
-                    () =>
-                _centerOnLocationUpdate = CenterOnLocationUpdate.never,
+                () => _centerOnLocationUpdate = CenterOnLocationUpdate.never,
               );
             }
           },
@@ -214,54 +225,69 @@ class _UserMapState extends State<UserMap> {
         ),
         CurrentLocationLayer(
             centerCurrentLocationStream:
-            _centerCurrentLocationStreamController.stream,
+                _centerCurrentLocationStreamController.stream,
             centerOnLocationUpdate: _centerOnLocationUpdate),
         MarkerLayer(markers: markersList)
       ],
       nonRotatedChildren: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // NavigationDrawer.buildNavigationDrawerButton((Globals.globalPagesList[0] as HomePage).getScaffoldKey()),
-            NavigationDrawer.buildNavigationDrawerButton(context),
-            Container(
-              margin: EdgeInsets.only(
-                top: MediaQuery.of(context).size.width / 4,
-                  left: MediaQuery.of(context).size.width / 15),
-              width: MediaQuery.of(context).size.width / 10,
-              child: FloatingActionButton(
-                heroTag: null,
-                onPressed: () {
-                  // Automatically center the location marker on the map when location updated until user interact with the map.
-                  setState(
-                        () => _centerOnLocationUpdate =
-                        CenterOnLocationUpdate.always,
-                  );
-                  // Center the location marker on the map and zoom the map to level 14.
-                  _centerCurrentLocationStreamController.add(14);
-                },
-                child: const Icon(
-                  Icons.my_location,
-                  color: Colors.white,
-                ),
+        Container(
+          margin: EdgeInsets.only(top: 60),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                child: NavigationDrawer.buildNavigationDrawerButton(context),
               ),
-            )
-          ],
+              if (widget.showLoadingPoisAnimation)
+                Container(
+                    color: Colors.transparent,
+                    alignment: Alignment.bottomRight,
+                    margin: EdgeInsets.only(
+                        right: MediaQuery.of(context).size.width / 60),
+                    height: MediaQuery.of(context).size.width / 10,
+                    width: MediaQuery.of(context).size.width / 10,
+                    child: LoadingAnimationWidget.dotsTriangle(
+                      size: 30,
+                      color: Colors.blue,
+                    )),
+            ],
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(
+              top: MediaQuery.of(context).size.width / 3,
+              left: MediaQuery.of(context).size.width / 40),
+          width: MediaQuery.of(context).size.width / 10,
+          child: FloatingActionButton(
+            heroTag: null,
+            onPressed: () {
+              // Automatically center the location marker on the map when location updated until user interact with the map.
+              setState(
+                () => _centerOnLocationUpdate = CenterOnLocationUpdate.always,
+              );
+              // Center the location marker on the map and zoom the map to level 14.
+              _centerCurrentLocationStreamController.add(14);
+            },
+            child: const Icon(
+              Icons.my_location,
+              color: Colors.white,
+            ),
+          ),
         ),
         Column(
           children: [
             Expanded(
                 child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                    const SizedBox(height: 5),
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                const SizedBox(height: 5),
                 Spacer(),
                 Expanded(child: guideTool.storiesDialogBox)
                 // guideTool.guideDialogBox,
-                    ],
-                ))
+              ],
+            ))
           ],
         )
       ],
@@ -314,7 +340,8 @@ class _UserMapState extends State<UserMap> {
     // guideTool.handlePois();
   }
 
-  void guideAboutMapPoi(MapPoi mapPoi) { //TODO ADD LOGIC
+  void guideAboutMapPoi(MapPoi mapPoi) {
+    //TODO ADD LOGIC
     // guideTool.stop();
     // guideTool.askPoi(mapPoi);
   }
