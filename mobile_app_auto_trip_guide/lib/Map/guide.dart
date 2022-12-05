@@ -180,7 +180,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                     Container(
                       child:
                           UniformButtons.getPreferenceButton(onPressed: () {
-                            //TODO add logic
+                            Navigator.pushNamed(context, '/favorite-categories-screen');
                           }),
                     )
                   ],
