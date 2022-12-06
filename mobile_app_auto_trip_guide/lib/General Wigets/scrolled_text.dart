@@ -59,7 +59,10 @@ class ScrolledText {
                           fontSize: 20,
                         )),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        print("Press to see full poi info");
+                        // context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
+                      },
                       icon: Icon(
                         Icons.arrow_forward_ios_sharp,
                         size: 15,

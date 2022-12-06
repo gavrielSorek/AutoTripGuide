@@ -17,6 +17,15 @@ class SetCurrentPoiEvent extends GuideEvent{
   SetCurrentPoiEvent({required this.storyItem}) {}
 }
 
-class ShowStoriesFinishedEvent extends GuideEvent{}
+
+class ShowFullPoiInfoEvent extends GuideEvent{
+  ShowFullPoiInfoEvent() {}
+}
+
+class SetLoadedStoriesEvent extends GuideEvent{
+  final StoryView storyView;
+  final StoryController controller;
+  SetLoadedStoriesEvent({required this.storyView, required this.controller}) {}
+}
 
 

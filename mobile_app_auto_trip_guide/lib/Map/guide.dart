@@ -196,24 +196,169 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
               Positioned(
                 left: Constants.padding,
                 right: Constants.padding,
-                child: CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    radius: Constants.avatarRadius,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(Constants.avatarRadius)),
-                      child: CachedNetworkImage(
-                        imageUrl: state.currentPoi?.poi.pic ?? "",
-                        placeholder: (context, url) =>
-                            new CircularProgressIndicator(),
-                        errorWidget: (context, url, error) =>
-                            new Icon(Icons.error_outlined, size: 100),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      alignment: Alignment.bottomLeft,
+                      child: Column(
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                context
+                                    .read<GuideBloc>()
+                                    .add(ShowFullPoiInfoEvent());
+                              },
+                              icon: Icon(
+                                Icons.arrow_upward,
+                                size: 40,
+                              )),
+                        ],
                       ),
-                    )),
+                    ),
+                    Expanded(
+                      child: CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          radius: Constants.avatarRadius,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(Constants.avatarRadius)),
+                            child: CachedNetworkImage(
+                              imageUrl: state.currentPoi?.poi.pic ?? "",
+                              placeholder: (context, url) =>
+                                  new CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  new Icon(Icons.error_outlined, size: 100),
+                            ),
+                          )),
+                    ),
+                    Container(
+                      alignment: Alignment.bottomLeft,
+                      child: Column(
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                context
+                                    .read<GuideBloc>()
+                                    .add(ShowFullPoiInfoEvent());
+                              },
+                              icon: Icon(
+                                Icons.arrow_upward,
+                                size: 40,
+                              )),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           )
         ]));
+  }
+
+  Widget buildFullPoiInfo(state) {
+    final showPoiState = state as ShowPoiState;
+    return Column(children: [
+      Spacer(),
+      Stack(
+        children: <Widget>[
+          Container(
+              alignment: Alignment.bottomCenter,
+              height: MediaQuery.of(context).size.height / 1.45,
+              padding: const EdgeInsets.only(
+                  left: Constants.padding,
+                  top: Constants.avatarRadius + Constants.padding,
+                  right: Constants.padding,
+                  bottom: Constants.padding),
+              margin: const EdgeInsets.only(top: Constants.avatarRadius),
+              decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(Constants.padding),
+                  boxShadow: const [
+                    BoxShadow(
+                        color: Colors.black,
+                        offset: Offset(0, 5),
+                        blurRadius: 10),
+                  ]),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        // margin: EdgeInsets.only(
+                        //     right: MediaQuery.of(context).size.width / 30),
+                        width: MediaQuery.of(context).size.width / 10,
+                        child: FloatingActionButton(
+                          backgroundColor: Globals.globalColor,
+                          heroTag: null,
+                          onPressed: () {
+                            context.read<GuideBloc>().add(SetLoadedStoriesEvent(
+                                storyView: state.savedStoriesState.storyView,
+                                controller:
+                                    state.savedStoriesState.controller));
+                          },
+                          child:
+                              const Icon(Icons.arrow_back, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: Text(
+                        showPoiState.currentPoi.poi.poiName ?? "",
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 25,
+                          color: Colors.blueGrey,
+                          height: 1,
+                        ),
+                      )),
+                  Expanded(
+                      child: Container(
+                          alignment: Alignment.topCenter,
+                          margin: EdgeInsets.only(top: 15),
+                          child: Text(
+                            showPoiState.currentPoi.poi.shortDesc ?? "",
+                            style: TextStyle(
+                              fontFamily: 'Arial',
+                              fontSize: 20,
+                              color: Colors.black,
+                              height: 1,
+                            ),
+                          ))),
+                  Container(
+                    child: UniformButtons.getPreferenceButton(onPressed: () {
+                      Navigator.pushNamed(
+                          context, '/favorite-categories-screen');
+                    }),
+                  )
+                ],
+              )),
+          Positioned(
+            left: Constants.padding,
+            right: Constants.padding,
+            child: CircleAvatar(
+                backgroundColor: Colors.transparent,
+                radius: Constants.avatarRadius,
+                child: ClipRRect(
+                  borderRadius:
+                      BorderRadius.all(Radius.circular(Constants.avatarRadius)),
+                  child: CachedNetworkImage(
+                    imageUrl: showPoiState.currentPoi?.poi.pic ?? "",
+                    placeholder: (context, url) =>
+                        new CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        new Icon(Icons.error_outlined, size: 100),
+                  ),
+                )),
+          ),
+        ],
+      )
+    ]);
   }
 
   @override
@@ -222,9 +367,10 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
       builder: (BuildContext context, state) {
         if (state is PoisSearchingState) {
           return buildSearchingWidget();
-        }
-        if (state is ShowStoriesState) {
+        } else if (state is ShowStoriesState) {
           return buildStoriesWidget(state);
+        } else if (state is ShowPoiState) {
+          return buildFullPoiInfo(state);
         } else {
           return buildSearchingWidget();
         }

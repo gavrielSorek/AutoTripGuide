@@ -91,10 +91,21 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             pic: currentPoi!.poi.pic));
         emit(ShowStoriesState(
             currentPoi: currentPoi,
-            lastShownPoi: state.lastShownPoi,
             storyView: state.storyView,
         controller: state.controller));
       }
+    });
+
+    on<ShowFullPoiInfoEvent>((event, emit) {
+      if (state is ShowStoriesState) {
+        final state = this.state as ShowStoriesState;
+        emit(ShowPoiState(savedStoriesState: state, currentPoi: state.currentPoi!));
+      }
+    });
+
+    on<SetLoadedStoriesEvent>((event, emit) {
+      emit(ShowStoriesState( storyView: event.storyView,
+          controller: event.controller));
     });
   }
 }
