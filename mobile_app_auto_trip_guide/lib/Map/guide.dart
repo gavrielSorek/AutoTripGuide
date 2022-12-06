@@ -321,13 +321,16 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                       child: Container(
                           alignment: Alignment.topCenter,
                           margin: EdgeInsets.only(top: 15),
-                          child: Text(
-                            showPoiState.currentPoi.poi.shortDesc ?? "",
-                            style: TextStyle(
-                              fontFamily: 'Arial',
-                              fontSize: 20,
-                              color: Colors.black,
-                              height: 1,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Text(
+                              showPoiState.currentPoi.poi.shortDesc ?? "",
+                              style: TextStyle(
+                                fontFamily: 'Arial',
+                                fontSize: 20,
+                                color: Colors.black,
+                                height: 1,
+                              ),
                             ),
                           ))),
                   Container(
