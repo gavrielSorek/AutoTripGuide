@@ -107,42 +107,46 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         ),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        child: Stack(children: <Widget>[
-          Container(
-            alignment: Alignment.topLeft,
-            // width: 240.0,
-            height: 200,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24.0),
-              color: Colors.white.withOpacity(0.8),
-            ),
-            child: Center(
-              child: Column(
-                children: [
-                  Text(
-                    "Scanning...\n",
-                    style: TextStyle(
-                      fontFamily: 'Arial',
-                      fontSize: 30,
-                      color: Colors.purple,
-                      height: 1,
-                    ),
+        child: Column(
+          children: [
+            Spacer(),
+            Stack(children: <Widget>[
+              Container(
+                alignment: Alignment.topLeft,
+                height: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24.0),
+                  color: Colors.white.withOpacity(0.8),
+                ),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        "Scanning...\n",
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 30,
+                          color: Colors.purple,
+                          height: 1,
+                        ),
+                      ),
+                      Text(
+                        "Auto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
+                        style: TextStyle(
+                          fontFamily: 'Arial',
+                          fontSize: 23,
+                          color: Colors.black,
+                          height: 1,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
-                  Text(
-                    "Auto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
-                    style: TextStyle(
-                      fontFamily: 'Arial',
-                      fontSize: 23,
-                      color: Colors.black,
-                      height: 1,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ]));
+            ]),
+          ],
+        ));
   }
 
   Widget buildStoriesWidget(state) {
@@ -153,58 +157,63 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         ),
         elevation: 0,
         backgroundColor: Colors.transparent,
-        child: Stack(
-          children: <Widget>[
-            Container(
-                height: double.infinity,
-                padding: const EdgeInsets.only(
-                    left: Constants.padding,
-                    top: Constants.avatarRadius + Constants.padding,
-                    right: Constants.padding,
-                    bottom: Constants.padding),
-                margin: const EdgeInsets.only(top: Constants.avatarRadius),
-                decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(Constants.padding),
-                    boxShadow: const [
-                      BoxShadow(
-                          color: Colors.black,
-                          offset: Offset(0, 5),
-                          blurRadius: 10),
-                    ]),
-                child: Column(
-                  children: [
-                    Expanded(child: state.storyView),
-                    Container(child: Globals.globalAudioApp, height: 56),
-                    Container(
-                      child:
-                          UniformButtons.getPreferenceButton(onPressed: () {
-                            Navigator.pushNamed(context, '/favorite-categories-screen');
-                          }),
-                    )
-                  ],
-                )),
-            Positioned(
-              left: Constants.padding,
-              right: Constants.padding,
-              child: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  radius: Constants.avatarRadius,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(
-                        Radius.circular(Constants.avatarRadius)),
-                    child: CachedNetworkImage(
-                      imageUrl: state.currentPoi?.poi.pic ?? "",
-                      placeholder: (context, url) =>
-                          new CircularProgressIndicator(),
-                      errorWidget: (context, url, error) =>
-                          new Icon(Icons.error_outlined, size: 100),
-                    ),
+        child: Column(children: [
+          Spacer(),
+          Stack(
+            children: <Widget>[
+              Container(
+                  alignment: Alignment.bottomCenter,
+                  height: MediaQuery.of(context).size.height / 2.5,
+                  padding: const EdgeInsets.only(
+                      left: Constants.padding,
+                      top: Constants.avatarRadius + Constants.padding,
+                      right: Constants.padding,
+                      bottom: Constants.padding),
+                  margin: const EdgeInsets.only(top: Constants.avatarRadius),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(Constants.padding),
+                      boxShadow: const [
+                        BoxShadow(
+                            color: Colors.black,
+                            offset: Offset(0, 5),
+                            blurRadius: 10),
+                      ]),
+                  child: Column(
+                    children: [
+                      Expanded(child: state.storyView),
+                      Container(child: Globals.globalAudioApp, height: 56),
+                      Container(
+                        child:
+                            UniformButtons.getPreferenceButton(onPressed: () {
+                          Navigator.pushNamed(
+                              context, '/favorite-categories-screen');
+                        }),
+                      )
+                    ],
                   )),
-            ),
-          ],
-        ));
+              Positioned(
+                left: Constants.padding,
+                right: Constants.padding,
+                child: CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                    radius: Constants.avatarRadius,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(Constants.avatarRadius)),
+                      child: CachedNetworkImage(
+                        imageUrl: state.currentPoi?.poi.pic ?? "",
+                        placeholder: (context, url) =>
+                            new CircularProgressIndicator(),
+                        errorWidget: (context, url, error) =>
+                            new Icon(Icons.error_outlined, size: 100),
+                      ),
+                    )),
+              ),
+            ],
+          )
+        ]));
   }
 
   @override

@@ -230,66 +230,69 @@ class _UserMapState extends State<UserMap> {
         MarkerLayer(markers: markersList)
       ],
       nonRotatedChildren: [
-        Container(
-          margin: EdgeInsets.only(top: 60),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                child: NavigationDrawer.buildNavigationDrawerButton(context),
-              ),
-              if (widget.showLoadingPoisAnimation)
-                Container(
-                    color: Colors.transparent,
-                    alignment: Alignment.bottomRight,
-                    margin: EdgeInsets.only(
-                        right: MediaQuery.of(context).size.width / 60),
-                    height: MediaQuery.of(context).size.width / 10,
-                    width: MediaQuery.of(context).size.width / 10,
-                    child: LoadingAnimationWidget.dotsTriangle(
-                      size: 30,
-                      color: Colors.blue,
-                    )),
-            ],
-          ),
-        ),
-        Container(
-          margin: EdgeInsets.only(
-              top: MediaQuery.of(context).size.width / 3,
-              left: MediaQuery.of(context).size.width / 40),
-          width: MediaQuery.of(context).size.width / 10,
-          child: FloatingActionButton(
-            heroTag: null,
-            onPressed: () {
-              // Automatically center the location marker on the map when location updated until user interact with the map.
-              setState(
-                () => _centerOnLocationUpdate = CenterOnLocationUpdate.always,
-              );
-              // Center the location marker on the map and zoom the map to level 14.
-              _centerCurrentLocationStreamController.add(14);
-            },
-            child: const Icon(
-              Icons.my_location,
-              color: Colors.white,
-            ),
-          ),
-        ),
         Column(
           children: [
+            Container(
+              margin: EdgeInsets.only(top: 60),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    child: NavigationDrawer.buildNavigationDrawerButton(context),
+                  ),
+                  if (widget.showLoadingPoisAnimation)
+                    Container(
+                        color: Colors.transparent,
+                        alignment: Alignment.bottomRight,
+                        margin: EdgeInsets.only(
+                            right: MediaQuery.of(context).size.width / 60),
+                        height: MediaQuery.of(context).size.width / 10,
+                        width: MediaQuery.of(context).size.width / 10,
+                        child: LoadingAnimationWidget.dotsTriangle(
+                          size: 30,
+                          color: Colors.blue,
+                        )),
+                ],
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.width / 20,
+                      left: MediaQuery.of(context).size.width / 40),
+                  width: MediaQuery.of(context).size.width / 10,
+                  child: FloatingActionButton(
+                    heroTag: null,
+                    onPressed: () {
+                      // Automatically center the location marker on the map when location updated until user interact with the map.
+                      setState(
+                            () => _centerOnLocationUpdate = CenterOnLocationUpdate.always,
+                      );
+                      // Center the location marker on the map and zoom the map to level 14.
+                      _centerCurrentLocationStreamController.add(14);
+                    },
+                    child: const Icon(
+                      Icons.my_location,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             Expanded(
                 child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const SizedBox(height: 5),
-                Spacer(),
-                Expanded(child: guideTool.storiesDialogBox)
-                // guideTool.guideDialogBox,
-              ],
-            ))
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const SizedBox(height: 5),
+                    Expanded(child: guideTool.storiesDialogBox)
+                    // guideTool.guideDialogBox,
+                  ],
+                ))
           ],
-        )
+        ),
       ],
     );
   }

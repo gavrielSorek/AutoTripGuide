@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:final_project/Adjusted Libs/story_view/story_view.dart';
 
-
 class ScrolledText {
   /// Short hand to create text-only page.
   ///
@@ -50,11 +49,25 @@ class ScrolledText {
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(children: [
-              Text(title,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                  )),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  children: [
+                    Text(title,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                        )),
+                    IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        size: 15,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Text(
                 text,
                 style: textStyle?.copyWith(
