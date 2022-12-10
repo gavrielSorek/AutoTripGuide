@@ -92,10 +92,15 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
 
     queuedPoisListStream = queuedPoisToPlayController.stream;
     queuedPoisListStream.listen((event) {
-      context.read<GuideBloc>().add(SetStoriesListEvent(
-          poisToPlay: event,
-          onShowStory: onShowStory,
-          onFinishedFunc: widget.onFinishedStories));
+      context.read<GuideBloc>().add(
+            SetStoriesListEvent(
+                poisToPlay: event,
+                onShowStory: onShowStory,
+                onFinishedFunc: widget.onFinishedStories,
+                onStoryTap: (story) {
+                  context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+                }),
+          );
     });
   }
 
@@ -200,23 +205,6 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
-                      alignment: Alignment.bottomLeft,
-                      child: Column(
-                        children: [
-                          IconButton(
-                              onPressed: () {
-                                context
-                                    .read<GuideBloc>()
-                                    .add(ShowFullPoiInfoEvent());
-                              },
-                              icon: Icon(
-                                Icons.arrow_upward,
-                                size: 40,
-                              )),
-                        ],
-                      ),
-                    ),
                     Expanded(
                       child: CircleAvatar(
                           backgroundColor: Colors.transparent,
@@ -232,23 +220,6 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                                   new Icon(Icons.error_outlined, size: 100),
                             ),
                           )),
-                    ),
-                    Container(
-                      alignment: Alignment.bottomLeft,
-                      child: Column(
-                        children: [
-                          IconButton(
-                              onPressed: () {
-                                context
-                                    .read<GuideBloc>()
-                                    .add(ShowFullPoiInfoEvent());
-                              },
-                              icon: Icon(
-                                Icons.arrow_upward,
-                                size: 40,
-                              )),
-                        ],
-                      ),
                     ),
                   ],
                 ),

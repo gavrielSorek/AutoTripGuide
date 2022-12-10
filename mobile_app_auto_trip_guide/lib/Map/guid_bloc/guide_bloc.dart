@@ -6,7 +6,6 @@ import '../../Adjusted Libs/story_view/story_controller.dart';
 import '../../Adjusted Libs/story_view/story_view.dart';
 import '../../General Wigets/generals.dart';
 import '../../General Wigets/scrolled_text.dart';
-import '../audio_player_controller.dart';
 import '../globals.dart';
 import '../types.dart';
 
@@ -69,6 +68,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         },
         storyItems:
             storyItems, // To disable vertical swipe gestures, ignore this parameter.
+        onStoryTap: event.onStoryTap,
       );
       emit(ShowStoriesState(storyView: storyView, controller: controller));
     });

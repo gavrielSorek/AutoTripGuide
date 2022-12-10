@@ -33,12 +33,12 @@ class StoryItem {
 
   /// The page content
   final Widget view;
-  StoryItem(
-      this.view, {
-        required this.duration,
-        this.shown = false,
-      });
 
+  StoryItem(
+    this.view, {
+    required this.duration,
+    this.shown = false,
+  });
 
   /// Short hand to create text-only page.
   ///
@@ -86,8 +86,8 @@ class StoryItem {
           child: Text(
             title,
             style: textStyle?.copyWith(
-              color: contrast > 1.8 ? Colors.white : Colors.black,
-            ) ??
+                  color: contrast > 1.8 ? Colors.white : Colors.black,
+                ) ??
                 TextStyle(
                   color: contrast > 1.8 ? Colors.white : Colors.black,
                   fontSize: 18,
@@ -140,17 +140,19 @@ class StoryView extends StatefulWidget {
   // Indicator Color
   final Color indicatorColor;
 
-  StoryView({
-    required this.storyItems,
-    required this.controller,
-    this.onComplete,
-    this.onStoryShow,
-    this.progressPosition = ProgressPosition.top,
-    this.repeat = false,
-    this.inline = false,
-    this.onVerticalSwipeComplete,
-    this.indicatorColor = Colors.white,
-  });
+  dynamic onStoryTap = null;
+
+  StoryView(
+      {required this.storyItems,
+      required this.controller,
+      this.onComplete,
+      this.onStoryShow,
+      this.progressPosition = ProgressPosition.top,
+      this.repeat = false,
+      this.inline = false,
+      this.onVerticalSwipeComplete,
+      this.indicatorColor = Colors.white,
+      this.onStoryTap});
 
   @override
   State<StatefulWidget> createState() {
@@ -197,28 +199,28 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
 
     this._playbackSubscription =
         widget.controller.playbackNotifier.listen((playbackStatus) {
-          switch (playbackStatus) {
-            case PlaybackState.play:
-              _removeNextHold();
-              this._animationController?.forward();
-              break;
+      switch (playbackStatus) {
+        case PlaybackState.play:
+          _removeNextHold();
+          this._animationController?.forward();
+          break;
 
-            case PlaybackState.pause:
-              _holdNext(); // then pause animation
-              this._animationController?.stop(canceled: false);
-              break;
+        case PlaybackState.pause:
+          _holdNext(); // then pause animation
+          this._animationController?.stop(canceled: false);
+          break;
 
-            case PlaybackState.next:
-              _removeNextHold();
-              _goForward();
-              break;
+        case PlaybackState.next:
+          _removeNextHold();
+          _goForward();
+          break;
 
-            case PlaybackState.previous:
-              _removeNextHold();
-              _goBack();
-              break;
-          }
-        });
+        case PlaybackState.previous:
+          _removeNextHold();
+          _goBack();
+          break;
+      }
+    });
     _play();
   }
 
@@ -394,54 +396,62 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
                   widget.controller.play();
                 },
                 onTapUp: (details) {
-                  // if debounce timed out (not active) then continue anim
-                  if (_nextDebouncer?.isActive == false) {
-                    widget.controller.play();
+                  if (widget.onStoryTap != null) {
+                    widget.onStoryTap(_currentStory);
                   } else {
-                    widget.controller.next();
+                    // if debounce timed out (not active) then continue anim
+                    if (_nextDebouncer?.isActive == false) {
+                      widget.controller.play();
+                    } else {
+                      widget.controller.next();
+                    }
                   }
                 },
                 onVerticalDragStart: widget.onVerticalSwipeComplete == null
                     ? null
                     : (details) {
-                  widget.controller.pause();
-                },
+                        widget.controller.pause();
+                      },
                 onVerticalDragCancel: widget.onVerticalSwipeComplete == null
                     ? null
                     : () {
-                  widget.controller.play();
-                },
+                        widget.controller.play();
+                      },
                 onVerticalDragUpdate: widget.onVerticalSwipeComplete == null
                     ? null
                     : (details) {
-                  if (verticalDragInfo == null) {
-                    verticalDragInfo = VerticalDragInfo();
-                  }
+                        if (verticalDragInfo == null) {
+                          verticalDragInfo = VerticalDragInfo();
+                        }
 
-                  verticalDragInfo!.update(details.primaryDelta!);
+                        verticalDragInfo!.update(details.primaryDelta!);
 
-                  // TODO: provide callback interface for animation purposes
-                },
+                        // TODO: provide callback interface for animation purposes
+                      },
                 onVerticalDragEnd: widget.onVerticalSwipeComplete == null
                     ? null
                     : (details) {
-                  widget.controller.play();
-                  // finish up drag cycle
-                  if (!verticalDragInfo!.cancel &&
-                      widget.onVerticalSwipeComplete != null) {
-                    widget.onVerticalSwipeComplete!(
-                        verticalDragInfo!.direction);
-                  }
+                        widget.controller.play();
+                        // finish up drag cycle
+                        if (!verticalDragInfo!.cancel &&
+                            widget.onVerticalSwipeComplete != null) {
+                          widget.onVerticalSwipeComplete!(
+                              verticalDragInfo!.direction);
+                        }
 
-                  verticalDragInfo = null;
-                },
+                        verticalDragInfo = null;
+                      },
               )),
           Align(
             alignment: Alignment.centerLeft,
             heightFactor: 1,
             child: SizedBox(
                 child: GestureDetector(onTap: () {
-                  widget.controller.previous();
+                  if (widget.onStoryTap != null) {
+                    widget.onStoryTap(_currentStory);
+                  } else {
+                    widget.controller.previous();
+                  }
                 }),
                 width: 70),
           ),
@@ -467,17 +477,18 @@ class PageBar extends StatefulWidget {
   final Animation<double>? animation;
   final IndicatorHeight indicatorHeight;
   final Color indicatorColor;
+
   // Controls the playback of the stories
   final StoryController controller;
 
   PageBar(
-      this.controller,
-      this.pages,
-      this.animation, {
-        this.indicatorHeight = IndicatorHeight.large,
-        this.indicatorColor = Colors.white,
-        Key? key,
-      }) : super(key: key);
+    this.controller,
+    this.pages,
+    this.animation, {
+    this.indicatorHeight = IndicatorHeight.large,
+    this.indicatorColor = Colors.white,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -501,7 +512,8 @@ class PageBarState extends State<PageBar> {
       setState(() {});
     });
 
-    this._progressSubscription = widget.controller.progressNotifier.listen((double progress) {
+    this._progressSubscription =
+        widget.controller.progressNotifier.listen((double progress) {
       if (progress > 1) {
         progress = 1;
       } else if (progress < 0) {
@@ -512,7 +524,6 @@ class PageBarState extends State<PageBar> {
       });
       print("change duration");
     });
-
   }
 
   @override
@@ -538,7 +549,7 @@ class PageBarState extends State<PageBar> {
               isPlaying(it) ? progress : (it.shown ? 1 : 0),
               // isPlaying(it) ? widget.animation!.value : (it.shown ? 1 : 0),
               indicatorHeight:
-              widget.indicatorHeight == IndicatorHeight.large ? 5 : 3,
+                  widget.indicatorHeight == IndicatorHeight.large ? 5 : 3,
               indicatorColor: widget.indicatorColor,
             ),
           ),
@@ -557,10 +568,10 @@ class StoryProgressIndicator extends StatelessWidget {
   final Color indicatorColor;
 
   StoryProgressIndicator(
-      this.value, {
-        this.indicatorHeight = 5,
-        this.indicatorColor = Colors.white,
-      });
+    this.value, {
+    this.indicatorHeight = 5,
+    this.indicatorColor = Colors.white,
+  });
 
   @override
   Widget build(BuildContext context) {

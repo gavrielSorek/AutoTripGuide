@@ -8,7 +8,8 @@ class SetStoriesListEvent extends GuideEvent{
   Map<String, MapPoi> poisToPlay;
   ValueChanged<StoryItem> onShowStory;
   dynamic onFinishedFunc;
-  SetStoriesListEvent({required this.poisToPlay, required this.onShowStory, this.onFinishedFunc}) {
+  dynamic onStoryTap = null;
+  SetStoriesListEvent({required this.poisToPlay, required this.onShowStory, this.onFinishedFunc, this.onStoryTap}) {
   }
 }
 
