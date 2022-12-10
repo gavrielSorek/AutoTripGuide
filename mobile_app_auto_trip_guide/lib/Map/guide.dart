@@ -5,6 +5,7 @@ import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../Adjusted Libs/story_view/story_view.dart';
+import '../Adjusted Libs/story_view/utils.dart';
 import '../General Wigets/uniform_widgets.dart';
 import 'guid_bloc/guide_bloc.dart';
 import 'guide_dialog_box.dart';
@@ -99,7 +100,8 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                 onFinishedFunc: widget.onFinishedStories,
                 onStoryTap: (story) {
                   context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-                }),
+                },
+            onVerticalSwipeComplete: (Direction? d){context.read<GuideBloc>().add(ShowFullPoiInfoEvent());}),
           );
     });
   }

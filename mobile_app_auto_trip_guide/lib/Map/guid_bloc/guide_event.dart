@@ -9,7 +9,8 @@ class SetStoriesListEvent extends GuideEvent{
   ValueChanged<StoryItem> onShowStory;
   dynamic onFinishedFunc;
   dynamic onStoryTap = null;
-  SetStoriesListEvent({required this.poisToPlay, required this.onShowStory, this.onFinishedFunc, this.onStoryTap}) {
+  dynamic onVerticalSwipeComplete = null;
+  SetStoriesListEvent({required this.poisToPlay, required this.onShowStory, this.onFinishedFunc, this.onStoryTap, this.onVerticalSwipeComplete}) {
   }
 }
 

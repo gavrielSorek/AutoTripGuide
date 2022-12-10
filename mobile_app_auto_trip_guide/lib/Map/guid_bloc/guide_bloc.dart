@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import '../../Adjusted Libs/story_view/story_controller.dart';
 import '../../Adjusted Libs/story_view/story_view.dart';
+import '../../Adjusted Libs/story_view/utils.dart';
 import '../../General Wigets/generals.dart';
 import '../../General Wigets/scrolled_text.dart';
 import '../globals.dart';
@@ -69,6 +70,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         storyItems:
             storyItems, // To disable vertical swipe gestures, ignore this parameter.
         onStoryTap: event.onStoryTap,
+        onVerticalSwipeComplete: event.onVerticalSwipeComplete,
       );
       emit(ShowStoriesState(storyView: storyView, controller: controller));
     });
