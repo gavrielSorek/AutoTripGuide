@@ -38,10 +38,9 @@ class AutoGuideApp extends StatelessWidget {
         // When navigating to the "/" route, build the FirstScreen widget.
         '/login-screen': (context) => LoginPage(),
         '/HomePage': (context) => HomePage(),
-        '/history-screen' : (context) => HistoryPage(),
-        '/favorite-categories-screen' : (context) => FavoriteCategoriesPage(),
-        '/personal-details-screen' : (context) => PersonalDetailsPage()
-
+        '/history-screen': (context) => HistoryPage(),
+        '/favorite-categories-screen': (context) => FavoriteCategoriesPage(),
+        '/personal-details-screen': (context) => PersonalDetailsPage()
       },
       // routes: {'/': (BuildContext ctx) => HomePage()}
     );
