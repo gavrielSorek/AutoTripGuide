@@ -66,7 +66,7 @@ class Guide {
 class GuidDialogBox extends StatefulWidget {
   final dynamic onFinishedStories;
   final StreamController<Map<String, MapPoi>> queuedPoisToPlayController =
-      StreamController<HashMap<String, MapPoi>>.broadcast();
+  StreamController<HashMap<String, MapPoi>>.broadcast();
 
   GuidDialogBox({required this.onFinishedStories}) {
     print(queuedPoisToPlayController);
@@ -94,15 +94,17 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
     queuedPoisListStream = queuedPoisToPlayController.stream;
     queuedPoisListStream.listen((event) {
       context.read<GuideBloc>().add(
-            SetStoriesListEvent(
-                poisToPlay: event,
-                onShowStory: onShowStory,
-                onFinishedFunc: widget.onFinishedStories,
-                onStoryTap: (story) {
-                  context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-                },
-            onVerticalSwipeComplete: (Direction? d){context.read<GuideBloc>().add(ShowFullPoiInfoEvent());}),
-          );
+        SetStoriesListEvent(
+            poisToPlay: event,
+            onShowStory: onShowStory,
+            onFinishedFunc: widget.onFinishedStories,
+            onStoryTap: (story) {
+              context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+            },
+            onVerticalSwipeComplete: (Direction? d) {
+              context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+            }),
+      );
     });
   }
 
@@ -170,7 +172,10 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
             children: <Widget>[
               Container(
                   alignment: Alignment.bottomCenter,
-                  height: MediaQuery.of(context).size.height / 2.5,
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height / 2.5,
                   padding: const EdgeInsets.only(
                       left: Constants.padding,
                       top: Constants.avatarRadius + Constants.padding,
@@ -193,7 +198,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                       Container(child: Globals.globalAudioApp, height: 56),
                       Container(
                         child:
-                            UniformButtons.getPreferenceButton(onPressed: () {
+                        UniformButtons.getPreferenceButton(onPressed: () {
                           Navigator.pushNamed(
                               context, '/favorite-categories-screen');
                         }),
@@ -208,20 +213,30 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          radius: Constants.avatarRadius,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(Constants.avatarRadius)),
-                            child: CachedNetworkImage(
-                              imageUrl: state.currentPoi?.poi.pic ?? "",
-                              placeholder: (context, url) =>
-                                  new CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  new Icon(Icons.error_outlined, size: 100),
-                            ),
-                          )),
+                      child: GestureDetector(
+                        onVerticalDragUpdate: (details) {
+                          int sensitivity = 8;
+                          if (details.delta.dy < -sensitivity) {
+                            // Up Swipe
+                            context
+                                .read<GuideBloc>()
+                                .add(ShowFullPoiInfoEvent());
+                            }},
+                        child: CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            radius: Constants.avatarRadius,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(Constants.avatarRadius)),
+                              child: CachedNetworkImage(
+                                imageUrl: state.currentPoi?.poi.pic ?? "",
+                                placeholder: (context, url) =>
+                                new CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                new Icon(Icons.error_outlined, size: 100),
+                              ),
+                            )),
+                      ),
                     ),
                   ],
                 ),
@@ -239,7 +254,10 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         children: <Widget>[
           Container(
               alignment: Alignment.bottomCenter,
-              height: MediaQuery.of(context).size.height / 1.45,
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height / 1.45,
               padding: const EdgeInsets.only(
                   left: Constants.padding,
                   top: Constants.avatarRadius + Constants.padding,
@@ -263,7 +281,10 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                       Container(
                         // margin: EdgeInsets.only(
                         //     right: MediaQuery.of(context).size.width / 30),
-                        width: MediaQuery.of(context).size.width / 10,
+                        width: MediaQuery
+                            .of(context)
+                            .size
+                            .width / 10,
                         child: FloatingActionButton(
                           backgroundColor: Globals.globalColor,
                           heroTag: null,
@@ -271,10 +292,10 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                             context.read<GuideBloc>().add(SetLoadedStoriesEvent(
                                 storyView: state.savedStoriesState.storyView,
                                 controller:
-                                    state.savedStoriesState.controller));
+                                state.savedStoriesState.controller));
                           },
                           child:
-                              const Icon(Icons.arrow_back, color: Colors.white),
+                          const Icon(Icons.arrow_back, color: Colors.white),
                         ),
                       ),
                     ],
@@ -317,20 +338,33 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
           Positioned(
             left: Constants.padding,
             right: Constants.padding,
-            child: CircleAvatar(
-                backgroundColor: Colors.transparent,
-                radius: Constants.avatarRadius,
-                child: ClipRRect(
-                  borderRadius:
-                      BorderRadius.all(Radius.circular(Constants.avatarRadius)),
-                  child: CachedNetworkImage(
-                    imageUrl: showPoiState.currentPoi?.poi.pic ?? "",
-                    placeholder: (context, url) =>
-                        new CircularProgressIndicator(),
-                    errorWidget: (context, url, error) =>
-                        new Icon(Icons.error_outlined, size: 100),
-                  ),
-                )),
+            child: GestureDetector(
+              onVerticalDragUpdate: (details) {
+                int sensitivity = 8;
+                if (details.delta.dy > sensitivity) {
+                  // Down Swipe
+                  context.read<GuideBloc>().add(SetLoadedStoriesEvent(
+                      storyView: state.savedStoriesState.storyView,
+                      controller: state.savedStoriesState.controller));
+                } else if (details.delta.dy < -sensitivity) {
+                  // Up Swipe
+                }
+              },
+              child: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  radius: Constants.avatarRadius,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(Constants.avatarRadius)),
+                    child: CachedNetworkImage(
+                      imageUrl: showPoiState.currentPoi?.poi.pic ?? "",
+                      placeholder: (context, url) =>
+                      new CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                      new Icon(Icons.error_outlined, size: 100),
+                    ),
+                  )),
+            ),
           ),
         ],
       )
