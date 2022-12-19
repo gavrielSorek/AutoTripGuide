@@ -205,25 +205,25 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
     this._storyItemIdSubscription =
         widget.controller.wantedStoryItemIdNotifier.listen((value) {
       bool isItemInTheList = false;
+      // position of requested story item
+      int pos = 0;
       StoryItem? storyItem;
       for (int i = 0; i < widget.storyItems.length; i++) {
         storyItem = widget.storyItems[i];
         if (storyItem != null &&
             storyItem.id != null &&
             storyItem.id! == value) {
+          pos = i;
           isItemInTheList = true;
           break;
         }
       }
       if (isItemInTheList) {
-        while (this._currentStory != widget.storyItems.first) {
-          _goBack();
-        }
-        while (this._currentStory?.id != value ||
-            this._currentStory == null ||
-            this._currentStory?.id == null) {
-          _goForward();
-        }
+        int currentPos = widget.storyItems.indexOf(this._currentStory);
+        this._currentStory!.shown = false;
+        widget.storyItems.insert(currentPos, widget.storyItems[pos]);
+        _beginPlay();
+        widget.storyItems.removeAt(pos + 1); // removes the duplicate story item
       }
     });
 

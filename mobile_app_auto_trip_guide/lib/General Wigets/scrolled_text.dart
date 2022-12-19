@@ -80,7 +80,7 @@ class ScrolledText {
                 ),
               ),
               Text(
-                text ?? '',
+                text ?? "",
                 style: TextStyle(
                     color: Color(0xff6C6F70),
                     fontFamily: 'Inter',
