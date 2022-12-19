@@ -21,10 +21,17 @@ class Guide {
 
   Guide(this.context, this.guideData) {
     storiesDialogBox = GuidDialogBox(onFinishedStories: onStoryFinished);
+
+    Stream stream = Globals.globalClickedPoiStream.stream;
+    stream.listen((mapPoi) {
+      mapPoiClicked(mapPoi);
+    });
     // StoriesDialogBox(key: UniqueKey());
   }
 
-  Future<void> handleMapPoi(MapPoi mapPoi) async {}
+  Future<void> mapPoiClicked(MapPoi mapPoi) async {
+    context.read<GuideBloc>().add(playPoiEvent(mapPoi: mapPoi));
+  }
 
   void setPoisInQueue(List<Poi> pois) {
     bool poisWereEmpty = _poisToPlay.isEmpty;

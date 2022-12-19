@@ -85,6 +85,7 @@ class AudioApp extends StatefulWidget {
 class _AudioAppState extends State<AudioApp> {
   Duration duration = Duration(seconds: 0);
   Duration position = Duration(seconds: 0);
+  Timer? _cancelablePlay;
 
   List<Icon> icons = [
     Icon(Icons.play_arrow),
@@ -269,25 +270,28 @@ class _AudioAppState extends State<AudioApp> {
   }
 
   Future play({bool playWithProgressBar = true}) async {
-    _playWithProgressBar = playWithProgressBar;
-    // TODO MOVE THIS SECTION
-    await widget.flutterTts.setSpeechRate(speechRate);
-    await widget.flutterTts.setPitch(pitch);
-    await widget.flutterTts.setLanguage(widget.languageCode);
+    _cancelablePlay?.cancel();
+    _cancelablePlay = Timer(Duration(seconds: 0), () async {
+      _playWithProgressBar = playWithProgressBar;
+      // TODO MOVE THIS SECTION
+      await widget.flutterTts.setSpeechRate(speechRate);
+      await widget.flutterTts.setPitch(pitch);
+      await widget.flutterTts.setLanguage(widget.languageCode);
 
-    if (isPaused) {
-      if (widget.onResume != null) {
-        widget.onResume();
-      }
+      if (isPaused) {
+        if (widget.onResume != null) {
+          widget.onResume();
+        }
 
-      await widget.audioPlayer.resume();
-    } else {
-      String urlPath = await convertTextToAudioFile(widget.text);
-      await widget.audioPlayer.play(UrlSource(urlPath));
-      if (widget.onStartPlaying != null) {
-        widget.onStartPlaying(duration);
+        await widget.audioPlayer.resume();
+      } else {
+        String urlPath = await convertTextToAudioFile(widget.text);
+        await widget.audioPlayer.play(UrlSource(urlPath));
+        if (widget.onStartPlaying != null) {
+          widget.onStartPlaying(duration);
+        }
       }
-    }
+    });
   }
 
   Future pause() async {

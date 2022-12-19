@@ -151,7 +151,7 @@ class MapPoi {
   MutableMapIconButton? iconButton;
 
   MapPoi(this.poi) {
-    iconButton = MutableMapIconButton(()=>{print("!!!!!!!!!!!")});
+    iconButton = MutableMapIconButton(()=>{Globals.globalClickedPoiStream.add(this)});
     marker = getMarkerFromPoi(poi, iconButton!);
   }
 }

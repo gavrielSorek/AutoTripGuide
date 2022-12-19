@@ -16,6 +16,8 @@ class StoryController {
   final durationNotifier = BehaviorSubject<Duration>();
   /// Stream that broadcasts the wanted duration with beginning and end.
   final progressNotifier = BehaviorSubject<double>();
+  /// Stream that broadcasts the wanted id of wanted story
+  final wantedStoryItemIdNotifier = BehaviorSubject<String>();
 
   /// Notify listeners with a [PlaybackState.pause] state
   void pause() {
@@ -46,5 +48,12 @@ class StoryController {
   /// the notifier stream.
   void dispose() {
     playbackNotifier.close();
+    durationNotifier.close();
+    progressNotifier.close();
+    wantedStoryItemIdNotifier.close();
+  }
+
+  void setStoryViewToStoryItemById(String id) {
+    wantedStoryItemIdNotifier.add(id);
   }
 }

@@ -108,6 +108,7 @@ class _StoriesDialogBoxState extends State<StoriesDialogBox> {
     final List<StoryItem> storyItems = [];
     widget._poisToPlay.forEach((key, mapPoi) {
       storyItems.add(ScrolledText.textStory(
+        id: mapPoi.poi.id,
           title: mapPoi.poi.poiName ?? 'No Name',
           text: mapPoi.poi.shortDesc,
           backgroundColor: Colors.white,

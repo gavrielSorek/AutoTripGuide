@@ -31,6 +31,7 @@ class Globals {
   static var globalColor = Color.fromRGBO(51, 153, 255, 0.8);
   static StreamController<VisitedPoi> globalVisitedPoiStream = StreamController<VisitedPoi>.broadcast();
   static final globalAudioApp = AudioApp();
+  static StreamController<MapPoi> globalClickedPoiStream = StreamController<MapPoi>.broadcast();
 
 
 

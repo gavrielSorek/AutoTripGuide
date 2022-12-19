@@ -51,6 +51,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       final List<StoryItem> storyItems = [];
       event.poisToPlay.forEach((key, mapPoi) {
         storyItems.add(ScrolledText.textStory(
+            id: mapPoi.poi.id,
             title: mapPoi.poi.poiName ?? 'No Name',
             text: mapPoi.poi.shortDesc,
             backgroundColor: Colors.white,
@@ -68,7 +69,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           event.onFinishedFunc();
         },
         storyItems:
-            storyItems, // To disable vertical swipe gestures, ignore this parameter.
+        storyItems,
+        // To disable vertical swipe gestures, ignore this parameter.
         onStoryTap: event.onStoryTap,
         onVerticalSwipeComplete: event.onVerticalSwipeComplete,
       );
@@ -80,7 +82,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         Globals.globalAudioApp.clearPlayer();
         state.controller.setProgressValue(0);
         String poiId =
-        event.storyItem.view.key.toString().replaceAll(RegExp(r"<|>|\[|\]|'"), '');
+        event.storyItem.view.key.toString().replaceAll(
+            RegExp(r"<|>|\[|\]|'"), '');
         MapPoi currentPoi = Globals.globalAllPois[poiId]!;
         Globals.globalAudioApp.setText(
             currentPoi!.poi.shortDesc!, currentPoi!.poi.language ?? 'en');
@@ -94,20 +97,32 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         emit(ShowStoriesState(
             currentPoi: currentPoi,
             storyView: state.storyView,
-        controller: state.controller));
+            controller: state.controller));
       }
     });
 
     on<ShowFullPoiInfoEvent>((event, emit) {
       if (state is ShowStoriesState) {
         final state = this.state as ShowStoriesState;
-        emit(ShowPoiState(savedStoriesState: state, currentPoi: state.currentPoi!));
+        emit(ShowPoiState(
+            savedStoriesState: state, currentPoi: state.currentPoi!));
       }
     });
 
     on<SetLoadedStoriesEvent>((event, emit) {
-      emit(ShowStoriesState( storyView: event.storyView,
+      emit(ShowStoriesState(storyView: event.storyView,
           controller: event.controller));
+    });
+
+    on<playPoiEvent>((event, emit) {
+      if (state is ShowStoriesState) {
+        final state = this.state as ShowStoriesState;
+        Globals.globalAudioApp.stopAudio();
+        Globals.globalUserMap.highlightPoi(event.mapPoi);
+        state.controller.setStoryViewToStoryItemById(event.mapPoi.poi.id);
+        emit(ShowStoriesState(storyView: state.storyView,
+            controller: state.controller));
+      }
     });
   }
 }

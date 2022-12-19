@@ -11,6 +11,7 @@ class ScrolledText {
   /// Works for inline and full-page stories. See [StoryView.inline] for more on
   /// what inline/full-page means.
   static StoryItem textStory({
+    required String id,
     required String title,
     text,
     required Color backgroundColor,
@@ -32,6 +33,7 @@ class ScrolledText {
     ] /** white text */);
 
     return StoryItem(
+      id:id,
       Container(
         key: key,
         decoration: BoxDecoration(

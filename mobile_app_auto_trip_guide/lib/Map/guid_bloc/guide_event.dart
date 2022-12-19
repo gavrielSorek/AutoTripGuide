@@ -19,6 +19,11 @@ class SetCurrentPoiEvent extends GuideEvent{
   SetCurrentPoiEvent({required this.storyItem}) {}
 }
 
+class playPoiEvent extends GuideEvent{
+  MapPoi mapPoi;
+  playPoiEvent({required this.mapPoi}) {}
+}
+
 
 class ShowFullPoiInfoEvent extends GuideEvent{
   ShowFullPoiInfoEvent() {}
@@ -29,5 +34,7 @@ class SetLoadedStoriesEvent extends GuideEvent{
   final StoryController controller;
   SetLoadedStoriesEvent({required this.storyView, required this.controller}) {}
 }
+
+
 
 

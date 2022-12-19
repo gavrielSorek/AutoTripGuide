@@ -4,6 +4,7 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:final_project/Map/types.dart';
 import 'story_controller.dart';
 import 'package:flutter/material.dart';
 import 'utils.dart';
@@ -34,8 +35,11 @@ class StoryItem {
   /// The page content
   final Widget view;
 
+  final String? id;
+
   StoryItem(
     this.view, {
+    this.id,
     required this.duration,
     this.shown = false,
   });
@@ -166,6 +170,7 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
   Timer? _nextDebouncer;
 
   StreamSubscription<PlaybackState>? _playbackSubscription;
+  StreamSubscription<String>? _storyItemIdSubscription;
 
   VerticalDragInfo? verticalDragInfo;
 
@@ -196,6 +201,31 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
         it!.shown = false;
       });
     }
+
+    this._storyItemIdSubscription =
+        widget.controller.wantedStoryItemIdNotifier.listen((value) {
+      bool isItemInTheList = false;
+      StoryItem? storyItem;
+      for (int i = 0; i < widget.storyItems.length; i++) {
+        storyItem = widget.storyItems[i];
+        if (storyItem != null &&
+            storyItem.id != null &&
+            storyItem.id! == value) {
+          isItemInTheList = true;
+          break;
+        }
+      }
+      if (isItemInTheList) {
+        while (this._currentStory != widget.storyItems.first) {
+          _goBack();
+        }
+        while (this._currentStory?.id != value ||
+            this._currentStory == null ||
+            this._currentStory?.id == null) {
+          _goForward();
+        }
+      }
+    });
 
     this._playbackSubscription =
         widget.controller.playbackNotifier.listen((playbackStatus) {
@@ -230,6 +260,7 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
 
     _animationController?.dispose();
     _playbackSubscription?.cancel();
+    _storyItemIdSubscription?.cancel();
 
     super.dispose();
   }
