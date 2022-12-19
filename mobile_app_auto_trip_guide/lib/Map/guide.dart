@@ -171,94 +171,98 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   }
 
   Widget buildStoriesWidget(state) {
-    return Dialog(
-        insetPadding: const EdgeInsets.all(Constants.edgesDist),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(Constants.padding),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        child: Column(children: [
-          Spacer(),
-          Stack(
-            children: <Widget>[
-              Container(
-                  alignment: Alignment.bottomCenter,
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height / 2.5,
-                  padding: const EdgeInsets.only(
-                      left: Constants.padding,
-                      top: Constants.avatarRadius + Constants.padding,
-                      right: Constants.padding,
-                      bottom: Constants.padding),
-                  margin: const EdgeInsets.only(top: Constants.avatarRadius),
-                  decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      color: Colors.white,
-                      // borderRadius: BorderRadius.circular(Constants.padding),
-                      // boxShadow: const [
-                      //   BoxShadow(
-                      //       color: Colors.black,
-                      //       offset: Offset(0, 5),
-                      //       blurRadius: 10),
-                      // ]
-                       borderRadius: BorderRadius.circular(34),
-                boxShadow : [BoxShadow( color: Color.fromRGBO(0, 0, 0, 0.25),offset: Offset(0,0),blurRadius: 20 )],
-                      ),
-                  child: Column(
-                    children: [
-                      Expanded(child: state.storyView),
-                      Container(child: Globals.globalAudioApp, height: 56),
-                      Container(
-                        child:
-                        UniformButtons.getPreferenceButton(onPressed: () {
-                          Navigator.pushNamed(
-                              context, '/favorite-categories-screen');
-                        }),
-                      )
-                    ],
-                  )),
-              Positioned(
-                left: Constants.padding,
-                right: Constants.padding,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onVerticalDragUpdate: (details) {
-                          int sensitivity = 8;
-                          if (details.delta.dy < -sensitivity) {
-                            // Up Swipe
-                            context
-                                .read<GuideBloc>()
-                                .add(ShowFullPoiInfoEvent());
-                            }},
-                        child: CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            radius: Constants.avatarRadius,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(Constants.avatarRadius)),
-                              child: CachedNetworkImage(
-                                imageUrl: state.currentPoi?.poi.pic ?? "",
-                                placeholder: (context, url) =>
-                                new CircularProgressIndicator(),
-                                errorWidget: (context, url, error) =>
-                                new Icon(Icons.error_outlined, size: 100),
-                              ),
-                            )),
-                      ),
+    return Column(
+      children: [
+        Spacer(),
+        Dialog(
+            insetPadding: const EdgeInsets.all(Constants.edgesDist),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(Constants.padding),
+            ),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            child: Column(children: [
+              Stack(
+                children: <Widget>[
+                  Container(
+                      alignment: Alignment.bottomCenter,
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height / 2.5,
+                      padding: const EdgeInsets.only(
+                          left: Constants.padding,
+                          top: Constants.avatarRadius + Constants.padding,
+                          right: Constants.padding,
+                          bottom: Constants.padding),
+                      margin: const EdgeInsets.only(top: Constants.avatarRadius),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          color: Colors.white,
+                          // borderRadius: BorderRadius.circular(Constants.padding),
+                          // boxShadow: const [
+                          //   BoxShadow(
+                          //       color: Colors.black,
+                          //       offset: Offset(0, 5),
+                          //       blurRadius: 10),
+                          // ]
+                           borderRadius: BorderRadius.circular(34),
+                    boxShadow : [BoxShadow( color: Color.fromRGBO(0, 0, 0, 0.25),offset: Offset(0,0),blurRadius: 20 )],
+                          ),
+                      child: Column(
+                        children: [
+                          Expanded(child: state.storyView),
+                          Container(child: Globals.globalAudioApp, height: 56),
+                          Container(
+                            child:
+                            UniformButtons.getPreferenceButton(onPressed: () {
+                              Navigator.pushNamed(
+                                  context, '/favorite-categories-screen');
+                            }),
+                          )
+                        ],
+                      )),
+                  Positioned(
+                    left: Constants.padding,
+                    right: Constants.padding,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onVerticalDragUpdate: (details) {
+                              int sensitivity = 8;
+                              if (details.delta.dy < -sensitivity) {
+                                // Up Swipe
+                                context
+                                    .read<GuideBloc>()
+                                    .add(ShowFullPoiInfoEvent());
+                                }},
+                            child: CircleAvatar(
+                                backgroundColor: Colors.transparent,
+                                radius: Constants.avatarRadius,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(Constants.avatarRadius)),
+                                  child: CachedNetworkImage(
+                                    imageUrl: state.currentPoi?.poi.pic ?? "",
+                                    placeholder: (context, url) =>
+                                    new CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                    new Icon(Icons.error_outlined, size: 100),
+                                  ),
+                                )),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ],
-          )
-        ]));
+                  ),
+                ],
+              )
+            ])),
+      ],
+    );
   }
 
   Widget buildFullPoiInfo(state) {

@@ -286,7 +286,6 @@ class _UserMapState extends State<UserMap> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const SizedBox(height: 5),
                     Expanded(child: guideTool.storiesDialogBox)
                     // guideTool.guideDialogBox,
                   ],
