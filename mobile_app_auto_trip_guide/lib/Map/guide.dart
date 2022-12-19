@@ -138,9 +138,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                 color : Color.fromRGBO(255, 255, 255, 0.75),
                 ),
                   child: Column(
-                    children: [       
-                      Padding(padding: EdgeInsets.only(left: 11,top: 16),child:    
-                      Align(alignment:Alignment.centerLeft , child:        
+                    children: [
+                      Padding(padding: EdgeInsets.only(left: 11,top: 16),child:
+                      Align(alignment:Alignment.centerLeft , child:
                       Text(
                         "Scanning...",
                         style: TextStyle(
@@ -153,10 +153,10 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                           height: 28/22,
                         ),
                       ))),
-                      
+
                       Padding(
                         padding: EdgeInsets.only(left: 11,right: 11,top: 16),
-                        child: 
+                        child:
                         Text(
                           "Auto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
                           style: TextStyle(
@@ -273,6 +273,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   }
 
   Widget buildFullPoiInfo(state) {
+    double bottomIconSize = 20;
     final showPoiState = state as ShowPoiState;
     return Column(children: [
       Spacer(),
@@ -353,6 +354,74 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                               ),
                             ),
                           ))),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // ElevatedButton(
+                        //     onPressed: () {},
+                        //     child: null,
+                        //     style: ButtonStyle(
+                        //         foregroundColor: MaterialStateProperty.all<Color>(
+                        //             Colors.white),
+                        //         backgroundColor:
+                        //             MaterialStateProperty.all<Color>(Colors.blueAccent),
+                        //         shape: MaterialStateProperty.all<
+                        //                 RoundedRectangleBorder>(
+                        //             RoundedRectangleBorder(
+                        //                 borderRadius: BorderRadius.circular(18.0),
+                        //                 side: BorderSide(color: Colors.blueAccent)))))
+                        RawMaterialButton(
+                          onPressed: () {
+                            Globals.globalAppLauncher.launchWaze(
+                                showPoiState.currentPoi.poi.latitude,
+                                showPoiState.currentPoi.poi.longitude);
+                          },
+                          elevation: 2.0,
+                          fillColor: Colors.blue,
+                          child: Icon(
+                            Icons.directions,
+                            size: bottomIconSize,
+                          ),
+                          padding: EdgeInsets.all(15.0),
+                          shape: CircleBorder(),
+                        ),
+                        RawMaterialButton(
+                          onPressed: () {},
+                          elevation: 2.0,
+                          fillColor: Colors.red,
+                          child: Icon(
+                            Icons.thumb_down,
+                            size: bottomIconSize,
+                          ),
+                          padding: EdgeInsets.all(15.0),
+                          shape: CircleBorder(),
+                        ),
+                        RawMaterialButton(
+                          onPressed: () {},
+                          elevation: 2.0,
+                          fillColor: Colors.green,
+                          child: Icon(
+                            Icons.thumb_up,
+                            size: bottomIconSize,
+                          ),
+                          padding: EdgeInsets.all(15.0),
+                          shape: CircleBorder(),
+                        ),
+                        RawMaterialButton(
+                          onPressed: () {},
+                          elevation: 2.0,
+                          fillColor: Colors.blue,
+                          child: Icon(
+                            Icons.share,
+                            size: bottomIconSize,
+                          ),
+                          padding: EdgeInsets.all(15.0),
+                          shape: CircleBorder(),
+                        )
+                      ],
+                    ),
+                  ),
                   Container(
                     child: UniformButtons.getPreferenceButton(onPressed: () {
                       Navigator.pushNamed(
