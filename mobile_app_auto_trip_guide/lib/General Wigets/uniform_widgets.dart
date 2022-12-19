@@ -8,10 +8,12 @@ class UniformButtons {
       onPressed: onPressed,
       child: Text('Preferences',
         style: TextStyle(
-          fontFamily: 'Arial',
-          fontSize: 17,
-          color: Colors.blue,
-          height: 1,
+        fontFamily: 'Inter',
+        fontSize: 18,
+        letterSpacing: 0,
+        fontWeight: FontWeight.bold,
+        height: 1.33,
+        color: Color(0xff0A84FF),
         ),
       ),
       style: OutlinedButton.styleFrom(
