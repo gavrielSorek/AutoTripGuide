@@ -35,7 +35,7 @@ class ScrolledText {
       Container(
         key: key,
         decoration: BoxDecoration(
-          color: backgroundColor,
+          color: Colors.grey, //TODO change to backgroundColor,
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(roundedTop ? 8 : 0),
             bottom: Radius.circular(roundedBottom ? 8 : 0),
@@ -53,11 +53,20 @@ class ScrolledText {
                 fit: BoxFit.scaleDown,
                 child: Row(
                   children: [
+                  Padding(
+                        padding: EdgeInsets.only(left: 0,right: 11,top: 16),
+                        child: 
                     Text(title,
                         style: TextStyle(
+
                           color: Colors.black,
-                          fontSize: 20,
-                        )),
+                          fontFamily: 'Inter',
+                          fontSize: 22,
+                          letterSpacing: 0.3499999940395355,
+                          fontWeight: FontWeight.normal,
+                          height: 1.2727272727272727
+                        ),
+                        textAlign: TextAlign.left,)),
                     IconButton(
                       onPressed: () {
                         print("Press to see full poi info");
@@ -73,14 +82,15 @@ class ScrolledText {
               ),
               Text(
                 text,
-                style: textStyle?.copyWith(
-                      color: contrast > 1.8 ? Colors.white : Colors.black,
-                    ) ??
-                    TextStyle(
-                      color: contrast > 1.8 ? Colors.white : Colors.black,
-                      fontSize: 18,
-                    ),
-                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xff6C6F70),
+                  fontFamily: 'Inter',
+                  fontSize: 16,
+                  letterSpacing: 0,
+                  fontWeight: FontWeight.normal,
+                  height: 1.5
+                ),
+                textAlign: TextAlign.left,
               )
             ]),
           ),

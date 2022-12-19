@@ -122,36 +122,48 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
             Stack(children: <Widget>[
               Container(
                 alignment: Alignment.topLeft,
-                height: 200,
+                height: 239,
+                width: 355,
+
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24.0),
-                  color: Colors.white.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(34),
+                boxShadow : [BoxShadow( color: Color.fromRGBO(0, 0, 0, 0.25),offset: Offset(0,0),blurRadius: 20 )],
+                color : Color.fromRGBO(255, 255, 255, 0.75),
                 ),
-                child: Center(
                   child: Column(
-                    children: [
+                    children: [       
+                      Padding(padding: EdgeInsets.only(left: 11,top: 16),child:    
+                      Align(alignment:Alignment.centerLeft , child:        
                       Text(
-                        "Scanning...\n",
+                        "Scanning...",
                         style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 30,
-                          color: Colors.purple,
-                          height: 1,
-                        ),
-                      ),
-                      Text(
-                        "Auto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 23,
+                          fontFamily: 'Inter',
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 22,
+                          letterSpacing: 0.35,
                           color: Colors.black,
-                          height: 1,
+                          height: 28/22,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
+                      ))),
+                      
+                      Padding(
+                        padding: EdgeInsets.only(left: 11,right: 11,top: 16),
+                        child: 
+                        Text(
+                          "Auto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
+                            letterSpacing: 0,
+                            color: Color(0xff6C6F70),
+                            height: 1.5,
+                          ),
+                        )),
                     ],
                   ),
-                ),
               ),
             ]),
           ],
@@ -185,13 +197,16 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                   decoration: BoxDecoration(
                       shape: BoxShape.rectangle,
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(Constants.padding),
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.black,
-                            offset: Offset(0, 5),
-                            blurRadius: 10),
-                      ]),
+                      // borderRadius: BorderRadius.circular(Constants.padding),
+                      // boxShadow: const [
+                      //   BoxShadow(
+                      //       color: Colors.black,
+                      //       offset: Offset(0, 5),
+                      //       blurRadius: 10),
+                      // ]
+                       borderRadius: BorderRadius.circular(34),
+                boxShadow : [BoxShadow( color: Color.fromRGBO(0, 0, 0, 0.25),offset: Offset(0,0),blurRadius: 20 )],
+                      ),
                   child: Column(
                     children: [
                       Expanded(child: state.storyView),
@@ -382,6 +397,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         } else if (state is ShowPoiState) {
           return buildFullPoiInfo(state);
         } else {
+        // } else {
           return buildSearchingWidget();
         }
       },

@@ -110,7 +110,7 @@ class _StoriesDialogBoxState extends State<StoriesDialogBox> {
       storyItems.add(ScrolledText.textStory(
           title: mapPoi.poi.poiName ?? 'No Name',
           text: mapPoi.poi.shortDesc,
-          backgroundColor: Colors.blueGrey.shade200,
+          backgroundColor: Colors.white,
           key: Key(mapPoi.poi.id),
           // duration: Duration(seconds: double.infinity.toInt()))); // infinite
           duration: Duration(hours: 100))); // infinite
