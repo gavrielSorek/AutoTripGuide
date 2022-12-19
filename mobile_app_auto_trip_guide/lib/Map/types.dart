@@ -192,7 +192,7 @@ class MutableMapIconButton extends StatefulWidget {
 }
 
 class _MutableMapIconButton extends State<StatefulWidget> {
-  Color _iconColor = Colors.purple;
+  Color _iconColor = Color(0xffB0B0B0);
   double _iconSize = 45.0;
   dynamic onPressedFunc;
   _MutableMapIconButton(this.onPressedFunc);
@@ -215,7 +215,7 @@ class _MutableMapIconButton extends State<StatefulWidget> {
   @override
   Widget build(BuildContext) {
     return IconButton(
-      icon: const Icon(Icons.location_on_outlined),
+      icon: const Icon(Icons.location_on_rounded),
       iconSize: _iconSize,
       color: _iconColor,
       onPressed: onPressedFunc,
