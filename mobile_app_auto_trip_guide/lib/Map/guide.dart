@@ -73,7 +73,7 @@ class Guide {
 class GuidDialogBox extends StatefulWidget {
   final dynamic onFinishedStories;
   final StreamController<Map<String, MapPoi>> queuedPoisToPlayController =
-  StreamController<HashMap<String, MapPoi>>.broadcast();
+      StreamController<HashMap<String, MapPoi>>.broadcast();
 
   GuidDialogBox({required this.onFinishedStories}) {
     print(queuedPoisToPlayController);
@@ -101,17 +101,17 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
     queuedPoisListStream = queuedPoisToPlayController.stream;
     queuedPoisListStream.listen((event) {
       context.read<GuideBloc>().add(
-        SetStoriesListEvent(
-            poisToPlay: event,
-            onShowStory: onShowStory,
-            onFinishedFunc: widget.onFinishedStories,
-            onStoryTap: (story) {
-              context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-            },
-            onVerticalSwipeComplete: (Direction? d) {
-              context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-            }),
-      );
+            SetStoriesListEvent(
+                poisToPlay: event,
+                onShowStory: onShowStory,
+                onFinishedFunc: widget.onFinishedStories,
+                onStoryTap: (story) {
+                  context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+                },
+                onVerticalSwipeComplete: (Direction? d) {
+                  context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+                }),
+          );
     });
   }
 
@@ -130,34 +130,38 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
               Container(
                 alignment: Alignment.topLeft,
                 height: 239,
-                width: 355,
-
+                width: MediaQuery.of(context).size.width - 30,
                 decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(34),
-                boxShadow : [BoxShadow( color: Color.fromRGBO(0, 0, 0, 0.25),offset: Offset(0,0),blurRadius: 20 )],
-                color : Color.fromRGBO(255, 255, 255, 0.75),
+                  borderRadius: BorderRadius.circular(34),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Color.fromRGBO(0, 0, 0, 0.25),
+                        offset: Offset(0, 0),
+                        blurRadius: 20)
+                  ],
+                  color: Color.fromRGBO(255, 255, 255, 0.75),
                 ),
-                  child: Column(
-                    children: [       
-                      Padding(padding: EdgeInsets.only(left: 11,top: 16),child:    
-                      Align(alignment:Alignment.centerLeft , child:        
-                      Text(
-                        "Scanning...",
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontStyle: FontStyle.normal,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 22,
-                          letterSpacing: 0.35,
-                          color: Colors.black,
-                          height: 28/22,
-                        ),
-                      ))),
-                      
-                      Padding(
-                        padding: EdgeInsets.only(left: 11,right: 11,top: 16),
-                        child: 
-                        Text(
+                child: Column(
+                  children: [
+                    Padding(
+                        padding: EdgeInsets.only(left: 11, top: 16),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Scanning...",
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 22,
+                                letterSpacing: 0.35,
+                                color: Colors.black,
+                                height: 28 / 22,
+                              ),
+                            ))),
+                    Padding(
+                        padding: EdgeInsets.only(left: 11, right: 11, top: 16),
+                        child: Text(
                           "Auto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
                           style: TextStyle(
                             fontFamily: 'Inter',
@@ -169,8 +173,8 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                             height: 1.5,
                           ),
                         )),
-                    ],
-                  ),
+                  ],
+                ),
               ),
             ]),
           ],
@@ -193,36 +197,44 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                 children: <Widget>[
                   Container(
                       alignment: Alignment.bottomCenter,
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .height / 2.5,
+                      height: MediaQuery.of(context).size.height / 2.2,
+                      width: MediaQuery.of(context).size.width -30,
                       padding: const EdgeInsets.only(
                           left: Constants.padding,
                           top: Constants.avatarRadius + Constants.padding,
                           right: Constants.padding,
                           bottom: Constants.padding),
-                      margin: const EdgeInsets.only(top: Constants.avatarRadius),
+                      margin:
+                          const EdgeInsets.only(top: Constants.avatarRadius),
                       decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          color: Colors.white,
-                          // borderRadius: BorderRadius.circular(Constants.padding),
-                          // boxShadow: const [
-                          //   BoxShadow(
-                          //       color: Colors.black,
-                          //       offset: Offset(0, 5),
-                          //       blurRadius: 10),
-                          // ]
-                           borderRadius: BorderRadius.circular(34),
-                    boxShadow : [BoxShadow( color: Color.fromRGBO(0, 0, 0, 0.25),offset: Offset(0,0),blurRadius: 20 )],
-                          ),
+                        shape: BoxShape.rectangle,
+                        color: Colors.white,
+                        // borderRadius: BorderRadius.circular(Constants.padding),
+                        // boxShadow: const [
+                        //   BoxShadow(
+                        //       color: Colors.black,
+                        //       offset: Offset(0, 5),
+                        //       blurRadius: 10),
+                        // ]
+                        borderRadius: BorderRadius.circular(34),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Color.fromRGBO(0, 0, 0, 0.25),
+                              offset: Offset(0, 0),
+                              blurRadius: 20)
+                        ],
+                      ),
                       child: Column(
                         children: [
+                          Padding(padding: EdgeInsets.only(top: 15),),
                           Expanded(child: state.storyView),
-                          Container(child: Globals.globalAudioApp, height: 56),
+                          Padding(
+                              padding: EdgeInsets.only(top: 15),
+                              child: Container(
+                                  child: Globals.globalAudioApp, height: 56)),
                           Container(
-                            child:
-                            UniformButtons.getPreferenceButton(onPressed: () {
+                            child: UniformButtons.getPreferenceButton(
+                                onPressed: () {
                               Navigator.pushNamed(
                                   context, '/favorite-categories-screen');
                             }),
@@ -245,7 +257,8 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                                 context
                                     .read<GuideBloc>()
                                     .add(ShowFullPoiInfoEvent());
-                                }},
+                              }
+                            },
                             child: CircleAvatar(
                                 backgroundColor: Colors.transparent,
                                 radius: Constants.avatarRadius,
@@ -255,9 +268,10 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                                   child: CachedNetworkImage(
                                     imageUrl: state.currentPoi?.poi.pic ?? "",
                                     placeholder: (context, url) =>
-                                    new CircularProgressIndicator(),
+                                        new CircularProgressIndicator(),
                                     errorWidget: (context, url, error) =>
-                                    new Icon(Icons.error_outlined, size: 100),
+                                        new Icon(Icons.error_outlined,
+                                            size: 100),
                                   ),
                                 )),
                           ),
@@ -280,10 +294,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         children: <Widget>[
           Container(
               alignment: Alignment.bottomCenter,
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height / 1.45,
+              height: MediaQuery.of(context).size.height / 1.45,
               padding: const EdgeInsets.only(
                   left: Constants.padding,
                   top: Constants.avatarRadius + Constants.padding,
@@ -307,10 +318,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                       Container(
                         // margin: EdgeInsets.only(
                         //     right: MediaQuery.of(context).size.width / 30),
-                        width: MediaQuery
-                            .of(context)
-                            .size
-                            .width / 10,
+                        width: MediaQuery.of(context).size.width / 10,
                         child: FloatingActionButton(
                           backgroundColor: Globals.globalColor,
                           heroTag: null,
@@ -318,10 +326,10 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                             context.read<GuideBloc>().add(SetLoadedStoriesEvent(
                                 storyView: state.savedStoriesState.storyView,
                                 controller:
-                                state.savedStoriesState.controller));
+                                    state.savedStoriesState.controller));
                           },
                           child:
-                          const Icon(Icons.arrow_back, color: Colors.white),
+                              const Icon(Icons.arrow_back, color: Colors.white),
                         ),
                       ),
                     ],
@@ -385,9 +393,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                     child: CachedNetworkImage(
                       imageUrl: showPoiState.currentPoi?.poi.pic ?? "",
                       placeholder: (context, url) =>
-                      new CircularProgressIndicator(),
+                          new CircularProgressIndicator(),
                       errorWidget: (context, url, error) =>
-                      new Icon(Icons.error_outlined, size: 100),
+                          new Icon(Icons.error_outlined, size: 100),
                     ),
                   )),
             ),
@@ -408,7 +416,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         } else if (state is ShowPoiState) {
           return buildFullPoiInfo(state);
         } else {
-        // } else {
+          // } else {
           return buildSearchingWidget();
         }
       },

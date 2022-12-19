@@ -98,7 +98,7 @@ class _AudioAppState extends State<AudioApp> {
   double speechRate = 0.4;
   double pitch = 1;
 
-  Color playButtonColor = Colors.grey;
+  Color playButtonColor = Colors.white;
   bool isPlayerButtonDisabled = false;
   bool _playWithProgressBar = false;
   PlayerState playerState = PlayerState.stopped;
@@ -317,7 +317,7 @@ class _AudioAppState extends State<AudioApp> {
 
   void disablePlayerButton() {
     isPlayerButtonDisabled = true;
-    setPlayButtonColor(Colors.grey);
+    setPlayButtonColor(Colors.white);
   }
 
   @override
@@ -338,44 +338,102 @@ class _AudioAppState extends State<AudioApp> {
   Widget _buildPlayer() => Container(
         width: double.infinity,
         child: Row(mainAxisSize: MainAxisSize.min, children: [
-          IconButton(
-            onPressed: () {
-              if (widget.onPressPrev != null) {
-                widget.onPressPrev();
-              }
-              ;
-            },
-            icon: Icon(Icons.skip_previous),
-            iconSize: 40,
-          ),
           Spacer(),
-          IconButton(
-              onPressed: isPlayerButtonDisabled
-                  ? null
-                  : () {
-                      if (!isPlaying) {
-                        setState(() {
-                          play();
-                        });
-                      } else {
-                        setState(() {
-                          pause();
-                        });
-                      }
-                    },
-              icon: playPauseIcon,
-              iconSize: 40),
+          Container(
+              width: 47,
+              height: 47,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                      color: Color.fromRGBO(0, 0, 0, 0.25),
+                      offset: Offset(0, 2),
+                      blurRadius: 10)
+                ],
+                color: Color(0xff0A84FF),
+              ),
+              child: IconButton(
+                onPressed: () {
+                  if (widget.onPressPrev != null) {
+                    widget.onPressPrev();
+                  }
+                  ;
+                },
+                icon: Icon(Icons.keyboard_double_arrow_left_outlined ),
+                color: Colors.white,
+                iconSize: 35,
+              )),
           Spacer(),
-          IconButton(
-            onPressed: () {
-              if (widget.onPressNext != null) {
-                widget.onPressNext();
-              }
-              ;
-            },
-            icon: Icon(Icons.skip_next),
-            iconSize: 40,
-          ),
+          Container(
+              width: 117,
+              height: 47,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                      color: Color.fromRGBO(0, 0, 0, 0.25),
+                      offset: Offset(0, 2),
+                      blurRadius: 10)
+                ],
+                color: Color(0xff0A84FF),
+              ),
+              child: IconButton(
+                  color: Colors.white,
+                  onPressed: isPlayerButtonDisabled
+                      ? null
+                      : () {
+                          if (!isPlaying) {
+                            setState(() {
+                              play();
+                            });
+                          } else {
+                            setState(() {
+                              pause();
+                            });
+                          }
+                        },
+                  icon: playPauseIcon,
+                  iconSize: 35)),
+          Spacer(),
+          Container(
+              width: 47,
+              height: 47,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                      color: Color.fromRGBO(0, 0, 0, 0.25),
+                      offset: Offset(0, 2),
+                      blurRadius: 10)
+                ],
+                color: Color(0xff0A84FF),
+              ),
+              child: IconButton(
+                onPressed: () {
+                  if (widget.onPressNext != null) {
+                    widget.onPressNext();
+                  }
+                  ;
+                },
+                icon: Icon(Icons.keyboard_double_arrow_right_rounded),
+                iconSize: 35,
+                color: Colors.white,
+              )),Spacer()
         ]),
       );
 }

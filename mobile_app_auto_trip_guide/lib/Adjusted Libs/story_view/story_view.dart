@@ -155,7 +155,7 @@ class StoryView extends StatefulWidget {
       this.repeat = false,
       this.inline = false,
       this.onVerticalSwipeComplete,
-      this.indicatorColor = Colors.white,
+      this.indicatorColor = Colors.blue,
       this.onStoryTap});
 
   @override
@@ -600,7 +600,7 @@ class StoryProgressIndicator extends StatelessWidget {
 
   StoryProgressIndicator(
     this.value, {
-    this.indicatorHeight = 5,
+    this.indicatorHeight = 10,
     this.indicatorColor = Colors.white,
   });
 

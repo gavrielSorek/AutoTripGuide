@@ -33,11 +33,11 @@ class ScrolledText {
     ] /** white text */);
 
     return StoryItem(
-      id:id,
+      id: id,
       Container(
         key: key,
         decoration: BoxDecoration(
-          color: Colors.grey, //TODO change to backgroundColor,
+          color: backgroundColor,
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(roundedTop ? 8 : 0),
             bottom: Radius.circular(roundedBottom ? 8 : 0),
@@ -51,24 +51,21 @@ class ScrolledText {
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(children: [
-              FittedBox(
-                fit: BoxFit.scaleDown,
+              Padding(
+                padding: EdgeInsets.only(left: 0, right: 0),
                 child: Row(
                   children: [
-                  Padding(
-                        padding: EdgeInsets.only(left: 0,right: 11,top: 16),
-                        child: 
-                    Text(title,
-                        style: TextStyle(
-
+                    Text(
+                      title,
+                      style: TextStyle(
                           color: Colors.black,
                           fontFamily: 'Inter',
                           fontSize: 22,
                           letterSpacing: 0.3499999940395355,
                           fontWeight: FontWeight.normal,
-                          height: 1.2727272727272727
-                        ),
-                        textAlign: TextAlign.left,)),
+                          height: 1.2727272727272727),
+                      textAlign: TextAlign.left,
+                    ),
                     IconButton(
                       onPressed: () {
                         print("Press to see full poi info");
@@ -83,15 +80,14 @@ class ScrolledText {
                 ),
               ),
               Text(
-                text,
+                text ?? '',
                 style: TextStyle(
-                  color: Color(0xff6C6F70),
-                  fontFamily: 'Inter',
-                  fontSize: 16,
-                  letterSpacing: 0,
-                  fontWeight: FontWeight.normal,
-                  height: 1.5
-                ),
+                    color: Color(0xff6C6F70),
+                    fontFamily: 'Inter',
+                    fontSize: 16,
+                    letterSpacing: 0,
+                    fontWeight: FontWeight.normal,
+                    height: 1.5),
                 textAlign: TextAlign.left,
               )
             ]),

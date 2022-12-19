@@ -26,7 +26,8 @@ class NavigationDrawer extends StatefulWidget {
           openDrawer(key);
         },
         icon: Icon(Icons.menu),
-        color: Colors.black);
+        iconSize: 38,
+        color: Color(0xff0A84FF));
   }
 
   @override
@@ -80,7 +81,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
           ListTile(
           tileColor: ModalRoute.of(context)?.settings.name == '/HomePage' ? chosenTileColor : null,
             leading: Icon(
-              Icons.map,
+              Icons.location_on_sharp,
             ),
             title: const Text('Map'),
             onTap: () {
@@ -106,7 +107,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
           ListTile(
             tileColor: ModalRoute.of(context)?.settings.name == '/favorite-categories-screen' ? chosenTileColor : null,
             leading: Icon(
-              Icons.room_preferences,
+              Icons.settings,
             ),
             title: const Text('Preferences'),
             onTap: () {

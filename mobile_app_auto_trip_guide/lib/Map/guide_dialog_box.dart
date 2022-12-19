@@ -15,7 +15,7 @@ class Constants {
   Constants._();
 
   static const double padding = 2;
-  static const double avatarRadius = 50;
+  static const double avatarRadius = 60;
   static const double edgesDist = 10;
 }
 
