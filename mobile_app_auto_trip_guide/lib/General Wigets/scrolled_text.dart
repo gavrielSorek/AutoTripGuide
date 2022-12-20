@@ -55,27 +55,32 @@ class ScrolledText {
                 padding: EdgeInsets.only(left: 0, right: 0),
                 child: Row(
                   children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'Inter',
-                          fontSize: 22,
-                          letterSpacing: 0.3499999940395355,
-                          fontWeight: FontWeight.normal,
-                          height: 1.2727272727272727),
-                      textAlign: TextAlign.left,
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        print("Press to see full poi info");
-                        // context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
-                      },
-                      icon: Icon(
-                        Icons.arrow_forward_ios_sharp,
-                        size: 15,
+                    Flexible(
+                      child: Container(
+                        child: Text(
+                          title,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Inter',
+                              fontSize: 22,
+                              letterSpacing: 0.3499999940395355,
+                              fontWeight: FontWeight.normal,
+                              height: 1.2727272727272727),
+                          textAlign: TextAlign.left,
+                        ),
                       ),
                     ),
+                    // IconButton(
+                    //   onPressed: () {
+                    //     print("Press to see full poi info");
+                    //     // context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
+                    //   },
+                    //   icon: Icon(
+                    //     Icons.arrow_forward_ios_sharp,
+                    //     size: 15,
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
