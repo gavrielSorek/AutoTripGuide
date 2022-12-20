@@ -329,6 +329,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         Stack(
           children: <Widget>[
             Container(
+
                 alignment: Alignment.bottomCenter,
                 height: MediaQuery.of(context).size.height / 1.55,
                 //TODO HANDLE ALL SIZES OF SCREENS
@@ -339,15 +340,23 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                     bottom: Constants.padding),
                 margin: const EdgeInsets.only(top: Constants.avatarRadius),
                 decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(Constants.padding),
-                    boxShadow: const [
-                      BoxShadow(
-                          color: Colors.black,
-                          offset: Offset(0, 5),
-                          blurRadius: 10),
-                    ]),
+                  shape: BoxShape.rectangle,
+                  color: Colors.white,
+                  // borderRadius: BorderRadius.circular(Constants.padding),
+                  // boxShadow: const [
+                  //   BoxShadow(
+                  //       color: Colors.black,
+                  //       offset: Offset(0, 5),
+                  //       blurRadius: 10),
+                  // ]
+                  borderRadius: BorderRadius.circular(34),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Color.fromRGBO(0, 0, 0, 0.25),
+                        offset: Offset(0, 0),
+                        blurRadius: 20)
+                  ],
+                ),
                 child: Column(
                   children: [
                     Container(
