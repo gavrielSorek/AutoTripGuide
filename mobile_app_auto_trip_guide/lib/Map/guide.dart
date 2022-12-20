@@ -298,7 +298,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         children: <Widget>[
           Container(
               alignment: Alignment.bottomCenter,
-              height: MediaQuery.of(context).size.height / 1.45,
+              height: MediaQuery.of(context).size.height / 1.5, //TODO HANDLE ALL SIZES OF SCREENS
               padding: const EdgeInsets.only(
                   left: Constants.padding,
                   top: Constants.avatarRadius + Constants.padding,
@@ -365,84 +365,75 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                               ),
                             ),
                           ))),
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // ElevatedButton(
-                        //     onPressed: () {},
-                        //     child: null,
-                        //     style: ButtonStyle(
-                        //         foregroundColor: MaterialStateProperty.all<Color>(
-                        //             Colors.white),
-                        //         backgroundColor:
-                        //             MaterialStateProperty.all<Color>(Colors.blueAccent),
-                        //         shape: MaterialStateProperty.all<
-                        //                 RoundedRectangleBorder>(
-                        //             RoundedRectangleBorder(
-                        //                 borderRadius: BorderRadius.circular(18.0),
-                        //                 side: BorderSide(color: Colors.blueAccent)))))
-                        RawMaterialButton(
-                          onPressed: () {
-                            Globals.globalAppLauncher.launchWaze(
-                                showPoiState.currentPoi.poi.latitude,
-                                showPoiState.currentPoi.poi.longitude);
-                          },
-                          elevation: 2.0,
-                          fillColor: Colors.blue,
-                          child: Icon(
-                            Icons.directions,
-                            size: bottomIconSize,
-                          ),
-                          padding: EdgeInsets.all(15.0),
-                          shape: CircleBorder(),
+                  Column(
+                    children: [
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            RawMaterialButton(
+                              onPressed: () {
+                                Globals.globalAppLauncher.launchWaze(
+                                    showPoiState.currentPoi.poi.latitude,
+                                    showPoiState.currentPoi.poi.longitude);
+                              },
+                              elevation: 2.0,
+                              fillColor: Colors.blue,
+                              child: Icon(
+                                Icons.directions,
+                                size: bottomIconSize,
+                              ),
+                              padding: EdgeInsets.all(15.0),
+                              shape: CircleBorder(),
+                            ),
+                            RawMaterialButton(
+                              onPressed: () {},
+                              elevation: 2.0,
+                              fillColor: Colors.red,
+                              child: Icon(
+                                Icons.thumb_down,
+                                size: bottomIconSize,
+                              ),
+                              padding: EdgeInsets.all(15.0),
+                              shape: CircleBorder(),
+                            ),
+                            RawMaterialButton(
+                              onPressed: () {},
+                              elevation: 2.0,
+                              fillColor: Colors.green,
+                              child: Icon(
+                                Icons.thumb_up,
+                                size: bottomIconSize,
+                              ),
+                              padding: EdgeInsets.all(15.0),
+                              shape: CircleBorder(),
+                            ),
+                            RawMaterialButton(
+                              onPressed: () {
+                                Share.share(
+                                    showPoiState.currentPoi.poi.shortDesc ?? "",
+                                    subject: showPoiState.currentPoi.poi.poiName);
+                              },
+                              elevation: 2.0,
+                              fillColor: Colors.blue,
+                              child: Icon(
+                                Icons.share,
+                                size: bottomIconSize,
+                              ),
+                              padding: EdgeInsets.all(15.0),
+                              shape: CircleBorder(),
+                            )
+                          ],
                         ),
-                        RawMaterialButton(
-                          onPressed: () {},
-                          elevation: 2.0,
-                          fillColor: Colors.red,
-                          child: Icon(
-                            Icons.thumb_down,
-                            size: bottomIconSize,
-                          ),
-                          padding: EdgeInsets.all(15.0),
-                          shape: CircleBorder(),
-                        ),
-                        RawMaterialButton(
-                          onPressed: () {},
-                          elevation: 2.0,
-                          fillColor: Colors.green,
-                          child: Icon(
-                            Icons.thumb_up,
-                            size: bottomIconSize,
-                          ),
-                          padding: EdgeInsets.all(15.0),
-                          shape: CircleBorder(),
-                        ),
-                        RawMaterialButton(
-                          onPressed: () {
-                            Share.share(
-                                showPoiState.currentPoi.poi.shortDesc ?? "",
-                                subject: showPoiState.currentPoi.poi.poiName);
-                          },
-                          elevation: 2.0,
-                          fillColor: Colors.blue,
-                          child: Icon(
-                            Icons.share,
-                            size: bottomIconSize,
-                          ),
-                          padding: EdgeInsets.all(15.0),
-                          shape: CircleBorder(),
-                        )
-                      ],
-                    ),
+                      ),
+                      Container(
+                        child: UniformButtons.getPreferenceButton(onPressed: () {
+                          Navigator.pushNamed(
+                              context, '/favorite-categories-screen');
+                        }),
+                      )
+                    ],
                   ),
-                  Container(
-                    child: UniformButtons.getPreferenceButton(onPressed: () {
-                      Navigator.pushNamed(
-                          context, '/favorite-categories-screen');
-                    }),
-                  )
                 ],
               )),
           Positioned(
