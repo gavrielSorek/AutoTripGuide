@@ -51,6 +51,7 @@ dependencies:
   get: ^4.6.1
   cached_network_image: ^3.2.3
   loading_animation_widget: ^1.2.0+3
+  share_plus: 6.3.0
 
 
 dev_dependencies:

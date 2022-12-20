@@ -10,6 +10,7 @@ import '../General Wigets/uniform_widgets.dart';
 import 'guid_bloc/guide_bloc.dart';
 import 'guide_dialog_box.dart';
 import 'globals.dart';
+import 'package:share_plus/share_plus.dart';
 
 class Guide {
   BuildContext context;
@@ -198,7 +199,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                   Container(
                       alignment: Alignment.bottomCenter,
                       height: MediaQuery.of(context).size.height / 2.2,
-                      width: MediaQuery.of(context).size.width -30,
+                      width: MediaQuery.of(context).size.width - 30,
                       padding: const EdgeInsets.only(
                           left: Constants.padding,
                           top: Constants.avatarRadius + Constants.padding,
@@ -226,7 +227,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                       ),
                       child: Column(
                         children: [
-                          Padding(padding: EdgeInsets.only(top: 15),),
+                          Padding(
+                            padding: EdgeInsets.only(top: 15),
+                          ),
                           Expanded(child: state.storyView),
                           Padding(
                               padding: EdgeInsets.only(top: 15),
@@ -417,7 +420,11 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                           shape: CircleBorder(),
                         ),
                         RawMaterialButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Share.share(
+                                showPoiState.currentPoi.poi.shortDesc ?? "",
+                                subject: showPoiState.currentPoi.poi.poiName);
+                          },
                           elevation: 2.0,
                           fillColor: Colors.blue,
                           child: Icon(
