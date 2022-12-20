@@ -18,6 +18,7 @@ class Constants {
   static const double avatarRadius = 60;
   static const double edgesDist = 10;
   static const double sidesMarginOfPic = 42;
+  static const double sidesMarginOfButtons = 10;
 }
 
 class Guide {
@@ -302,7 +303,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                   ),
                   Positioned(
                     top: Constants.avatarRadius,
-                    right: 10,
+                    right: Constants.sidesMarginOfButtons,
                     child: Container(
                         child: UniformButtons.getGuidePreferencesButton(
                             onPressed: () {})),
@@ -317,187 +318,200 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   Widget buildFullPoiInfo(state) {
     double bottomIconSize = 20;
     final showPoiState = state as ShowPoiState;
-    return Column(children: [
-      Spacer(),
-      Stack(
-        children: <Widget>[
-          Container(
-              alignment: Alignment.bottomCenter,
-              height: MediaQuery.of(context).size.height / 1.5,
-              //TODO HANDLE ALL SIZES OF SCREENS
-              padding: const EdgeInsets.only(
-                  left: Constants.padding,
-                  top: Constants.avatarRadius + Constants.padding,
-                  right: Constants.padding,
-                  bottom: Constants.padding),
-              margin: const EdgeInsets.only(top: Constants.avatarRadius),
-              decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(Constants.padding),
-                  boxShadow: const [
-                    BoxShadow(
-                        color: Colors.black,
-                        offset: Offset(0, 5),
-                        blurRadius: 10),
-                  ]),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        // margin: EdgeInsets.only(
-                        //     right: MediaQuery.of(context).size.width / 30),
-                        width: MediaQuery.of(context).size.width / 10,
-                        child: FloatingActionButton(
-                          backgroundColor: Globals.globalColor,
-                          heroTag: null,
-                          onPressed: () {
-                            context.read<GuideBloc>().add(SetLoadedStoriesEvent(
-                                storyView: state.savedStoriesState.storyView,
-                                controller:
-                                    state.savedStoriesState.controller));
-                          },
+    return Dialog(
+      insetPadding: const EdgeInsets.all(Constants.edgesDist),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Constants.padding),
+      ),
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      child: Column(children: [
+        Stack(
+          children: <Widget>[
+            Container(
+                alignment: Alignment.bottomCenter,
+                height: MediaQuery.of(context).size.height / 1.55,
+                //TODO HANDLE ALL SIZES OF SCREENS
+                padding: const EdgeInsets.only(
+                    left: Constants.padding,
+                    top: Constants.avatarRadius + Constants.padding,
+                    right: Constants.padding,
+                    bottom: Constants.padding),
+                margin: const EdgeInsets.only(top: Constants.avatarRadius),
+                decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(Constants.padding),
+                    boxShadow: const [
+                      BoxShadow(
+                          color: Colors.black,
+                          offset: Offset(0, 5),
+                          blurRadius: 10),
+                    ]),
+                child: Column(
+                  children: [
+                    Container(
+                        margin: EdgeInsets.only(top: 10),
+                        child: Text(
+                          showPoiState.currentPoi.poi.poiName ?? "",
+                          style: TextStyle(
+                            fontFamily: 'Arial',
+                            fontSize: 25,
+                            color: Colors.blueGrey,
+                            height: 1,
+                          ),
+                        )),
+                    Expanded(
+                        child: Container(
+                            alignment: Alignment.topCenter,
+                            margin: EdgeInsets.only(top: 15),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: Text(
+                                showPoiState.currentPoi.poi.shortDesc ?? "",
+                                style: TextStyle(
+                                  fontFamily: 'Arial',
+                                  fontSize: 20,
+                                  color: Colors.black,
+                                  height: 1,
+                                ),
+                              ),
+                            ))),
+                    Column(
+                      children: [
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              RawMaterialButton(
+                                onPressed: () {
+                                  Globals.globalAppLauncher.launchWaze(
+                                      showPoiState.currentPoi.poi.latitude,
+                                      showPoiState.currentPoi.poi.longitude);
+                                },
+                                elevation: 2.0,
+                                fillColor: Colors.blue,
+                                child: Icon(
+                                  Icons.directions,
+                                  size: bottomIconSize,
+                                ),
+                                padding: EdgeInsets.all(15.0),
+                                shape: CircleBorder(),
+                              ),
+                              RawMaterialButton(
+                                onPressed: () {},
+                                elevation: 2.0,
+                                fillColor: Colors.red,
+                                child: Icon(
+                                  Icons.thumb_down,
+                                  size: bottomIconSize,
+                                ),
+                                padding: EdgeInsets.all(15.0),
+                                shape: CircleBorder(),
+                              ),
+                              RawMaterialButton(
+                                onPressed: () {},
+                                elevation: 2.0,
+                                fillColor: Colors.green,
+                                child: Icon(
+                                  Icons.thumb_up,
+                                  size: bottomIconSize,
+                                ),
+                                padding: EdgeInsets.all(15.0),
+                                shape: CircleBorder(),
+                              ),
+                              RawMaterialButton(
+                                onPressed: () {
+                                  Share.share(
+                                      showPoiState.currentPoi.poi.shortDesc ??
+                                          "",
+                                      subject:
+                                          showPoiState.currentPoi.poi.poiName);
+                                },
+                                elevation: 2.0,
+                                fillColor: Colors.blue,
+                                child: Icon(
+                                  Icons.share,
+                                  size: bottomIconSize,
+                                ),
+                                padding: EdgeInsets.all(15.0),
+                                shape: CircleBorder(),
+                              )
+                            ],
+                          ),
+                        ),
+                        Container(
                           child:
-                              const Icon(Icons.arrow_back, color: Colors.white),
+                              UniformButtons.getPreferenceButton(onPressed: () {
+                            Navigator.pushNamed(
+                                context, '/favorite-categories-screen');
+                          }),
+                        )
+                      ],
+                    ),
+                  ],
+                )),
+            Positioned(
+              left: Constants.padding,
+              right: Constants.padding,
+              child: GestureDetector(
+                onVerticalDragUpdate: (details) {
+                  int sensitivity = 8;
+                  if (details.delta.dy > sensitivity) {
+                    // Down Swipe
+                    context.read<GuideBloc>().add(SetLoadedStoriesEvent(
+                        storyView: state.savedStoriesState.storyView,
+                        controller: state.savedStoriesState.controller));
+                  } else if (details.delta.dy < -sensitivity) {
+                    // Up Swipe
+                  }
+                },
+                child: CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                    radius: Constants.avatarRadius,
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                          left: Constants.sidesMarginOfPic,
+                          right: Constants.sidesMarginOfPic),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(Constants.avatarRadius)),
+                        child: CachedNetworkImage(
+                          imageUrl: state.currentPoi?.poi.pic ?? "",
+                          placeholder: (context, url) =>
+                              new CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              new Icon(Icons.error_outlined, size: 100),
                         ),
                       ),
-                    ],
-                  ),
-                  Container(
-                      margin: EdgeInsets.only(top: 10),
-                      child: Text(
-                        showPoiState.currentPoi.poi.poiName ?? "",
-                        style: TextStyle(
-                          fontFamily: 'Arial',
-                          fontSize: 25,
-                          color: Colors.blueGrey,
-                          height: 1,
-                        ),
-                      )),
-                  Expanded(
-                      child: Container(
-                          alignment: Alignment.topCenter,
-                          margin: EdgeInsets.only(top: 15),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: Text(
-                              showPoiState.currentPoi.poi.shortDesc ?? "",
-                              style: TextStyle(
-                                fontFamily: 'Arial',
-                                fontSize: 20,
-                                color: Colors.black,
-                                height: 1,
-                              ),
-                            ),
-                          ))),
-                  Column(
-                    children: [
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            RawMaterialButton(
-                              onPressed: () {
-                                Globals.globalAppLauncher.launchWaze(
-                                    showPoiState.currentPoi.poi.latitude,
-                                    showPoiState.currentPoi.poi.longitude);
-                              },
-                              elevation: 2.0,
-                              fillColor: Colors.blue,
-                              child: Icon(
-                                Icons.directions,
-                                size: bottomIconSize,
-                              ),
-                              padding: EdgeInsets.all(15.0),
-                              shape: CircleBorder(),
-                            ),
-                            RawMaterialButton(
-                              onPressed: () {},
-                              elevation: 2.0,
-                              fillColor: Colors.red,
-                              child: Icon(
-                                Icons.thumb_down,
-                                size: bottomIconSize,
-                              ),
-                              padding: EdgeInsets.all(15.0),
-                              shape: CircleBorder(),
-                            ),
-                            RawMaterialButton(
-                              onPressed: () {},
-                              elevation: 2.0,
-                              fillColor: Colors.green,
-                              child: Icon(
-                                Icons.thumb_up,
-                                size: bottomIconSize,
-                              ),
-                              padding: EdgeInsets.all(15.0),
-                              shape: CircleBorder(),
-                            ),
-                            RawMaterialButton(
-                              onPressed: () {
-                                Share.share(
-                                    showPoiState.currentPoi.poi.shortDesc ?? "",
-                                    subject:
-                                        showPoiState.currentPoi.poi.poiName);
-                              },
-                              elevation: 2.0,
-                              fillColor: Colors.blue,
-                              child: Icon(
-                                Icons.share,
-                                size: bottomIconSize,
-                              ),
-                              padding: EdgeInsets.all(15.0),
-                              shape: CircleBorder(),
-                            )
-                          ],
-                        ),
-                      ),
-                      Container(
-                        child:
-                            UniformButtons.getPreferenceButton(onPressed: () {
-                          Navigator.pushNamed(
-                              context, '/favorite-categories-screen');
-                        }),
-                      )
-                    ],
-                  ),
-                ],
-              )),
-          Positioned(
-            left: Constants.padding,
-            right: Constants.padding,
-            child: GestureDetector(
-              onVerticalDragUpdate: (details) {
-                int sensitivity = 8;
-                if (details.delta.dy > sensitivity) {
-                  // Down Swipe
+                    )),
+              ),
+            ),
+            Positioned(
+              top: Constants.avatarRadius,
+              right: Constants.sidesMarginOfButtons,
+              child: Container(
+                  child: UniformButtons.getGuidePreferencesButton(
+                      onPressed: () {})),
+            ),
+            Positioned(
+              top: Constants.avatarRadius,
+              right: Constants.sidesMarginOfButtons,
+              child: Container(
+                  child: UniformButtons.getGuidePreferencesButton(
+                      onPressed: () {})),
+            ),
+            Positioned(
+                top: Constants.avatarRadius,
+                child: UniformButtons.getReturnDialogButton(onPressed: () {
                   context.read<GuideBloc>().add(SetLoadedStoriesEvent(
                       storyView: state.savedStoriesState.storyView,
                       controller: state.savedStoriesState.controller));
-                } else if (details.delta.dy < -sensitivity) {
-                  // Up Swipe
-                }
-              },
-              child: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  radius: Constants.avatarRadius,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(
-                        Radius.circular(Constants.avatarRadius)),
-                    child: CachedNetworkImage(
-                      imageUrl: showPoiState.currentPoi?.poi.pic ?? "",
-                      placeholder: (context, url) =>
-                          new CircularProgressIndicator(),
-                      errorWidget: (context, url, error) =>
-                          new Icon(Icons.error_outlined, size: 100),
-                    ),
-                  )),
-            ),
-          ),
-        ],
-      )
-    ]);
+                }))
+          ],
+        )
+      ]),
+    );
   }
 
   @override
