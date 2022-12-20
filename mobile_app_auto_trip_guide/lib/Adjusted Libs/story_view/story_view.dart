@@ -219,11 +219,12 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
         }
       }
       if (isItemInTheList) {
+        StoryItem requestedStory = widget.storyItems[pos]!;
+        widget.storyItems.removeAt(pos); // removes the duplicate story item
         int currentPos = widget.storyItems.indexOf(this._currentStory);
         this._currentStory!.shown = false;
-        widget.storyItems.insert(currentPos, widget.storyItems[pos]);
+        widget.storyItems.insert(currentPos, requestedStory);
         _beginPlay();
-        widget.storyItems.removeAt(pos + 1); // removes the duplicate story item
       }
     });
 
