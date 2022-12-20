@@ -8,9 +8,17 @@ import '../Adjusted Libs/story_view/story_view.dart';
 import '../Adjusted Libs/story_view/utils.dart';
 import '../General Wigets/uniform_widgets.dart';
 import 'guid_bloc/guide_bloc.dart';
-import 'guide_dialog_box.dart';
 import 'globals.dart';
 import 'package:share_plus/share_plus.dart';
+
+class Constants {
+  Constants._();
+
+  static const double padding = 2;
+  static const double avatarRadius = 60;
+  static const double edgesDist = 10;
+  static const double sidesMarginOfPic = 42;
+}
 
 class Guide {
   BuildContext context;
@@ -265,23 +273,40 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                             child: CircleAvatar(
                                 backgroundColor: Colors.transparent,
                                 radius: Constants.avatarRadius,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.all(
-                                      Radius.circular(Constants.avatarRadius)),
-                                  child: CachedNetworkImage(
-                                    imageUrl: state.currentPoi?.poi.pic ?? "",
-                                    placeholder: (context, url) =>
-                                        new CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        new Icon(Icons.error_outlined,
-                                            size: 100),
+                                child: Container(
+                                  margin: const EdgeInsets.only(
+                                      left: Constants.sidesMarginOfPic,
+                                      right: Constants.sidesMarginOfPic),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(
+                                            Constants.avatarRadius)),
+                                    child: CachedNetworkImage(
+                                      imageUrl: state.currentPoi?.poi.pic ?? "",
+                                      placeholder: (context, url) =>
+                                          new CircularProgressIndicator(),
+                                      errorWidget: (context, url, error) =>
+                                          new Icon(Icons.error_outlined,
+                                              size: 100),
+                                    ),
                                   ),
                                 )),
                           ),
                         ),
+                        // Container(
+                        //   color: Colors.green,
+                        //   // alignment: Alignment.bottomCenter,
+                        //     child: UniformButtons.getGuidePreferencesButton(onPressed: (){})),
                       ],
                     ),
                   ),
+                  Positioned(
+                    top: Constants.avatarRadius,
+                    right: 10,
+                    child: Container(
+                        child: UniformButtons.getGuidePreferencesButton(
+                            onPressed: () {})),
+                  )
                 ],
               )
             ])),
@@ -298,7 +323,8 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         children: <Widget>[
           Container(
               alignment: Alignment.bottomCenter,
-              height: MediaQuery.of(context).size.height / 1.5, //TODO HANDLE ALL SIZES OF SCREENS
+              height: MediaQuery.of(context).size.height / 1.5,
+              //TODO HANDLE ALL SIZES OF SCREENS
               padding: const EdgeInsets.only(
                   left: Constants.padding,
                   top: Constants.avatarRadius + Constants.padding,
@@ -412,7 +438,8 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                               onPressed: () {
                                 Share.share(
                                     showPoiState.currentPoi.poi.shortDesc ?? "",
-                                    subject: showPoiState.currentPoi.poi.poiName);
+                                    subject:
+                                        showPoiState.currentPoi.poi.poiName);
                               },
                               elevation: 2.0,
                               fillColor: Colors.blue,
@@ -427,7 +454,8 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                         ),
                       ),
                       Container(
-                        child: UniformButtons.getPreferenceButton(onPressed: () {
+                        child:
+                            UniformButtons.getPreferenceButton(onPressed: () {
                           Navigator.pushNamed(
                               context, '/favorite-categories-screen');
                         }),
