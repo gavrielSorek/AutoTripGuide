@@ -326,12 +326,15 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
       elevation: 0,
       backgroundColor: Colors.transparent,
       child: Column(children: [
+                                Spacer(),
+
         Stack(
           children: <Widget>[
-            Container(
 
+            Container(
                 alignment: Alignment.bottomCenter,
                 height: MediaQuery.of(context).size.height / 1.55,
+                width: MediaQuery.of(context).size.width - 30,
                 //TODO HANDLE ALL SIZES OF SCREENS
                 padding: const EdgeInsets.only(
                     left: Constants.padding,
@@ -359,33 +362,65 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                 ),
                 child: Column(
                   children: [
-                    Container(
-                        margin: EdgeInsets.only(top: 10),
+                    // Container(
+                    //     margin: EdgeInsets.only(top: 10),     
+                    //     child: Text(
+                    //       showPoiState.currentPoi.poi.poiName ?? "",
+                    //       style: TextStyle(
+                    //         color: Colors.black,
+                    //           fontFamily: 'Inter',
+                    //           fontSize: 22,
+                    //           letterSpacing: 0.3499999940395355,
+                    //           fontWeight: FontWeight.normal,
+                    //           height: 1.2727272727272727),
+                    //       textAlign: TextAlign.left,
+                          
+                    //     )),
+                                      Padding(
+                padding: EdgeInsets.only(left: 24, right: 0),
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: Container(
                         child: Text(
                           showPoiState.currentPoi.poi.poiName ?? "",
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontFamily: 'Arial',
-                            fontSize: 25,
-                            color: Colors.blueGrey,
-                            height: 1,
-                          ),
-                        )),
+                              color: Colors.black,
+                              fontFamily: 'Inter',
+                              fontSize: 22,
+                              letterSpacing: 0.3499999940395355,
+                              fontWeight: FontWeight.normal,
+                              height: 1.2727272727272727),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
                     Expanded(
                         child: Container(
                             alignment: Alignment.topCenter,
-                            margin: EdgeInsets.only(top: 15),
                             child: SingleChildScrollView(
                               scrollDirection: Axis.vertical,
-                              child: Text(
+                              child:
+                        Padding(padding: EdgeInsets.only(left: 24, right: 24)
+                              ,child:  Text(
                                 showPoiState.currentPoi.poi.shortDesc ?? "",
                                 style: TextStyle(
-                                  fontFamily: 'Arial',
-                                  fontSize: 20,
-                                  color: Colors.black,
-                                  height: 1,
-                                ),
+                                    color: Color(0xff6C6F70),
+                                    fontFamily: 'Inter',
+                                    fontSize: 16,
+                                    letterSpacing: 0,
+                                    fontWeight: FontWeight.normal,
+                                    height: 1.5),
+                                textAlign: TextAlign.left,
+                                
                               ),
-                            ))),
+                            )))),
+                    Padding(padding: EdgeInsets.only(top:15),child:
                     Column(
                       children: [
                         Container(
@@ -457,7 +492,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                           }),
                         )
                       ],
-                    ),
+                    )),
                   ],
                 )),
             Positioned(
