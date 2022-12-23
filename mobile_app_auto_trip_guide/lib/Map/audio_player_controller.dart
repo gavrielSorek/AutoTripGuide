@@ -83,9 +83,10 @@ class AudioApp extends StatefulWidget {
 }
 
 class _AudioAppState extends State<AudioApp> {
+  bool _isPlayingLogicInProgress =false;
   Duration duration = Duration(seconds: 0);
   Duration position = Duration(seconds: 0);
-  Timer? _cancelablePlay;
+  bool _isNewPlayNeeded = false;
 
   List<Icon> icons = [
     Icon(Icons.play_arrow),
@@ -269,29 +270,46 @@ class _AudioAppState extends State<AudioApp> {
     });
   }
 
-  Future play({bool playWithProgressBar = true}) async {
-    _cancelablePlay?.cancel();
-    _cancelablePlay = Timer(Duration(seconds: 0), () async {
-      _playWithProgressBar = playWithProgressBar;
-      // TODO MOVE THIS SECTION
-      await widget.flutterTts.setSpeechRate(speechRate);
-      await widget.flutterTts.setPitch(pitch);
-      await widget.flutterTts.setLanguage(widget.languageCode);
+  Future _startPlayLogic({bool playWithProgressBar = true}) async {
+    _isPlayingLogicInProgress = true;
+    _isNewPlayNeeded = false;
+    _playWithProgressBar = playWithProgressBar;
+    // TODO MOVE THIS SECTION
+    await widget.flutterTts.setSpeechRate(speechRate);
+    await widget.flutterTts.setPitch(pitch);
+    await widget.flutterTts.setLanguage(widget.languageCode);
 
-      if (isPaused) {
-        if (widget.onResume != null) {
-          widget.onResume();
-        }
+    if (isPaused) {
+      if (widget.onResume != null) {
+        widget.onResume();
+      }
 
-        await widget.audioPlayer.resume();
-      } else {
-        String urlPath = await convertTextToAudioFile(widget.text);
+      await widget.audioPlayer.resume();
+    } else {
+      await widget.audioPlayer.stop();
+      String urlPath = await convertTextToAudioFile(widget.text);
+      if (!_isNewPlayNeeded) {
         await widget.audioPlayer.play(UrlSource(urlPath));
         if (widget.onStartPlaying != null) {
           widget.onStartPlaying(duration);
+          if(_isNewPlayNeeded) {
+            _startPlayLogic(playWithProgressBar: playWithProgressBar);
+            return;
+          }
         }
+      } else {
+        _startPlayLogic(playWithProgressBar: playWithProgressBar);
       }
-    });
+    }
+    _isPlayingLogicInProgress = false;
+  }
+
+  Future play({bool playWithProgressBar = true}) async {
+    if (_isPlayingLogicInProgress) {
+      _isNewPlayNeeded = true;
+    } else {
+      _startPlayLogic();
+    }
   }
 
   Future pause() async {
@@ -364,7 +382,7 @@ class _AudioAppState extends State<AudioApp> {
                   }
                   ;
                 },
-                icon: Icon(Icons.keyboard_double_arrow_left_outlined ),
+                icon: Icon(Icons.keyboard_double_arrow_left_outlined),
                 color: Colors.white,
                 iconSize: 35,
               )),
@@ -433,7 +451,8 @@ class _AudioAppState extends State<AudioApp> {
                 icon: Icon(Icons.keyboard_double_arrow_right_rounded),
                 iconSize: 35,
                 color: Colors.white,
-              )),Spacer()
+              )),
+          Spacer()
         ]),
       );
 }
