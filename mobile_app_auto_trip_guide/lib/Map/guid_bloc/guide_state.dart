@@ -28,3 +28,11 @@ class ShowPoiState extends GuideDialogState {
       {required this.savedStoriesState,
         required this.currentPoi}) {}
 }
+
+class ShowOptionalCategoriesState extends GuideDialogState {
+  final GuideDialogState? lastState;
+  final Map<String, List<Poi>> categoriesToPoisMap;
+  ShowOptionalCategoriesState(
+      {this.lastState,
+        required this.categoriesToPoisMap}) {}
+}

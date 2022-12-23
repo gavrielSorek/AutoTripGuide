@@ -102,26 +102,32 @@ class GuidDialogBox extends StatefulWidget {
 class _GuidDialogBoxState extends State<GuidDialogBox> {
   late Stream queuedPoisListStream;
 
+  late ValueChanged<StoryItem> onShowStory;
+
   _GuidDialogBoxState(
       StreamController<Map<String, MapPoi>> queuedPoisToPlayController) {
-    ValueChanged<StoryItem> onShowStory = (s) async {
+    // ValueChanged<StoryItem> onShowStory = (s) async {
+    //   context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
+    // };
+    onShowStory = (s) async {
       context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
     };
 
     queuedPoisListStream = queuedPoisToPlayController.stream;
     queuedPoisListStream.listen((event) {
       context.read<GuideBloc>().add(
-            SetStoriesListEvent(
-                poisToPlay: event,
-                onShowStory: onShowStory,
-                onFinishedFunc: widget.onFinishedStories,
-                onStoryTap: (story) {
-                  context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-                },
-                onVerticalSwipeComplete: (Direction? d) {
-                  context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-                }),
-          );
+          // SetStoriesListEvent(
+          //     poisToPlay: event,
+          //     onShowStory: onShowStory,
+          //     onFinishedFunc: widget.onFinishedStories,
+          //     onStoryTap: (story) {
+          //       context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+          //     },
+          //     onVerticalSwipeComplete: (Direction? d) {
+          //       context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+          //     }),
+
+          ShowOptionalCategoriesEvent(pois: event));
     });
   }
 
@@ -326,11 +332,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
       elevation: 0,
       backgroundColor: Colors.transparent,
       child: Column(children: [
-                                Spacer(),
-
+        Spacer(),
         Stack(
           children: <Widget>[
-
             Container(
                 alignment: Alignment.bottomCenter,
                 height: MediaQuery.of(context).size.height / 1.55,
@@ -363,7 +367,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                 child: Column(
                   children: [
                     // Container(
-                    //     margin: EdgeInsets.only(top: 10),     
+                    //     margin: EdgeInsets.only(top: 10),
                     //     child: Text(
                     //       showPoiState.currentPoi.poi.poiName ?? "",
                     //       style: TextStyle(
@@ -374,125 +378,128 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                     //           fontWeight: FontWeight.normal,
                     //           height: 1.2727272727272727),
                     //       textAlign: TextAlign.left,
-                          
+
                     //     )),
-                                      Padding(
-                padding: EdgeInsets.only(left: 24, right: 0),
-                child: Row(
-                  children: [
-                    Flexible(
-                      child: Container(
-                        child: Text(
-                          showPoiState.currentPoi.poi.poiName ?? "",
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: 'Inter',
-                              fontSize: 22,
-                              letterSpacing: 0.3499999940395355,
-                              fontWeight: FontWeight.normal,
-                              height: 1.2727272727272727),
-                          textAlign: TextAlign.left,
-                        ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 24, right: 0),
+                      child: Row(
+                        children: [
+                          Flexible(
+                            child: Container(
+                              child: Text(
+                                showPoiState.currentPoi.poi.poiName ?? "",
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontFamily: 'Inter',
+                                    fontSize: 22,
+                                    letterSpacing: 0.3499999940395355,
+                                    fontWeight: FontWeight.normal,
+                                    height: 1.2727272727272727),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
 
                     Expanded(
                         child: Container(
                             alignment: Alignment.topCenter,
                             child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child:
-                        Padding(padding: EdgeInsets.only(left: 24, right: 24)
-                              ,child:  Text(
-                                showPoiState.currentPoi.poi.shortDesc ?? "",
-                                style: TextStyle(
-                                    color: Color(0xff6C6F70),
-                                    fontFamily: 'Inter',
-                                    fontSize: 16,
-                                    letterSpacing: 0,
-                                    fontWeight: FontWeight.normal,
-                                    height: 1.5),
-                                textAlign: TextAlign.left,
-                                
+                                scrollDirection: Axis.vertical,
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 24, right: 24),
+                                  child: Text(
+                                    showPoiState.currentPoi.poi.shortDesc ?? "",
+                                    style: TextStyle(
+                                        color: Color(0xff6C6F70),
+                                        fontFamily: 'Inter',
+                                        fontSize: 16,
+                                        letterSpacing: 0,
+                                        fontWeight: FontWeight.normal,
+                                        height: 1.5),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                )))),
+                    Padding(
+                        padding: EdgeInsets.only(top: 15),
+                        child: Column(
+                          children: [
+                            Container(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  RawMaterialButton(
+                                    onPressed: () {
+                                      Globals.globalAppLauncher.launchWaze(
+                                          showPoiState.currentPoi.poi.latitude,
+                                          showPoiState
+                                              .currentPoi.poi.longitude);
+                                    },
+                                    elevation: 2.0,
+                                    fillColor: Colors.blue,
+                                    child: Icon(
+                                      Icons.directions,
+                                      size: bottomIconSize,
+                                    ),
+                                    padding: EdgeInsets.all(15.0),
+                                    shape: CircleBorder(),
+                                  ),
+                                  RawMaterialButton(
+                                    onPressed: () {},
+                                    elevation: 2.0,
+                                    fillColor: Colors.red,
+                                    child: Icon(
+                                      Icons.thumb_down,
+                                      size: bottomIconSize,
+                                    ),
+                                    padding: EdgeInsets.all(15.0),
+                                    shape: CircleBorder(),
+                                  ),
+                                  RawMaterialButton(
+                                    onPressed: () {},
+                                    elevation: 2.0,
+                                    fillColor: Colors.green,
+                                    child: Icon(
+                                      Icons.thumb_up,
+                                      size: bottomIconSize,
+                                    ),
+                                    padding: EdgeInsets.all(15.0),
+                                    shape: CircleBorder(),
+                                  ),
+                                  RawMaterialButton(
+                                    onPressed: () {
+                                      Share.share(
+                                          showPoiState
+                                                  .currentPoi.poi.shortDesc ??
+                                              "",
+                                          subject: showPoiState
+                                              .currentPoi.poi.poiName);
+                                    },
+                                    elevation: 2.0,
+                                    fillColor: Colors.blue,
+                                    child: Icon(
+                                      Icons.share,
+                                      size: bottomIconSize,
+                                    ),
+                                    padding: EdgeInsets.all(15.0),
+                                    shape: CircleBorder(),
+                                  )
+                                ],
                               ),
-                            )))),
-                    Padding(padding: EdgeInsets.only(top:15),child:
-                    Column(
-                      children: [
-                        Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              RawMaterialButton(
-                                onPressed: () {
-                                  Globals.globalAppLauncher.launchWaze(
-                                      showPoiState.currentPoi.poi.latitude,
-                                      showPoiState.currentPoi.poi.longitude);
-                                },
-                                elevation: 2.0,
-                                fillColor: Colors.blue,
-                                child: Icon(
-                                  Icons.directions,
-                                  size: bottomIconSize,
-                                ),
-                                padding: EdgeInsets.all(15.0),
-                                shape: CircleBorder(),
-                              ),
-                              RawMaterialButton(
-                                onPressed: () {},
-                                elevation: 2.0,
-                                fillColor: Colors.red,
-                                child: Icon(
-                                  Icons.thumb_down,
-                                  size: bottomIconSize,
-                                ),
-                                padding: EdgeInsets.all(15.0),
-                                shape: CircleBorder(),
-                              ),
-                              RawMaterialButton(
-                                onPressed: () {},
-                                elevation: 2.0,
-                                fillColor: Colors.green,
-                                child: Icon(
-                                  Icons.thumb_up,
-                                  size: bottomIconSize,
-                                ),
-                                padding: EdgeInsets.all(15.0),
-                                shape: CircleBorder(),
-                              ),
-                              RawMaterialButton(
-                                onPressed: () {
-                                  Share.share(
-                                      showPoiState.currentPoi.poi.shortDesc ??
-                                          "",
-                                      subject:
-                                          showPoiState.currentPoi.poi.poiName);
-                                },
-                                elevation: 2.0,
-                                fillColor: Colors.blue,
-                                child: Icon(
-                                  Icons.share,
-                                  size: bottomIconSize,
-                                ),
-                                padding: EdgeInsets.all(15.0),
-                                shape: CircleBorder(),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          child:
-                              UniformButtons.getPreferenceButton(onPressed: () {
-                            Navigator.pushNamed(
-                                context, '/favorite-categories-screen');
-                          }),
-                        )
-                      ],
-                    )),
+                            ),
+                            Container(
+                              child: UniformButtons.getPreferenceButton(
+                                  onPressed: () {
+                                Navigator.pushNamed(
+                                    context, '/favorite-categories-screen');
+                              }),
+                            )
+                          ],
+                        )),
                   ],
                 )),
             Positioned(
@@ -558,6 +565,121 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
     );
   }
 
+  Widget buildOptionalCategoriesSelectionWidget(state) {
+    final showOptionalCategoriesState = state as ShowOptionalCategoriesState;
+    return OptionalCategoriesSelection(state: showOptionalCategoriesState);
+    // return Dialog(
+    //     insetPadding: const EdgeInsets.all(Constants.edgesDist),
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.circular(Constants.padding),
+    //     ),
+    //     elevation: 0,
+    //     backgroundColor: Colors.transparent,
+    //     child: Container(
+    //         decoration: BoxDecoration(
+    //           shape: BoxShape.rectangle,
+    //           color: Colors.white,
+    //           // borderRadius: BorderRadius.circular(Constants.padding),
+    //           // boxShadow: const [
+    //           //   BoxShadow(
+    //           //       color: Colors.black,
+    //           //       offset: Offset(0, 5),
+    //           //       blurRadius: 10),
+    //           // ]
+    //           borderRadius: BorderRadius.circular(34),
+    //           boxShadow: [
+    //             BoxShadow(
+    //                 color: Color.fromRGBO(0, 0, 0, 0.25),
+    //                 offset: Offset(0, 0),
+    //                 blurRadius: 20)
+    //           ],
+    //         ),
+    //         width: double.infinity,
+    //         height: double.infinity,
+    //         child: Column(
+    //           children: [
+    //             Padding(
+    //                 padding: EdgeInsets.only(left: 11, top: 16),
+    //                 child: Align(
+    //                     alignment: Alignment.centerLeft,
+    //                     child: Padding(
+    //                       padding: EdgeInsets.only(left: 11, right: 11),
+    //                       child: Text(
+    //                         "X Places near you: ",
+    //                         style: TextStyle(
+    //                           fontFamily: 'Inter',
+    //                           fontStyle: FontStyle.normal,
+    //                           fontWeight: FontWeight.w500,
+    //                           fontSize: 22,
+    //                           letterSpacing: 0.35,
+    //                           color: Colors.black,
+    //                           height: 28 / 22,
+    //                         ),
+    //                       ),
+    //                     ))),
+    //             Padding(
+    //               padding: EdgeInsets.only(left: 11, right: 11, top: 16),
+    //               child: Text(
+    //                 "Select your preferred category and start playing: ",
+    //                 overflow: TextOverflow.visible,
+    //                 style: TextStyle(
+    //                   fontFamily: 'Inter',
+    //                   fontStyle: FontStyle.normal,
+    //                   fontWeight: FontWeight.w400,
+    //                   fontSize: 16,
+    //                   letterSpacing: 0,
+    //                   color: Color(0xff6C6F70),
+    //                   height: 1.5,
+    //                 ),
+    //               ),
+    //             ),
+    //             Expanded(
+    //               child: GridView.count(
+    //                 // Create a grid with 2 columns. If you change the scrollDirection to
+    //                 // horizontal, this produces 2 rows.
+    //                 crossAxisCount: 2,
+    //                 // Generate 100 widgets that display their index in the List.
+    //                 children: List.generate(100, (index) {
+    //                   return Center(
+    //                     child: Text(
+    //                       'Item $index',
+    //                     ),
+    //                   );
+    //                 }),
+    //               ),
+    //             ),
+    //             // TextButton(
+    //             //   onPressed: () {
+    //             //     context.read<GuideBloc>().add(
+    //             //         SetStoriesListEvent(
+    //             //             poisToPlay: showOptionalCategoriesState.categoriesToPoisMap['Parks'],
+    //             //             onShowStory: onShowStory,
+    //             //             onFinishedFunc: widget.onFinishedStories,
+    //             //             onStoryTap: (story) {
+    //             //               context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+    //             //             },
+    //             //             onVerticalSwipeComplete: (Direction? d) {
+    //             //               context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+    //             //             }),);
+    //             //   },
+    //             //   child: Text("Start Playing"),
+    //             //   style: TextButton.styleFrom(
+    //             //     backgroundColor: Color(0xffD1D1D1),
+    //             //     textStyle: TextStyle(
+    //             //       fontFamily: 'Inter',
+    //             //       fontStyle: FontStyle.normal,
+    //             //       fontWeight: FontWeight.w400,
+    //             //       fontSize: 16,
+    //             //       letterSpacing: 0,
+    //             //       color: Colors.white,
+    //             //       height: 1.5,
+    //             //     ),
+    //             //   ),
+    //             // ),
+    //           ],
+    //         )));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<GuideBloc, GuideDialogState>(
@@ -568,8 +690,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
           return buildStoriesWidget(state);
         } else if (state is ShowPoiState) {
           return buildFullPoiInfo(state);
+        } else if (state is ShowOptionalCategoriesState) {
+          return buildOptionalCategoriesSelectionWidget(state);
         } else {
-          // } else {
           return buildSearchingWidget();
         }
       },
@@ -579,5 +702,133 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   @override
   void dispose() {
     super.dispose();
+  }
+}
+
+class OptionalCategoriesSelection extends StatefulWidget {
+  final ShowOptionalCategoriesState state;
+
+  OptionalCategoriesSelection({required this.state}) {}
+
+  @override
+  State<StatefulWidget> createState() {
+    return _OptionalCategoriesSelection();
+  }
+}
+
+class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
+  @override
+  Widget build(BuildContext context) {
+    List<String> categoriesList = widget.state.categoriesToPoisMap.keys.toList();
+    return Dialog(
+        insetPadding: const EdgeInsets.all(Constants.edgesDist),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Constants.padding),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: Colors.white,
+              // borderRadius: BorderRadius.circular(Constants.padding),
+              // boxShadow: const [
+              //   BoxShadow(
+              //       color: Colors.black,
+              //       offset: Offset(0, 5),
+              //       blurRadius: 10),
+              // ]
+              borderRadius: BorderRadius.circular(34),
+              boxShadow: [
+                BoxShadow(
+                    color: Color.fromRGBO(0, 0, 0, 0.25),
+                    offset: Offset(0, 0),
+                    blurRadius: 20)
+              ],
+            ),
+            width: double.infinity,
+            height: double.infinity,
+            child: Column(
+              children: [
+                Padding(
+                    padding: EdgeInsets.only(left: 11, top: 16),
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 11, right: 11),
+                          child: Text(
+                            "X Places near you: ",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 22,
+                              letterSpacing: 0.35,
+                              color: Colors.black,
+                              height: 28 / 22,
+                            ),
+                          ),
+                        ))),
+                Padding(
+                  padding: EdgeInsets.only(left: 11, right: 11, top: 16),
+                  child: Text(
+                    "Select your preferred category and start playing: ",
+                    overflow: TextOverflow.visible,
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                      letterSpacing: 0,
+                      color: Color(0xff6C6F70),
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GridView.count(
+                    // Create a grid with 2 columns. If you change the scrollDirection to
+                    // horizontal, this produces 2 rows.
+                    crossAxisCount: 2,
+                    // Generate 100 widgets that display their index in the List.
+                    children: List.generate(widget.state.categoriesToPoisMap.length, (index) {
+                      return Center(
+                        child: Text(
+                          categoriesList[index] + "count " + widget.state.categoriesToPoisMap[categoriesList[index]]!.length.toString(),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+                // TextButton(
+                //   onPressed: () {
+                //     context.read<GuideBloc>().add(
+                //         SetStoriesListEvent(
+                //             poisToPlay: showOptionalCategoriesState.categoriesToPoisMap['Parks'],
+                //             onShowStory: onShowStory,
+                //             onFinishedFunc: widget.onFinishedStories,
+                //             onStoryTap: (story) {
+                //               context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+                //             },
+                //             onVerticalSwipeComplete: (Direction? d) {
+                //               context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+                //             }),);
+                //   },
+                //   child: Text("Start Playing"),
+                //   style: TextButton.styleFrom(
+                //     backgroundColor: Color(0xffD1D1D1),
+                //     textStyle: TextStyle(
+                //       fontFamily: 'Inter',
+                //       fontStyle: FontStyle.normal,
+                //       fontWeight: FontWeight.w400,
+                //       fontSize: 16,
+                //       letterSpacing: 0,
+                //       color: Colors.white,
+                //       height: 1.5,
+                //     ),
+                //   ),
+                // ),
+              ],
+            )));
   }
 }

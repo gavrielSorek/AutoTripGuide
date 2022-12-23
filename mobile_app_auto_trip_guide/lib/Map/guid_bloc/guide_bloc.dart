@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -123,6 +125,31 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         emit(ShowStoriesState(storyView: state.storyView,
             controller: state.controller));
       }
+    });
+
+    on<ShowOptionalCategoriesEvent>((event, emit) {
+      List<MapPoi> mapPoisList = event.pois.values.toList();
+      Map<String, List<Poi>> categoriesToPois = HashMap<String, List<Poi>>();
+      mapPoisList.forEach((mapPoi) {
+        mapPoi.poi.Categories.forEach((category) {
+          if(!categoriesToPois.containsKey(category)) {
+            categoriesToPois[category] = <Poi>[];
+          }
+          categoriesToPois[category]?.add(mapPoi.poi);
+        });
+      });
+
+
+      print(categoriesToPois);
+      emit(ShowOptionalCategoriesState(categoriesToPoisMap: categoriesToPois));
+      // if (state is ShowStoriesState) {
+      //   final state = this.state as ShowStoriesState;
+      //   Globals.globalAudioApp.stopAudio();
+      //   Globals.globalUserMap.highlightPoi(event.mapPoi);
+      //   state.controller.setStoryViewToStoryItemById(event.mapPoi.poi.id);
+      //   emit(ShowStoriesState(storyView: state.storyView,
+      //       controller: state.controller));
+      // }
     });
   }
 }
