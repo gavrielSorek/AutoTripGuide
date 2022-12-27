@@ -44,6 +44,14 @@ class SetLoadedStoriesEvent extends GuideEvent {
 
 class ShowOptionalCategoriesEvent extends GuideEvent {
   final Map<String, MapPoi> pois;
+  ValueChanged<StoryItem> onShowStory;
+  dynamic onFinishedFunc;
+  final Map<String, bool> isCheckedCategory;
 
-  ShowOptionalCategoriesEvent({required this.pois}) {}
+  ShowOptionalCategoriesEvent({
+    required this.pois,
+    required this.onShowStory,
+    this.onFinishedFunc,
+    required this.isCheckedCategory,
+  }) {}
 }

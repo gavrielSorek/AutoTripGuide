@@ -24,6 +24,12 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       emit(PoisSearchingState());
     });
     on<SetStoriesListEvent>((event, emit) {
+      final ShowOptionalCategoriesState lastShowOptionalCategoriesState ;
+      if(state is ShowOptionalCategoriesState){
+        lastShowOptionalCategoriesState = state as ShowOptionalCategoriesState;
+      } else{
+        return;
+      }
       // stop loading animation
       Globals.globalUserMap.setLoadingAnimationState(false);
 
@@ -70,22 +76,21 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         onComplete: () {
           event.onFinishedFunc();
         },
-        storyItems:
-        storyItems,
+        storyItems: storyItems,
         // To disable vertical swipe gestures, ignore this parameter.
         onStoryTap: event.onStoryTap,
         onVerticalSwipeComplete: event.onVerticalSwipeComplete,
       );
-      emit(ShowStoriesState(storyView: storyView, controller: controller));
+      emit(ShowStoriesState(storyView: storyView, controller: controller,lastShowOptionalCategoriesState: lastShowOptionalCategoriesState ));
     });
     on<SetCurrentPoiEvent>((event, emit) {
       if (state is ShowStoriesState) {
         final state = this.state as ShowStoriesState;
         Globals.globalAudioApp.clearPlayer();
         state.controller.setProgressValue(0);
-        String poiId =
-        event.storyItem.view.key.toString().replaceAll(
-            RegExp(r"<|>|\[|\]|'"), '');
+        String poiId = event.storyItem.view.key
+            .toString()
+            .replaceAll(RegExp(r"<|>|\[|\]|'"), '');
         MapPoi currentPoi = Globals.globalAllPois[poiId]!;
         Globals.globalAudioApp.setText(
             currentPoi!.poi.shortDesc!, currentPoi!.poi.language ?? 'en');
@@ -99,7 +104,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         emit(ShowStoriesState(
             currentPoi: currentPoi,
             storyView: state.storyView,
-            controller: state.controller));
+            controller: state.controller,
+            lastShowOptionalCategoriesState: state.lastShowOptionalCategoriesState));
       }
     });
 
@@ -112,8 +118,11 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     });
 
     on<SetLoadedStoriesEvent>((event, emit) {
-      emit(ShowStoriesState(storyView: event.storyView,
-          controller: event.controller));
+      if (state is ShowStoriesState) {
+        final state = this.state as ShowStoriesState;
+      emit(ShowStoriesState(
+          storyView: event.storyView, controller: event.controller,lastShowOptionalCategoriesState: state.lastShowOptionalCategoriesState));
+      }
     });
 
     on<playPoiEvent>((event, emit) {
@@ -122,26 +131,31 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         Globals.globalAudioApp.stopAudio();
         Globals.globalUserMap.highlightPoi(event.mapPoi);
         state.controller.setStoryViewToStoryItemById(event.mapPoi.poi.id);
-        emit(ShowStoriesState(storyView: state.storyView,
-            controller: state.controller));
+        emit(ShowStoriesState(
+            storyView: state.storyView, controller: state.controller,lastShowOptionalCategoriesState: state.lastShowOptionalCategoriesState));
       }
     });
 
     on<ShowOptionalCategoriesEvent>((event, emit) {
       List<MapPoi> mapPoisList = event.pois.values.toList();
-      Map<String, List<Poi>> categoriesToPois = HashMap<String, List<Poi>>();
+
+      Map<String, List<MapPoi>> categoriesToMapPois = HashMap<String, List<MapPoi>>();
       mapPoisList.forEach((mapPoi) {
         mapPoi.poi.Categories.forEach((category) {
-          if(!categoriesToPois.containsKey(category)) {
-            categoriesToPois[category] = <Poi>[];
+          if (!categoriesToMapPois.containsKey(category)) {
+            categoriesToMapPois[category] = <MapPoi>[];
           }
-          categoriesToPois[category]?.add(mapPoi.poi);
+          categoriesToMapPois[category]?.add(mapPoi);
         });
       });
 
-
-      print(categoriesToPois);
-      emit(ShowOptionalCategoriesState(categoriesToPoisMap: categoriesToPois));
+      print(categoriesToMapPois);
+      emit(ShowOptionalCategoriesState(
+          categoriesToPoisMap: categoriesToMapPois,
+          isCheckedCategory: event.isCheckedCategory,
+          onShowStory: event.onShowStory,
+          idToPoisMap: event.pois,
+          onFinishedFunc: event.onFinishedFunc));
       // if (state is ShowStoriesState) {
       //   final state = this.state as ShowStoriesState;
       //   Globals.globalAudioApp.stopAudio();

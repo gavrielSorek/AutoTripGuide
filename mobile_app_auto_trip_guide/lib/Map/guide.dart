@@ -127,7 +127,11 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
           //       context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
           //     }),
 
-          ShowOptionalCategoriesEvent(pois: event));
+          ShowOptionalCategoriesEvent(
+              pois: event,
+              onShowStory: onShowStory,
+              onFinishedFunc: widget.onFinishedStories,
+              isCheckedCategory: HashMap<String, bool>()));
     });
   }
 
@@ -310,9 +314,19 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                   Positioned(
                     top: Constants.avatarRadius,
                     right: Constants.sidesMarginOfButtons,
-                    child: Container(
-                        child: UniformButtons.getGuidePreferencesButton(
-                            onPressed: () {})),
+                    child: Container(child:
+                        UniformButtons.getGuidePreferencesButton(onPressed: () {
+                      context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
+                          pois:
+                              state.lastShowOptionalCategoriesState.idToPoisMap,
+                          onShowStory:
+                              state.lastShowOptionalCategoriesState.onShowStory,
+                          onFinishedFunc: state
+                              .lastShowOptionalCategoriesState.onFinishedFunc,
+                          isCheckedCategory: state
+                              .lastShowOptionalCategoriesState
+                              .isCheckedCategory));
+                    })),
                   )
                 ],
               )
@@ -568,116 +582,6 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   Widget buildOptionalCategoriesSelectionWidget(state) {
     final showOptionalCategoriesState = state as ShowOptionalCategoriesState;
     return OptionalCategoriesSelection(state: showOptionalCategoriesState);
-    // return Dialog(
-    //     insetPadding: const EdgeInsets.all(Constants.edgesDist),
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.circular(Constants.padding),
-    //     ),
-    //     elevation: 0,
-    //     backgroundColor: Colors.transparent,
-    //     child: Container(
-    //         decoration: BoxDecoration(
-    //           shape: BoxShape.rectangle,
-    //           color: Colors.white,
-    //           // borderRadius: BorderRadius.circular(Constants.padding),
-    //           // boxShadow: const [
-    //           //   BoxShadow(
-    //           //       color: Colors.black,
-    //           //       offset: Offset(0, 5),
-    //           //       blurRadius: 10),
-    //           // ]
-    //           borderRadius: BorderRadius.circular(34),
-    //           boxShadow: [
-    //             BoxShadow(
-    //                 color: Color.fromRGBO(0, 0, 0, 0.25),
-    //                 offset: Offset(0, 0),
-    //                 blurRadius: 20)
-    //           ],
-    //         ),
-    //         width: double.infinity,
-    //         height: double.infinity,
-    //         child: Column(
-    //           children: [
-    //             Padding(
-    //                 padding: EdgeInsets.only(left: 11, top: 16),
-    //                 child: Align(
-    //                     alignment: Alignment.centerLeft,
-    //                     child: Padding(
-    //                       padding: EdgeInsets.only(left: 11, right: 11),
-    //                       child: Text(
-    //                         "X Places near you: ",
-    //                         style: TextStyle(
-    //                           fontFamily: 'Inter',
-    //                           fontStyle: FontStyle.normal,
-    //                           fontWeight: FontWeight.w500,
-    //                           fontSize: 22,
-    //                           letterSpacing: 0.35,
-    //                           color: Colors.black,
-    //                           height: 28 / 22,
-    //                         ),
-    //                       ),
-    //                     ))),
-    //             Padding(
-    //               padding: EdgeInsets.only(left: 11, right: 11, top: 16),
-    //               child: Text(
-    //                 "Select your preferred category and start playing: ",
-    //                 overflow: TextOverflow.visible,
-    //                 style: TextStyle(
-    //                   fontFamily: 'Inter',
-    //                   fontStyle: FontStyle.normal,
-    //                   fontWeight: FontWeight.w400,
-    //                   fontSize: 16,
-    //                   letterSpacing: 0,
-    //                   color: Color(0xff6C6F70),
-    //                   height: 1.5,
-    //                 ),
-    //               ),
-    //             ),
-    //             Expanded(
-    //               child: GridView.count(
-    //                 // Create a grid with 2 columns. If you change the scrollDirection to
-    //                 // horizontal, this produces 2 rows.
-    //                 crossAxisCount: 2,
-    //                 // Generate 100 widgets that display their index in the List.
-    //                 children: List.generate(100, (index) {
-    //                   return Center(
-    //                     child: Text(
-    //                       'Item $index',
-    //                     ),
-    //                   );
-    //                 }),
-    //               ),
-    //             ),
-    //             // TextButton(
-    //             //   onPressed: () {
-    //             //     context.read<GuideBloc>().add(
-    //             //         SetStoriesListEvent(
-    //             //             poisToPlay: showOptionalCategoriesState.categoriesToPoisMap['Parks'],
-    //             //             onShowStory: onShowStory,
-    //             //             onFinishedFunc: widget.onFinishedStories,
-    //             //             onStoryTap: (story) {
-    //             //               context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-    //             //             },
-    //             //             onVerticalSwipeComplete: (Direction? d) {
-    //             //               context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-    //             //             }),);
-    //             //   },
-    //             //   child: Text("Start Playing"),
-    //             //   style: TextButton.styleFrom(
-    //             //     backgroundColor: Color(0xffD1D1D1),
-    //             //     textStyle: TextStyle(
-    //             //       fontFamily: 'Inter',
-    //             //       fontStyle: FontStyle.normal,
-    //             //       fontWeight: FontWeight.w400,
-    //             //       fontSize: 16,
-    //             //       letterSpacing: 0,
-    //             //       color: Colors.white,
-    //             //       height: 1.5,
-    //             //     ),
-    //             //   ),
-    //             // ),
-    //           ],
-    //         )));
   }
 
   @override
@@ -717,9 +621,27 @@ class OptionalCategoriesSelection extends StatefulWidget {
 }
 
 class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
+  static String getImageFromCategory(String category) {
+    String path = '';
+    switch (category) {
+      case 'Parks':
+        return 'assets/images/parks.jpeg';
+      case 'Synagogues':
+        return 'assets/images/synagogue.jpeg';
+      case 'Bridges':
+        return 'assets/images/bridges.jpeg';
+      case 'Museums':
+        return 'assets/images/museums.jpeg';
+      default:
+        path = 'assets/images/art.png';
+    }
+    return path;
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<String> categoriesList = widget.state.categoriesToPoisMap.keys.toList();
+    List<String> categoriesList =
+        widget.state.categoriesToPoisMap.keys.toList();
     return Dialog(
         insetPadding: const EdgeInsets.all(Constants.edgesDist),
         shape: RoundedRectangleBorder(
@@ -757,7 +679,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                         child: Padding(
                           padding: EdgeInsets.only(left: 11, right: 11),
                           child: Text(
-                            "X Places near you: ",
+                            widget.state.idToPoisMap.keys.length.toString() + " Places near you: ",
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontStyle: FontStyle.normal,
@@ -786,48 +708,124 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                   ),
                 ),
                 Expanded(
-                  child: GridView.count(
-                    // Create a grid with 2 columns. If you change the scrollDirection to
-                    // horizontal, this produces 2 rows.
-                    crossAxisCount: 2,
-                    // Generate 100 widgets that display their index in the List.
-                    children: List.generate(widget.state.categoriesToPoisMap.length, (index) {
-                      return Center(
-                        child: Text(
-                          categoriesList[index] + "count " + widget.state.categoriesToPoisMap[categoriesList[index]]!.length.toString(),
-                        ),
-                      );
-                    }),
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 11, right: 11),
+                      child: GridView.count(
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 0,
+                        crossAxisCount: 2,
+                        children: List.generate(
+                            widget.state.categoriesToPoisMap.length, (index) {
+                          return Center(
+                            child: Stack(children: [
+                              SizedBox(
+                                  height: 100,
+                                  child: ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
+                                    child: Image.asset(getImageFromCategory(
+                                        categoriesList[index])),
+                                  )),
+                              Positioned(
+                                  left: 3,
+                                  right: 0,
+                                  bottom: 0,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            categoriesList[index] +
+                                                " (" +
+                                                widget
+                                                    .state
+                                                    .categoriesToPoisMap[
+                                                        categoriesList[index]]!
+                                                    .length
+                                                    .toString() +
+                                                ")",
+                                            style: TextStyle(
+                                              fontFamily: 'Inter',
+                                              fontStyle: FontStyle.normal,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                              letterSpacing: 0,
+                                              color: Colors.white,
+                                            ),
+                                          )),
+                                      Expanded(
+                                          child: Checkbox(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              side: BorderSide(
+                                                  color: Colors.white),
+                                              value: widget.state
+                                                          .isCheckedCategory[
+                                                      categoriesList[index]] ??
+                                                  false,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  widget.state
+                                                          .isCheckedCategory[
+                                                      categoriesList[
+                                                          index]] = value ??
+                                                      false;
+                                                });
+                                              })),
+                                    ],
+                                  ))
+                            ]),
+                          );
+                        }),
+                      )),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Set<MapPoi> filteredPois = Set();
+                    widget.state.isCheckedCategory.forEach((key, value) {
+                      if (value) {
+                        filteredPois.addAll(
+                            widget.state.categoriesToPoisMap[key] ?? []);
+                      }
+                    });
+                    Map<String, MapPoi> filteredMapPois = Map.fromIterable(
+                        filteredPois.toList(),
+                        key: (item) => item.poi.id,
+                        value: (item) => item);
+
+                    context.read<GuideBloc>().add(
+                          SetStoriesListEvent(
+                              poisToPlay: filteredMapPois,
+                              onShowStory: widget.state.onShowStory,
+                              onFinishedFunc: widget.state.onFinishedFunc,
+                              onStoryTap: (story) {
+                                context
+                                    .read<GuideBloc>()
+                                    .add(ShowFullPoiInfoEvent());
+                              },
+                              onVerticalSwipeComplete: (Direction? d) {
+                                context
+                                    .read<GuideBloc>()
+                                    .add(ShowFullPoiInfoEvent());
+                              }),
+                        );
+                  },
+                  child: Text("Start Playing"),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Color(0xffD1D1D1),
+                    textStyle: TextStyle(
+                      fontFamily: 'Inter',
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                      letterSpacing: 0,
+                      color: Colors.white,
+                      height: 1.5,
+                    ),
                   ),
                 ),
-                // TextButton(
-                //   onPressed: () {
-                //     context.read<GuideBloc>().add(
-                //         SetStoriesListEvent(
-                //             poisToPlay: showOptionalCategoriesState.categoriesToPoisMap['Parks'],
-                //             onShowStory: onShowStory,
-                //             onFinishedFunc: widget.onFinishedStories,
-                //             onStoryTap: (story) {
-                //               context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-                //             },
-                //             onVerticalSwipeComplete: (Direction? d) {
-                //               context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-                //             }),);
-                //   },
-                //   child: Text("Start Playing"),
-                //   style: TextButton.styleFrom(
-                //     backgroundColor: Color(0xffD1D1D1),
-                //     textStyle: TextStyle(
-                //       fontFamily: 'Inter',
-                //       fontStyle: FontStyle.normal,
-                //       fontWeight: FontWeight.w400,
-                //       fontSize: 16,
-                //       letterSpacing: 0,
-                //       color: Colors.white,
-                //       height: 1.5,
-                //     ),
-                //   ),
-                // ),
               ],
             )));
   }
