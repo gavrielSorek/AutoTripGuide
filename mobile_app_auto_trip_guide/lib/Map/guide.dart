@@ -713,6 +713,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                       child: GridView.count(
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 0,
+                          childAspectRatio: (1.3),
                         crossAxisCount: 2,
                         children: List.generate(
                             widget.state.categoriesToPoisMap.length, (index) {
@@ -724,7 +725,8 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(20)),
                                     child: Image.asset(getImageFromCategory(
-                                        categoriesList[index])),
+                                        categoriesList[index]
+                                        )),
                                   )),
                               Positioned(
                                   left: 3,
@@ -748,7 +750,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                               fontFamily: 'Inter',
                                               fontStyle: FontStyle.normal,
                                               fontWeight: FontWeight.w600,
-                                              fontSize: 16,
+                                              fontSize: 15,
                                               letterSpacing: 0,
                                               color: Colors.white,
                                             ),
