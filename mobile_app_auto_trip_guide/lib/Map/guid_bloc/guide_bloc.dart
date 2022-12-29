@@ -149,7 +149,6 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         });
       });
 
-      print(categoriesToMapPois);
       emit(ShowOptionalCategoriesState(
           categoriesToPoisMap: categoriesToMapPois,
           isCheckedCategory: event.isCheckedCategory,

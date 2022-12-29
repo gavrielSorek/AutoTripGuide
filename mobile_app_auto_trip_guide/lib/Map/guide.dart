@@ -713,21 +713,22 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                       child: GridView.count(
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 0,
-                          childAspectRatio: (1.3),
+                          childAspectRatio: (1.45),
                         crossAxisCount: 2,
                         children: List.generate(
                             widget.state.categoriesToPoisMap.length, (index) {
                           return Center(
                             child: Stack(children: [
-                              SizedBox(
-                                  height: 100,
-                                  child: ClipRRect(
+                                ClipRRect(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(20)),
                                     child: Image.asset(getImageFromCategory(
                                         categoriesList[index]
-                                        )),
-                                  )),
+                                        ),height: 100,
+                                        width: 200,
+                                        fit: BoxFit.cover,
+                                        ),
+                                  ),
                               Positioned(
                                   left: 3,
                                   right: 0,
