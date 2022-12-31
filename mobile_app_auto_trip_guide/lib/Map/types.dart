@@ -151,7 +151,7 @@ class MapPoi {
   MutableMapIconButton? iconButton;
 
   MapPoi(this.poi) {
-    iconButton = MutableMapIconButton(()=>{Globals.globalClickedPoiStream.add(this)});
+    iconButton = MutableMapIconButton(onPressedFunc: ()=>{Globals.globalClickedPoiStream.add(this)});
     marker = getMarkerFromPoi(poi, iconButton!);
   }
 }
@@ -180,32 +180,33 @@ class GuideData {
 }
 
 class MutableMapIconButton extends StatefulWidget {
-  dynamic onPressedFunc;
+  final dynamic onPressedFunc;
+  Color _iconColor = Color(0xffB0B0B0);
 
-  MutableMapIconButton(this.onPressedFunc, {Key? key}) : super(key: key);
-  _MutableMapIconButton? iconState;
+  void setColor(Color color) {
+    _iconColor = color;
+    iconState?.updateState();
+  }
+
+  MutableMapIconButton({required this.onPressedFunc});
+  _MutableMapIconButtonState? iconState;
   @override
   State<StatefulWidget> createState() {
-    iconState = _MutableMapIconButton(onPressedFunc);
+    iconState = _MutableMapIconButtonState();
     return iconState!;
   }
 }
 
-class _MutableMapIconButton extends State<StatefulWidget> {
-  Color _iconColor = Color(0xffB0B0B0);
+class _MutableMapIconButtonState extends State<MutableMapIconButton> {
   double _iconSize = 45.0;
-  dynamic onPressedFunc;
-  _MutableMapIconButton(this.onPressedFunc);
+  _MutableMapIconButtonState() {
 
-  void setColor(Color color) {
-    if (!mounted) {
-      return; // Just do nothing if the widget is disposed.
-    }
-    setState(() {
-      _iconColor = color;
-    });
   }
 
+  void updateState() {
+    setState(() {
+    });
+  }
   void setSize(double size) {
     setState(() {
       _iconSize = size;
@@ -217,8 +218,8 @@ class _MutableMapIconButton extends State<StatefulWidget> {
     return IconButton(
       icon: const Icon(Icons.location_on_rounded),
       iconSize: _iconSize,
-      color: _iconColor,
-      onPressed: onPressedFunc,
+      color: widget._iconColor,
+      onPressed: widget.onPressedFunc
     );
   }
 }
