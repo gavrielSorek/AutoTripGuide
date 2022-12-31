@@ -148,7 +148,7 @@ class MapPoi {
   Marker? marker;
 
   // IconButton? iconButton;
-  MutableMapIconButton? iconButton;
+  late MutableMapIconButton iconButton;
 
   MapPoi(this.poi) {
     iconButton = MutableMapIconButton(onPressedFunc: ()=>{Globals.globalClickedPoiStream.add(this)});

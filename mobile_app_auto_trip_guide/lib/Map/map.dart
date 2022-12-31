@@ -239,7 +239,8 @@ class _UserMapState extends State<UserMap> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    child: NavigationDrawer.buildNavigationDrawerButton(context),
+                    child:
+                        NavigationDrawer.buildNavigationDrawerButton(context),
                   ),
                   if (widget.showLoadingPoisAnimation)
                     Container(
@@ -268,7 +269,8 @@ class _UserMapState extends State<UserMap> {
                     onPressed: () {
                       // Automatically center the location marker on the map when location updated until user interact with the map.
                       setState(
-                            () => _centerOnLocationUpdate = CenterOnLocationUpdate.always,
+                        () => _centerOnLocationUpdate =
+                            CenterOnLocationUpdate.always,
                       );
                       // Center the location marker on the map and zoom the map to level 14.
                       _centerCurrentLocationStreamController.add(14);
@@ -283,14 +285,14 @@ class _UserMapState extends State<UserMap> {
             ),
             Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Expanded(child: guideTool.storiesDialogBox)
-                    // guideTool.guideDialogBox,
-                  ],
-                ))
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(child: guideTool.storiesDialogBox)
+                // guideTool.guideDialogBox,
+              ],
+            ))
           ],
         ),
       ],
@@ -329,13 +331,13 @@ class _UserMapState extends State<UserMap> {
 
   void highlightMapPoi(MapPoi mapPoi) {
     setState(() {
-      mapPoi.iconButton!.iconState?.setColor(Color(0xff0A84FF));
+      mapPoi.iconButton.setColor(Color(0xff0A84FF));
     });
   }
 
   void unHighlightMapPoi(MapPoi mapPoi) {
     setState(() {
-      mapPoi.iconButton!.iconState?.setColor(Color(0xffB0B0B0));
+      mapPoi.iconButton.setColor(Color(0xffB0B0B0));
     });
   }
 
