@@ -14,7 +14,6 @@ import 'guide.dart';
 import 'package:flutter/foundation.dart';
 
 class UserMap extends StatefulWidget {
-  MapPoi? highlightedPoi;
   bool showLoadingPoisAnimation = false;
 
   // inits
@@ -71,12 +70,7 @@ class UserMap extends StatefulWidget {
   }
 
   void highlightPoi(MapPoi mapPoi) {
-    //TODO USE BLOC
-    if (this.highlightedPoi != null) {
-      userMapState?.unHighlightMapPoi(highlightedPoi!);
-    }
-    this.highlightedPoi = mapPoi;
-    userMapState?.highlightMapPoi(mapPoi);
+    userMapState?.highlightPoi(mapPoi);
   }
 
   void setLoadingAnimationState(bool isActive) {
@@ -99,17 +93,20 @@ class UserMap extends StatefulWidget {
 }
 
 class _UserMapState extends State<UserMap> {
+  List<Marker> markersList = [];
+  List<Marker> markersListToDrawnAbove = [];
   GuideData guideData = GuideData();
   late Guide guideTool;
   WidgetVisibility navButtonState = WidgetVisibility.hide;
   WidgetVisibility nextButtonState = WidgetVisibility.hide;
   WidgetVisibility loadingPois = WidgetVisibility.view;
+  MapPoi? highlightedPoi;
 
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
   final MapController _mapController = MapController();
   double mapHeading = 0;
-  List<Marker> markersList = [];
+
   bool isNewPoisNeededFlag = true;
   int _numOfPoisRequests = 0;
 
@@ -126,6 +123,17 @@ class _UserMapState extends State<UserMap> {
 
   void updateState() {
     setState(() {});
+  }
+
+  void highlightPoi(MapPoi mapPoi) {
+    if (highlightedPoi != null) {
+      markersListToDrawnAbove.clear();
+      this.highlightedPoi?.iconButton.setColor(Color(0xffB0B0B0));
+    }
+    mapPoi.iconButton.setColor(Color(0xff0A84FF));
+    markersListToDrawnAbove.add(mapPoi.marker!);
+    this.highlightedPoi = mapPoi;
+    updateState();
   }
 
   @override
@@ -228,7 +236,8 @@ class _UserMapState extends State<UserMap> {
             centerCurrentLocationStream:
                 _centerCurrentLocationStreamController.stream,
             centerOnLocationUpdate: _centerOnLocationUpdate),
-        MarkerLayer(markers: markersList)
+        MarkerLayer(markers: markersList),
+        MarkerLayer(markers: markersListToDrawnAbove),
       ],
       nonRotatedChildren: [
         Column(
@@ -326,18 +335,6 @@ class _UserMapState extends State<UserMap> {
     }
     setState(() {
       navButtonState = WidgetVisibility.hide;
-    });
-  }
-
-  void highlightMapPoi(MapPoi mapPoi) {
-    setState(() {
-      mapPoi.iconButton.setColor(Color(0xff0A84FF));
-    });
-  }
-
-  void unHighlightMapPoi(MapPoi mapPoi) {
-    setState(() {
-      mapPoi.iconButton.setColor(Color(0xffB0B0B0));
     });
   }
 

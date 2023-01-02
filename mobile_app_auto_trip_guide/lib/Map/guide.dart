@@ -67,17 +67,6 @@ class Guide {
     }
   }
 
-  void askPoi(MapPoi poi) {
-    guideState = GuideState.working;
-    preHandlePoi(poi);
-  }
-
-  // lunch before handle poi
-  void preHandlePoi(MapPoi mapPoi) {
-    Globals.setMainMapPoi(mapPoi);
-    Globals.globalUserMap.userMapState?.highlightMapPoi(mapPoi);
-    Globals.globalUserMap.userMapState?.showNextButton();
-  }
 }
 
 class GuidDialogBox extends StatefulWidget {

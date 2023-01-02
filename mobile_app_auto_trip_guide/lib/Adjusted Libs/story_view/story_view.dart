@@ -224,6 +224,13 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
         int currentPos = widget.storyItems.indexOf(this._currentStory);
         this._currentStory!.shown = false;
         widget.storyItems.insert(currentPos, requestedStory);
+
+        if (requestedStory.shown) {
+          this._currentStory!.shown = false;
+        } else {
+          this._currentStory!.shown = true;
+        }
+        requestedStory.shown = false;
         _beginPlay();
       }
     });

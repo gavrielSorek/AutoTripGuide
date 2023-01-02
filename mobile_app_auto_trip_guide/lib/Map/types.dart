@@ -204,6 +204,9 @@ class _MutableMapIconButtonState extends State<MutableMapIconButton> {
   }
 
   void updateState() {
+    if(!mounted) {
+      return;
+    }
     setState(() {
     });
   }
@@ -211,6 +214,12 @@ class _MutableMapIconButtonState extends State<MutableMapIconButton> {
     setState(() {
       _iconSize = size;
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
