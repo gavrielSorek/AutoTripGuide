@@ -24,10 +24,10 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       emit(PoisSearchingState());
     });
     on<SetStoriesListEvent>((event, emit) {
-      final ShowOptionalCategoriesState lastShowOptionalCategoriesState ;
-      if(state is ShowOptionalCategoriesState){
+      final ShowOptionalCategoriesState lastShowOptionalCategoriesState;
+      if (state is ShowOptionalCategoriesState) {
         lastShowOptionalCategoriesState = state as ShowOptionalCategoriesState;
-      } else{
+      } else {
         return;
       }
       // stop loading animation
@@ -85,7 +85,10 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         onStoryTap: event.onStoryTap,
         onVerticalSwipeComplete: event.onVerticalSwipeComplete,
       );
-      emit(ShowStoriesState(storyView: storyView, controller: controller,lastShowOptionalCategoriesState: lastShowOptionalCategoriesState ));
+      emit(ShowStoriesState(
+          storyView: storyView,
+          controller: controller,
+          lastShowOptionalCategoriesState: lastShowOptionalCategoriesState));
     });
     on<SetCurrentPoiEvent>((event, emit) {
       if (state is ShowStoriesState) {
@@ -109,7 +112,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             currentPoi: currentPoi,
             storyView: state.storyView,
             controller: state.controller,
-            lastShowOptionalCategoriesState: state.lastShowOptionalCategoriesState));
+            lastShowOptionalCategoriesState:
+                state.lastShowOptionalCategoriesState));
       }
     });
 
@@ -122,10 +126,13 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     });
 
     on<SetLoadedStoriesEvent>((event, emit) {
-      if (state is ShowStoriesState) {
-        final state = this.state as ShowStoriesState;
-      emit(ShowStoriesState(
-          storyView: event.storyView, controller: event.controller,lastShowOptionalCategoriesState: state.lastShowOptionalCategoriesState));
+      if (state is ShowPoiState) {
+        final state = this.state as ShowPoiState;
+        emit(ShowStoriesState(
+            storyView: event.storyView,
+            controller: event.controller,
+            lastShowOptionalCategoriesState:
+                state.savedStoriesState.lastShowOptionalCategoriesState));
       }
     });
 
@@ -144,15 +151,19 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             duration: Duration(hours: 100));
 
         state.controller.setStoryViewToStoryItem(requestedStoryItem);
-        emit(ShowStoriesState(storyView: state.storyView,
-            controller: state.controller, lastShowOptionalCategoriesState: state.lastShowOptionalCategoriesState));
+        emit(ShowStoriesState(
+            storyView: state.storyView,
+            controller: state.controller,
+            lastShowOptionalCategoriesState:
+                state.lastShowOptionalCategoriesState));
       }
     });
 
     on<ShowOptionalCategoriesEvent>((event, emit) {
       List<MapPoi> mapPoisList = event.pois.values.toList();
 
-      Map<String, List<MapPoi>> categoriesToMapPois = HashMap<String, List<MapPoi>>();
+      Map<String, List<MapPoi>> categoriesToMapPois =
+          HashMap<String, List<MapPoi>>();
       //patch to all categories
       categoriesToMapPois['All'] = <MapPoi>[];
       categoriesToMapPois['All']?.addAll(mapPoisList);

@@ -60,8 +60,7 @@ class Guide {
   }
 
   void onStoryFinished() {
-    if (_queuedPoisToPlay.isEmpty)
-      return;
+    if (_queuedPoisToPlay.isEmpty) return;
 
     _poisToPlay.clear();
     _poisToPlay.addAll(_queuedPoisToPlay);
@@ -572,7 +571,12 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
 
   Widget buildOptionalCategoriesSelectionWidget(state) {
     final showOptionalCategoriesState = state as ShowOptionalCategoriesState;
-    return OptionalCategoriesSelection(state: showOptionalCategoriesState);
+    return OptionalCategoriesSelection(
+      state: showOptionalCategoriesState,
+      onPoiClicked: () {
+        context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+      },
+    );
   }
 
   @override
@@ -602,8 +606,10 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
 
 class OptionalCategoriesSelection extends StatefulWidget {
   final ShowOptionalCategoriesState state;
+  final dynamic onPoiClicked;
 
-  OptionalCategoriesSelection({required this.state}) {}
+  OptionalCategoriesSelection(
+      {required this.state, required this.onPoiClicked}) {}
 
   @override
   State<StatefulWidget> createState() {
@@ -612,9 +618,8 @@ class OptionalCategoriesSelection extends StatefulWidget {
 }
 
 class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
-
   static String getImageFromCategory(List<MapPoi> items) {
-    return  items[0].poi.pic ?? '';
+    return items[0].poi.pic ?? '';
   }
 
   @override
@@ -658,7 +663,8 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                         child: Padding(
                           padding: EdgeInsets.only(left: 11, right: 11),
                           child: Text(
-                            widget.state.idToPoisMap.keys.length.toString() + " Places near you: ",
+                            widget.state.idToPoisMap.keys.length.toString() +
+                                " Places near you: ",
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontStyle: FontStyle.normal,
@@ -692,25 +698,24 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                       child: GridView.count(
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 0,
-                          childAspectRatio: (1.45),
+                        childAspectRatio: (1.45),
                         crossAxisCount: 2,
                         children: List.generate(
                             widget.state.categoriesToPoisMap.length, (index) {
                           return Center(
                             child: Stack(children: [
-                                ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(20)),
-                                        child: CachedNetworkImage(imageUrl: getImageFromCategory(
-                                                  widget
-                                                      .state
-                                                      .categoriesToPoisMap[
-                                                          categoriesList[index]]!  )
-                                        ,height: 100,
-                                        width: 200,
-                                        fit: BoxFit.cover,
-                                        ),
-                                  ),
+                              ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                                child: CachedNetworkImage(
+                                  imageUrl: getImageFromCategory(
+                                      widget.state.categoriesToPoisMap[
+                                          categoriesList[index]]!),
+                                  height: 100,
+                                  width: 200,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                               Positioned(
                                   left: 3,
                                   right: 0,
@@ -736,8 +741,8 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                               fontSize: 15,
                                               letterSpacing: 0,
                                               color: Colors.white,
-                                              backgroundColor: Colors.black.withOpacity(0.3),
-                                              
+                                              backgroundColor:
+                                                  Colors.black.withOpacity(0.3),
                                             ),
                                           )),
                                       Expanded(
@@ -753,18 +758,25 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                                       categoriesList[index]] ??
                                                   false,
                                               onChanged: (value) {
-
                                                 //Handle the 'All' CASE
-                                                if(categoriesList[index] == 'All'){
-                                                    for (String key in  widget.state.categoriesToPoisMap.keys) {
-                                                     setState(() {
-                                                       widget.state.isCheckedCategory[key] = value ?? false;
-                                                     }); 
-                                                    }
+                                                if (categoriesList[index] ==
+                                                    'All') {
+                                                  for (String key in widget
+                                                      .state
+                                                      .categoriesToPoisMap
+                                                      .keys) {
+                                                    setState(() {
+                                                      widget.state
+                                                              .isCheckedCategory[
+                                                          key] = value ?? false;
+                                                    });
+                                                  }
                                                 }
-                                                if(value == false) {
+                                                if (value == false) {
                                                   setState(() {
-                                                     widget.state.isCheckedCategory['All'] = value ?? false;                                                    
+                                                    widget.state
+                                                            .isCheckedCategory[
+                                                        'All'] = value ?? false;
                                                   });
                                                 }
                                                 setState(() {
@@ -802,14 +814,10 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                               onShowStory: widget.state.onShowStory,
                               onFinishedFunc: widget.state.onFinishedFunc,
                               onStoryTap: (story) {
-                                context
-                                    .read<GuideBloc>()
-                                    .add(ShowFullPoiInfoEvent());
+                                widget.onPoiClicked();
                               },
                               onVerticalSwipeComplete: (Direction? d) {
-                                context
-                                    .read<GuideBloc>()
-                                    .add(ShowFullPoiInfoEvent());
+                                widget.onPoiClicked();
                               }),
                         );
                   },
