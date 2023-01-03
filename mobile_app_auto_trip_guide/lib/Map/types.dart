@@ -135,25 +135,23 @@ class Audio {
 
 class MapPoi {
   // return marker from poi
-  static Marker getMarkerFromPoi(Poi poi, MutableMapIconButton iconButton) {
+  Marker createMarkerFromPoi(Color color) {
     return Marker(
       width: 45.0,
       height: 45.0,
       point: LatLng(poi.latitude, poi.longitude),
-      builder: (context) => Container(child: iconButton),
+      builder: (context) => Container(child: IconButton(
+          icon: const Icon(Icons.location_on_rounded),
+          iconSize: 45.0,
+          color: color,
+          onPressed: ()=>{Globals.globalClickedPoiStream.add(this)}
+      )),
     );
   }
 
   Poi poi;
-  Marker? marker;
 
-  // IconButton? iconButton;
-  late MutableMapIconButton iconButton;
-
-  MapPoi(this.poi) {
-    iconButton = MutableMapIconButton(onPressedFunc: ()=>{Globals.globalClickedPoiStream.add(this)});
-    marker = getMarkerFromPoi(poi, iconButton!);
-  }
+  MapPoi(this.poi) {}
 }
 
 enum GuideStatus { voice, text }
@@ -179,56 +177,3 @@ class GuideData {
   }
 }
 
-class MutableMapIconButton extends StatefulWidget {
-  final dynamic onPressedFunc;
-  Color _iconColor = Color(0xffB0B0B0);
-
-  void setColor(Color color) {
-    _iconColor = color;
-    iconState?.updateState();
-  }
-
-  MutableMapIconButton({required this.onPressedFunc});
-  _MutableMapIconButtonState? iconState;
-  @override
-  State<StatefulWidget> createState() {
-    iconState = _MutableMapIconButtonState();
-    return iconState!;
-  }
-}
-
-class _MutableMapIconButtonState extends State<MutableMapIconButton> {
-  double _iconSize = 45.0;
-  _MutableMapIconButtonState() {
-
-  }
-
-  void updateState() {
-    if(!mounted) {
-      return;
-    }
-    setState(() {
-    });
-  }
-  void setSize(double size) {
-    setState(() {
-      _iconSize = size;
-    });
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext) {
-    return IconButton(
-      icon: const Icon(Icons.location_on_rounded),
-      iconSize: _iconSize,
-      color: widget._iconColor,
-      onPressed: widget.onPressedFunc
-    );
-  }
-}

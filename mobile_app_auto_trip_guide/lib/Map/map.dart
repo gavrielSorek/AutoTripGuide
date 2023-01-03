@@ -101,6 +101,8 @@ class _UserMapState extends State<UserMap> {
   WidgetVisibility nextButtonState = WidgetVisibility.hide;
   WidgetVisibility loadingPois = WidgetVisibility.view;
   MapPoi? highlightedPoi;
+  final regularMarkerColor = Color(0xffB0B0B0);
+  final highlightedMarkerColor = Color(0xff0A84FF);
 
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
@@ -126,12 +128,8 @@ class _UserMapState extends State<UserMap> {
   }
 
   void highlightPoi(MapPoi mapPoi) {
-    if (highlightedPoi != null) {
-      markersListToDrawnAbove.clear();
-      this.highlightedPoi?.iconButton.setColor(Color(0xffB0B0B0));
-    }
-    mapPoi.iconButton.setColor(Color(0xff0A84FF));
-    markersListToDrawnAbove.add(mapPoi.marker!);
+    markersListToDrawnAbove.clear();
+    markersListToDrawnAbove.add(mapPoi.createMarkerFromPoi(highlightedMarkerColor));
     this.highlightedPoi = mapPoi;
     updateState();
   }
@@ -172,7 +170,7 @@ class _UserMapState extends State<UserMap> {
             Globals.globalAllPois[poi.id] = mapPoi;
             Globals.addUnhandledPoiKey(poi.id);
             Globals.globalPoisIdToMarkerIdx[poi.id] = markersList.length;
-            markersList.add(mapPoi.marker!);
+            markersList.add(mapPoi.createMarkerFromPoi(regularMarkerColor));
           }
         }
       });
