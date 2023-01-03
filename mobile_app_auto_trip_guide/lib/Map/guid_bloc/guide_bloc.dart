@@ -60,7 +60,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             duration: Duration(hours: 100))); // infinite
       });
 
-      StoryView storyView = StoryView(
+      final StoryView storyView = StoryView(
         controller: controller,
         repeat: true,
         progressPosition: ProgressPosition.bottom,
@@ -119,7 +119,16 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         final state = this.state as ShowStoriesState;
         Globals.globalAudioApp.stopAudio();
         Globals.globalUserMap.highlightPoi(event.mapPoi);
-        state.controller.setStoryViewToStoryItemById(event.mapPoi.poi.id);
+        StoryItem requestedStoryItem = ScrolledText.textStory(
+            id: event.mapPoi.poi.id,
+            title: event.mapPoi.poi.poiName ?? 'No Name',
+            text: event.mapPoi.poi.shortDesc,
+            backgroundColor: Colors.white,
+            key: Key(event.mapPoi.poi.id),
+            // duration: Duration(seconds: double.infinity.toInt()))); // infinite
+            duration: Duration(hours: 100));
+
+        state.controller.setStoryViewToStoryItem(requestedStoryItem);
         emit(ShowStoriesState(storyView: state.storyView,
             controller: state.controller));
       }
