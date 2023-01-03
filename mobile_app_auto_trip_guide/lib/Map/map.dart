@@ -159,7 +159,6 @@ class _UserMapState extends State<UserMap> {
           LocationInfo(currentLocation.latitude, currentLocation.longitude,
               currentLocation.heading, currentLocation.speed));
 
-
       pois = PoisAttributesCalculator.filterPois(pois, currentLocation);
 // pois = [new Poi(latitude: 32.100084,longitude: 34.881173,country: 'Israel',poiName: 'Roy1',Categories: [],id:'a',audio: null,shortDesc:'Adullam-France Park (Hebrew: פארק עדולם-צרפת), also known as Parc de France-Adoulam, is a sprawling park of 50,000 dunams (50 km2; 19 sq mi)(ca. 12,350 acres) in the Central District of Israel, located south of Beit Shemesh. The park, established in 2008 for public recreation, features two major hiking and biking trails, and four major archaeological sites from the Second Temple period. It stretches between Naḥal Ha-Elah (Highway 375), its northernmost boundary, to Naḥal Guvrin (Highway 35), its southernmost boundary. To its west lies the Beit Guvrin-Beit Shemesh highway, and to its east the "green line" – now territories under joint Israeli-Palestinian Arab control – which marks its limit.'),new Poi(latitude: 32.100080,longitude: 34.881170,poiName: 'Roy2',country: 'Israel',Categories: [],id:'b',audio: null,shortDesc: 'bbbb')];
       setState(() {
@@ -176,8 +175,6 @@ class _UserMapState extends State<UserMap> {
         }
       });
 
-      Globals.globalUnhandledKeys
-          .sort(PersonalizeRecommendation.sortPoisByWeightedScore);
       // if there is new pois and guideTool waiting
       if (pois.isNotEmpty) {
         guideTool.setPoisInQueue(pois);

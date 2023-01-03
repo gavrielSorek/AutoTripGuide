@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import '../../Adjusted Libs/story_view/story_controller.dart';
 import '../../Adjusted Libs/story_view/story_view.dart';
-import '../../Adjusted Libs/story_view/utils.dart';
 import '../../General Wigets/generals.dart';
 import '../../General Wigets/scrolled_text.dart';
 import '../globals.dart';
+import '../personalize_recommendation.dart';
 import '../types.dart';
 
 part 'guide_event.dart';
@@ -48,8 +48,12 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         controller.next();
       };
 
+      List<MapPoi> poisToPlay = List.from(event.poisToPlay.values);
+      // sorting the pois
+      poisToPlay.sort(PersonalizeRecommendation.sortMapPoisByWeightedScore);
+
       final List<StoryItem> storyItems = [];
-      event.poisToPlay.forEach((key, mapPoi) {
+      poisToPlay.forEach((mapPoi) {
         storyItems.add(ScrolledText.textStory(
             id: mapPoi.poi.id,
             title: mapPoi.poi.poiName ?? 'No Name',

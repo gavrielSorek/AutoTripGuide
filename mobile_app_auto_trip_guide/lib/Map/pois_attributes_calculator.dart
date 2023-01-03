@@ -73,7 +73,7 @@ class PoisAttributesCalculator {
     return filterPoisByDistance(pois, position);
   }
   static List<Poi> filterPoisByDistance(List<Poi> pois, Position position) {
-    const double maxDist = 2000; //1000 meters
+    const double maxDist = 2000; //2000 meters
     pois.removeWhere((poi) => getDistBetweenPoints(poi.latitude, poi.longitude, position.latitude, position.longitude) > maxDist);
     return pois;
   }

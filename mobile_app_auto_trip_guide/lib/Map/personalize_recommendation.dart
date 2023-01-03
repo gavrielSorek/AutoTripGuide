@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:final_project/Map/globals.dart';
+import 'package:final_project/Map/types.dart';
 import 'package:geolocator/geolocator.dart';
 import 'map.dart';
 
@@ -16,28 +17,26 @@ class PersonalizeRecommendation {
   }
 
   // get distance of poi from user
-  static double getDistanceInKm(String id) {
+  static double getDistanceInKm(Poi poi) {
     Position userLocation = UserMap.USER_LOCATION;
-    double latitude = Globals.globalAllPois[id]!.poi.latitude;
-    double longitude = Globals.globalAllPois[id]!.poi.longitude;
-    double dist = calculateDistance(userLocation?.latitude ?? latitude, userLocation?.longitude ?? longitude, latitude, longitude);
+    double dist = calculateDistance(userLocation?.latitude ?? poi.latitude, userLocation?.longitude ?? poi.longitude, poi.latitude, poi.longitude);
     return dist;
   }
 
   // get score of poi according to user's preferences
-  static int getPreferenceScore(String id) {
-    List<String> categories = Globals.globalAllPois[id]!.poi.Categories;
+  static int getPreferenceScore(Poi poi) {
+    List<String> categories = poi.Categories;
     int intersections = Globals.favoriteCategoriesSet.intersection(categories.toSet()).length;
     int favoriteCategoriesLength = Globals.favoriteCategoriesSet.length;
     return favoriteCategoriesLength - intersections;
   }
 
   // sort pois by weighted score of preferences and distance
-  static int sortPoisByWeightedScore(String idA, String idB) {
-    double distanceA = getDistanceInKm(idA);
-    double distanceB = getDistanceInKm(idB);
-    int preferencesScoreA = getPreferenceScore(idA);
-    int preferencesScoreB = getPreferenceScore(idB);
+  static int sortMapPoisByWeightedScore(MapPoi mapPoi1, MapPoi mapPoi2) {
+    double distanceA = getDistanceInKm(mapPoi1.poi);
+    double distanceB = getDistanceInKm(mapPoi2.poi);
+    int preferencesScoreA = getPreferenceScore(mapPoi1.poi);
+    int preferencesScoreB = getPreferenceScore(mapPoi2.poi);
     int weightedScoreA = ((0.7 * distanceA + 0.3 * preferencesScoreA) * 1000).round();
     int weightedScoreB = ((0.7 * distanceB + 0.3 * preferencesScoreB) * 1000).round();
     return weightedScoreA - weightedScoreB;
