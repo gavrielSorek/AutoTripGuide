@@ -621,21 +621,9 @@ class OptionalCategoriesSelection extends StatefulWidget {
 }
 
 class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
-  static String getImageFromCategory(String category) {
-    String path = '';
-    switch (category) {
-      case 'Parks':
-        return 'assets/images/parks.jpeg';
-      case 'Synagogues':
-        return 'assets/images/synagogue.jpeg';
-      case 'Bridges':
-        return 'assets/images/bridges.jpeg';
-      case 'Museums':
-        return 'assets/images/museums.jpeg';
-      default:
-        path = 'assets/images/art.png';
-    }
-    return path;
+
+  static String getImageFromCategory(List<MapPoi> items) {
+    return  items[0].poi.pic ?? '';
   }
 
   @override
@@ -722,9 +710,12 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                 ClipRRect(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(20)),
-                                    child: Image.asset(getImageFromCategory(
-                                        categoriesList[index]
-                                        ),height: 100,
+                                        child: CachedNetworkImage(imageUrl: getImageFromCategory(
+                                                  widget
+                                                      .state
+                                                      .categoriesToPoisMap[
+                                                          categoriesList[index]]!  )
+                                        ,height: 100,
                                         width: 200,
                                         fit: BoxFit.cover,
                                         ),
@@ -754,6 +745,8 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                               fontSize: 15,
                                               letterSpacing: 0,
                                               color: Colors.white,
+                                              backgroundColor: Colors.black.withOpacity(0.3),
+                                              
                                             ),
                                           )),
                                       Expanded(
@@ -769,6 +762,20 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                                       categoriesList[index]] ??
                                                   false,
                                               onChanged: (value) {
+
+                                                //Handle the 'All' CASE
+                                                if(categoriesList[index] == 'All'){
+                                                    for (String key in  widget.state.categoriesToPoisMap.keys) {
+                                                     setState(() {
+                                                       widget.state.isCheckedCategory[key] = value ?? false;
+                                                     }); 
+                                                    }
+                                                }
+                                                if(value == false) {
+                                                  setState(() {
+                                                     widget.state.isCheckedCategory['All'] = value ?? false;                                                    
+                                                  });
+                                                }
                                                 setState(() {
                                                   widget.state
                                                           .isCheckedCategory[

@@ -140,6 +140,10 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       List<MapPoi> mapPoisList = event.pois.values.toList();
 
       Map<String, List<MapPoi>> categoriesToMapPois = HashMap<String, List<MapPoi>>();
+      //patch to all categories
+      categoriesToMapPois['All'] = <MapPoi>[];
+      categoriesToMapPois['All']?.addAll(mapPoisList);
+
       mapPoisList.forEach((mapPoi) {
         mapPoi.poi.Categories.forEach((category) {
           if (!categoriesToMapPois.containsKey(category)) {
