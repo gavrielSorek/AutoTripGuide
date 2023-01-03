@@ -1,4 +1,6 @@
 import 'package:final_project/Map/map.dart';
+import 'package:final_project/Map/types.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 
 class PoisAttributesCalculator {
@@ -11,7 +13,7 @@ class PoisAttributesCalculator {
     1: 'Northeast',
     5: 'Southwest',
     3: 'Southeast',
-   -1: 'Undefined'
+    -1: 'Undefined'
   };
 
   // static Map<int, String> USER_RELATIVE_DIRECTIONS = {
@@ -26,20 +28,24 @@ class PoisAttributesCalculator {
   //   -1: 'Undefined'
   // };
 
-  static double getBearingBetweenPoints(startLat,startLong,endLat,endLong){
-    double bearing = Geolocator.bearingBetween(startLat, startLong, endLat, endLong);
+  static double getBearingBetweenPoints(startLat, startLong, endLat, endLong) {
+    double bearing =
+        Geolocator.bearingBetween(startLat, startLong, endLat, endLong);
     if (bearing < 0) {
       return 360 + bearing;
     }
     return bearing;
   }
 
-  static double getDistBetweenPoints(double lat1, double lng1, double lat2, double lng2) {
-    double distanceInMeters = Geolocator.distanceBetween(lat1, lng1, lat2, lng2);
+  static double getDistBetweenPoints(
+      double lat1, double lng1, double lat2, double lng2) {
+    double distanceInMeters =
+        Geolocator.distanceBetween(lat1, lng1, lat2, lng2);
     return distanceInMeters;
   }
 
-  static double getBearingBetweenPointsWithHeading(double lat1, double lng1, double lat2, double lng2, double heading) {
+  static double getBearingBetweenPointsWithHeading(
+      double lat1, double lng1, double lat2, double lng2, double heading) {
     double trueBearing = getBearingBetweenPoints(lat1, lng1, lat2, lng2);
     double relativeUserHeadingToPoint = trueBearing - heading;
     if (relativeUserHeadingToPoint >= 0) {
@@ -49,15 +55,26 @@ class PoisAttributesCalculator {
     }
   }
 
-  static String getDirection(double? lat1, double? lng1, double? lat2, double? lng2) {
+  static String getDirection(
+      double? lat1, double? lng1, double? lat2, double? lng2) {
     if (lat1 == null || lng1 == null || lat2 == null || lng2 == null) {
       return 'Undefined';
     }
     // double bearing = getBearingBetweenPoints(lat1, lng1, lat2, lng2);
-    double bearing = getBearingBetweenPointsWithHeading(lat1, lng1, lat2, lng2, UserMap.USER_LOCATION.heading);
+    double bearing = getBearingBetweenPointsWithHeading(
+        lat1, lng1, lat2, lng2, UserMap.USER_LOCATION.heading);
     int halfQuarter = 45;
-    int directionNum = bearing~/halfQuarter;
-    print("direction Num "  + directionNum.toString());
+    int directionNum = bearing ~/ halfQuarter;
+    print("direction Num " + directionNum.toString());
     return Directions[directionNum] ?? 'Undefined';
+  }
+
+  static List<Poi> filterPois(List<Poi> pois, Position position) { // can add more filters
+    return filterPoisByDistance(pois, position);
+  }
+  static List<Poi> filterPoisByDistance(List<Poi> pois, Position position) {
+    const double maxDist = 2000; //1000 meters
+    pois.removeWhere((poi) => getDistBetweenPoints(poi.latitude, poi.longitude, position.latitude, position.longitude) > maxDist);
+    return pois;
   }
 }

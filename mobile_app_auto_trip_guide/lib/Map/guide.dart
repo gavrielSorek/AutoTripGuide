@@ -52,6 +52,7 @@ class Guide {
     }
     if (_poisToPlay.isEmpty) {
       _poisToPlay.addAll(_queuedPoisToPlay);
+      _queuedPoisToPlay.clear();
     }
     if (poisWereEmpty && !_poisToPlay.isEmpty) {
       storiesDialogBox.setPoiToPlay(_poisToPlay);
@@ -59,14 +60,15 @@ class Guide {
   }
 
   void onStoryFinished() {
-    print("onStoryFinished");
+    if (_queuedPoisToPlay.isEmpty)
+      return;
+
     _poisToPlay.clear();
     _poisToPlay.addAll(_queuedPoisToPlay);
     if (!_poisToPlay.isEmpty) {
       storiesDialogBox.setPoiToPlay(_poisToPlay);
     }
   }
-
 }
 
 class GuidDialogBox extends StatefulWidget {
