@@ -52,6 +52,7 @@ class Guide {
     }
     if (_poisToPlay.isEmpty) {
       _poisToPlay.addAll(_queuedPoisToPlay);
+      _queuedPoisToPlay.clear();
     }
     if (poisWereEmpty && !_poisToPlay.isEmpty) {
       storiesDialogBox.setPoiToPlay(_poisToPlay);
@@ -59,24 +60,14 @@ class Guide {
   }
 
   void onStoryFinished() {
-    print("onStoryFinished");
+    if (_queuedPoisToPlay.isEmpty)
+      return;
+
     _poisToPlay.clear();
     _poisToPlay.addAll(_queuedPoisToPlay);
     if (!_poisToPlay.isEmpty) {
       storiesDialogBox.setPoiToPlay(_poisToPlay);
     }
-  }
-
-  void askPoi(MapPoi poi) {
-    guideState = GuideState.working;
-    preHandlePoi(poi);
-  }
-
-  // lunch before handle poi
-  void preHandlePoi(MapPoi mapPoi) {
-    Globals.setMainMapPoi(mapPoi);
-    Globals.globalUserMap.userMapState?.highlightMapPoi(mapPoi);
-    Globals.globalUserMap.userMapState?.showNextButton();
   }
 }
 

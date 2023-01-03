@@ -14,7 +14,6 @@ import 'guide.dart';
 import 'package:flutter/foundation.dart';
 
 class UserMap extends StatefulWidget {
-  MapPoi? highlightedPoi;
   bool showLoadingPoisAnimation = false;
 
   // inits
@@ -71,16 +70,10 @@ class UserMap extends StatefulWidget {
   }
 
   void highlightPoi(MapPoi mapPoi) {
-    //TODO USE BLOC
-    if (this.highlightedPoi != null) {
-      userMapState?.unHighlightMapPoi(highlightedPoi!);
-    }
-    this.highlightedPoi = mapPoi;
-    userMapState?.highlightMapPoi(mapPoi);
+    userMapState?.highlightPoi(mapPoi);
   }
 
   void setLoadingAnimationState(bool isActive) {
-    //TODO USE BLOC
     showLoadingPoisAnimation = isActive;
     userMapState?.updateState();
   }
@@ -99,17 +92,22 @@ class UserMap extends StatefulWidget {
 }
 
 class _UserMapState extends State<UserMap> {
+  List<Marker> markersList = [];
+  List<Marker> markersListToDrawnAbove = [];
   GuideData guideData = GuideData();
   late Guide guideTool;
   WidgetVisibility navButtonState = WidgetVisibility.hide;
   WidgetVisibility nextButtonState = WidgetVisibility.hide;
   WidgetVisibility loadingPois = WidgetVisibility.view;
+  MapPoi? highlightedPoi;
+  final regularMarkerColor = Color(0xffB0B0B0);
+  final highlightedMarkerColor = Color(0xff0A84FF);
 
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
   final MapController _mapController = MapController();
   double mapHeading = 0;
-  List<Marker> markersList = [];
+
   bool isNewPoisNeededFlag = true;
   int _numOfPoisRequests = 0;
 
@@ -126,6 +124,13 @@ class _UserMapState extends State<UserMap> {
 
   void updateState() {
     setState(() {});
+  }
+
+  void highlightPoi(MapPoi mapPoi) {
+    markersListToDrawnAbove.clear();
+    markersListToDrawnAbove.add(mapPoi.createMarkerFromPoi(highlightedMarkerColor));
+    this.highlightedPoi = mapPoi;
+    updateState();
   }
 
   @override
@@ -153,6 +158,9 @@ class _UserMapState extends State<UserMap> {
       pois = await Globals.globalServerCommunication.getPoisByLocation(
           LocationInfo(currentLocation.latitude, currentLocation.longitude,
               currentLocation.heading, currentLocation.speed));
+
+      pois = PoisAttributesCalculator.filterPois(pois, currentLocation);
+// pois = [new Poi(latitude: 32.100084,longitude: 34.881173,country: 'Israel',poiName: 'Roy1',Categories: [],id:'a',audio: null,shortDesc:'Adullam-France Park (Hebrew: פארק עדולם-צרפת), also known as Parc de France-Adoulam, is a sprawling park of 50,000 dunams (50 km2; 19 sq mi)(ca. 12,350 acres) in the Central District of Israel, located south of Beit Shemesh. The park, established in 2008 for public recreation, features two major hiking and biking trails, and four major archaeological sites from the Second Temple period. It stretches between Naḥal Ha-Elah (Highway 375), its northernmost boundary, to Naḥal Guvrin (Highway 35), its southernmost boundary. To its west lies the Beit Guvrin-Beit Shemesh highway, and to its east the "green line" – now territories under joint Israeli-Palestinian Arab control – which marks its limit.'),new Poi(latitude: 32.100080,longitude: 34.881170,poiName: 'Roy2',country: 'Israel',Categories: [],id:'b',audio: null,shortDesc: 'bbbb')];
       setState(() {
         // add all the new poi
         print("add pois to map");
@@ -162,13 +170,11 @@ class _UserMapState extends State<UserMap> {
             Globals.globalAllPois[poi.id] = mapPoi;
             Globals.addUnhandledPoiKey(poi.id);
             Globals.globalPoisIdToMarkerIdx[poi.id] = markersList.length;
-            markersList.add(mapPoi.marker!);
+            markersList.add(mapPoi.createMarkerFromPoi(regularMarkerColor));
           }
         }
       });
 
-      Globals.globalUnhandledKeys
-          .sort(PersonalizeRecommendation.sortPoisByWeightedScore);
       // if there is new pois and guideTool waiting
       if (pois.isNotEmpty) {
         guideTool.setPoisInQueue(pois);
@@ -226,7 +232,8 @@ class _UserMapState extends State<UserMap> {
             centerCurrentLocationStream:
                 _centerCurrentLocationStreamController.stream,
             centerOnLocationUpdate: _centerOnLocationUpdate),
-        MarkerLayer(markers: markersList)
+        MarkerLayer(markers: markersList),
+        MarkerLayer(markers: markersListToDrawnAbove),
       ],
       nonRotatedChildren: [
         Column(
@@ -237,7 +244,8 @@ class _UserMapState extends State<UserMap> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    child: NavigationDrawer.buildNavigationDrawerButton(context),
+                    child:
+                        NavigationDrawer.buildNavigationDrawerButton(context),
                   ),
                   if (widget.showLoadingPoisAnimation)
                     Container(
@@ -266,7 +274,8 @@ class _UserMapState extends State<UserMap> {
                     onPressed: () {
                       // Automatically center the location marker on the map when location updated until user interact with the map.
                       setState(
-                            () => _centerOnLocationUpdate = CenterOnLocationUpdate.always,
+                        () => _centerOnLocationUpdate =
+                            CenterOnLocationUpdate.always,
                       );
                       // Center the location marker on the map and zoom the map to level 14.
                       _centerCurrentLocationStreamController.add(14);
@@ -281,14 +290,14 @@ class _UserMapState extends State<UserMap> {
             ),
             Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Expanded(child: guideTool.storiesDialogBox)
-                    // guideTool.guideDialogBox,
-                  ],
-                ))
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(child: guideTool.storiesDialogBox)
+                // guideTool.guideDialogBox,
+              ],
+            ))
           ],
         ),
       ],
@@ -322,18 +331,6 @@ class _UserMapState extends State<UserMap> {
     }
     setState(() {
       navButtonState = WidgetVisibility.hide;
-    });
-  }
-
-  void highlightMapPoi(MapPoi mapPoi) {
-    setState(() {
-      mapPoi.iconButton!.iconState?.setColor(Color(0xff0A84FF));
-    });
-  }
-
-  void unHighlightMapPoi(MapPoi mapPoi) {
-    setState(() {
-      mapPoi.iconButton!.iconState?.setColor(Color(0xffB0B0B0));
     });
   }
 

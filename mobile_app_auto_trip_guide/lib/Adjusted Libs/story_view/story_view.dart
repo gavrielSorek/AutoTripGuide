@@ -146,6 +146,9 @@ class StoryView extends StatefulWidget {
 
   dynamic onStoryTap = null;
 
+  // indicates whether the state class initialized with the desirable settings
+  bool isInit = false;
+
   StoryView(
       {required this.storyItems,
       required this.controller,
@@ -170,7 +173,7 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
   Timer? _nextDebouncer;
 
   StreamSubscription<PlaybackState>? _playbackSubscription;
-  StreamSubscription<String>? _storyItemIdSubscription;
+  StreamSubscription<StoryItem>? _storyItemSubscription;
 
   VerticalDragInfo? verticalDragInfo;
 
@@ -184,12 +187,9 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
     return item?.view ?? Container();
   }
 
-  @override
-  void initState() {
-    super.initState();
-
+  void initializeClass() {
+    widget.isInit = true;
     // All pages after the first unshown page should have their shown value as
-    // false
     final firstPage = widget.storyItems.firstWhereOrNull((it) => !it!.shown);
     if (firstPage == null) {
       widget.storyItems.forEach((it2) {
@@ -202,30 +202,29 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
       });
     }
 
-    this._storyItemIdSubscription =
-        widget.controller.wantedStoryItemIdNotifier.listen((value) {
+    this._storyItemSubscription =
+        widget.controller.wantedStoryItemNotifier.listen((value) {
       bool isItemInTheList = false;
       // position of requested story item
-      int pos = 0;
-      StoryItem? storyItem;
-      for (int i = 0; i < widget.storyItems.length; i++) {
-        storyItem = widget.storyItems[i];
-        if (storyItem != null &&
-            storyItem.id != null &&
-            storyItem.id! == value) {
-          pos = i;
-          isItemInTheList = true;
-          break;
-        }
+      int index = widget.storyItems
+          .indexWhere((storyItem) => storyItem?.id == value.id);
+      if (index == -1) {
+        widget.storyItems.add(value);
+        index = widget.storyItems.length - 1;
       }
-      if (isItemInTheList) {
-        StoryItem requestedStory = widget.storyItems[pos]!;
-        widget.storyItems.removeAt(pos); // removes the duplicate story item
-        int currentPos = widget.storyItems.indexOf(this._currentStory);
+      StoryItem requestedStory = widget.storyItems[index]!;
+      widget.storyItems.removeAt(index); // removes the duplicate story item
+      int currentPos = widget.storyItems.indexOf(this._currentStory);
+      this._currentStory!.shown = false;
+      widget.storyItems.insert(currentPos, requestedStory);
+
+      if (requestedStory.shown) {
         this._currentStory!.shown = false;
-        widget.storyItems.insert(currentPos, requestedStory);
-        _beginPlay();
+      } else {
+        this._currentStory!.shown = true;
       }
+      requestedStory.shown = false;
+      _beginPlay();
     });
 
     this._playbackSubscription =
@@ -256,12 +255,18 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
   }
 
   @override
+  void initState() {
+    super.initState();
+    initializeClass();
+  }
+
+  @override
   void dispose() {
     _clearDebouncer();
 
     _animationController?.dispose();
     _playbackSubscription?.cancel();
-    _storyItemIdSubscription?.cancel();
+    _storyItemSubscription?.cancel();
 
     super.dispose();
   }
@@ -382,6 +387,9 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.isInit) {
+      initializeClass();
+    }
     return Container(
       color: Colors.white,
       child: Stack(

@@ -135,25 +135,23 @@ class Audio {
 
 class MapPoi {
   // return marker from poi
-  static Marker getMarkerFromPoi(Poi poi, MutableMapIconButton iconButton) {
+  Marker createMarkerFromPoi(Color color) {
     return Marker(
       width: 45.0,
       height: 45.0,
       point: LatLng(poi.latitude, poi.longitude),
-      builder: (context) => Container(child: iconButton),
+      builder: (context) => Container(child: IconButton(
+          icon: const Icon(Icons.location_on_rounded),
+          iconSize: 45.0,
+          color: color,
+          onPressed: ()=>{Globals.globalClickedPoiStream.add(this)}
+      )),
     );
   }
 
   Poi poi;
-  Marker? marker;
 
-  // IconButton? iconButton;
-  MutableMapIconButton? iconButton;
-
-  MapPoi(this.poi) {
-    iconButton = MutableMapIconButton(()=>{Globals.globalClickedPoiStream.add(this)});
-    marker = getMarkerFromPoi(poi, iconButton!);
-  }
+  MapPoi(this.poi) {}
 }
 
 enum GuideStatus { voice, text }
@@ -179,46 +177,3 @@ class GuideData {
   }
 }
 
-class MutableMapIconButton extends StatefulWidget {
-  dynamic onPressedFunc;
-
-  MutableMapIconButton(this.onPressedFunc, {Key? key}) : super(key: key);
-  _MutableMapIconButton? iconState;
-  @override
-  State<StatefulWidget> createState() {
-    iconState = _MutableMapIconButton(onPressedFunc);
-    return iconState!;
-  }
-}
-
-class _MutableMapIconButton extends State<StatefulWidget> {
-  Color _iconColor = Color(0xffB0B0B0);
-  double _iconSize = 45.0;
-  dynamic onPressedFunc;
-  _MutableMapIconButton(this.onPressedFunc);
-
-  void setColor(Color color) {
-    if (!mounted) {
-      return; // Just do nothing if the widget is disposed.
-    }
-    setState(() {
-      _iconColor = color;
-    });
-  }
-
-  void setSize(double size) {
-    setState(() {
-      _iconSize = size;
-    });
-  }
-
-  @override
-  Widget build(BuildContext) {
-    return IconButton(
-      icon: const Icon(Icons.location_on_rounded),
-      iconSize: _iconSize,
-      color: _iconColor,
-      onPressed: onPressedFunc,
-    );
-  }
-}

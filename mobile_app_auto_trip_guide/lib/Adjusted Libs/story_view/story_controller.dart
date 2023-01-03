@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:final_project/Adjusted%20Libs/story_view/story_view.dart';
 import 'package:rxdart/rxdart.dart';
 
 enum PlaybackState { pause, play, next, previous }
@@ -16,8 +17,8 @@ class StoryController {
   final durationNotifier = BehaviorSubject<Duration>();
   /// Stream that broadcasts the wanted duration with beginning and end.
   final progressNotifier = BehaviorSubject<double>();
-  /// Stream that broadcasts the wanted id of wanted story
-  final wantedStoryItemIdNotifier = BehaviorSubject<String>();
+  /// Stream that broadcasts the wanted story
+  final wantedStoryItemNotifier = BehaviorSubject<StoryItem>();
 
   /// Notify listeners with a [PlaybackState.pause] state
   void pause() {
@@ -50,10 +51,10 @@ class StoryController {
     playbackNotifier.close();
     durationNotifier.close();
     progressNotifier.close();
-    wantedStoryItemIdNotifier.close();
+    wantedStoryItemNotifier.close();
   }
 
-  void setStoryViewToStoryItemById(String id) {
-    wantedStoryItemIdNotifier.add(id);
+  void setStoryViewToStoryItem(StoryItem storyItem) {
+    wantedStoryItemNotifier.add(storyItem);
   }
 }
