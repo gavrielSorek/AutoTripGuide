@@ -294,10 +294,6 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                                 )),
                           ),
                         ),
-                        // Container(
-                        //   color: Colors.green,
-                        //   // alignment: Alignment.bottomCenter,
-                        //     child: UniformButtons.getGuidePreferencesButton(onPressed: (){})),
                       ],
                     ),
                   ),
@@ -547,14 +543,18 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
               right: Constants.sidesMarginOfButtons,
               child: Container(
                   child: UniformButtons.getGuidePreferencesButton(
-                      onPressed: () {})),
-            ),
-            Positioned(
-              top: Constants.avatarRadius,
-              right: Constants.sidesMarginOfButtons,
-              child: Container(
-                  child: UniformButtons.getGuidePreferencesButton(
-                      onPressed: () {})),
+                      onPressed: () {
+                      context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
+                          pois:
+                              state.savedStoriesState.lastShowOptionalCategoriesState.idToPoisMap,
+                          onShowStory:
+                              state.savedStoriesState.lastShowOptionalCategoriesState.onShowStory,
+                          onFinishedFunc: state.savedStoriesState
+                              .lastShowOptionalCategoriesState.onFinishedFunc,
+                          isCheckedCategory: state.savedStoriesState
+                              .lastShowOptionalCategoriesState
+                              .isCheckedCategory));
+                      })),
             ),
             Positioned(
                 top: Constants.avatarRadius,
