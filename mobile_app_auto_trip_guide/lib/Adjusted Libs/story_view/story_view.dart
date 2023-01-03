@@ -206,10 +206,11 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
         widget.controller.wantedStoryItemNotifier.listen((value) {
       bool isItemInTheList = false;
       // position of requested story item
-      int index = widget.storyItems.indexWhere((storyItem) => storyItem?.id == value.id);
+      int index = widget.storyItems
+          .indexWhere((storyItem) => storyItem?.id == value.id);
       if (index == -1) {
         widget.storyItems.add(value);
-        index = widget.storyItems.length-1;
+        index = widget.storyItems.length - 1;
       }
       StoryItem requestedStory = widget.storyItems[index]!;
       widget.storyItems.removeAt(index); // removes the duplicate story item
@@ -224,7 +225,6 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
       }
       requestedStory.shown = false;
       _beginPlay();
-
     });
 
     this._playbackSubscription =
@@ -257,6 +257,7 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    initializeClass();
   }
 
   @override
