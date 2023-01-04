@@ -807,7 +807,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                         filteredPois.toList(),
                         key: (item) => item.poi.id,
                         value: (item) => item);
-
+                    if(filteredPois.length > 0) {
                     context.read<GuideBloc>().add(
                           SetStoriesListEvent(
                               poisToPlay: filteredMapPois,
@@ -820,6 +820,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                 widget.onPoiClicked();
                               }),
                         );
+                    }
                   },
                   child: Text("Start Playing"),
                   style: TextButton.styleFrom(
