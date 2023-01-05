@@ -605,7 +605,7 @@ class StoryProgressIndicator extends StatelessWidget {
   /// From `0.0` to `1.0`, determines the progress of the indicator
   final double value;
   final double indicatorHeight;
-  final Color indicatorColor;
+   Color indicatorColor;
 
   StoryProgressIndicator(
     this.value, {
@@ -619,12 +619,13 @@ class StoryProgressIndicator extends StatelessWidget {
       size: Size.fromHeight(
         this.indicatorHeight,
       ),
+      // change the color of the bars
       foregroundPainter: IndicatorOval(
-        this.indicatorColor.withOpacity(0.8),
+        this.indicatorColor = Color(0xff0A84FF).withOpacity(0.9),
         this.value,
       ),
       painter: IndicatorOval(
-        this.indicatorColor.withOpacity(0.4),
+        this.indicatorColor = Color(0xffD1D1D1),
         1.0,
       ),
     );
