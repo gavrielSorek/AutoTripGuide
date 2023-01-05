@@ -271,27 +271,27 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                                     .add(ShowFullPoiInfoEvent());
                               }
                             },
-                            child: CircleAvatar(
-                                backgroundColor: Colors.transparent,
-                                radius: Constants.avatarRadius,
-                                child: Container(
-                                  margin: const EdgeInsets.only(
-                                      left: Constants.sidesMarginOfPic,
-                                      right: Constants.sidesMarginOfPic),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(
-                                            Constants.avatarRadius)),
-                                    child: CachedNetworkImage(
-                                      imageUrl: state.currentPoi?.poi.pic ?? "",
-                                      placeholder: (context, url) =>
-                                          new CircularProgressIndicator(),
-                                      errorWidget: (context, url, error) =>
-                                          new Icon(Icons.error_outlined,
-                                              size: 100),
-                                    ),
-                                  ),
-                                )),
+                child: CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                    radius: Constants.avatarRadius,
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                          left: Constants.sidesMarginOfPic,
+                          right: Constants.sidesMarginOfPic),
+                      child:
+                              ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(50)),
+                                child: CachedNetworkImage(
+                                  imageUrl: state.currentPoi?.poi.pic ?? "",
+                                  height: 180,
+                                  width: 220,
+                                  fit: BoxFit.fill,
+                                 placeholder: (context, url) => new CircularProgressIndicator(),
+                                 errorWidget: (context, url, error) =>  new Icon(Icons.error_outlined, size: 100),
+                                ),
+                              ),
+                    )),
                           ),
                         ),
                       ],
@@ -524,17 +524,19 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                       margin: const EdgeInsets.only(
                           left: Constants.sidesMarginOfPic,
                           right: Constants.sidesMarginOfPic),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                            Radius.circular(Constants.avatarRadius)),
-                        child: CachedNetworkImage(
-                          imageUrl: state.currentPoi?.poi.pic ?? "",
-                          placeholder: (context, url) =>
-                              new CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              new Icon(Icons.error_outlined, size: 100),
-                        ),
-                      ),
+                      child:
+                              ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20)),
+                                child: CachedNetworkImage(
+                                  imageUrl: state.currentPoi?.poi.pic ?? "",
+                                  height: 180,
+                                  width: 250,
+                                  fit: BoxFit.cover,
+                                 placeholder: (context, url) => new CircularProgressIndicator(),
+                                 errorWidget: (context, url, error) =>  new Icon(Icons.error_outlined, size: 100),
+                                ),
+                              ),
                     )),
               ),
             ),
@@ -622,6 +624,33 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
     return items[0].poi.pic ?? '';
   }
 
+  void handleSelectedCatrgotyClicked(selectedCategory) {
+    bool currentValue = (widget.state.isCheckedCategory[selectedCategory] ?? false);
+     setState(() {
+        widget.state.isCheckedCategory[selectedCategory] = !currentValue;
+            }); 
+         //Handle the 'All' CASE
+      if(selectedCategory == 'All'){
+      for(String key in widget.state.categoriesToPoisMap.keys){
+          setState(() {
+          widget.state.isCheckedCategory[ key] = !currentValue ;
+          });
+      }
+      }
+    if (currentValue) {
+      setState(() {
+        widget.state.isCheckedCategory['All'] =  false;
+      });
+    }  
+    num selected =  widget.state.isCheckedCategory.values.where((x) => x).length;
+    num total = widget.state.categoriesToPoisMap.keys.length;
+    if(selected + 1 >= total) {
+        setState(() {
+        widget.state.isCheckedCategory['All'] =  true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     List<String> categoriesList =
@@ -702,7 +731,13 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                         crossAxisCount: 2,
                         children: List.generate(
                             widget.state.categoriesToPoisMap.length, (index) {
-                          return Center(
+                          return 
+                          GestureDetector( 
+                            onTap: () => {
+                              handleSelectedCatrgotyClicked(categoriesList[index])
+                            },
+                            child:
+                          Center(
                             child: Stack(children: [
                               ClipRRect(
                                 borderRadius:
@@ -720,8 +755,23 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                   left: 3,
                                   right: 0,
                                   bottom: 0,
-                                  child: Row(
+                                  
+                                  child:
+                                  Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color.fromRGBO(0, 0, 0, 0),
+                                Color.fromRGBO(0, 0, 0, 0.75),
+                              ],
+                            ),
+                          ),child:
+                                   Row(
+                                    
                                     children: [
+                                      
                                       Expanded(
                                           flex: 2,
                                           child: Text(
@@ -734,6 +784,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                                     .length
                                                     .toString() +
                                                 ")",
+                                              
                                             style: TextStyle(
                                               fontFamily: 'Inter',
                                               fontStyle: FontStyle.normal,
@@ -741,8 +792,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                               fontSize: 15,
                                               letterSpacing: 0,
                                               color: Colors.white,
-                                              backgroundColor:
-                                                  Colors.black.withOpacity(0.3),
+
                                             ),
                                           )),
                                       Expanded(
@@ -751,46 +801,47 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           10)),
-                                              side: BorderSide(
+                                              side: BorderSide( width: 1.8,
                                                   color: Colors.white),
                                               value: widget.state
                                                           .isCheckedCategory[
                                                       categoriesList[index]] ??
                                                   false,
                                               onChanged: (value) {
-                                                //Handle the 'All' CASE
-                                                if (categoriesList[index] ==
-                                                    'All') {
-                                                  for (String key in widget
-                                                      .state
-                                                      .categoriesToPoisMap
-                                                      .keys) {
-                                                    setState(() {
-                                                      widget.state
-                                                              .isCheckedCategory[
-                                                          key] = value ?? false;
-                                                    });
-                                                  }
-                                                }
-                                                if (value == false) {
-                                                  setState(() {
-                                                    widget.state
-                                                            .isCheckedCategory[
-                                                        'All'] = value ?? false;
-                                                  });
-                                                }
-                                                setState(() {
-                                                  widget.state
-                                                          .isCheckedCategory[
-                                                      categoriesList[
-                                                          index]] = value ??
-                                                      false;
-                                                });
+                                                handleSelectedCatrgotyClicked(categoriesList[index]);
+                                                // //Handle the 'All' CASE
+                                                // if (categoriesList[index] ==
+                                                //     'All') {
+                                                //   for (String key in widget
+                                                //       .state
+                                                //       .categoriesToPoisMap
+                                                //       .keys) {
+                                                //     setState(() {
+                                                //       widget.state
+                                                //               .isCheckedCategory[
+                                                //           key] = value ?? false;
+                                                //     });
+                                                //   }
+                                                // }
+                                                // if (value == false) {
+                                                //   setState(() {
+                                                //     widget.state
+                                                //             .isCheckedCategory[
+                                                //         'All'] = value ?? false;
+                                                //   });
+                                                // }
+                                                // setState(() {
+                                                //   widget.state
+                                                //           .isCheckedCategory[
+                                                //       categoriesList[
+                                                //           index]] = value ??
+                                                //       false;
+                                                // });
                                               })),
                                     ],
-                                  ))
+                                  )))
                             ]),
-                          );
+                          ));
                         }),
                       )),
                 ),
