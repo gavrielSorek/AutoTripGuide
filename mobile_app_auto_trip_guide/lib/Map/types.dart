@@ -96,7 +96,7 @@ class Poi {
   });
 
   factory Poi.fromJson(Map<String, dynamic> json) {
-    String picUrl = (json['_pic'] ?? "https://image.shutterstock.com/image-photo/no-photography-allowed-on-white-260nw-139998481.jpg") as String;
+    String picUrl = (json['_pic'] ?? '?') as String;
     if (picUrl == 'no pic') {
       picUrl = "https://image.shutterstock.com/image-photo/no-photography-allowed-on-white-260nw-139998481.jpg";
     }
