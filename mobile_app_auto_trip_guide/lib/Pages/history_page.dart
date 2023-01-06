@@ -26,11 +26,12 @@ class _HistoryPageState extends State<HistoryPage> {
   List<VisitedPoi> visitedPoisList = Globals.globalVisitedPoi;
   int visitedPoisListLength = Globals.globalVisitedPoi.length;
   Stream stream = Globals.globalVisitedPoiStream.stream;
+  late StreamSubscription _visitedPoisStreamSubscription;
 
   @override
   void initState() {
     super.initState();
-    stream.listen((value) {
+    _visitedPoisStreamSubscription = stream.listen((value) {
       //TODO DELETE
       visitedPoisListUpdated();
     });
@@ -38,8 +39,9 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
+    _visitedPoisStreamSubscription.cancel();
+
   }
   void visitedPoisListUpdated() {
     setState(() {
