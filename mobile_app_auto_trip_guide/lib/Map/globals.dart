@@ -16,7 +16,6 @@ class Globals {
   static ServerCommunication globalServerCommunication = ServerCommunication();
   static Map<String, MapPoi> globalAllPois = HashMap<String, MapPoi>();
   static List<String> globalUnhandledKeys = [];
-  static Map globalPoisIdToMarkerIdx = HashMap<String, int>();
   static String globalDefaultLanguage = "eng";
   static String globalEmail = "";
   static Map<String, List<String>>? globalCategories;
@@ -79,7 +78,6 @@ class Globals {
     await UserMap.mapInit();
     globalAllPois.clear();
     globalUnhandledKeys.clear();
-    globalPoisIdToMarkerIdx.clear();
     mainMapPoi = null;
     globalUserInfoObj = null;
   }
@@ -87,7 +85,6 @@ class Globals {
     // TODO add members to close
     globalAllPois.clear();
     globalUnhandledKeys.clear();
-    globalPoisIdToMarkerIdx.clear();
     mainMapPoi = null;
     globalUserInfoObj = null;
   }

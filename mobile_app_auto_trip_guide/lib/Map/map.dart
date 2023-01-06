@@ -13,6 +13,26 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'guide.dart';
 import 'package:flutter/foundation.dart';
 
+enum MarkersLayer { semiTransparent, grey, blue }
+
+enum Action { add, remove }
+
+class MapPoiAction {
+  MarkersLayer layer;
+  Action action;
+  MapPoi mapPoi;
+
+  MapPoiAction(
+      {required this.layer, required this.action, required this.mapPoi});
+}
+
+class MapPoisLayer {
+  final MarkersLayer layer;
+  final List<MapPoi> mapPois;
+
+  MapPoisLayer({required this.layer, required this.mapPois});
+}
+
 class UserMap extends StatefulWidget {
   bool showLoadingPoisAnimation = false;
 
@@ -23,6 +43,10 @@ class UserMap extends StatefulWidget {
   static late Position LAST_AREA_USER_LOCATION;
   static double DISTANCE_BETWEEN_AREAS = 1000; //1000 meters
   static List userChangeLocationFuncs = [];
+  StreamController<MapPoisLayer> mapPoisLayerStreamController =
+      StreamController<MapPoisLayer>.broadcast();
+  StreamController<MapPoiAction> mapPoiActionStreamController =
+      StreamController<MapPoiAction>.broadcast();
 
   static Future<void> mapInit() async {
     //permissions handling
@@ -70,7 +94,8 @@ class UserMap extends StatefulWidget {
   }
 
   void highlightPoi(MapPoi mapPoi) {
-    userMapState?.highlightPoi(mapPoi);
+    mapPoisLayerStreamController
+        .add(MapPoisLayer(layer: MarkersLayer.blue, mapPois: [mapPoi]));
   }
 
   void setLoadingAnimationState(bool isActive) {
@@ -89,19 +114,32 @@ class UserMap extends StatefulWidget {
     userMapState = _UserMapState();
     return userMapState!;
   }
+
+  void setMapPoisLayer(MapPoisLayer mapPoisLayer) {
+    mapPoisLayerStreamController.add(mapPoisLayer);
+  }
+
+  void setMapPoiOnLayer(MapPoiAction mapPoiAction) {
+    mapPoiActionStreamController.add(mapPoiAction);
+  }
 }
 
 class _UserMapState extends State<UserMap> {
-  List<Marker> markersList = [];
-  List<Marker> markersListToDrawnAbove = [];
+  late StreamSubscription mapPoisLayerSubscription;
+  late StreamSubscription mapPoiActionSubscription;
+  List<List<Marker>> listOfMarkersLayers = [];
+
   GuideData guideData = GuideData();
   late Guide guideTool;
   WidgetVisibility navButtonState = WidgetVisibility.hide;
   WidgetVisibility nextButtonState = WidgetVisibility.hide;
   WidgetVisibility loadingPois = WidgetVisibility.view;
   MapPoi? highlightedPoi;
-  final regularMarkerColor = Color(0xffB0B0B0);
-  final highlightedMarkerColor = Color(0xff0A84FF);
+  List<Color> layersColor = [
+    Color(0xffB0B0B0).withAlpha(130),
+    Color(0xffB0B0B0),
+    Color(0xff0A84FF)
+  ];
 
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
@@ -119,38 +157,68 @@ class _UserMapState extends State<UserMap> {
 
   _UserMapState() : super() {
     UserMap.userChangeLocationFuncs.add(onLocationChanged);
-    print("hello from ctor2");
+    // add a layer for every value in the MarkersLayer enum
+    MarkersLayer.values.forEach((element) {
+      listOfMarkersLayers.add([]);
+    });
   }
 
   void updateState() {
     setState(() {});
   }
 
-  void highlightPoi(MapPoi mapPoi) {
-    markersListToDrawnAbove.clear();
-    markersListToDrawnAbove.add(mapPoi.createMarkerFromPoi(highlightedMarkerColor));
-    this.highlightedPoi = mapPoi;
-    updateState();
+  void setMapPoisLayer(MapPoisLayer mapPoisLayer) {
+    List<Marker> newMarkerLayer = <Marker>[];
+    mapPoisLayer.mapPois.forEach((element) {
+      Marker marker =
+          element.createMarkerFromPoi(layersColor[mapPoisLayer.layer.index]);
+      newMarkerLayer.add(marker);
+    });
+    listOfMarkersLayers[mapPoisLayer.layer.index] = newMarkerLayer;
+  }
+
+  void setMapPoiAction(MapPoiAction mapPoiAction) {
+    // first remove the element
+    listOfMarkersLayers[mapPoiAction.layer.index].removeWhere((marker) =>
+        marker.point.latitude == mapPoiAction.mapPoi.poi.latitude &&
+        marker.point.longitude == mapPoiAction.mapPoi.poi.longitude);
+    if (mapPoiAction.action == Action.add) {
+      listOfMarkersLayers[mapPoiAction.layer.index].add(mapPoiAction.mapPoi
+          .createMarkerFromPoi(layersColor[mapPoiAction.layer.index]));
+    }
   }
 
   @override
   void initState() {
-    super.initState();
+    mapPoisLayerSubscription =
+        widget.mapPoisLayerStreamController.stream.listen((event) {
+      setMapPoisLayer(event);
+      updateState();
+    });
+    mapPoiActionSubscription =
+        widget.mapPoiActionStreamController.stream.listen((event) {
+      setMapPoiAction(event);
+      updateState();
+    });
     print("init _UserMapState");
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
     guideTool = Guide(context, guideData);
+    super.initState();
   }
 
   @override
   void dispose() {
     print("____________________dispose statful map");
+    mapPoisLayerSubscription.cancel();
+    mapPoiActionSubscription.cancel();
     _centerCurrentLocationStreamController.close();
     super.dispose();
   }
 
   // add new pois if location changed
   void onLocationChanged(Position currentLocation) async {
+    if (!mounted) return;
     print("hello from location changed");
     List<Poi> pois;
     // TODO add a condition that won't crazy the server
@@ -169,8 +237,10 @@ class _UserMapState extends State<UserMap> {
             MapPoi mapPoi = MapPoi(poi);
             Globals.globalAllPois[poi.id] = mapPoi;
             Globals.addUnhandledPoiKey(poi.id);
-            Globals.globalPoisIdToMarkerIdx[poi.id] = markersList.length;
-            markersList.add(mapPoi.createMarkerFromPoi(regularMarkerColor));
+            widget.mapPoiActionStreamController.add(MapPoiAction(
+                layer: MarkersLayer.semiTransparent,
+                action: Action.add,
+                mapPoi: MapPoi(poi)));
           }
         }
       });
@@ -232,8 +302,10 @@ class _UserMapState extends State<UserMap> {
             centerCurrentLocationStream:
                 _centerCurrentLocationStreamController.stream,
             centerOnLocationUpdate: _centerOnLocationUpdate),
-        MarkerLayer(markers: markersList),
-        MarkerLayer(markers: markersListToDrawnAbove),
+        MarkerLayer(
+            markers: listOfMarkersLayers[MarkersLayer.semiTransparent.index]),
+        MarkerLayer(markers: listOfMarkersLayers[MarkersLayer.grey.index]),
+        MarkerLayer(markers: listOfMarkersLayers[MarkersLayer.blue.index]),
       ],
       nonRotatedChildren: [
         Column(

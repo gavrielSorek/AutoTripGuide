@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:bloc/bloc.dart';
+import 'package:final_project/Map/map.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
@@ -57,6 +58,9 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       };
 
       List<MapPoi> poisToPlay = List.from(event.poisToPlay.values);
+      // update the gray pois to be the playing pois
+      Globals.globalUserMap.setMapPoisLayer(
+          MapPoisLayer(layer: MarkersLayer.grey, mapPois: poisToPlay));
       // sorting the pois
       poisToPlay.sort(PersonalizeRecommendation.sortMapPoisByWeightedScore);
 
@@ -160,8 +164,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     });
 
     on<ShowOptionalCategoriesEvent>((event, emit) {
+      Globals.globalAudioApp.stopAudio();
       List<MapPoi> mapPoisList = event.pois.values.toList();
-
       Map<String, List<MapPoi>> categoriesToMapPois =
           HashMap<String, List<MapPoi>>();
       //patch to all categories
@@ -183,14 +187,6 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           onShowStory: event.onShowStory,
           idToPoisMap: event.pois,
           onFinishedFunc: event.onFinishedFunc));
-      // if (state is ShowStoriesState) {
-      //   final state = this.state as ShowStoriesState;
-      //   Globals.globalAudioApp.stopAudio();
-      //   Globals.globalUserMap.highlightPoi(event.mapPoi);
-      //   state.controller.setStoryViewToStoryItemById(event.mapPoi.poi.id);
-      //   emit(ShowStoriesState(storyView: state.storyView,
-      //       controller: state.controller));
-      // }
     });
   }
 }
