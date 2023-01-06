@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:latlong2/latlong.dart';
 import 'globals.dart';
 
@@ -7,7 +8,7 @@ extension StringExtension on String {
   String capitalizeTotalString() {
     String capitalizedString = "";
     List<String> stringArray = this.split(" ");
-    for(int i=0; i<stringArray.length; i++) {
+    for (int i = 0; i < stringArray.length; i++) {
       String capitalizedPartName = stringArray[i].capitalize();
       capitalizedString += capitalizedPartName + " ";
     }
@@ -76,50 +77,51 @@ class Poi {
 
   List<String> Categories;
 
-  Poi({
-    required this.id,
-    this.poiName,
-    required this.latitude,
-    required this.longitude,
-    this.shortDesc,
-    this.language,
-    this.audio,
-    this.source,
-    this.Contributor,
-    this.CreatedDate,
-    this.ApprovedBy,
-    this.UpdatedBy,
-    this.LastUpdatedDate,
-    this.country,
-    required this.Categories,
-    this.pic
-  });
+  Poi(
+      {required this.id,
+      this.poiName,
+      required this.latitude,
+      required this.longitude,
+      this.shortDesc,
+      this.language,
+      this.audio,
+      this.source,
+      this.Contributor,
+      this.CreatedDate,
+      this.ApprovedBy,
+      this.UpdatedBy,
+      this.LastUpdatedDate,
+      this.country,
+      required this.Categories,
+      this.pic});
 
   factory Poi.fromJson(Map<String, dynamic> json) {
     String picUrl = (json['_pic'] ?? '?') as String;
     if (picUrl == 'no pic') {
-      picUrl = "https://image.shutterstock.com/image-photo/no-photography-allowed-on-white-260nw-139998481.jpg";
+      picUrl =
+          "https://image.shutterstock.com/image-photo/no-photography-allowed-on-white-260nw-139998481.jpg";
     }
     String poiName = json['_poiName'] as String;
     String capitalizedPoiName = poiName.capitalizeTotalString();
 
     return Poi(
-      id: json['_id'] as String,
-      poiName: capitalizedPoiName,
-      latitude: json['_latitude'] as double,
-      longitude: json['_longitude'] as double,
-      shortDesc: (json['_shortDesc'] ?? "?") as String,
-      language: (json['_language'] ?? "?") as String,
-      audio: (json['_audio'] ?? "?"),
-      source: (json['_source'] ?? "?") as String,
-      Contributor: (json['_Contributor'] ?? "?") as String,
-      CreatedDate: (json['_CreatedDate'] ?? "?") as String,
-      ApprovedBy: (json['_ApprovedBy'] ?? "?") as String,
-      UpdatedBy: (json['_UpdatedBy'] ?? "?") as String,
-      LastUpdatedDate: (json['_LastUpdatedDate'] ?? "?") as String,
-      country: (json['_country'] ?? "?") as String,
-      pic: picUrl,
-      Categories: ((json['_Categories'] ?? []) as List<dynamic>).cast<String>());
+        id: json['_id'] as String,
+        poiName: capitalizedPoiName,
+        latitude: json['_latitude'] as double,
+        longitude: json['_longitude'] as double,
+        shortDesc: (json['_shortDesc'] ?? "?") as String,
+        language: (json['_language'] ?? "?") as String,
+        audio: (json['_audio'] ?? "?"),
+        source: (json['_source'] ?? "?") as String,
+        Contributor: (json['_Contributor'] ?? "?") as String,
+        CreatedDate: (json['_CreatedDate'] ?? "?") as String,
+        ApprovedBy: (json['_ApprovedBy'] ?? "?") as String,
+        UpdatedBy: (json['_UpdatedBy'] ?? "?") as String,
+        LastUpdatedDate: (json['_LastUpdatedDate'] ?? "?") as String,
+        country: (json['_country'] ?? "?") as String,
+        pic: picUrl,
+        Categories:
+            ((json['_Categories'] ?? []) as List<dynamic>).cast<String>());
   }
 }
 
@@ -137,14 +139,18 @@ class MapPoi {
   // return marker from poi
   Marker createMarkerFromPoi(Color color) {
     return Marker(
-      width: 45.0,
-      height: 45.0,
+      width: 50.0,
+      height: 50.0,
       point: LatLng(poi.latitude, poi.longitude),
-      builder: (context) => Container(child: IconButton(
-          icon: const Icon(Icons.location_on_rounded),
-          iconSize: 45.0,
-          color: color,
-          onPressed: ()=>{Globals.globalClickedPoiStream.add(this)}
+      builder: (context) => Container(
+          child: SizedBox(
+        child: IconButton(
+            icon: SvgPicture.asset(
+              'assets/images/mapMarker.svg',
+              color: color,
+            ),
+            color: color,
+            onPressed: () => {Globals.globalClickedPoiStream.add(this)}),
       )),
     );
   }
@@ -155,7 +161,9 @@ class MapPoi {
 }
 
 enum GuideStatus { voice, text }
+
 enum GuideState { working, waiting, stopped }
+
 enum WidgetVisibility { hide, view }
 
 // contain data about the guid type
@@ -176,4 +184,3 @@ class GuideData {
     guideIcon = guideIcons[oppositeStatusIdx];
   }
 }
-
