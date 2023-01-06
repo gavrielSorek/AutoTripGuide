@@ -5,6 +5,7 @@ import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import '../Pages/login_controller.dart';
 import 'apps_launcher.dart';
@@ -26,34 +27,39 @@ class Globals {
   static AppLauncher globalAppLauncher = AppLauncher();
   static MapPoi? mainMapPoi; // spoken poi
   static final globalController = Get.put(LoginController());
+
   // static List<Widget> globalPagesList = [HomePage(), AccountPage(), HistoryPage()];
   static var globalColor = Color.fromRGBO(51, 153, 255, 0.8);
-  static StreamController<VisitedPoi> globalVisitedPoiStream = StreamController<VisitedPoi>.broadcast();
+  static StreamController<VisitedPoi> globalVisitedPoiStream =
+      StreamController<VisitedPoi>.broadcast();
   static final globalAudioApp = AudioApp();
-  static StreamController<MapPoi> globalClickedPoiStream = StreamController<MapPoi>.broadcast();
-
-
+  static StreamController<MapPoi> globalClickedPoiStream =
+      StreamController<MapPoi>.broadcast();
+  static String? svgMarkerString;
 
   static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {
     globalVisitedPoi = visitedPoisList;
   }
+
   static void addGlobalVisitedPoi(VisitedPoi visitedPoi) {
     globalVisitedPoi.add(visitedPoi);
     globalVisitedPoiStream.add(visitedPoi);
   }
+
   static void addUnhandledPoiKey(String key) {
     if (globalUnhandledKeys.isEmpty) {
       globalUserMap.userMapState?.loadingPois = WidgetVisibility.hide;
     }
     globalUnhandledKeys.add(key);
   }
+
   static void removeUnhandledPoiKey(int index) {
     globalUnhandledKeys.removeAt(index);
     if (globalUnhandledKeys.isEmpty) {
       globalUserMap.userMapState?.loadingPois = WidgetVisibility.view;
     }
-
   }
+
   static setFavoriteCategories(List<String> newFavoriteCategories) {
     globalFavoriteCategories = newFavoriteCategories;
     favoriteCategoriesSet = newFavoriteCategories.toSet();
@@ -80,7 +86,10 @@ class Globals {
     globalUnhandledKeys.clear();
     mainMapPoi = null;
     globalUserInfoObj = null;
+    svgMarkerString =
+        await rootBundle.loadString('assets/images/mapMarker.svg');
   }
+
   static clearAll() async {
     // TODO add members to close
     globalAllPois.clear();

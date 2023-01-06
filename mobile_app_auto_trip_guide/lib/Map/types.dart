@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:latlong2/latlong.dart';
 import 'globals.dart';
+
+extension HexColor on Color {
+  /// Prefixes a hash sign if [leadingHashSign] is set to `true` (default is `true`).
+  String toHex({bool leadingHashSign = true}) => '${leadingHashSign ? '#' : ''}'
+      '${alpha.toRadixString(16).padLeft(2, '0')}'
+      '${red.toRadixString(16).padLeft(2, '0')}'
+      '${green.toRadixString(16).padLeft(2, '0')}'
+      '${blue.toRadixString(16).padLeft(2, '0')}';
+}
 
 extension StringExtension on String {
   String capitalizeTotalString() {
@@ -138,6 +148,11 @@ class Audio {
 class MapPoi {
   // return marker from poi
   Marker createMarkerFromPoi(Color color) {
+    const String originalMarkerColor = '#B0B0B0';
+    // replace the fill color
+    String markerIconString =
+        Globals.svgMarkerString!.replaceAll(originalMarkerColor, color.toHex());
+
     return Marker(
       width: 50.0,
       height: 50.0,
@@ -145,11 +160,12 @@ class MapPoi {
       builder: (context) => Container(
           child: SizedBox(
         child: IconButton(
-            icon: SvgPicture.asset(
-              'assets/images/mapMarker.svg',
-              color: color,
+            icon: Opacity(
+              opacity: color.opacity,
+              child: SvgPicture.string(
+                markerIconString,
+              ),
             ),
-            color: color,
             onPressed: () => {Globals.globalClickedPoiStream.add(this)}),
       )),
     );
