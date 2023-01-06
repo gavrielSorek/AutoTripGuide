@@ -123,5 +123,6 @@ class _ProgressButtonState extends State<ProgressButton>
   Future<void> dispose() async {
     super.dispose();
     _isAnimationActiveSubscription.cancel();
+    _animationController.dispose();
   }
 }
