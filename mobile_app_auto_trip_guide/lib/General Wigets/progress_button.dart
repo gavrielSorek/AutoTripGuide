@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class ProgressButton extends StatefulWidget {
@@ -7,23 +9,23 @@ class ProgressButton extends StatefulWidget {
   final double width;
   final double height;
   final String content;
+  final StreamController<bool> animationStatusStream = StreamController<bool>();
 
-  ProgressButton({required this.color,
-    required this.fillDuration,
-    required this.onPressed,
-    required this.width,
-    required this.height,
-    required this.content});
+  ProgressButton(
+      {required this.color,
+      required this.fillDuration,
+      required this.onPressed,
+      required this.width,
+      required this.height,
+      required this.content});
 
-  void stopAnimation() {
-    state?.stopCountDown();
+  void setAnimationActivityStatus(bool isActive) {
+    animationStatusStream.add(isActive);
   }
-  _ProgressButtonState? state;
 
   @override
   _ProgressButtonState createState() {
-    state = _ProgressButtonState();
-    return state!;
+    return _ProgressButtonState(animationStatusStream.stream);
   }
 }
 
@@ -31,12 +33,22 @@ class _ProgressButtonState extends State<ProgressButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late double fillingPercent = 0;
+  late Stream _isAnimationActiveStream;
+  late StreamSubscription _isAnimationActiveSubscription;
+
+  _ProgressButtonState(Stream animationActivityStream) {
+    _isAnimationActiveStream = animationActivityStream;
+  }
 
   @override
   void initState() {
     super.initState();
-
-    super.initState();
+    _isAnimationActiveSubscription =
+        _isAnimationActiveStream.listen((isActive) {
+      if (!isActive) {
+        stopCountDown();
+      }
+    });
     _animationController =
         AnimationController(vsync: this, duration: widget.fillDuration);
     _animationController.addListener(() {
@@ -108,7 +120,8 @@ class _ProgressButtonState extends State<ProgressButton>
   }
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     super.dispose();
+    _isAnimationActiveSubscription.cancel();
   }
 }

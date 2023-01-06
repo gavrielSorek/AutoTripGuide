@@ -759,7 +759,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                 Expanded(
                   child: GestureDetector(
                     onPanDown: (val) {
-                      playButton.stopAnimation();
+                      playButton.setAnimationActivityStatus(false);
                     },
                     child: Padding(
                         padding: EdgeInsets.only(left: 11, right: 11),
