@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'package:async/async.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
@@ -92,38 +93,29 @@ class GuidDialogBox extends StatefulWidget {
 
 class _GuidDialogBoxState extends State<GuidDialogBox> {
   late Stream queuedPoisListStream;
-
+  late StreamSubscription _queuedPoisListSubscription;
   late ValueChanged<StoryItem> onShowStory;
 
   _GuidDialogBoxState(
       StreamController<Map<String, MapPoi>> queuedPoisToPlayController) {
-    // ValueChanged<StoryItem> onShowStory = (s) async {
-    //   context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
-    // };
     onShowStory = (s) async {
       context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
     };
 
     queuedPoisListStream = queuedPoisToPlayController.stream;
-    queuedPoisListStream.listen((event) {
-      context.read<GuideBloc>().add(
-          // SetStoriesListEvent(
-          //     poisToPlay: event,
-          //     onShowStory: onShowStory,
-          //     onFinishedFunc: widget.onFinishedStories,
-          //     onStoryTap: (story) {
-          //       context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-          //     },
-          //     onVerticalSwipeComplete: (Direction? d) {
-          //       context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-          //     }),
+  }
 
+  @override
+  void initState() {
+    _queuedPoisListSubscription = queuedPoisListStream.listen((event) {
+      context.read<GuideBloc>().add(
           ShowOptionalCategoriesEvent(
               pois: event,
               onShowStory: onShowStory,
               onFinishedFunc: widget.onFinishedStories,
               isCheckedCategory: HashMap<String, bool>()));
     });
+    super.initState();
   }
 
   Widget buildSearchingWidget() {
@@ -603,6 +595,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
 
   @override
   void dispose() {
+    _queuedPoisListSubscription.cancel();
     super.dispose();
   }
 }
