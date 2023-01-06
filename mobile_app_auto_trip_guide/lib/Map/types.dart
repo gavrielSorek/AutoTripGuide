@@ -106,32 +106,37 @@ class Poi {
       this.pic});
 
   factory Poi.fromJson(Map<String, dynamic> json) {
-    String picUrl = (json['_pic'] ?? '?') as String;
-    if (picUrl == 'no pic') {
-      picUrl =
-          "https://image.shutterstock.com/image-photo/no-photography-allowed-on-white-260nw-139998481.jpg";
-    }
-    String poiName = json['_poiName'] as String;
-    String capitalizedPoiName = poiName.capitalizeTotalString();
+    try {
+      String picUrl = (json['_pic'] ?? '?') as String;
+      if (picUrl == 'no pic') {
+        picUrl =
+        "https://image.shutterstock.com/image-photo/no-photography-allowed-on-white-260nw-139998481.jpg";
+      }
+      String poiName = json['_poiName'] as String;
+      String capitalizedPoiName = poiName.capitalizeTotalString();
 
-    return Poi(
-        id: json['_id'] as String,
-        poiName: capitalizedPoiName,
-        latitude: json['_latitude'] as double,
-        longitude: json['_longitude'] as double,
-        shortDesc: (json['_shortDesc'] ?? "?") as String,
-        language: (json['_language'] ?? "?") as String,
-        audio: (json['_audio'] ?? "?"),
-        source: (json['_source'] ?? "?") as String,
-        Contributor: (json['_Contributor'] ?? "?") as String,
-        CreatedDate: (json['_CreatedDate'] ?? "?") as String,
-        ApprovedBy: (json['_ApprovedBy'] ?? "?") as String,
-        UpdatedBy: (json['_UpdatedBy'] ?? "?") as String,
-        LastUpdatedDate: (json['_LastUpdatedDate'] ?? "?") as String,
-        country: (json['_country'] ?? "?") as String,
-        pic: picUrl,
-        Categories:
-            ((json['_Categories'] ?? []) as List<dynamic>).cast<String>());
+      return Poi(
+          id: json['_id'] as String,
+          poiName: capitalizedPoiName,
+          latitude: json['_latitude'] as double,
+          longitude: json['_longitude'] as double,
+          shortDesc: (json['_shortDesc'] ?? "?") as String,
+          language: (json['_language'] ?? "?") as String,
+          audio: (json['_audio'] ?? "?"),
+          source: (json['_source'] ?? "?") as String,
+          Contributor: (json['_Contributor'] ?? "?") as String,
+          CreatedDate: (json['_CreatedDate'] ?? "?") as String,
+          ApprovedBy: (json['_ApprovedBy'] ?? "?") as String,
+          UpdatedBy: (json['_UpdatedBy'] ?? "?") as String,
+          LastUpdatedDate: (json['_LastUpdatedDate'] ?? "?") as String,
+          country: (json['_country'] ?? "?") as String,
+          pic: picUrl,
+          Categories:
+          ((json['_Categories'] ?? []) as List<dynamic>).cast<String>());
+    } catch (e) {
+      print("Error processing poi: $e");
+      return Poi(id: 'Dummy', latitude: 1000, longitude: 1000, Categories: []); // not existed poi
+    }
   }
 }
 
