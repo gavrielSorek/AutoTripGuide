@@ -32,8 +32,7 @@ class Guide {
   late GuidDialogBox storiesDialogBox;
 
   Guide(this.context, this.guideData) {
-    storiesDialogBox = GuidDialogBox(onFinishedStories: onStoryFinished);
-
+    storiesDialogBox = GuidDialogBox();
     Stream stream = Globals.globalClickedPoiStream.stream;
     stream.listen((mapPoi) {
       mapPoiClicked(mapPoi);
@@ -57,8 +56,18 @@ class Guide {
       _queuedPoisToPlay.clear();
     }
     if (poisWereEmpty && !_poisToPlay.isEmpty) {
-      storiesDialogBox.setPoiToPlay(_poisToPlay);
+      setPoisToPlay(_poisToPlay);
     }
+  }
+
+  void setPoisToPlay(Map<String, MapPoi> mapPois) {
+    context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
+        pois: mapPois,
+        onShowStory: (s) async {
+          context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
+        },
+        onFinishedFunc: onStoryFinished,
+        isCheckedCategory: HashMap<String, bool>()));
   }
 
   void onStoryFinished() {
@@ -70,54 +79,26 @@ class Guide {
       _poisToPlay.addAll(_queuedPoisToPlay);
       _queuedPoisToPlay.clear();
       if (!_poisToPlay.isEmpty) {
-        storiesDialogBox.setPoiToPlay(_poisToPlay);
+        setPoisToPlay(_poisToPlay);
       }
     });
   }
 }
 
 class GuidDialogBox extends StatefulWidget {
-  final dynamic onFinishedStories;
-  final StreamController<Map<String, MapPoi>> queuedPoisToPlayController =
-      StreamController<HashMap<String, MapPoi>>.broadcast();
-
-  GuidDialogBox({required this.onFinishedStories}) {
-    print(queuedPoisToPlayController);
-  }
-
-  setPoiToPlay(Map<String, MapPoi> mapPois) {
-    queuedPoisToPlayController.add(mapPois);
-  }
+  GuidDialogBox() {}
 
   @override
   State<StatefulWidget> createState() {
-    return _GuidDialogBoxState(queuedPoisToPlayController);
+    return _GuidDialogBoxState();
   }
 }
 
 class _GuidDialogBoxState extends State<GuidDialogBox> {
-  late Stream queuedPoisListStream;
-  late StreamSubscription _queuedPoisListSubscription;
-  late ValueChanged<StoryItem> onShowStory;
-
-  _GuidDialogBoxState(
-      StreamController<Map<String, MapPoi>> queuedPoisToPlayController) {
-    onShowStory = (s) async {
-      context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
-    };
-
-    queuedPoisListStream = queuedPoisToPlayController.stream;
-  }
+  _GuidDialogBoxState() {}
 
   @override
   void initState() {
-    _queuedPoisListSubscription = queuedPoisListStream.listen((event) {
-      context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
-          pois: event,
-          onShowStory: onShowStory,
-          onFinishedFunc: widget.onFinishedStories,
-          isCheckedCategory: HashMap<String, bool>()));
-    });
     super.initState();
   }
 
@@ -238,13 +219,6 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                       decoration: BoxDecoration(
                         shape: BoxShape.rectangle,
                         color: Colors.white,
-                        // borderRadius: BorderRadius.circular(Constants.padding),
-                        // boxShadow: const [
-                        //   BoxShadow(
-                        //       color: Colors.black,
-                        //       offset: Offset(0, 5),
-                        //       blurRadius: 10),
-                        // ]
                         borderRadius: BorderRadius.circular(34),
                         boxShadow: [
                           BoxShadow(
@@ -387,20 +361,6 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                 ),
                 child: Column(
                   children: [
-                    // Container(
-                    //     margin: EdgeInsets.only(top: 10),
-                    //     child: Text(
-                    //       showPoiState.currentPoi.poi.poiName ?? "",
-                    //       style: TextStyle(
-                    //         color: Colors.black,
-                    //           fontFamily: 'Inter',
-                    //           fontSize: 22,
-                    //           letterSpacing: 0.3499999940395355,
-                    //           fontWeight: FontWeight.normal,
-                    //           height: 1.2727272727272727),
-                    //       textAlign: TextAlign.left,
-
-                    //     )),
                     Padding(
                       padding: EdgeInsets.only(left: 24, right: 0),
                       child: Row(
@@ -614,7 +574,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
           return buildOptionalCategoriesSelectionWidget(state);
         } else if (state is LoadingMorePoisState) {
           return buildLoadingNewPoisWidget();
-        }else {
+        } else {
           return buildSearchingWidget();
         }
       },
@@ -623,7 +583,6 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
 
   @override
   void dispose() {
-    _queuedPoisListSubscription.cancel();
     super.dispose();
   }
 }
@@ -722,13 +681,6 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               color: Colors.white,
-              // borderRadius: BorderRadius.circular(Constants.padding),
-              // boxShadow: const [
-              //   BoxShadow(
-              //       color: Colors.black,
-              //       offset: Offset(0, 5),
-              //       blurRadius: 10),
-              // ]
               borderRadius: BorderRadius.circular(34),
               boxShadow: [
                 BoxShadow(
@@ -871,34 +823,6 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                                           handleSelectedCatrgotyClicked(
                                                               categoriesList[
                                                                   index]);
-                                                          // //Handle the 'All' CASE
-                                                          // if (categoriesList[index] ==
-                                                          //     'All') {
-                                                          //   for (String key in widget
-                                                          //       .state
-                                                          //       .categoriesToPoisMap
-                                                          //       .keys) {
-                                                          //     setState(() {
-                                                          //       widget.state
-                                                          //               .isCheckedCategory[
-                                                          //           key] = value ?? false;
-                                                          //     });
-                                                          //   }
-                                                          // }
-                                                          // if (value == false) {
-                                                          //   setState(() {
-                                                          //     widget.state
-                                                          //             .isCheckedCategory[
-                                                          //         'All'] = value ?? false;
-                                                          //   });
-                                                          // }
-                                                          // setState(() {
-                                                          //   widget.state
-                                                          //           .isCheckedCategory[
-                                                          //       categoriesList[
-                                                          //           index]] = value ??
-                                                          //       false;
-                                                          // });
                                                         })),
                                               ],
                                             )))
