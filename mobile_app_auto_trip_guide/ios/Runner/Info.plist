@@ -18,7 +18,7 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>CFBundleURLTypes</key>
+	<!-- <key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleTypeRole</key>
@@ -28,6 +28,19 @@
 				<string>com.googleusercontent.apps.141959691870-me9msoi1adrn75p22klneo9h962sms15</string>
 			</array>
 		</dict>
+	</array> -->
+	<!-- new gopogle auth -->
+
+	<key>GIDClientID</key>
+	<string>505998861423-mihg5teej0n9ba48d7t5qbe1l7rotb0k.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+	<dict>
+		<key>CFBundleURLSchemes</key>
+		<array>
+		<string>com.googleusercontent.apps.505998861423-mihg5teej0n9ba48d7t5qbe1l7rotb0k</string>
+		</array>
+	</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
@@ -66,5 +79,7 @@
         <key>NSAllowsArbitraryLoads</key>
         <true/>
     </dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 </dict>
 </plist>
