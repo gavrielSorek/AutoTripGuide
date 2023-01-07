@@ -319,18 +319,17 @@ class _UserMapState extends State<UserMap> {
                     child:
                         NavigationDrawer.buildNavigationDrawerButton(context),
                   ),
-                  if (widget.showLoadingPoisAnimation)
-                    Container(
+                  widget.showLoadingPoisAnimation ? Container(
                         color: Colors.transparent,
                         alignment: Alignment.bottomRight,
                         margin: EdgeInsets.only(
                             right: MediaQuery.of(context).size.width / 60),
                         height: MediaQuery.of(context).size.width / 10,
                         width: MediaQuery.of(context).size.width / 10,
-                        child: LoadingAnimationWidget.dotsTriangle(
+                        child: LoadingAnimationWidget.threeArchedCircle(
                           size: 30,
                           color: Colors.blue,
-                        )),
+                        )) : Container(),
                 ],
               ),
             ),

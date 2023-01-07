@@ -36,8 +36,6 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       } else {
         return;
       }
-      // stop loading animation
-      Globals.globalUserMap.setLoadingAnimationState(false);
 
       StoryController controller = StoryController();
       Globals.globalAudioApp.onPressNext = () {
@@ -169,6 +167,9 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     });
 
     on<ShowOptionalCategoriesEvent>((event, emit) {
+      // stop loading animation
+      Globals.globalUserMap.setLoadingAnimationState(false);
+
       Globals.globalAudioApp.stopAudio();
       List<MapPoi> mapPoisList = event.pois.values.toList();
       Map<String, List<MapPoi>> categoriesToMapPois =
