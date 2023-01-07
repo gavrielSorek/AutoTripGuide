@@ -5,7 +5,7 @@ abstract class GuideDialogState {}
 
 // class GuideInitial extends GuideDialogState {}
 class PoisSearchingState extends GuideDialogState {}
-
+class LoadingMorePoisState extends GuideDialogState {}
 class ShowStoriesState extends GuideDialogState {
   final MapPoi? currentPoi;
   final StoryView storyView;

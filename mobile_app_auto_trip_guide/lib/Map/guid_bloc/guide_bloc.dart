@@ -24,6 +24,11 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       Globals.globalUserMap.setLoadingAnimationState(true);
       emit(PoisSearchingState());
     });
+    on<ShowLoadingMorePoisEvent>((event, emit) {
+      // start loading animation
+      Globals.globalUserMap.setLoadingAnimationState(true);
+      emit(LoadingMorePoisState());
+    });
     on<SetStoriesListEvent>((event, emit) {
       final ShowOptionalCategoriesState lastShowOptionalCategoriesState;
       if (state is ShowOptionalCategoriesState) {

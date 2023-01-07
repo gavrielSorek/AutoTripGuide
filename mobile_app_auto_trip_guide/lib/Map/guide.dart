@@ -63,12 +63,16 @@ class Guide {
 
   void onStoryFinished() {
     if (_queuedPoisToPlay.isEmpty) return;
+    context.read<GuideBloc>().add(ShowLoadingMorePoisEvent());
 
-    _poisToPlay.clear();
-    _poisToPlay.addAll(_queuedPoisToPlay);
-    if (!_poisToPlay.isEmpty) {
-      storiesDialogBox.setPoiToPlay(_poisToPlay);
-    }
+    Future.delayed(Duration(seconds: 3)).then((value) {
+      _poisToPlay.clear();
+      _poisToPlay.addAll(_queuedPoisToPlay);
+      _queuedPoisToPlay.clear();
+      if (!_poisToPlay.isEmpty) {
+        storiesDialogBox.setPoiToPlay(_poisToPlay);
+      }
+    });
   }
 }
 
@@ -108,17 +112,16 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   @override
   void initState() {
     _queuedPoisListSubscription = queuedPoisListStream.listen((event) {
-      context.read<GuideBloc>().add(
-          ShowOptionalCategoriesEvent(
-              pois: event,
-              onShowStory: onShowStory,
-              onFinishedFunc: widget.onFinishedStories,
-              isCheckedCategory: HashMap<String, bool>()));
+      context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
+          pois: event,
+          onShowStory: onShowStory,
+          onFinishedFunc: widget.onFinishedStories,
+          isCheckedCategory: HashMap<String, bool>()));
     });
     super.initState();
   }
 
-  Widget buildSearchingWidget() {
+  Widget buildDialogContainedWidgets(List<Widget> widgetList) {
     return Dialog(
         insetPadding: const EdgeInsets.all(Constants.edgesDist),
         shape: RoundedRectangleBorder(
@@ -144,44 +147,67 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                   ],
                   color: Color.fromRGBO(255, 255, 255, 0.75),
                 ),
-                child: Column(
-                  children: [
-                    Padding(
-                        padding: EdgeInsets.only(left: 11, top: 16),
-                        child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Scanning...",
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontStyle: FontStyle.normal,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 22,
-                                letterSpacing: 0.35,
-                                color: Colors.black,
-                                height: 28 / 22,
-                              ),
-                            ))),
-                    Padding(
-                        padding: EdgeInsets.only(left: 11, right: 11, top: 16),
-                        child: Text(
-                          "Auto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16,
-                            letterSpacing: 0,
-                            color: Color(0xff6C6F70),
-                            height: 1.5,
-                          ),
-                        )),
-                  ],
-                ),
+                child: Column(children: widgetList),
               ),
             ]),
           ],
         ));
+  }
+
+  Widget buildLoadingNewPoisWidget() {
+    return buildDialogContainedWidgets([
+      Padding(
+          padding: EdgeInsets.only(left: 11, top: 16),
+          child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Loading more POIs...",
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 22,
+                  letterSpacing: 0.35,
+                  color: Colors.black,
+                  height: 28 / 22,
+                ),
+              ))),
+    ]);
+  }
+
+  Widget buildSearchingWidget() {
+    return buildDialogContainedWidgets([
+      Padding(
+          padding: EdgeInsets.only(left: 11, top: 16),
+          child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Scanning...",
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 22,
+                  letterSpacing: 0.35,
+                  color: Colors.black,
+                  height: 28 / 22,
+                ),
+              ))),
+      Padding(
+          padding: EdgeInsets.only(left: 11, right: 11, top: 16),
+          child: Text(
+            "Auto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
+            style: TextStyle(
+              fontFamily: 'Inter',
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w400,
+              fontSize: 16,
+              letterSpacing: 0,
+              color: Color(0xff6C6F70),
+              height: 1.5,
+            ),
+          )),
+    ]);
   }
 
   Widget buildStoriesWidget(state) {
@@ -586,7 +612,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
           return buildFullPoiInfo(state);
         } else if (state is ShowOptionalCategoriesState) {
           return buildOptionalCategoriesSelectionWidget(state);
-        } else {
+        } else if (state is LoadingMorePoisState) {
+          return buildLoadingNewPoisWidget();
+        }else {
           return buildSearchingWidget();
         }
       },

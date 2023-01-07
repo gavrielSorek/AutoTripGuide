@@ -4,6 +4,8 @@ abstract class GuideEvent {}
 
 class ShowSearchingPoisAnimationEvent extends GuideEvent {}
 
+class ShowLoadingMorePoisEvent extends GuideEvent {}
+
 class SetStoriesListEvent extends GuideEvent {
   Map<String, MapPoi> poisToPlay;
   ValueChanged<StoryItem> onShowStory;
