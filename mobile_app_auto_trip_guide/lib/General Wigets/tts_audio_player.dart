@@ -9,7 +9,6 @@ class TtsAudioPlayer {
   late FlutterTts flutterTts;
   String _allTextToPlay = '';
   int _textLength = 0;
-  String _restOfTextToPlay = '';
   dynamic _onFinishedFunc = null;
   dynamic _onProgress = null;
   dynamic _onPlay = null, _onPause = null, _onResume = null;
@@ -20,16 +19,24 @@ class TtsAudioPlayer {
   double _rate = 0.5;
   bool _isCurrentLanguageInstalled = false;
   TtsState _ttsState = TtsState.stopped;
+  Timer? _periodicProgressTimer;
 
   get isPlaying => _ttsState == TtsState.playing;
+
   get isStopped => _ttsState == TtsState.stopped;
+
   get isPaused => _ttsState == TtsState.paused;
+
   get isContinued => _ttsState == TtsState.continued;
+
   get status => _ttsState;
 
   bool get isIOS => !kIsWeb && Platform.isIOS;
+
   bool get isAndroid => !kIsWeb && Platform.isAndroid;
+
   bool get isWindows => !kIsWeb && Platform.isWindows;
+
   bool get isWeb => kIsWeb;
 
   void setTextToPlay(String textToPlay, String language) {
@@ -41,9 +48,11 @@ class TtsAudioPlayer {
   set onResume(dynamic onResume) {
     _onResume = onResume;
   }
+
   set onFinished(dynamic onFinishedFunc) {
     _onFinishedFunc = onFinishedFunc;
   }
+
   set onProgress(dynamic onProgress) {
     _onProgress = onProgress;
   }
@@ -56,14 +65,12 @@ class TtsAudioPlayer {
     _onPause = onPause;
   }
 
-
   TtsAudioPlayer() {
     flutterTts = FlutterTts();
   }
 
   // must be called before using the audio player
   iniPlayer() async {
-
     await flutterTts.awaitSpeakCompletion(true);
 
     if (isAndroid) {
@@ -78,7 +85,7 @@ class TtsAudioPlayer {
     flutterTts.setStartHandler(() {
       print("Playing");
       _ttsState = TtsState.playing;
-      if(_onPlay != null) {
+      if (_onPlay != null) {
         _onPlay();
       }
     });
@@ -115,18 +122,40 @@ class TtsAudioPlayer {
     });
 
     flutterTts.setProgressHandler((text, start, end, word) {
-      print('______________________________________');
-      // print(text);
-      // print(start);
-      // print(end);
-      // print(word);
-      int pos = (_textLength - text.length) + end; // position in the original text
-      print(pos / _textLength);
-      if (_onProgress != null) {
-        _textLength > 0 ? _onProgress(pos / _textLength) : null;
-      }
-      print('_____________________________');
+      _periodicProgressTimer?.cancel();
+      int end_pos =
+          (_textLength - text.length) + end; // position in the original text
+      print(end_pos / _textLength);
+      int start_pos = end_pos - word.length;
+      if (_onProgress != null && _textLength > 0) {
+        double startRangeProgress = start_pos / _textLength;
+        double endRangeProgress =
+            (end_pos + 1) / _textLength; // 1 - for the space
+        double estimatedProgress = startRangeProgress;
+        _onProgress(estimatedProgress);
 
+        double range = endRangeProgress - startRangeProgress;
+        double addParam = (range / word.length) * 2;
+        // print('______________________________________');
+        // print(start);
+        // print(end);
+        // print(word);
+        // print(start_pos);
+        // print(end_pos);
+        // print(startRangeProgress);
+        // print(endRangeProgress);
+        // print('_____________________________');
+        _periodicProgressTimer =
+            Timer.periodic(Duration(milliseconds: 100), (timer) {
+          estimatedProgress += addParam;
+          if (estimatedProgress < endRangeProgress) {
+            _onProgress(estimatedProgress);
+            // print("***************");
+            // print(estimatedProgress);
+            // print("***************");
+          }
+        });
+      }
     });
 
     flutterTts.setErrorHandler((msg) {
@@ -146,10 +175,7 @@ class TtsAudioPlayer {
 
   clearPlayer() {
     _allTextToPlay = '';
-    _restOfTextToPlay = '';
   }
-
-
 
   Future<dynamic> _getLanguages() async => await flutterTts.getLanguages;
 
@@ -168,7 +194,6 @@ class TtsAudioPlayer {
       print(voice);
     }
   }
-
 
   Future _setAwaitOptions() async {
     await flutterTts.awaitSpeakCompletion(true);
