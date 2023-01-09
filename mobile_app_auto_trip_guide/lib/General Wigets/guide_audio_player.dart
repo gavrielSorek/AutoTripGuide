@@ -4,13 +4,16 @@ import 'package:flutter/material.dart';
 
 class GuideAudioPlayer extends StatefulWidget {
   final TtsAudioPlayer ttsAudioPlayer = TtsAudioPlayer();
-  dynamic
-  _onPressNext = null, _onPressPrev = null;
+  dynamic _onPressNext = null,
+      _onPressPrev = null,
+      _onPause = null,
+      _onResume = null;
 
   // must be called before using the player
   initAudioPlayer() async {
     await ttsAudioPlayer.iniPlayer();
   }
+
   set onPlayerFinishedFunc(dynamic onPlayerFinishedFunc) {
     ttsAudioPlayer.onFinished = onPlayerFinishedFunc;
   }
@@ -23,22 +26,16 @@ class GuideAudioPlayer extends StatefulWidget {
     _onPressPrev = onPressPrev;
   }
 
-  // set onPause(dynamic onPause) {
-  //   _onPause = onPause;
-  // }
-
-  // set onResume(dynamic onResume) {
-  //   _onResume = onResume;
-  // }
-
-  set onStartPlaying(dynamic onStartPlaying) {
-    ttsAudioPlayer.onPlay = onStartPlaying;
-  }
-
   set onProgressChanged(dynamic onProgressChanged) {
     ttsAudioPlayer.onProgress = onProgressChanged;
+  }
 
-    // _onProgressChanged = onProgressChanged;
+  set onPause(dynamic onPause) {
+    _onPause = onPause;
+  }
+
+  set onResume(dynamic onResume) {
+    _onResume = onResume;
   }
 
   Future<void> play() async {
@@ -46,7 +43,11 @@ class GuideAudioPlayer extends StatefulWidget {
   }
 
   Future<void> pause() async {
-    await ttsAudioPlayer.playAudio();
+    await ttsAudioPlayer.pauseAudio();
+  }
+
+  Future<void> stop() async {
+    await ttsAudioPlayer.stopAudio();
   }
 
   get isPlaying => ttsAudioPlayer.isPlaying;
@@ -57,6 +58,14 @@ class GuideAudioPlayer extends StatefulWidget {
 
   get isContinued => ttsAudioPlayer.isContinued;
 
+  void clearPlayer() {
+    ttsAudioPlayer.clearPlayer();
+  }
+
+  void setTextToPlay(String text, String language) {
+    ttsAudioPlayer.setTextToPlay(text, language);
+  }
+
   @override
   State<StatefulWidget> createState() {
     return _GuideAudioPlayerState();
@@ -64,6 +73,7 @@ class GuideAudioPlayer extends StatefulWidget {
 }
 
 class _GuideAudioPlayerState extends State<GuideAudioPlayer> {
+  final playerStatesList = List.of(TtsState.values);
   bool _isPlayerButtonDisabled = false;
   List<Icon> icons = [
     Icon(Icons.pause),
@@ -72,15 +82,31 @@ class _GuideAudioPlayerState extends State<GuideAudioPlayer> {
     Icon(Icons.pause)
   ]; //in the length of TtsState
   Icon playerIcon = Icon(Icons.play_arrow);
+
   @override
   void initState() {
     widget.ttsAudioPlayer.onPause = () {
-      setState(() {
-        playerIcon = icons[widget.ttsAudioPlayer.status];
-      });
+      widget._onPause();
+      updatePlayerButton();
+    };
+
+    widget.ttsAudioPlayer.onResume = () {
+      widget._onResume();
+      updatePlayerButton();
+    };
+
+    widget.ttsAudioPlayer.onPlay = () {
+      updatePlayerButton();
     };
 
     super.initState();
+  }
+
+  void updatePlayerButton() {
+    setState(() {
+      playerIcon =
+          icons[playerStatesList.indexOf(widget.ttsAudioPlayer.status)];
+    });
   }
 
   @override
@@ -98,8 +124,7 @@ class _GuideAudioPlayerState extends State<GuideAudioPlayer> {
     );
   }
 
-  Widget _buildPlayer() =>
-      Container(
+  Widget _buildPlayer() => Container(
         width: double.infinity,
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Spacer(),
@@ -156,16 +181,16 @@ class _GuideAudioPlayerState extends State<GuideAudioPlayer> {
                   onPressed: _isPlayerButtonDisabled
                       ? null
                       : () {
-                    if (widget.isPlaying) {
-                      setState(() {
-                        widget.play();
-                      });
-                    } else {
-                      setState(() {
-                        widget.pause();
-                      });
-                    }
-                  },
+                          if (widget.isStopped || widget.isPaused) {
+                            setState(() {
+                              widget.play();
+                            });
+                          } else {
+                            setState(() {
+                              widget.pause();
+                            });
+                          }
+                        },
                   icon: playerIcon,
                   iconSize: 35)),
           Spacer(),

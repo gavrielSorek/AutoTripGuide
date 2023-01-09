@@ -12,7 +12,7 @@ class TtsAudioPlayer {
   String _restOfTextToPlay = '';
   dynamic _onFinishedFunc = null;
   dynamic _onProgress = null;
-  dynamic _onPlay = null, _onPause = null;
+  dynamic _onPlay = null, _onPause = null, _onResume = null;
   String? _language;
   String? _engine;
   double _volume = 0.5;
@@ -38,6 +38,9 @@ class TtsAudioPlayer {
     _language = language;
   }
 
+  set onResume(dynamic onResume) {
+    _onResume = onResume;
+  }
   set onFinished(dynamic onFinishedFunc) {
     _onFinishedFunc = onFinishedFunc;
   }
@@ -102,12 +105,13 @@ class TtsAudioPlayer {
     flutterTts.setPauseHandler(() {
       print("Paused");
       _ttsState = TtsState.paused;
-      _onPause != null ? _onPause : null;
+      _onPause != null ? _onPause() : null;
     });
 
     flutterTts.setContinueHandler(() {
       print("Continued");
       _ttsState = TtsState.continued;
+      _onResume != null ? _onResume() : null;
     });
 
     flutterTts.setProgressHandler((text, start, end, word) {
@@ -146,6 +150,7 @@ class TtsAudioPlayer {
   }
 
 
+
   Future<dynamic> _getLanguages() async => await flutterTts.getLanguages;
 
   Future<dynamic> _getEngines() async => await flutterTts.getEngines;
@@ -170,14 +175,10 @@ class TtsAudioPlayer {
   }
 
   Future stopAudio() async {
-    var result = await flutterTts.stop();
-    if (result == 1)
-      _ttsState = TtsState.stopped;
+    await flutterTts.stop();
   }
 
   Future pauseAudio() async {
-    var result = await flutterTts.pause();
-    if (result == 1)
-      _ttsState = TtsState.paused;
+    await flutterTts.pause();
   }
 }
