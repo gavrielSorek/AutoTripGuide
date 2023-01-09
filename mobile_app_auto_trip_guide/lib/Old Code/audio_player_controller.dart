@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:flutter_tts/flutter_tts.dart';
 
-import 'globals.dart';
+import '../Map/globals.dart';
 
 typedef void OnError(Exception exception);
 

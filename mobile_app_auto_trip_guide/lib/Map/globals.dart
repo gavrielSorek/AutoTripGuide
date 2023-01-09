@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import '../General Wigets/guide_audio_player.dart';
+import 'guide_audio_player.dart';
 import '../Pages/login_controller.dart';
 import 'apps_launcher.dart';
 import 'map.dart';
