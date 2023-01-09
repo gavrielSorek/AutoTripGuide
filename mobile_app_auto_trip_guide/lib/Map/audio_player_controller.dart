@@ -125,9 +125,11 @@ class _AudioAppState extends State<AudioApp> {
     if (Platform.isAndroid) {
       path = (await getExternalStorageDirectory())?.path;
     } else {
-      path = (await getApplicationSupportDirectory()).path;
+      path = (await getTemporaryDirectory()).path;
     }
-    await widget.flutterTts.synthesizeToFile(widget.text, fileName);
+    print("-----------------");
+    print(await widget.flutterTts.synthesizeToFile(widget.text, fileName));
+    print("-----------------");
     return '$path/$fileName';
   }
 
