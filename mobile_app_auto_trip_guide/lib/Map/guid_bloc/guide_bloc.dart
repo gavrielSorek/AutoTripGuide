@@ -107,7 +107,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             .replaceAll(RegExp(r"<|>|\[|\]|'"), '');
         MapPoi currentPoi = Globals.globalAllPois[poiId]!;
         Globals.globalGuideAudioPlayer
-            .setTextToPlay(currentPoi!.poi.shortDesc!, 'en-GB');
+            .setTextToPlay(currentPoi!.poi.shortDesc!, 'en-US');
         Globals.globalGuideAudioPlayer.play();
         Globals.globalUserMap.highlightPoi(currentPoi!);
         Globals.addGlobalVisitedPoi(VisitedPoi(
@@ -126,6 +126,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
 
     on<ShowFullPoiInfoEvent>((event, emit) {
       if (state is ShowStoriesState) {
+        Globals.globalGuideAudioPlayer.stop();
         final state = this.state as ShowStoriesState;
         emit(ShowPoiState(
             savedStoriesState: state, currentPoi: state.currentPoi!));
