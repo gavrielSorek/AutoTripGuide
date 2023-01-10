@@ -605,6 +605,102 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
     return items[0].poi.pic ?? '';
   }
 
+  List<Widget> buildGridView(Map<String, List<MapPoi>> categoriesMap ){
+      List<String> categoriesList = categoriesMap.keys.toList();
+      List<Widget> genereatedList =  List.generate(
+        widget.state.categoriesToPoisMap.length, (index) {
+      return GestureDetector(
+        key: Key(categoriesList[index]),
+          onTap: () => {
+                handleSelectedCatrgotyClicked(
+                    categoriesList[index])
+              },
+          child: Center(
+            child: Stack(children: [
+              ClipRRect(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(20)),
+                child: CachedNetworkImage(
+                  imageUrl: getImageFromCategory(
+                      widget.state.categoriesToPoisMap[
+                          categoriesList[index]]!),
+                  height: 100,
+                  width: 200,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned(
+                  left: 3,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color.fromRGBO(0, 0, 0, 0),
+                            Color.fromRGBO(0, 0, 0, 0.75),
+                          ],
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                              flex: 2,
+                              child: Text(
+                                categoriesList[index] +
+                                    " (" +
+                                    widget
+                                        .state
+                                        .categoriesToPoisMap[
+                                            categoriesList[
+                                                index]]!
+                                        .length
+                                        .toString() +
+                                    ")",
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontStyle:
+                                      FontStyle.normal,
+                                  fontWeight:
+                                      FontWeight.w600,
+                                  fontSize: 15,
+                                  letterSpacing: 0,
+                                  color: Colors.white,
+                                ),
+                              )),
+                          Expanded(
+                              child: Checkbox(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius
+                                              .circular(
+                                                  10)),
+                                  side: BorderSide(
+                                      width: 1.8,
+                                      color:
+                                          Colors.white),
+                                  value: widget.state
+                                              .isCheckedCategory[
+                                          categoriesList[
+                                              index]] ??
+                                      false,
+                                  onChanged: (value) {
+                                    handleSelectedCatrgotyClicked(
+                                        categoriesList[
+                                            index]);
+                                  })),
+                        ],
+                      )))
+            ]),
+          ));
+    });
+    genereatedList.sort((a, b) => a.key.toString().compareTo(b.key.toString()));
+    return genereatedList;
+  
+  }
+
   void handleSelectedCatrgotyClicked(selectedCategory) {
     bool currentValue =
         (widget.state.isCheckedCategory[selectedCategory] ?? false);
@@ -741,94 +837,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                           mainAxisSpacing: 0,
                           childAspectRatio: (1.45),
                           crossAxisCount: 2,
-                          children: List.generate(
-                              widget.state.categoriesToPoisMap.length, (index) {
-                            return GestureDetector(
-                                onTap: () => {
-                                      handleSelectedCatrgotyClicked(
-                                          categoriesList[index])
-                                    },
-                                child: Center(
-                                  child: Stack(children: [
-                                    ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(20)),
-                                      child: CachedNetworkImage(
-                                        imageUrl: getImageFromCategory(
-                                            widget.state.categoriesToPoisMap[
-                                                categoriesList[index]]!),
-                                        height: 100,
-                                        width: 200,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    Positioned(
-                                        left: 3,
-                                        right: 0,
-                                        bottom: 0,
-                                        child: Container(
-                                            decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topCenter,
-                                                end: Alignment.bottomCenter,
-                                                colors: [
-                                                  Color.fromRGBO(0, 0, 0, 0),
-                                                  Color.fromRGBO(0, 0, 0, 0.75),
-                                                ],
-                                              ),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      categoriesList[index] +
-                                                          " (" +
-                                                          widget
-                                                              .state
-                                                              .categoriesToPoisMap[
-                                                                  categoriesList[
-                                                                      index]]!
-                                                              .length
-                                                              .toString() +
-                                                          ")",
-                                                      style: TextStyle(
-                                                        fontFamily: 'Inter',
-                                                        fontStyle:
-                                                            FontStyle.normal,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 15,
-                                                        letterSpacing: 0,
-                                                        color: Colors.white,
-                                                      ),
-                                                    )),
-                                                Expanded(
-                                                    child: Checkbox(
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10)),
-                                                        side: BorderSide(
-                                                            width: 1.8,
-                                                            color:
-                                                                Colors.white),
-                                                        value: widget.state
-                                                                    .isCheckedCategory[
-                                                                categoriesList[
-                                                                    index]] ??
-                                                            false,
-                                                        onChanged: (value) {
-                                                          handleSelectedCatrgotyClicked(
-                                                              categoriesList[
-                                                                  index]);
-                                                        })),
-                                              ],
-                                            )))
-                                  ]),
-                                ));
-                          }),
+                          children: buildGridView(widget.state.categoriesToPoisMap),
                         )),
                   ),
                 ),

@@ -104,6 +104,7 @@ class UserMap extends StatefulWidget {
   }
 
   UserMap({Key? key}) : super(key: key) {
+    Future.delayed(Duration(seconds: 1), (() => { userMapState?.onLocationChanged(LAST_AREA_USER_LOCATION)}));
     print("hello from ctor");
   }
 
