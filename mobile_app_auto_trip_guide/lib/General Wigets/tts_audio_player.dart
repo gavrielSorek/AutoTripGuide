@@ -135,7 +135,7 @@ class TtsAudioPlayer {
         _onProgress(estimatedProgress);
 
         double range = endRangeProgress - startRangeProgress;
-        double addParam = (range / word.length) * 2;
+        double addParam = (range / word.length) * 3;
         // print('______________________________________');
         // print(start);
         // print(end);
@@ -146,13 +146,15 @@ class TtsAudioPlayer {
         // print(endRangeProgress);
         // print('_____________________________');
         _periodicProgressTimer =
-            Timer.periodic(Duration(milliseconds: 100), (timer) {
+            Timer.periodic(Duration(milliseconds: 200), (timer) {
           estimatedProgress += addParam;
           if (estimatedProgress < endRangeProgress) {
-            _onProgress(estimatedProgress);
-            // print("***************");
-            // print(estimatedProgress);
-            // print("***************");
+            if (status == TtsState.playing) {
+              _onProgress(estimatedProgress);
+              // print("***************");
+              // print(estimatedProgress);
+              // print("***************");
+            }
           }
         });
       }
