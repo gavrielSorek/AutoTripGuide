@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:async';
 import 'dart:io' show Platform;
@@ -130,7 +132,7 @@ class TtsAudioPlayer {
       if (_onProgress != null && _textLength > 0) {
         double startRangeProgress = start_pos / _textLength;
         double endRangeProgress =
-            (end_pos + 1) / _textLength; // 1 - for the space
+            min((end_pos + 1) / _textLength, 1); // 1 - for the space
         double estimatedProgress = startRangeProgress;
         _onProgress(estimatedProgress);
 
@@ -167,6 +169,7 @@ class TtsAudioPlayer {
   }
 
   Future<void> playAudio() async {
+    _periodicProgressTimer?.cancel();
     await flutterTts.setLanguage(_language ?? 'en-GB');
     await flutterTts.speak(_allTextToPlay);
   }
