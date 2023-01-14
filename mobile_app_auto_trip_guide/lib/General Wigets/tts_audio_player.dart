@@ -100,6 +100,10 @@ class TtsAudioPlayer {
 
     flutterTts.setCompletionHandler(() {
       print("Complete");
+      if(_ttsState == TtsState.stopped){
+        // fix the bug for ios, the 'complete' handler is called after pressing on next, the 'cancel' handler is not called and changed the status to 'stooped'
+        return;
+      }
       _ttsState = TtsState.stopped;
       if (_onFinishedFunc != null) {
         _onFinishedFunc();
@@ -206,6 +210,7 @@ class TtsAudioPlayer {
 
   Future stopAudio() async {
     await flutterTts.stop();
+    _ttsState = TtsState.stopped;
   }
 
   Future pauseAudio() async {

@@ -255,14 +255,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                       ),
                       child: Column(
                         children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 15),
-                          ),
                           Expanded(child: state.storyView),
-                          Padding(
-                              padding: EdgeInsets.only(top: 15),
-                              child: Container(
-                                  child: Globals.globalGuideAudioPlayer, height: 56)),
+                          Container(
+                              child: Globals.globalGuideAudioPlayer, height: 56),
                           Container(
                             child: UniformButtons.getPreferenceButton(
                                 onPressed: () {
