@@ -135,6 +135,32 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         ));
   }
 
+  Widget buildImageWidget(String imagPath){
+    return  CircleAvatar(
+        backgroundColor: Colors.transparent,
+        radius: Constants.avatarRadius,
+        child: Container(
+          margin: const EdgeInsets.only(
+              left: Constants.sidesMarginOfPic,
+              right: Constants.sidesMarginOfPic),
+          child: ClipRRect(
+            borderRadius:
+                BorderRadius.all(Radius.circular(50)),
+            child: CachedNetworkImage(
+              imageUrl: imagPath ?? "",
+              height: 180,
+              width: 220,
+              fit: BoxFit.fill,
+              placeholder: (context, url) =>
+                  new CircularProgressIndicator(),
+              errorWidget: (context, url, error) =>
+                  new Icon(Icons.error_outlined,
+                      size: 100),
+            ),
+          ),
+        ));
+  }
+
   Widget buildLoadingNewPoisWidget() {
     return buildDialogContainedWidgets([
       Padding(
@@ -264,29 +290,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                                     .add(ShowFullPoiInfoEvent());
                               }
                             },
-                            child: CircleAvatar(
-                                backgroundColor: Colors.transparent,
-                                radius: Constants.avatarRadius,
-                                child: Container(
-                                  margin: const EdgeInsets.only(
-                                      left: Constants.sidesMarginOfPic,
-                                      right: Constants.sidesMarginOfPic),
-                                  child: ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50)),
-                                    child: CachedNetworkImage(
-                                      imageUrl: state.currentPoi?.poi.pic ?? "",
-                                      height: 180,
-                                      width: 220,
-                                      fit: BoxFit.fill,
-                                      placeholder: (context, url) =>
-                                          new CircularProgressIndicator(),
-                                      errorWidget: (context, url, error) =>
-                                          new Icon(Icons.error_outlined,
-                                              size: 100),
-                                    ),
-                                  ),
-                                )),
+                            child: buildImageWidget(state.currentPoi?.poi.pic ?? '') ,
                           ),
                         ),
                       ],
@@ -498,27 +502,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                     // Up Swipe
                   }
                 },
-                child: CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    radius: Constants.avatarRadius,
-                    child: Container(
-                      margin: const EdgeInsets.only(
-                          left: Constants.sidesMarginOfPic,
-                          right: Constants.sidesMarginOfPic),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        child: CachedNetworkImage(
-                          imageUrl: state.currentPoi?.poi.pic ?? "",
-                          height: 180,
-                          width: 250,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              new CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              new Icon(Icons.error_outlined, size: 100),
-                        ),
-                      ),
-                    )),
+                child: buildImageWidget( state.currentPoi.poi.pic ?? ""),
               ),
             ),
             Positioned(
@@ -627,6 +611,11 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                   height: 100,
                   width: 200,
                   fit: BoxFit.cover,
+                  placeholder: (context, url) =>
+                  new CircularProgressIndicator(),
+                  errorWidget: (context, url, error) =>
+                  new Icon(Icons.error_outlined,
+                      size: 100),
                 ),
               ),
               Positioned(
