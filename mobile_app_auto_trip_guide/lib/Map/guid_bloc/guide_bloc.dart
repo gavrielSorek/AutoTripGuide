@@ -126,7 +126,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
 
     on<ShowFullPoiInfoEvent>((event, emit) {
       if (state is ShowStoriesState) {
-        Globals.globalGuideAudioPlayer.stop();
+        Globals.globalGuideAudioPlayer.pause();
         final state = this.state as ShowStoriesState;
         emit(ShowPoiState(
             savedStoriesState: state, currentPoi: state.currentPoi!));
