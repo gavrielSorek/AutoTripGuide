@@ -774,24 +774,40 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
             child: Column(
               children: [
                 Padding(
-                    padding: EdgeInsets.only(left: 11, top: 16),
+                    padding: EdgeInsets.only(top: 16),
                     child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 11, right: 11),
-                          child: Text(
-                            widget.state.idToPoisMap.keys.length.toString() +
-                                " Places near you: ",
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 22,
-                              letterSpacing: 0.35,
-                              color: Colors.black,
-                              height: 28 / 22,
-                            ),
-                          ),
+                        child: Row(
+                          children: [
+                            Positioned(
+                            top: Constants.avatarRadius,
+                            child: 
+                            UniformButtons.getReturnDialogButton(onPressed: () {
+                                // context.read<GuideBloc>().add(SetLoadedStoriesEvent(
+                                //     storyView: widget.state.savedStoriesState.storyView,
+                                //     controller: state.savedStoriesState.controller));
+                              })),
+                            Text(
+                              widget.state.idToPoisMap.keys.length.toString() +
+                                  " Places near you: ",
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 22,
+                                letterSpacing: 0.35,
+                                color: Colors.black,
+                                height: 28 / 22,
+                              ),
+                            ),            
+                          Expanded(
+                              child: UniformButtons.getReloadDialogButton(onPressed: () {
+                                      // context.read<GuideBloc>().add(ShowSearchingPoisAnimationEvent());
+                              }),
+                    )
+
+                          
+                          ],
                         ))),
                 Padding(
                   padding: EdgeInsets.only(left: 11, right: 11, top: 16),
