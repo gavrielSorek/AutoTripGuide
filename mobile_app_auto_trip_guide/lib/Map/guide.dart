@@ -32,7 +32,11 @@ class Guide {
   late GuidDialogBox storiesDialogBox;
 
   Guide(this.context, this.guideData) {
-    storiesDialogBox = GuidDialogBox();
+    storiesDialogBox = GuidDialogBox(onRefreshFunc: () {
+      clearAllPois();
+      context.read<GuideBloc>().add(ShowSearchingPoisAnimationEvent());
+      Globals.globalUserMap.userMapState?.loadNewPois();
+    });
     Stream stream = Globals.globalClickedPoiStream.stream;
     stream.listen((mapPoi) {
       mapPoiClicked(mapPoi);
@@ -83,10 +87,17 @@ class Guide {
       }
     });
   }
+
+    void clearAllPois() {
+      _poisToPlay.clear();
+      _queuedPoisToPlay.clear();
+  }
 }
 
 class GuidDialogBox extends StatefulWidget {
-  GuidDialogBox() {}
+  dynamic onRefreshFunc;
+  GuidDialogBox({ required this.onRefreshFunc}) {
+  }
 
   @override
   State<StatefulWidget> createState() {
@@ -536,6 +547,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
       onPoiClicked: () {
         context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
       },
+      onRefreshFunc: widget.onRefreshFunc
     );
   }
 
@@ -568,10 +580,11 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
 
 class OptionalCategoriesSelection extends StatefulWidget {
   final ShowOptionalCategoriesState state;
+  final dynamic onRefreshFunc;
   final dynamic onPoiClicked;
 
   OptionalCategoriesSelection(
-      {required this.state, required this.onPoiClicked}) {}
+      {required this.state, required this.onPoiClicked, required this.onRefreshFunc}) {}
 
   @override
   State<StatefulWidget> createState() {
@@ -776,17 +789,19 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                 Padding(
                     padding: EdgeInsets.only(top: 16),
                     child: Align(
-                        alignment: Alignment.centerLeft,
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            // widget.state.lastShowStoriesState == null ? Container() : 
                             Positioned(
                             top: Constants.avatarRadius,
                             child: 
-                            UniformButtons.getReturnDialogButton(onPressed: () {
-                                // context.read<GuideBloc>().add(SetLoadedStoriesEvent(
-                                //     storyView: widget.state.savedStoriesState.storyView,
-                                //     controller: state.savedStoriesState.controller));
-                              })),
+                            UniformButtons.getReturnDialogButton(
+                              onPressed: () {
+                                context.read<GuideBloc>().add(SetLoadedStoriesEvent(
+                                    storyView: widget.state.lastShowStoriesState!.storyView,
+                                    controller: widget.state.lastShowStoriesState!.controller));
+                              }, enabled: widget.state.lastShowStoriesState != null)),
                             Text(
                               widget.state.idToPoisMap.keys.length.toString() +
                                   " Places near you: ",
@@ -800,11 +815,9 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                 height: 28 / 22,
                               ),
                             ),            
-                          Expanded(
-                              child: UniformButtons.getReloadDialogButton(onPressed: () {
-                                      // context.read<GuideBloc>().add(ShowSearchingPoisAnimationEvent());
-                              }),
-                    )
+                          UniformButtons.getReloadDialogButton(onPressed: () {
+                                  widget.onRefreshFunc();
+                          })
 
                           
                           ],

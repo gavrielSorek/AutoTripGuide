@@ -32,13 +32,14 @@ class UniformButtons {
     ), onPressed: onPressed);
   }
 
-  static IconButton getReturnDialogButton({required dynamic onPressed}) {
+  static IconButton getReturnDialogButton({required dynamic onPressed, enabled = true}) {
     final String assetName = 'assets/images/return.svg';
     return IconButton(icon: SvgPicture.asset(
         assetName,
-        color: Color.fromRGBO(10, 132, 255, 1),
-        semanticsLabel: 'Label'
-    ), onPressed: onPressed);
+        color:enabled ? Color.fromRGBO(10, 132, 255, 1) : Colors.grey ,
+        semanticsLabel: 'Label',
+    ), onPressed: enabled ? onPressed : null,
+    );
   }
 
     static IconButton getReloadDialogButton({required dynamic onPressed}) {
