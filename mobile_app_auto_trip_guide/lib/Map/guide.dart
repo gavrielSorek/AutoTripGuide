@@ -32,7 +32,11 @@ class Guide {
   late GuidDialogBox storiesDialogBox;
 
   Guide(this.context, this.guideData) {
-    storiesDialogBox = GuidDialogBox();
+    storiesDialogBox = GuidDialogBox(onRefreshFunc: () {
+      clearAllPois();
+      context.read<GuideBloc>().add(ShowSearchingPoisAnimationEvent());
+      Globals.globalUserMap.userMapState?.loadNewPois();
+    });
     Stream stream = Globals.globalClickedPoiStream.stream;
     stream.listen((mapPoi) {
       mapPoiClicked(mapPoi);
@@ -83,10 +87,17 @@ class Guide {
       }
     });
   }
+
+    void clearAllPois() {
+      _poisToPlay.clear();
+      _queuedPoisToPlay.clear();
+  }
 }
 
 class GuidDialogBox extends StatefulWidget {
-  GuidDialogBox() {}
+  dynamic onRefreshFunc;
+  GuidDialogBox({ required this.onRefreshFunc}) {
+  }
 
   @override
   State<StatefulWidget> createState() {
@@ -132,6 +143,32 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
               ),
             ]),
           ],
+        ));
+  }
+
+  Widget buildImageWidget(String imagPath){
+    return  CircleAvatar(
+        backgroundColor: Colors.transparent,
+        radius: Constants.avatarRadius,
+        child: Container(
+          margin: const EdgeInsets.only(
+              left: Constants.sidesMarginOfPic,
+              right: Constants.sidesMarginOfPic),
+          child: ClipRRect(
+            borderRadius:
+                BorderRadius.all(Radius.circular(50)),
+            child: CachedNetworkImage(
+              imageUrl: imagPath ?? "",
+              height: 180,
+              width: 220,
+              fit: BoxFit.fill,
+              placeholder: (context, url) =>
+                  new CircularProgressIndicator(),
+              errorWidget: (context, url, error) =>
+                  new Icon(Icons.error_outlined,
+                      size: 100),
+            ),
+          ),
         ));
   }
 
@@ -231,14 +268,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                       ),
                       child: Column(
                         children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 15),
-                          ),
                           Expanded(child: state.storyView),
-                          Padding(
-                              padding: EdgeInsets.only(top: 15),
-                              child: Container(
-                                  child: Globals.globalGuideAudioPlayer, height: 56)),
+                          Container(
+                              child: Globals.globalGuideAudioPlayer, height: 56),
                           Container(
                             child: UniformButtons.getPreferenceButton(
                                 onPressed: () {
@@ -266,29 +298,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                                     .add(ShowFullPoiInfoEvent());
                               }
                             },
-                            child: CircleAvatar(
-                                backgroundColor: Colors.transparent,
-                                radius: Constants.avatarRadius,
-                                child: Container(
-                                  margin: const EdgeInsets.only(
-                                      left: Constants.sidesMarginOfPic,
-                                      right: Constants.sidesMarginOfPic),
-                                  child: ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50)),
-                                    child: CachedNetworkImage(
-                                      imageUrl: state.currentPoi?.poi.pic ?? "",
-                                      height: imageHeight,
-                                      width: 220,
-                                      fit: BoxFit.fill,
-                                      placeholder: (context, url) =>
-                                          new CircularProgressIndicator(),
-                                      errorWidget: (context, url, error) =>
-                                          new Icon(Icons.error_outlined,
-                                              size: 100),
-                                    ),
-                                  ),
-                                )),
+                            child: buildImageWidget(state.currentPoi?.poi.pic ?? '') ,
                           ),
                         ),
                       ],
@@ -500,27 +510,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                     // Up Swipe
                   }
                 },
-                child: CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    radius: Constants.avatarRadius,
-                    child: Container(
-                      margin: const EdgeInsets.only(
-                          left: Constants.sidesMarginOfPic,
-                          right: Constants.sidesMarginOfPic),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        child: CachedNetworkImage(
-                          imageUrl: state.currentPoi?.poi.pic ?? "",
-                          height: 180,
-                          width: 250,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              new CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              new Icon(Icons.error_outlined, size: 100),
-                        ),
-                      ),
-                    )),
+                child: buildImageWidget( state.currentPoi.poi.pic ?? ""),
               ),
             ),
             Positioned(
@@ -559,6 +549,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
       onPoiClicked: () {
         context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
       },
+      onRefreshFunc: widget.onRefreshFunc
     );
   }
 
@@ -591,10 +582,11 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
 
 class OptionalCategoriesSelection extends StatefulWidget {
   final ShowOptionalCategoriesState state;
+  final dynamic onRefreshFunc;
   final dynamic onPoiClicked;
 
   OptionalCategoriesSelection(
-      {required this.state, required this.onPoiClicked}) {}
+      {required this.state, required this.onPoiClicked, required this.onRefreshFunc}) {}
 
   @override
   State<StatefulWidget> createState() {
@@ -605,6 +597,107 @@ class OptionalCategoriesSelection extends StatefulWidget {
 class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
   static String getImageFromCategory(List<MapPoi> items) {
     return items[0].poi.pic ?? '';
+  }
+
+  List<Widget> buildGridView(Map<String, List<MapPoi>> categoriesMap ){
+      List<String> categoriesList = categoriesMap.keys.toList();
+      List<Widget> genereatedList =  List.generate(
+        widget.state.categoriesToPoisMap.length, (index) {
+      return GestureDetector(
+        key: Key(categoriesList[index]),
+          onTap: () => {
+                handleSelectedCatrgotyClicked(
+                    categoriesList[index])
+              },
+          child: Center(
+            child: Stack(children: [
+              ClipRRect(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(20)),
+                child: CachedNetworkImage(
+                  imageUrl: getImageFromCategory(
+                      widget.state.categoriesToPoisMap[
+                          categoriesList[index]]!),
+                  height: 100,
+                  width: 200,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) =>
+                  new CircularProgressIndicator(),
+                  errorWidget: (context, url, error) =>
+                  new Icon(Icons.error_outlined,
+                      size: 100),
+                ),
+              ),
+              Positioned(
+                  left: 3,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color.fromRGBO(0, 0, 0, 0),
+                            Color.fromRGBO(0, 0, 0, 0.75),
+                          ],
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                              flex: 2,
+                              child: Text(
+                                categoriesList[index] +
+                                    " (" +
+                                    widget
+                                        .state
+                                        .categoriesToPoisMap[
+                                            categoriesList[
+                                                index]]!
+                                        .length
+                                        .toString() +
+                                    ")",
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontStyle:
+                                      FontStyle.normal,
+                                  fontWeight:
+                                      FontWeight.w600,
+                                  fontSize: 15,
+                                  letterSpacing: 0,
+                                  color: Colors.white,
+                                ),
+                              )),
+                          Expanded(
+                              child: Checkbox(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius
+                                              .circular(
+                                                  10)),
+                                  side: BorderSide(
+                                      width: 1.8,
+                                      color:
+                                          Colors.white),
+                                  value: widget.state
+                                              .isCheckedCategory[
+                                          categoriesList[
+                                              index]] ??
+                                      false,
+                                  onChanged: (value) {
+                                    handleSelectedCatrgotyClicked(
+                                        categoriesList[
+                                            index]);
+                                  })),
+                        ],
+                      )))
+            ]),
+          ));
+    });
+    genereatedList.sort((a, b) => a.key.toString().compareTo(b.key.toString()));
+    return genereatedList;
+
   }
 
   void handleSelectedCatrgotyClicked(selectedCategory) {
@@ -696,24 +789,40 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
             child: Column(
               children: [
                 Padding(
-                    padding: EdgeInsets.only(left: 11, top: 16),
+                    padding: EdgeInsets.only(top: 16),
                     child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 11, right: 11),
-                          child: Text(
-                            widget.state.idToPoisMap.keys.length.toString() +
-                                " Places near you: ",
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 22,
-                              letterSpacing: 0.35,
-                              color: Colors.black,
-                              height: 28 / 22,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // widget.state.lastShowStoriesState == null ? Container() :
+                            Positioned(
+                            top: Constants.avatarRadius,
+                            child:
+                            UniformButtons.getReturnDialogButton(
+                              onPressed: () {
+                                context.read<GuideBloc>().add(SetLoadedStoriesEvent(
+                                    storyView: widget.state.lastShowStoriesState!.storyView,
+                                    controller: widget.state.lastShowStoriesState!.controller));
+                              }, enabled: widget.state.lastShowStoriesState != null)),
+                            Text(
+                              widget.state.idToPoisMap.keys.length.toString() +
+                                  " Places near you: ",
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 22,
+                                letterSpacing: 0.35,
+                                color: Colors.black,
+                                height: 28 / 22,
+                              ),
                             ),
-                          ),
+                          UniformButtons.getReloadDialogButton(onPressed: () {
+                                  widget.onRefreshFunc();
+                          })
+
+
+                          ],
                         ))),
                 Padding(
                   padding: EdgeInsets.only(left: 11, right: 11, top: 16),
@@ -743,94 +852,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                           mainAxisSpacing: 0,
                           childAspectRatio: (1.45),
                           crossAxisCount: 2,
-                          children: List.generate(
-                              widget.state.categoriesToPoisMap.length, (index) {
-                            return GestureDetector(
-                                onTap: () => {
-                                      handleSelectedCatrgotyClicked(
-                                          categoriesList[index])
-                                    },
-                                child: Center(
-                                  child: Stack(children: [
-                                    ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(20)),
-                                      child: CachedNetworkImage(
-                                        imageUrl: getImageFromCategory(
-                                            widget.state.categoriesToPoisMap[
-                                                categoriesList[index]]!),
-                                        height: 100,
-                                        width: 200,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    Positioned(
-                                        left: 3,
-                                        right: 0,
-                                        bottom: 0,
-                                        child: Container(
-                                            decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topCenter,
-                                                end: Alignment.bottomCenter,
-                                                colors: [
-                                                  Color.fromRGBO(0, 0, 0, 0),
-                                                  Color.fromRGBO(0, 0, 0, 0.75),
-                                                ],
-                                              ),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      categoriesList[index] +
-                                                          " (" +
-                                                          widget
-                                                              .state
-                                                              .categoriesToPoisMap[
-                                                                  categoriesList[
-                                                                      index]]!
-                                                              .length
-                                                              .toString() +
-                                                          ")",
-                                                      style: TextStyle(
-                                                        fontFamily: 'Inter',
-                                                        fontStyle:
-                                                            FontStyle.normal,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 15,
-                                                        letterSpacing: 0,
-                                                        color: Colors.white,
-                                                      ),
-                                                    )),
-                                                Expanded(
-                                                    child: Checkbox(
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10)),
-                                                        side: BorderSide(
-                                                            width: 1.8,
-                                                            color:
-                                                                Colors.white),
-                                                        value: widget.state
-                                                                    .isCheckedCategory[
-                                                                categoriesList[
-                                                                    index]] ??
-                                                            false,
-                                                        onChanged: (value) {
-                                                          handleSelectedCatrgotyClicked(
-                                                              categoriesList[
-                                                                  index]);
-                                                        })),
-                                              ],
-                                            )))
-                                  ]),
-                                ));
-                          }),
+                          children: buildGridView(widget.state.categoriesToPoisMap),
                         )),
                   ),
                 ),

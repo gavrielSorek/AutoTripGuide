@@ -126,7 +126,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
 
     on<ShowFullPoiInfoEvent>((event, emit) {
       if (state is ShowStoriesState) {
-        Globals.globalGuideAudioPlayer.stop();
+        Globals.globalGuideAudioPlayer.pause();
         final state = this.state as ShowStoriesState;
         emit(ShowPoiState(
             savedStoriesState: state, currentPoi: state.currentPoi!));
@@ -141,6 +141,12 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             controller: event.controller,
             lastShowOptionalCategoriesState:
                 state.savedStoriesState.lastShowOptionalCategoriesState));
+      } else if( state is ShowOptionalCategoriesState){
+      final state = this.state as ShowOptionalCategoriesState;
+        emit(ShowStoriesState(
+            storyView: event.storyView,
+            controller: event.controller,
+            lastShowOptionalCategoriesState: state));
       }
     });
 
@@ -187,13 +193,18 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           categoriesToMapPois[category]?.add(mapPoi);
         });
       });
-
+      ShowStoriesState? lastShowStoriesState = null;
+      if(state is ShowStoriesState) {
+        lastShowStoriesState = state as ShowStoriesState;
+      }
       emit(ShowOptionalCategoriesState(
           categoriesToPoisMap: categoriesToMapPois,
           isCheckedCategory: event.isCheckedCategory,
           onShowStory: event.onShowStory,
           idToPoisMap: event.pois,
-          onFinishedFunc: event.onFinishedFunc));
+          onFinishedFunc: event.onFinishedFunc,
+          lastShowStoriesState: lastShowStoriesState
+          ));
     });
   }
 }

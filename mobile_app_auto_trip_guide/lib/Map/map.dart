@@ -111,6 +111,7 @@ class UserMap extends StatefulWidget {
   }
 
   UserMap({Key? key}) : super(key: key) {
+    Future.delayed(Duration(seconds: 1), (() => { userMapState?.onLocationChanged(LAST_AREA_USER_LOCATION)}));
     print("hello from ctor");
   }
 
@@ -310,14 +311,20 @@ class _UserMapState extends State<UserMap> {
   void onLocationChanged(Position currentLocation) async {
     if (!mounted) return;
     print("hello from location changed");
-    List<Poi> pois;
     // TODO add a condition that won't crazy the server
     if (isNewPoisNeeded()) {
-      pois = await Globals.globalServerCommunication.getPoisByLocation(
-          LocationInfo(currentLocation.latitude, currentLocation.longitude,
-              currentLocation.heading, currentLocation.speed));
+      loadNewPois(location: currentLocation);
+    }
+  }
 
-      pois = PoisAttributesCalculator.filterPois(pois, currentLocation);
+  Future<void> loadNewPois({Position? location = null}) async {
+      Position selectedLocation = location ?? UserMap.USER_LOCATION;
+        List<Poi> pois;
+          pois = await Globals.globalServerCommunication.getPoisByLocation(
+          LocationInfo(selectedLocation.latitude, selectedLocation.longitude,
+              selectedLocation.heading, selectedLocation.speed));
+
+      pois = PoisAttributesCalculator.filterPois(pois, selectedLocation);
 // pois = [new Poi(latitude: 32.100084,longitude: 34.881173,country: 'Israel',poiName: 'Roy1',Categories: [],id:'a',audio: null,shortDesc:'Adullam-France Park (Hebrew: פארק עדולם-צרפת), also known as Parc de France-Adoulam, is a sprawling park of 50,000 dunams (50 km2; 19 sq mi)(ca. 12,350 acres) in the Central District of Israel, located south of Beit Shemesh. The park, established in 2008 for public recreation, features two major hiking and biking trails, and four major archaeological sites from the Second Temple period. It stretches between Naḥal Ha-Elah (Highway 375), its northernmost boundary, to Naḥal Guvrin (Highway 35), its southernmost boundary. To its west lies the Beit Guvrin-Beit Shemesh highway, and to its east the "green line" – now territories under joint Israeli-Palestinian Arab control – which marks its limit.'),new Poi(latitude: 32.100080,longitude: 34.881170,poiName: 'Roy2',country: 'Israel',Categories: [],id:'b',audio: null,shortDesc: 'bbbb')];
       setState(() {
         // add all the new poi
@@ -339,7 +346,6 @@ class _UserMapState extends State<UserMap> {
       if (pois.isNotEmpty) {
         guideTool.setPoisInQueue(pois);
       }
-    }
   }
 
   // change pois needed flag
