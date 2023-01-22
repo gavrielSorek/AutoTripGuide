@@ -12,6 +12,7 @@ import 'apps_launcher.dart';
 import 'map.dart';
 
 class Globals {
+  static Sizes globalWidgetsSizes = Sizes();
   static UserMap globalUserMap = UserMap();
   static ServerCommunication globalServerCommunication = ServerCommunication();
   static Map<String, MapPoi> globalAllPois = HashMap<String, MapPoi>();
@@ -95,4 +96,15 @@ class Globals {
     mainMapPoi = null;
     globalUserInfoObj = null;
   }
+}
+// sizes of widgets
+class Sizes {
+  double _dialogBoxTotalHeight = 0;
+  double get dialogBoxTotalHeight {
+    return this._dialogBoxTotalHeight;
+  }
+  void set dialogBoxTotalHeight(double dialogBoxHeight) {
+    _dialogBoxTotalHeight = dialogBoxHeight;
+  }
+
 }

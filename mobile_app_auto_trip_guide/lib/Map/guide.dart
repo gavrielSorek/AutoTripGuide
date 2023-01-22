@@ -192,6 +192,8 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   }
 
   Widget buildStoriesWidget(state) {
+    final double imageHeight = 180;
+    Globals.globalWidgetsSizes.dialogBoxTotalHeight = MediaQuery.of(context).size.height / 2.2;
     return Column(
       children: [
         Spacer(),
@@ -207,7 +209,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                 children: <Widget>[
                   Container(
                       alignment: Alignment.bottomCenter,
-                      height: MediaQuery.of(context).size.height / 2.2,
+                      height: Globals.globalWidgetsSizes.dialogBoxTotalHeight,
                       width: MediaQuery.of(context).size.width - 30,
                       padding: const EdgeInsets.only(
                           left: Constants.padding,
@@ -276,7 +278,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                                         BorderRadius.all(Radius.circular(50)),
                                     child: CachedNetworkImage(
                                       imageUrl: state.currentPoi?.poi.pic ?? "",
-                                      height: 180,
+                                      height: imageHeight,
                                       width: 220,
                                       fit: BoxFit.fill,
                                       placeholder: (context, url) =>

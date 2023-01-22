@@ -47,6 +47,8 @@ class UserMap extends StatefulWidget {
       StreamController<MapPoisLayer>.broadcast();
   StreamController<MapPoiAction> mapPoiActionStreamController =
       StreamController<MapPoiAction>.broadcast();
+  StreamController<LatLng> highlightedPoiStreamController =
+      StreamController<LatLng>.broadcast();
 
   static Future<void> mapInit() async {
     //permissions handling
@@ -61,9 +63,12 @@ class UserMap extends StatefulWidget {
     }
 
     USER_LOCATION = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.medium);
     // initialization order is very important
-    Geolocator.getPositionStream().listen(locationChangedEvent);
+
+    Geolocator.getPositionStream(
+            locationSettings: LocationSettings(accuracy: LocationAccuracy.high))
+        .listen(locationChangedEvent);
     LAST_AREA_USER_LOCATION = USER_LOCATION;
   }
 
@@ -96,6 +101,8 @@ class UserMap extends StatefulWidget {
   void highlightPoi(MapPoi mapPoi) {
     mapPoisLayerStreamController
         .add(MapPoisLayer(layer: MarkersLayer.blue, mapPois: [mapPoi]));
+    highlightedPoiStreamController
+        .add(LatLng(mapPoi.poi.latitude, mapPoi.poi.longitude));
   }
 
   void setLoadingAnimationState(bool isActive) {
@@ -128,7 +135,8 @@ class _UserMapState extends State<UserMap> {
   late StreamSubscription mapPoisLayerSubscription;
   late StreamSubscription mapPoiActionSubscription;
   List<List<Marker>> listOfMarkersLayers = [];
-
+  StreamController<LocationMarkerPosition> _currentLocationStreamController =
+      StreamController<LocationMarkerPosition>();
   GuideData guideData = GuideData();
   late Guide guideTool;
   WidgetVisibility navButtonState = WidgetVisibility.hide;
@@ -157,10 +165,44 @@ class _UserMapState extends State<UserMap> {
 
   _UserMapState() : super() {
     UserMap.userChangeLocationFuncs.add(onLocationChanged);
+    UserMap.userChangeLocationFuncs.add(updateMapRelativePosition);
+    UserMap.userChangeLocationFuncs.add((Position currentLocation) {
+      _currentLocationStreamController.add(LocationMarkerPosition(
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
+          accuracy: currentLocation.accuracy));
+    });
+
     // add a layer for every value in the MarkersLayer enum
     MarkersLayer.values.forEach((element) {
       listOfMarkersLayers.add([]);
     });
+  }
+
+  CustomPoint? getRelativeScreenCenterToUserPosition() {
+    CustomPoint? userPoint = _mapController.latLngToScreenPoint(LatLng(
+        UserMap.USER_LOCATION.latitude, UserMap.USER_LOCATION.longitude));
+    return CustomPoint(userPoint!.x,
+        userPoint!.y + Globals.globalWidgetsSizes.dialogBoxTotalHeight / 2);
+  }
+
+  LatLng getRelativeCenterToUserPosition() {
+    return _mapController.pointToLatLng(
+        getRelativeScreenCenterToUserPosition() ?? CustomPoint(0, 0))!;
+  }
+
+  void updateMapRelativePosition(Position currentLocation) async {
+    double epsilon = 0.0001;
+    if (_centerOnLocationUpdate == CenterOnLocationUpdate.always) {
+      LatLng oldCenter = _mapController.center;
+      LatLng newCenter = getRelativeCenterToUserPosition();
+      if ((newCenter.longitude - oldCenter.longitude).abs() < epsilon &&
+          (newCenter.latitude - oldCenter.latitude).abs() < epsilon) {
+        return; // the location didn't changed really
+      }
+      _mapController.move(
+          newCenter, _mapController.zoom);
+    }
   }
 
   void updateState() {
@@ -188,6 +230,21 @@ class _UserMapState extends State<UserMap> {
     }
   }
 
+  bool isValidScreenPoint(CustomPoint? screenPoint) {
+    double margin = 20;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+    double dialogHeight = Globals.globalWidgetsSizes.dialogBoxTotalHeight;
+
+    if (screenPoint == null) return false;
+    if (screenPoint.x > screenWidth ||
+        screenPoint.x < 0 ||
+        screenPoint.y > screenHeight ||
+        screenHeight - screenPoint.y - margin < dialogHeight ||
+        screenPoint.y < 0) return false;
+    return true;
+  }
+
   @override
   void initState() {
     mapPoisLayerSubscription =
@@ -204,6 +261,38 @@ class _UserMapState extends State<UserMap> {
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
     guideTool = Guide(context, guideData);
+
+    widget.highlightedPoiStreamController.stream.listen((event) {
+      double xMarginFromCenter =
+          (UserMap.USER_LOCATION.longitude - event.longitude).abs();
+      double yMarginFromCenter =
+          (UserMap.USER_LOCATION.latitude - event.latitude).abs();
+
+      _mapController.fitBounds(
+        LatLngBounds(
+          LatLng(UserMap.USER_LOCATION.latitude + yMarginFromCenter,
+              UserMap.USER_LOCATION.longitude + xMarginFromCenter),
+          LatLng(UserMap.USER_LOCATION.latitude - yMarginFromCenter,
+              UserMap.USER_LOCATION.longitude - xMarginFromCenter),
+        ),
+        options: FitBoundsOptions(
+            padding: EdgeInsets.only(
+                bottom: Globals.globalWidgetsSizes.dialogBoxTotalHeight + 80,
+                top: 80,
+                right: 50,
+                left: 50),
+            forceIntegerZoomLevel: false),
+      );
+      // need to move because bounds can change the center a little bit
+      updateMapRelativePosition(UserMap.USER_LOCATION);
+    });
+
+    LocationMarkerDataStreamFactory().compassHeadingStream().listen((event) {
+      // if (_centerOnLocationUpdate != CenterOnLocationUpdate.always) return;
+      mapHeading = event.heading;
+      _mapController.rotate(mapHeading);
+      updateState();
+    });
     super.initState();
   }
 
@@ -213,6 +302,7 @@ class _UserMapState extends State<UserMap> {
     mapPoisLayerSubscription.cancel();
     mapPoiActionSubscription.cancel();
     _centerCurrentLocationStreamController.close();
+    _currentLocationStreamController.close();
     super.dispose();
   }
 
@@ -294,14 +384,16 @@ class _UserMapState extends State<UserMap> {
       // ignore: sort_child_properties_last
       children: [
         TileLayer(
-          urlTemplate: 'https://a.tile.openstreetmap.de/{z}/{x}/{y}.png',
+          urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           subdomains: ['a', 'b', 'c'],
           maxZoom: 19,
         ),
         CurrentLocationLayer(
-            centerCurrentLocationStream:
-                _centerCurrentLocationStreamController.stream,
-            centerOnLocationUpdate: _centerOnLocationUpdate),
+          positionStream: _currentLocationStreamController.stream,
+          // centerCurrentLocationStream:
+          //     _centerCurrentLocationStreamController.stream,
+          // centerOnLocationUpdate: _centerOnLocationUpdate),
+        ),
         MarkerLayer(
             markers: listOfMarkersLayers[MarkersLayer.semiTransparent.index]),
         MarkerLayer(markers: listOfMarkersLayers[MarkersLayer.grey.index]),
@@ -319,17 +411,19 @@ class _UserMapState extends State<UserMap> {
                     child:
                         NavigationDrawer.buildNavigationDrawerButton(context),
                   ),
-                  widget.showLoadingPoisAnimation ? Container(
-                        color: Colors.transparent,
-                        alignment: Alignment.bottomRight,
-                        margin: EdgeInsets.only(
-                            right: MediaQuery.of(context).size.width / 60),
-                        height: MediaQuery.of(context).size.width / 10,
-                        width: MediaQuery.of(context).size.width / 10,
-                        child: LoadingAnimationWidget.threeArchedCircle(
-                          size: 30,
-                          color: Colors.blue,
-                        )) : Container(),
+                  widget.showLoadingPoisAnimation
+                      ? Container(
+                          color: Colors.transparent,
+                          alignment: Alignment.bottomRight,
+                          margin: EdgeInsets.only(
+                              right: MediaQuery.of(context).size.width / 60),
+                          height: MediaQuery.of(context).size.width / 10,
+                          width: MediaQuery.of(context).size.width / 10,
+                          child: LoadingAnimationWidget.threeArchedCircle(
+                            size: 30,
+                            color: Colors.blue,
+                          ))
+                      : Container(),
                 ],
               ),
             ),
@@ -343,13 +437,12 @@ class _UserMapState extends State<UserMap> {
                   child: FloatingActionButton(
                     heroTag: null,
                     onPressed: () {
-                      // Automatically center the location marker on the map when location updated until user interact with the map.
-                      setState(
-                        () => _centerOnLocationUpdate =
-                            CenterOnLocationUpdate.always,
-                      );
+                      _centerOnLocationUpdate = CenterOnLocationUpdate.always;
+                      _mapController.move(getRelativeCenterToUserPosition(),
+                          _mapController.zoom); // need to be called twice!
+
                       // Center the location marker on the map and zoom the map to level 14.
-                      _centerCurrentLocationStreamController.add(14);
+                      // _centerCurrentLocationStreamController.add(13);
                     },
                     child: const Icon(
                       Icons.my_location,
