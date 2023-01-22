@@ -794,16 +794,12 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // widget.state.lastShowStoriesState == null ? Container() :
-                            Positioned(
-                            top: Constants.avatarRadius,
-                            child:
                             UniformButtons.getReturnDialogButton(
                               onPressed: () {
                                 context.read<GuideBloc>().add(SetLoadedStoriesEvent(
                                     storyView: widget.state.lastShowStoriesState!.storyView,
                                     controller: widget.state.lastShowStoriesState!.controller));
-                              }, enabled: widget.state.lastShowStoriesState != null)),
+                              }, enabled: widget.state.lastShowStoriesState != null),
                             Text(
                               widget.state.idToPoisMap.keys.length.toString() +
                                   " Places near you: ",
