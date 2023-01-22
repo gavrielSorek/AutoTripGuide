@@ -145,6 +145,7 @@ class _UserMapState extends State<UserMap> {
   WidgetVisibility nextButtonState = WidgetVisibility.hide;
   WidgetVisibility loadingPois = WidgetVisibility.view;
   MapPoi? highlightedPoi;
+  LatLng? pointShouldBeOnMap;
   List<Color> layersColor = [
     Color(0xffB0B0B0).withAlpha(130),
     Color(0xffB0B0B0),
@@ -264,36 +265,46 @@ class _UserMapState extends State<UserMap> {
     guideTool = Guide(context, guideData);
 
     widget.highlightedPoiStreamController.stream.listen((event) {
-      double xMarginFromCenter =
-          (UserMap.USER_LOCATION.longitude - event.longitude).abs();
-      double yMarginFromCenter =
-          (UserMap.USER_LOCATION.latitude - event.latitude).abs();
-
-      _mapController.fitBounds(
-        LatLngBounds(
-          LatLng(UserMap.USER_LOCATION.latitude + yMarginFromCenter,
-              UserMap.USER_LOCATION.longitude + xMarginFromCenter),
-          LatLng(UserMap.USER_LOCATION.latitude - yMarginFromCenter,
-              UserMap.USER_LOCATION.longitude - xMarginFromCenter),
-        ),
-        options: FitBoundsOptions(
-            padding: EdgeInsets.only(
-                bottom: Globals.globalWidgetsSizes.dialogBoxTotalHeight + 80,
-                top: 80,
-                right: 50,
-                left: 50),
-            forceIntegerZoomLevel: false),
-      );
-      // need to move because bounds can change the center a little bit
-      updateMapRelativePosition(UserMap.USER_LOCATION);
+      pointShouldBeOnMap = event;
+      setMapToHighlightedPoint(pointShouldBeOnMap!);
     });
 
     LocationMarkerDataStreamFactory().compassHeadingStream().listen((event) {
-      if (_centerOnLocationUpdate != CenterOnLocationUpdate.always) return;
-      _mapController.rotate(-event.heading / pi * 180);
+      final double epsilon = 0.00001;
+      if (_centerOnLocationUpdate != CenterOnLocationUpdate.always ||
+          (event.heading - mapHeading).abs() < epsilon) return;
+      mapHeading = -event.heading / pi * 180;
+      print(mapHeading);
+      _mapController.rotate(mapHeading);
       updateMapRelativePosition(UserMap.USER_LOCATION);
     });
     super.initState();
+  }
+
+  void setMapToHighlightedPoint(LatLng point) {
+    final double safeDist = 0.003;
+    double xMarginFromCenter =
+        (UserMap.USER_LOCATION.longitude - point.longitude).abs() + safeDist;
+    double yMarginFromCenter =
+        (UserMap.USER_LOCATION.latitude - point.latitude).abs() + safeDist;
+
+    _mapController.fitBounds(
+      LatLngBounds(
+        LatLng(UserMap.USER_LOCATION.latitude + yMarginFromCenter,
+            UserMap.USER_LOCATION.longitude + xMarginFromCenter),
+        LatLng(UserMap.USER_LOCATION.latitude - yMarginFromCenter,
+            UserMap.USER_LOCATION.longitude - xMarginFromCenter),
+      ),
+      options: FitBoundsOptions(
+          padding: EdgeInsets.only(
+              bottom: Globals.globalWidgetsSizes.dialogBoxTotalHeight + 80,
+              top: 80,
+              right: 50,
+              left: 50),
+          forceIntegerZoomLevel: false),
+    );
+    // need to move because bounds can change the center a little bit
+    updateMapRelativePosition(UserMap.USER_LOCATION);
   }
 
   @override
