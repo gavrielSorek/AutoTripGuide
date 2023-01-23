@@ -282,12 +282,11 @@ class _UserMapState extends State<UserMap> {
   }
 
   void setMapToHighlightedPoint(LatLng point) {
-    final double safeDist = 0.003;
     double xMarginFromCenter =
-        (UserMap.USER_LOCATION.longitude - point.longitude).abs() + safeDist;
+        (UserMap.USER_LOCATION.longitude - point.longitude).abs();
     double yMarginFromCenter =
-        (UserMap.USER_LOCATION.latitude - point.latitude).abs() + safeDist;
-
+        (UserMap.USER_LOCATION.latitude - point.latitude).abs();
+    _mapController.rotate(0);
     _mapController.fitBounds(
       LatLngBounds(
         LatLng(UserMap.USER_LOCATION.latitude + yMarginFromCenter,
@@ -297,12 +296,13 @@ class _UserMapState extends State<UserMap> {
       ),
       options: FitBoundsOptions(
           padding: EdgeInsets.only(
-              bottom: Globals.globalWidgetsSizes.dialogBoxTotalHeight + 80,
-              top: 80,
-              right: 50,
-              left: 50),
+              bottom: Globals.globalWidgetsSizes.dialogBoxTotalHeight + 100,
+              top: 100,
+              right: 100,
+              left: 100),
           forceIntegerZoomLevel: false),
     );
+    _mapController.rotate(mapHeading);
     // need to move because bounds can change the center a little bit
     updateMapRelativePosition(UserMap.USER_LOCATION);
   }
