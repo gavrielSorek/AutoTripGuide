@@ -88,16 +88,16 @@ class Guide {
     });
   }
 
-    void clearAllPois() {
-      _poisToPlay.clear();
-      _queuedPoisToPlay.clear();
+  void clearAllPois() {
+    _poisToPlay.clear();
+    _queuedPoisToPlay.clear();
   }
 }
 
 class GuidDialogBox extends StatefulWidget {
   dynamic onRefreshFunc;
-  GuidDialogBox({ required this.onRefreshFunc}) {
-  }
+
+  GuidDialogBox({required this.onRefreshFunc}) {}
 
   @override
   State<StatefulWidget> createState() {
@@ -146,8 +146,8 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         ));
   }
 
-  Widget buildImageWidget(String imagPath){
-    return  CircleAvatar(
+  Widget buildImageWidget(String imagPath) {
+    return CircleAvatar(
         backgroundColor: Colors.transparent,
         radius: Constants.avatarRadius,
         child: Container(
@@ -155,18 +155,15 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
               left: Constants.sidesMarginOfPic,
               right: Constants.sidesMarginOfPic),
           child: ClipRRect(
-            borderRadius:
-                BorderRadius.all(Radius.circular(50)),
+            borderRadius: BorderRadius.all(Radius.circular(50)),
             child: CachedNetworkImage(
               imageUrl: imagPath ?? "",
               height: 180,
               width: 220,
               fit: BoxFit.fill,
-              placeholder: (context, url) =>
-                  new CircularProgressIndicator(),
+              placeholder: (context, url) => new CircularProgressIndicator(),
               errorWidget: (context, url, error) =>
-                  new Icon(Icons.error_outlined,
-                      size: 100),
+                  new Icon(Icons.error_outlined, size: 100),
             ),
           ),
         ));
@@ -230,7 +227,8 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
 
   Widget buildStoriesWidget(state) {
     final double imageHeight = 180;
-    Globals.globalWidgetsSizes.dialogBoxTotalHeight = MediaQuery.of(context).size.height / 2.2;
+    Globals.globalWidgetsSizes.dialogBoxTotalHeight =
+        MediaQuery.of(context).size.height / 2.2;
     return Column(
       children: [
         Spacer(),
@@ -270,14 +268,15 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                         children: [
                           Expanded(child: state.storyView),
                           Container(
-                              child: Globals.globalGuideAudioPlayer, height: 56),
-                          Container(
-                            child: UniformButtons.getPreferenceButton(
-                                onPressed: () {
-                              Navigator.pushNamed(
-                                  context, '/favorite-categories-screen');
-                            }),
-                          )
+                              child: Globals.globalGuideAudioPlayer,
+                              height: 56),
+                          // Container(
+                          //   child: UniformButtons.getPreferenceButton(
+                          //       onPressed: () {
+                          //     Navigator.pushNamed(
+                          //         context, '/favorite-categories-screen');
+                          //   }),
+                          // )
                         ],
                       )),
                   Positioned(
@@ -298,29 +297,30 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                                     .add(ShowFullPoiInfoEvent());
                               }
                             },
-                            child: buildImageWidget(state.currentPoi?.poi.pic ?? '') ,
+                            child: buildImageWidget(
+                                state.currentPoi?.poi.pic ?? ''),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Positioned(
-                    top: Constants.avatarRadius,
-                    right: Constants.sidesMarginOfButtons,
-                    child: Container(child:
-                        UniformButtons.getGuidePreferencesButton(onPressed: () {
-                      context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
-                          pois:
-                              state.lastShowOptionalCategoriesState.idToPoisMap,
-                          onShowStory:
-                              state.lastShowOptionalCategoriesState.onShowStory,
-                          onFinishedFunc: state
-                              .lastShowOptionalCategoriesState.onFinishedFunc,
-                          isCheckedCategory: state
-                              .lastShowOptionalCategoriesState
-                              .isCheckedCategory));
-                    })),
-                  )
+                  // Positioned(
+                  //   top: Constants.avatarRadius,
+                  //   right: Constants.sidesMarginOfButtons,
+                  //   child: Container(child:
+                  //       UniformButtons.getGuidePreferencesButton(onPressed: () {
+                  //     context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
+                  //         pois:
+                  //             state.lastShowOptionalCategoriesState.idToPoisMap,
+                  //         onShowStory:
+                  //             state.lastShowOptionalCategoriesState.onShowStory,
+                  //         onFinishedFunc: state
+                  //             .lastShowOptionalCategoriesState.onFinishedFunc,
+                  //         isCheckedCategory: state
+                  //             .lastShowOptionalCategoriesState
+                  //             .isCheckedCategory));
+                  //   })),
+                  // )
                 ],
               )
             ])),
@@ -329,6 +329,10 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   }
 
   Widget buildFullPoiInfo(state) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double containerHeightDivider = screenHeight > 660
+        ? 1.55
+        : 1.9; // consider different sizes of screen - temporary fix
     double bottomIconSize = 20;
     final showPoiState = state as ShowPoiState;
     return Dialog(
@@ -344,7 +348,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
           children: <Widget>[
             Container(
                 alignment: Alignment.bottomCenter,
-                height: MediaQuery.of(context).size.height / 1.55,
+                height: screenHeight / containerHeightDivider,
                 width: MediaQuery.of(context).size.width - 30,
                 //TODO HANDLE ALL SIZES OF SCREENS
                 padding: const EdgeInsets.only(
@@ -396,7 +400,6 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                         ],
                       ),
                     ),
-
                     Expanded(
                         child: Container(
                             alignment: Alignment.topCenter,
@@ -484,13 +487,13 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                                 ],
                               ),
                             ),
-                            Container(
-                              child: UniformButtons.getPreferenceButton(
-                                  onPressed: () {
-                                Navigator.pushNamed(
-                                    context, '/favorite-categories-screen');
-                              }),
-                            )
+                            // Container(
+                            //   child: UniformButtons.getPreferenceButton(
+                            //       onPressed: () {
+                            //     Navigator.pushNamed(
+                            //         context, '/favorite-categories-screen');
+                            //   }),
+                            // )
                           ],
                         )),
                   ],
@@ -510,25 +513,25 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                     // Up Swipe
                   }
                 },
-                child: buildImageWidget( state.currentPoi.poi.pic ?? ""),
+                child: buildImageWidget(state.currentPoi.poi.pic ?? ""),
               ),
             ),
-            Positioned(
-              top: Constants.avatarRadius,
-              right: Constants.sidesMarginOfButtons,
-              child: Container(child:
-                  UniformButtons.getGuidePreferencesButton(onPressed: () {
-                context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
-                    pois: state.savedStoriesState
-                        .lastShowOptionalCategoriesState.idToPoisMap,
-                    onShowStory: state.savedStoriesState
-                        .lastShowOptionalCategoriesState.onShowStory,
-                    onFinishedFunc: state.savedStoriesState
-                        .lastShowOptionalCategoriesState.onFinishedFunc,
-                    isCheckedCategory: state.savedStoriesState
-                        .lastShowOptionalCategoriesState.isCheckedCategory));
-              })),
-            ),
+            // Positioned(
+            //   top: Constants.avatarRadius,
+            //   right: Constants.sidesMarginOfButtons,
+            //   child: Container(child:
+            //       UniformButtons.getGuidePreferencesButton(onPressed: () {
+            //     context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
+            //         pois: state.savedStoriesState
+            //             .lastShowOptionalCategoriesState.idToPoisMap,
+            //         onShowStory: state.savedStoriesState
+            //             .lastShowOptionalCategoriesState.onShowStory,
+            //         onFinishedFunc: state.savedStoriesState
+            //             .lastShowOptionalCategoriesState.onFinishedFunc,
+            //         isCheckedCategory: state.savedStoriesState
+            //             .lastShowOptionalCategoriesState.isCheckedCategory));
+            //   })),
+            // ),
             Positioned(
                 top: Constants.avatarRadius,
                 child: UniformButtons.getReturnDialogButton(onPressed: () {
@@ -545,12 +548,11 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   Widget buildOptionalCategoriesSelectionWidget(state) {
     final showOptionalCategoriesState = state as ShowOptionalCategoriesState;
     return OptionalCategoriesSelection(
-      state: showOptionalCategoriesState,
-      onPoiClicked: () {
-        context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-      },
-      onRefreshFunc: widget.onRefreshFunc
-    );
+        state: showOptionalCategoriesState,
+        onPoiClicked: () {
+          context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+        },
+        onRefreshFunc: widget.onRefreshFunc);
   }
 
   @override
@@ -586,7 +588,9 @@ class OptionalCategoriesSelection extends StatefulWidget {
   final dynamic onPoiClicked;
 
   OptionalCategoriesSelection(
-      {required this.state, required this.onPoiClicked, required this.onRefreshFunc}) {}
+      {required this.state,
+      required this.onPoiClicked,
+      required this.onRefreshFunc}) {}
 
   @override
   State<StatefulWidget> createState() {
@@ -599,33 +603,27 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
     return items[0].poi.pic ?? '';
   }
 
-  List<Widget> buildGridView(Map<String, List<MapPoi>> categoriesMap ){
-      List<String> categoriesList = categoriesMap.keys.toList();
-      List<Widget> genereatedList =  List.generate(
-        widget.state.categoriesToPoisMap.length, (index) {
+  List<Widget> buildGridView(Map<String, List<MapPoi>> categoriesMap) {
+    List<String> categoriesList = categoriesMap.keys.toList();
+    List<Widget> genereatedList =
+        List.generate(widget.state.categoriesToPoisMap.length, (index) {
       return GestureDetector(
-        key: Key(categoriesList[index]),
-          onTap: () => {
-                handleSelectedCatrgotyClicked(
-                    categoriesList[index])
-              },
+          key: Key(categoriesList[index]),
+          onTap: () => {handleSelectedCatrgotyClicked(categoriesList[index])},
           child: Center(
             child: Stack(children: [
               ClipRRect(
-                borderRadius:
-                    BorderRadius.all(Radius.circular(20)),
+                borderRadius: BorderRadius.all(Radius.circular(20)),
                 child: CachedNetworkImage(
                   imageUrl: getImageFromCategory(
-                      widget.state.categoriesToPoisMap[
-                          categoriesList[index]]!),
+                      widget.state.categoriesToPoisMap[categoriesList[index]]!),
                   height: 100,
                   width: 200,
                   fit: BoxFit.cover,
                   placeholder: (context, url) =>
-                  new CircularProgressIndicator(),
+                      new CircularProgressIndicator(),
                   errorWidget: (context, url, error) =>
-                  new Icon(Icons.error_outlined,
-                      size: 100),
+                      new Icon(Icons.error_outlined, size: 100),
                 ),
               ),
               Positioned(
@@ -653,17 +651,14 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                     widget
                                         .state
                                         .categoriesToPoisMap[
-                                            categoriesList[
-                                                index]]!
+                                            categoriesList[index]]!
                                         .length
                                         .toString() +
                                     ")",
                                 style: TextStyle(
                                   fontFamily: 'Inter',
-                                  fontStyle:
-                                      FontStyle.normal,
-                                  fontWeight:
-                                      FontWeight.w600,
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w600,
                                   fontSize: 15,
                                   letterSpacing: 0,
                                   color: Colors.white,
@@ -672,23 +667,15 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                           Expanded(
                               child: Checkbox(
                                   shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius
-                                              .circular(
-                                                  10)),
+                                      borderRadius: BorderRadius.circular(10)),
                                   side: BorderSide(
-                                      width: 1.8,
-                                      color:
-                                          Colors.white),
-                                  value: widget.state
-                                              .isCheckedCategory[
-                                          categoriesList[
-                                              index]] ??
+                                      width: 1.8, color: Colors.white),
+                                  value: widget.state.isCheckedCategory[
+                                          categoriesList[index]] ??
                                       false,
                                   onChanged: (value) {
                                     handleSelectedCatrgotyClicked(
-                                        categoriesList[
-                                            index]);
+                                        categoriesList[index]);
                                   })),
                         ],
                       )))
@@ -697,7 +684,6 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
     });
     genereatedList.sort((a, b) => a.key.toString().compareTo(b.key.toString()));
     return genereatedList;
-
   }
 
   void handleSelectedCatrgotyClicked(selectedCategory) {
@@ -792,34 +778,36 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                     padding: EdgeInsets.only(top: 16),
                     child: Align(
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            UniformButtons.getReturnDialogButton(
-                              onPressed: () {
-                                context.read<GuideBloc>().add(SetLoadedStoriesEvent(
-                                    storyView: widget.state.lastShowStoriesState!.storyView,
-                                    controller: widget.state.lastShowStoriesState!.controller));
-                              }, enabled: widget.state.lastShowStoriesState != null),
-                            Text(
-                              widget.state.idToPoisMap.keys.length.toString() +
-                                  " Places near you: ",
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontStyle: FontStyle.normal,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 22,
-                                letterSpacing: 0.35,
-                                color: Colors.black,
-                                height: 28 / 22,
-                              ),
-                            ),
-                          UniformButtons.getReloadDialogButton(onPressed: () {
-                                  widget.onRefreshFunc();
-                          })
-
-
-                          ],
-                        ))),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        UniformButtons.getReturnDialogButton(
+                            onPressed: () {
+                              context.read<GuideBloc>().add(
+                                  SetLoadedStoriesEvent(
+                                      storyView: widget.state
+                                          .lastShowStoriesState!.storyView,
+                                      controller: widget.state
+                                          .lastShowStoriesState!.controller));
+                            },
+                            enabled: widget.state.lastShowStoriesState != null),
+                        Text(
+                          widget.state.idToPoisMap.keys.length.toString() +
+                              " Places near you: ",
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 22,
+                            letterSpacing: 0.35,
+                            color: Colors.black,
+                            height: 28 / 22,
+                          ),
+                        ),
+                        UniformButtons.getReloadDialogButton(onPressed: () {
+                          widget.onRefreshFunc();
+                        })
+                      ],
+                    ))),
                 Padding(
                   padding: EdgeInsets.only(left: 11, right: 11, top: 16),
                   child: Text(
@@ -848,7 +836,8 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                           mainAxisSpacing: 0,
                           childAspectRatio: (1.45),
                           crossAxisCount: 2,
-                          children: buildGridView(widget.state.categoriesToPoisMap),
+                          children:
+                              buildGridView(widget.state.categoriesToPoisMap),
                         )),
                   ),
                 ),
