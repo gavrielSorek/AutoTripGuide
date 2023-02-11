@@ -1,5 +1,6 @@
 const fs = require('fs')
 const db = require("./db");
+const generalServices = require('../services/generalServices')
 const onlinePoisFinder = require("./onlinePoisFinder");
 const serverCommunication = require("../services/serverCommunication");
 var tokenGetter = require("../services/serverTokenGetter");
@@ -22,6 +23,8 @@ app.use(bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 extended: false}));
 const MAX_POIS_FOR_USER = 20
+const MAX_DAYS_USE_AREA_CACHE = 30
+
 const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 const dbClientSearcher = new MongoClient(uri);
@@ -71,13 +74,17 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
     res.json(pois);
     res.end();
     // update the db with new pois if needed
-    geoHashStrings.forEach((geoHashStr)=>{
+    geoHashStrings.forEach(async (geoHashStr)=>{
+        let areaData = await db.getCachedAreaInfo(dbClientSearcher, {geoHashStr: geoHashStr})
         //if the online searcher didn't search on this location
-        if (!geoHashHandledByOnlineSercher.has(geoHashStr)) { 
-            geoHashHandledByOnlineSercher.add(geoHashStr);
+        if (areaData && generalServices.getNumOfDaysBetweenDates(generalServices.getTodayDate(), areaData.lastUpdated) < MAX_DAYS_USE_AREA_CACHE) {
+            // do nothing - everything is updated
+        } else {
             updateDbWithOnlinePois(getGeoHashBoundsByGeoStr(geoHashStr), 'en');
-            }
-        })
+            params = {geoHashStr: geoHashStr, lastUpdated: generalServices.getTodayDate()}
+            db.addCachedAreaInfo(dbClientSearcher, params)
+        }
+    })
  })
 
  async function updateDbWithOnlinePois(bounds, language) {

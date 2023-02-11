@@ -1,4 +1,4 @@
-module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength ,getFavorCategories, updateFavorCategories, getUserInfo, updateUserInfo, insertPoiToHistory, getPoisHistory};
+module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength, addCachedAreaInfo, getCachedAreaInfo ,getFavorCategories, updateFavorCategories, getUserInfo, updateUserInfo, insertPoiToHistory, getPoisHistory};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -184,6 +184,33 @@ async function getPoisHistory(client, email) {
     } else {
         return [];
     }
+}
+
+// The function returns data about cached area
+async function getCachedAreaInfo(client, parameters) {
+    var res = await client.db("auto_trip_guide_db").collection("cachedAreas").find({geoHashStr: parameters.geoHashStr});
+    var resArr = await res.toArray();
+    if (resArr.length > 0) {
+        console.log("found erea")
+        return resArr[0];
+    } else {
+        return null;
+    }
+}
+
+// The function returns data about cached area
+async function addCachedAreaInfo(client, parameters) {
+    let cachedArea = await getCachedAreaInfo(client, parameters)
+    var res
+    if (cachedArea) {
+        res = await client.db("auto_trip_guide_db").collection("cachedAreas").updateOne({geoHashStr: parameters.geoHashStr}, { $set: { 
+            lastUpdated: parameters.lastUpdated
+        }});
+    } else {
+        let data = {geoHashStr: parameters.geoHashStr, lastUpdated: parameters.lastUpdated} 
+        res = await client.db("auto_trip_guide_db").collection("cachedAreas").insertOne(data);
+    }
+    return res
 }
 
 // check if object is empty
