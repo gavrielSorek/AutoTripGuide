@@ -270,10 +270,11 @@ class _UserMapState extends State<UserMap> {
     });
 
     LocationMarkerDataStreamFactory().compassHeadingStream().listen((event) {
-      final double epsilon = 0.00001;
+      final double epsilon = 2;
+      double newHeading = -event.heading / pi * 180;
       if (_centerOnLocationUpdate != CenterOnLocationUpdate.always ||
-          (event.heading - mapHeading).abs() < epsilon) return;
-      mapHeading = -event.heading / pi * 180;
+          (newHeading - mapHeading).abs() < epsilon) return;
+      mapHeading = newHeading;
       print(mapHeading);
       _mapController.rotate(mapHeading);
       updateMapRelativePosition(UserMap.USER_LOCATION);
