@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'guide_audio_player.dart';
 import '../Pages/login_controller.dart';
 import 'apps_launcher.dart';
@@ -34,6 +35,7 @@ class Globals {
   static StreamController<MapPoi> globalClickedPoiStream =
       StreamController<MapPoi>.broadcast();
   static String? svgMarkerString;
+  static SharedPreferences? globalPrefs;
 
   static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {
     globalVisitedPoi = visitedPoisList;
@@ -80,6 +82,7 @@ class Globals {
   static init() async {
     // initialization order is very important
     await UserMap.mapInit();
+    globalPrefs = await SharedPreferences.getInstance();
     globalAllPois.clear();
     globalUnhandledKeys.clear();
     mainMapPoi = null;
@@ -97,14 +100,16 @@ class Globals {
     globalUserInfoObj = null;
   }
 }
+
 // sizes of widgets
 class Sizes {
   double _dialogBoxTotalHeight = 0;
+
   double get dialogBoxTotalHeight {
     return this._dialogBoxTotalHeight;
   }
+
   void set dialogBoxTotalHeight(double dialogBoxHeight) {
     _dialogBoxTotalHeight = dialogBoxHeight;
   }
-
 }

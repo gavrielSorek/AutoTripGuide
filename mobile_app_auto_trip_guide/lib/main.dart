@@ -3,7 +3,9 @@ import 'package:final_project/Pages/history_page.dart';
 import 'package:final_project/Pages/home_page.dart';
 import 'package:final_project/Pages/personal_details_page.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'Map/globals.dart';
+import 'Map/onboarding.dart';
 import 'Pages/favorite_categories_page.dart';
 import 'Pages/login_page.dart';
 import 'dart:math';
@@ -27,20 +29,24 @@ class AutoGuideApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool? isIntroDone = Globals.globalPrefs?.getBool('introDone');
+    String initialRoute =
+        isIntroDone != null ? '/login-screen' : '/onboard-screen';
     return MaterialApp(
       title: 'Auto Trip Guide',
       theme: ThemeData(
         primarySwatch: generateMaterialColor(Globals.globalColor),
         fontFamily: 'Roboto',
       ),
-      initialRoute: '/login-screen',
+      initialRoute: initialRoute,
       routes: {
         // When navigating to the "/" route, build the FirstScreen widget.
         '/login-screen': (context) => LoginPage(),
         '/HomePage': (context) => HomePage(),
         '/history-screen': (context) => HistoryPage(),
         '/favorite-categories-screen': (context) => FavoriteCategoriesPage(),
-        '/personal-details-screen': (context) => PersonalDetailsPage()
+        '/personal-details-screen': (context) => PersonalDetailsPage(),
+        '/onboard-screen': (context) => OnBoardingPage()
       },
       // routes: {'/': (BuildContext ctx) => HomePage()}
     );
