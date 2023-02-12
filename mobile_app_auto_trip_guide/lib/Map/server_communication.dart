@@ -6,8 +6,9 @@ import 'package:http/retry.dart';
 import 'globals.dart';
 
 class ServerCommunication {
-  // String serverUrl = "https://autotripguidemobile.loca.lt";
-  String serverUrl = "autotripguidemobile.loca.lt";
+  //String serverUrl = "autotripguidemobile.loca.lt";
+  String serverUrl = "212.80.207.83:5600";
+
 
   var client = RetryClient(http.Client());
 
@@ -20,19 +21,18 @@ class ServerCommunication {
       'heading': locationInfo.heading.toString(),
       'speed': locationInfo.speed.toString()
     };
-    final uri = Uri.https(url, path, queryParameters);
+    final uri = Uri.http(url, path, queryParameters);
     return uri;
   }
 
   String getAudioStreamUrl(Poi poi) {
-    return 'https://' + serverUrl+'/getAudioStream'+ '?poiId=' + poi.id.toString();
+    return 'http://' + serverUrl+'/getAudioStream'+ '?poiId=' + poi.id.toString();
   }
 
   Future<List<Poi>> getPoisByLocation(LocationInfo? locationInfo) async {
     Uri newUri =
         addLocationInfoToUrl(serverUrl, '/searchNearbyPois', locationInfo!);
 
-    // var client = http.Client();
     try {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {
@@ -55,7 +55,7 @@ class ServerCommunication {
     final queryParameters = {
       'poiId': poiId,
     };
-    final uri = Uri.https(url, path, queryParameters);
+    final uri = Uri.http(url, path, queryParameters);
     return uri;
   }
 
@@ -91,7 +91,7 @@ class ServerCommunication {
       'age': userInfo.age.toString(),
       'categories': userInfo.categories.toString()
     };
-    final uri = Uri.https(url, path, queryParameters);
+    final uri = Uri.http(url, path, queryParameters);
     return uri;
   }
 
@@ -123,7 +123,7 @@ class ServerCommunication {
     final queryParameters = {
       'language': language.toString()
     };
-    final uri = Uri.https(url, path, queryParameters);
+    final uri = Uri.http(url, path, queryParameters);
     return uri;
   }
 
@@ -160,7 +160,7 @@ class ServerCommunication {
     final queryParameters = {
       'email': emailAddr.toString()
     };
-    final uri = Uri.https(url, path, queryParameters);
+    final uri = Uri.http(url, path, queryParameters);
     return uri;
   }
 
@@ -191,7 +191,7 @@ class ServerCommunication {
       'email': emailAddr.toString(),
       'categories': Globals.globalFavoriteCategories
     };
-    final uri = Uri.https(url, path, queryParameters);
+    final uri = Uri.http(url, path, queryParameters);
     return uri;
   }
 
@@ -241,7 +241,7 @@ class ServerCommunication {
       'languages': userInfo?.languages.toString(),
       'age': userInfo?.age.toString()
     };
-    final uri = Uri.https(url, path, queryParameters);
+    final uri = Uri.http(url, path, queryParameters);
     return uri;
   }
 
@@ -269,7 +269,7 @@ class ServerCommunication {
       'pic' : visitedPoi.pic.toString(),
       'emailAddr': Globals.globalEmail
     };
-    final uri = Uri.https(url, path, queryParameters);
+    final uri = Uri.http(url, path, queryParameters);
     return uri;
   }
 
