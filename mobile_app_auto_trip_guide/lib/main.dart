@@ -32,6 +32,9 @@ class AutoGuideApp extends StatelessWidget {
     final bool? isIntroDone = Globals.globalPrefs?.getBool('introDone');
     String initialRoute =
         isIntroDone != null ? '/login-screen' : '/onboard-screen';
+    if (Globals.globalController.isUserSignIn) {
+      initialRoute = '/HomePage';
+    }
     return MaterialApp(
       title: 'Auto Trip Guide',
       theme: ThemeData(

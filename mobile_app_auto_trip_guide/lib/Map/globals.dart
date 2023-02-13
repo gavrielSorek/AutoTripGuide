@@ -90,6 +90,11 @@ class Globals {
     svgMarkerString =
         await rootBundle.loadString('assets/images/mapMarker.svg');
     await globalGuideAudioPlayer.initAudioPlayer();
+    await globalController.init();
+    if (globalController.isUserSignIn) {
+      await globalController.login();
+      await loadUserDetails();
+    }
   }
 
   static clearAll() async {
@@ -98,6 +103,37 @@ class Globals {
     globalUnhandledKeys.clear();
     mainMapPoi = null;
     globalUserInfoObj = null;
+  }
+
+  static loadUserDetails() async {
+    Globals.globalEmail =
+        Globals.globalController.googleAccount.value?.email ?? ' ';
+    Globals.globalServerCommunication.addNewUser(UserInfo(
+        Globals.globalController.googleAccount.value?.displayName ?? ' ',
+        Globals.globalEmail,
+        ' ',
+        ' ',
+        ' ',
+        Globals.globalFavoriteCategories));
+
+    if (Globals.globalUserInfoObj == null) {
+      Map<String, String> userInfo = await Globals.globalServerCommunication
+          .getUserInfo(Globals.globalEmail);
+      Globals.globalUserInfoObj = UserInfo(
+          userInfo["name"],
+          Globals.globalEmail,
+          userInfo["gender"] ?? " ",
+          userInfo["languages"] ?? " ",
+          userInfo["age"],
+          Globals.globalFavoriteCategories);
+    }
+    Globals.globalCategories ??= await Globals.globalServerCommunication
+        .getCategories(Globals.globalDefaultLanguage);
+    Globals.setFavoriteCategories(await Globals.globalServerCommunication
+        .getFavorCategories(
+        Globals.globalController.googleAccount.value?.email ?? ' '));
+    Globals.setGlobalVisitedPoisList(await Globals.globalServerCommunication
+        .getPoisHistory(Globals.globalEmail));
   }
 }
 

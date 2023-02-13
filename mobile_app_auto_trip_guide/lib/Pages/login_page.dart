@@ -1,3 +1,4 @@
+import 'package:final_project/Pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../Map/globals.dart';
@@ -9,40 +10,6 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return buildLoginWidget(context);
-  }
-
-  void loadUserDetails() async {
-    if (Globals.globalUserInfoObj == null) {
-      Map<String, String> userInfo = await Globals.globalServerCommunication
-          .getUserInfo(Globals.globalEmail);
-      Globals.globalUserInfoObj = UserInfo(
-          userInfo["name"],
-          Globals.globalEmail,
-          userInfo["gender"] ?? " ",
-          userInfo["languages"] ?? " ",
-          userInfo["age"],
-          Globals.globalFavoriteCategories);
-    }
-    Globals.globalCategories ??= await Globals.globalServerCommunication
-        .getCategories(Globals.globalDefaultLanguage);
-    Globals.setFavoriteCategories(await Globals.globalServerCommunication
-        .getFavorCategories(
-            Globals.globalController.googleAccount.value?.email ?? ' '));
-    Globals.setGlobalVisitedPoisList(await Globals.globalServerCommunication
-        .getPoisHistory(Globals.globalEmail));
-  }
-
-  void addUser() async {
-    Globals.globalEmail =
-        Globals.globalController.googleAccount.value?.email ?? ' ';
-    Globals.globalServerCommunication.addNewUser(UserInfo(
-        Globals.globalController.googleAccount.value?.displayName ?? ' ',
-        Globals.globalEmail,
-        ' ',
-        ' ',
-        ' ',
-        Globals.globalFavoriteCategories));
-    loadUserDetails();
   }
 
   Widget buildLoginWidget(BuildContext context) {
@@ -78,7 +45,7 @@ class LoginPage extends StatelessWidget {
               FloatingActionButton.extended(
                 onPressed: () async {
                   await Globals.globalController.login();
-                  addUser();
+                  await Globals.loadUserDetails();
                   Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
                 },
                 icon: Image.asset(
