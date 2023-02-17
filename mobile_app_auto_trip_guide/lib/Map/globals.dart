@@ -36,6 +36,7 @@ class Globals {
       StreamController<MapPoi>.broadcast();
   static String? svgMarkerString;
   static SharedPreferences? globalPrefs;
+  static bool globalIsInitialized = false;
 
   static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {
     globalVisitedPoi = visitedPoisList;
@@ -95,6 +96,7 @@ class Globals {
       await globalController.login();
       await loadUserDetails();
     }
+    globalIsInitialized = true;
   }
 
   static clearAll() async {
