@@ -22,7 +22,7 @@ const port = 5600
 app.use(bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 extended: false}));
-const MAX_POIS_FOR_USER = 20
+const MAX_POIS_FOR_USER = 300
 const MAX_DAYS_USE_AREA_CACHE = 30
 
 const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
