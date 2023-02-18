@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'package:audio_service/audio_service.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'BackgroundGuideAudioPlayer.dart';
 import 'guide_audio_player.dart';
 import '../Pages/login_controller.dart';
 import 'apps_launcher.dart';
@@ -28,7 +30,7 @@ class Globals {
   static AppLauncher globalAppLauncher = AppLauncher();
   static MapPoi? mainMapPoi; // spoken poi
   static final globalController = Get.put(LoginController());
-  static GuideAudioPlayer globalGuideAudioPlayer = GuideAudioPlayer();
+  static GuideAudioPlayer globalGuideAudioPlayer = BackgroundGuideAudioPlayer();
   static var globalColor = Color.fromRGBO(51, 153, 255, 0.8);
   static StreamController<VisitedPoi> globalVisitedPoiStream =
       StreamController<VisitedPoi>.broadcast();
@@ -37,6 +39,7 @@ class Globals {
   static String? svgMarkerString;
   static SharedPreferences? globalPrefs;
   static bool globalIsInitialized = false;
+  static late AudioHandler globalAudioHandler;
 
   static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {
     globalVisitedPoi = visitedPoisList;
