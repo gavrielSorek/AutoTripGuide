@@ -9,6 +9,7 @@ import '../Adjusted Libs/story_view/story_view.dart';
 import '../Adjusted Libs/story_view/utils.dart';
 import '../General Wigets/progress_button.dart';
 import '../General Wigets/uniform_widgets.dart';
+import 'background_audio_player.dart';
 import 'guid_bloc/guide_bloc.dart';
 import 'globals.dart';
 import 'package:share_plus/share_plus.dart';
@@ -268,15 +269,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                         children: [
                           Expanded(child: state.storyView),
                           Container(
-                              child: Globals.globalGuideAudioPlayer,
+                              child: GuideAudioPlayerUI(
+                                  Globals.globalGuideAudioPlayerHandler),
                               height: 56),
-                          // Container(
-                          //   child: UniformButtons.getPreferenceButton(
-                          //       onPressed: () {
-                          //     Navigator.pushNamed(
-                          //         context, '/favorite-categories-screen');
-                          //   }),
-                          // )
                         ],
                       )),
                   Positioned(
