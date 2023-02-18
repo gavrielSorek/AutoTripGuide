@@ -8,8 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'BackgroundGuideAudioPlayer.dart';
-import 'guide_audio_player.dart';
+import 'background_audio_player.dart';
 import '../Pages/login_controller.dart';
 import 'apps_launcher.dart';
 import 'map.dart';
@@ -30,7 +29,7 @@ class Globals {
   static AppLauncher globalAppLauncher = AppLauncher();
   static MapPoi? mainMapPoi; // spoken poi
   static final globalController = Get.put(LoginController());
-  static GuideAudioPlayer globalGuideAudioPlayer = BackgroundGuideAudioPlayer();
+  static late BackgroundAudioHandler globalGuideAudioPlayerHandler; // the initialization is in the main
   static var globalColor = Color.fromRGBO(51, 153, 255, 0.8);
   static StreamController<VisitedPoi> globalVisitedPoiStream =
       StreamController<VisitedPoi>.broadcast();
@@ -93,7 +92,7 @@ class Globals {
     globalUserInfoObj = null;
     svgMarkerString =
         await rootBundle.loadString('assets/images/mapMarker.svg');
-    await globalGuideAudioPlayer.initAudioPlayer();
+    await globalGuideAudioPlayerHandler.initAudioPlayer();
     await globalController.init();
     if (globalController.isUserSignIn) {
       await globalController.login();

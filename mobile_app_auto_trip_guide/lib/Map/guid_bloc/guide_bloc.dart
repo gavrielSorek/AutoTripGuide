@@ -38,25 +38,25 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       }
 
       StoryController controller = StoryController();
-      Globals.globalGuideAudioPlayer.onPressNext = () {
-        Globals.globalGuideAudioPlayer.stop();
+      Globals.globalGuideAudioPlayerHandler.onPressNext = () {
+        Globals.globalGuideAudioPlayerHandler.stop();
         controller.pause();
         controller.next();
       };
-      Globals.globalGuideAudioPlayer.onPressPrev = () {
-        Globals.globalGuideAudioPlayer.stop();
+      Globals.globalGuideAudioPlayerHandler.onPressPrev = () {
+        Globals.globalGuideAudioPlayerHandler.stop();
         controller.previous();
       };
-      Globals.globalGuideAudioPlayer.onPause = () {
+      Globals.globalGuideAudioPlayerHandler.onPause = () {
         controller.pause();
       };
-      Globals.globalGuideAudioPlayer.onResume = () {
+      Globals.globalGuideAudioPlayerHandler.onResume = () {
         controller.play();
       };
-      Globals.globalGuideAudioPlayer.onProgressChanged = (double progress) {
+      Globals.globalGuideAudioPlayerHandler.onProgressChanged = (double progress) {
         controller.setProgressValue(progress);
       };
-      Globals.globalGuideAudioPlayer.onPlayerFinishedFunc = () {
+      Globals.globalGuideAudioPlayerHandler.onPlayerFinishedFunc = () {
         controller.next();
       };
 
@@ -100,15 +100,15 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     on<SetCurrentPoiEvent>((event, emit) {
       if (state is ShowStoriesState) {
         final state = this.state as ShowStoriesState;
-        Globals.globalGuideAudioPlayer.clearPlayer();
+        Globals.globalGuideAudioPlayerHandler.clearPlayer();
         state.controller.setProgressValue(0);
         String poiId = event.storyItem.view.key
             .toString()
             .replaceAll(RegExp(r"<|>|\[|\]|'"), '');
         MapPoi currentPoi = Globals.globalAllPois[poiId]!;
-        Globals.globalGuideAudioPlayer
+        Globals.globalGuideAudioPlayerHandler
             .setTextToPlay(currentPoi!.poi.shortDesc!, 'en-US');
-        Globals.globalGuideAudioPlayer.play();
+        Globals.globalGuideAudioPlayerHandler.play();
         Globals.globalUserMap.highlightPoi(currentPoi!);
         Globals.addGlobalVisitedPoi(VisitedPoi(
             poiName: currentPoi!.poi.poiName,
@@ -126,7 +126,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
 
     on<ShowFullPoiInfoEvent>((event, emit) {
       if (state is ShowStoriesState) {
-        Globals.globalGuideAudioPlayer.pause();
+        Globals.globalGuideAudioPlayerHandler.pause();
         final state = this.state as ShowStoriesState;
         emit(ShowPoiState(
             savedStoriesState: state, currentPoi: state.currentPoi!));
@@ -153,7 +153,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     on<playPoiEvent>((event, emit) {
       if (state is ShowStoriesState) {
         final state = this.state as ShowStoriesState;
-        Globals.globalGuideAudioPlayer.stop();
+        Globals.globalGuideAudioPlayerHandler.stop();
         Globals.globalUserMap.highlightPoi(event.mapPoi);
         StoryItem requestedStoryItem = ScrolledText.textStory(
             id: event.mapPoi.poi.id,
@@ -177,7 +177,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       // stop loading animation
       Globals.globalUserMap.setLoadingAnimationState(false);
 
-      Globals.globalGuideAudioPlayer.stop();
+      Globals.globalGuideAudioPlayerHandler.stop();
       List<MapPoi> mapPoisList = event.pois.values.toList();
       Map<String, List<MapPoi>> categoriesToMapPois =
           HashMap<String, List<MapPoi>>();

@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:final_project/Map/BackgroundGuideAudioPlayer.dart';
+import 'package:final_project/Map/background_audio_player.dart';
 import 'package:final_project/Pages/history_page.dart';
 import 'package:final_project/Pages/home_page.dart';
 import 'package:final_project/Pages/app_loading_page.dart';
@@ -17,11 +17,12 @@ Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   // store this in a singleton
-  Globals.globalAudioHandler = await AudioService.init(
+  Globals.globalGuideAudioPlayerHandler = await AudioService.init(
     builder: () => BackgroundAudioHandler(),
     config: AudioServiceConfig(
       androidNotificationChannelId: 'com.mycompany.myapp.channel.audio',
-      androidNotificationChannelName: 'Music playback',
+      androidNotificationChannelName: 'Audio playback',
+      androidNotificationOngoing: true,
     ),
   );
   runApp(const AutoGuideApp());
