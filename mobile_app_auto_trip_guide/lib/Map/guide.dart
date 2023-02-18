@@ -304,23 +304,23 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                       ],
                     ),
                   ),
-                  // Positioned(
-                  //   top: Constants.avatarRadius,
-                  //   right: Constants.sidesMarginOfButtons,
-                  //   child: Container(child:
-                  //       UniformButtons.getGuidePreferencesButton(onPressed: () {
-                  //     context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
-                  //         pois:
-                  //             state.lastShowOptionalCategoriesState.idToPoisMap,
-                  //         onShowStory:
-                  //             state.lastShowOptionalCategoriesState.onShowStory,
-                  //         onFinishedFunc: state
-                  //             .lastShowOptionalCategoriesState.onFinishedFunc,
-                  //         isCheckedCategory: state
-                  //             .lastShowOptionalCategoriesState
-                  //             .isCheckedCategory));
-                  //   })),
-                  // )
+                  Positioned(
+                    top: Constants.avatarRadius,
+                    right: Constants.sidesMarginOfButtons,
+                    child: Container(child:
+                        UniformButtons.getGuidePreferencesButton(onPressed: () {
+                      context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
+                          pois:
+                              state.lastShowOptionalCategoriesState.idToPoisMap,
+                          onShowStory:
+                              state.lastShowOptionalCategoriesState.onShowStory,
+                          onFinishedFunc: state
+                              .lastShowOptionalCategoriesState.onFinishedFunc,
+                          isCheckedCategory: state
+                              .lastShowOptionalCategoriesState
+                              .isCheckedCategory));
+                    })),
+                  )
                 ],
               )
             ])),
@@ -516,22 +516,22 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                 child: buildImageWidget(state.currentPoi.poi.pic ?? ""),
               ),
             ),
-            // Positioned(
-            //   top: Constants.avatarRadius,
-            //   right: Constants.sidesMarginOfButtons,
-            //   child: Container(child:
-            //       UniformButtons.getGuidePreferencesButton(onPressed: () {
-            //     context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
-            //         pois: state.savedStoriesState
-            //             .lastShowOptionalCategoriesState.idToPoisMap,
-            //         onShowStory: state.savedStoriesState
-            //             .lastShowOptionalCategoriesState.onShowStory,
-            //         onFinishedFunc: state.savedStoriesState
-            //             .lastShowOptionalCategoriesState.onFinishedFunc,
-            //         isCheckedCategory: state.savedStoriesState
-            //             .lastShowOptionalCategoriesState.isCheckedCategory));
-            //   })),
-            // ),
+            Positioned(
+              top: Constants.avatarRadius,
+              right: Constants.sidesMarginOfButtons,
+              child: Container(child:
+                  UniformButtons.getGuidePreferencesButton(onPressed: () {
+                context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
+                    pois: state.savedStoriesState
+                        .lastShowOptionalCategoriesState.idToPoisMap,
+                    onShowStory: state.savedStoriesState
+                        .lastShowOptionalCategoriesState.onShowStory,
+                    onFinishedFunc: state.savedStoriesState
+                        .lastShowOptionalCategoriesState.onFinishedFunc,
+                    isCheckedCategory: state.savedStoriesState
+                        .lastShowOptionalCategoriesState.isCheckedCategory));
+              })),
+            ),
             Positioned(
                 top: Constants.avatarRadius,
                 child: UniformButtons.getReturnDialogButton(onPressed: () {
