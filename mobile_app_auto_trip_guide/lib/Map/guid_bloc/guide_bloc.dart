@@ -53,7 +53,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       Globals.globalGuideAudioPlayerHandler.onResume = () {
         controller.play();
       };
-      Globals.globalGuideAudioPlayerHandler.onProgressChanged = (double progress) {
+      Globals.globalGuideAudioPlayerHandler.onProgressChanged =
+          (double progress) {
         controller.setProgressValue(progress);
       };
       Globals.globalGuideAudioPlayerHandler.onPlayerFinishedFunc = () {
@@ -108,6 +109,9 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         MapPoi currentPoi = Globals.globalAllPois[poiId]!;
         Globals.globalGuideAudioPlayerHandler
             .setTextToPlay(currentPoi!.poi.shortDesc!, 'en-US');
+        Globals.globalGuideAudioPlayerHandler.trackTitle =
+            currentPoi!.poi.poiName;
+        Globals.globalGuideAudioPlayerHandler.picUrl = currentPoi!.poi.pic;
         Globals.globalGuideAudioPlayerHandler.play();
         Globals.globalUserMap.highlightPoi(currentPoi!);
         Globals.addGlobalVisitedPoi(VisitedPoi(
@@ -141,8 +145,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             controller: event.controller,
             lastShowOptionalCategoriesState:
                 state.savedStoriesState.lastShowOptionalCategoriesState));
-      } else if( state is ShowOptionalCategoriesState){
-      final state = this.state as ShowOptionalCategoriesState;
+      } else if (state is ShowOptionalCategoriesState) {
+        final state = this.state as ShowOptionalCategoriesState;
         emit(ShowStoriesState(
             storyView: event.storyView,
             controller: event.controller,
@@ -194,7 +198,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         });
       });
       ShowStoriesState? lastShowStoriesState = null;
-      if(state is ShowStoriesState) {
+      if (state is ShowStoriesState) {
         lastShowStoriesState = state as ShowStoriesState;
       }
       emit(ShowOptionalCategoriesState(
@@ -203,8 +207,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           onShowStory: event.onShowStory,
           idToPoisMap: event.pois,
           onFinishedFunc: event.onFinishedFunc,
-          lastShowStoriesState: lastShowStoriesState
-          ));
+          lastShowStoriesState: lastShowStoriesState));
     });
   }
 }

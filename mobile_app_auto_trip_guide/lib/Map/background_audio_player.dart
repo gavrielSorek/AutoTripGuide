@@ -9,12 +9,36 @@ class BackgroundAudioHandler extends BaseAudioHandler
     with QueueHandler, SeekHandler {
   dynamic _onPressNext = null, _onPressPrev = null;
   final TtsAudioPlayer ttsAudioPlayer = TtsAudioPlayer();
+  String _albumName = '', _trackTitle = '', _artistName = '', _picUrl = '';
+  late MediaItem _currentMediaItem;
 
   BackgroundAudioHandler() {
+    _currentMediaItem = MediaItem(
+        id: '',
+        album: _albumName,
+        title: _trackTitle,
+        artist: _artistName,
+        artUri: Uri.parse(_picUrl));
     playbackState.add(playbackState.value.copyWith(
       controls: [MediaControl.play],
       processingState: AudioProcessingState.ready,
     ));
+  }
+
+  set picUrl(dynamic picUrl) {
+    _picUrl = picUrl;
+  }
+
+  set albumName(dynamic albumName) {
+    _albumName = albumName;
+  }
+
+  set trackTitle(dynamic trackTitle) {
+    _trackTitle = trackTitle;
+  }
+
+  set artistName(dynamic artistName) {
+    _artistName = artistName;
   }
 
   set onPressNext(dynamic onPressNext) {
@@ -70,6 +94,12 @@ class BackgroundAudioHandler extends BaseAudioHandler
         MediaControl.skipToNext
       ],
     ));
+    _currentMediaItem = _currentMediaItem.copyWith(
+        album: _albumName,
+        title: _trackTitle,
+        artist: _artistName,
+        artUri: Uri.parse(_picUrl));
+    mediaItem.add(_currentMediaItem);
     await ttsAudioPlayer.playAudio();
   }
 
@@ -89,6 +119,7 @@ class BackgroundAudioHandler extends BaseAudioHandler
   @override
   Future<void> stop() async {
     await ttsAudioPlayer.stopAudio();
+    mediaItem.add(_currentMediaItem);
     // Set the audio_service state to `idle` to deactivate the notification.
     // playbackState.add(playbackState.value.copyWith(
     //   processingState: AudioProcessingState.idle,
