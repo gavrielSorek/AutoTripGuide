@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs access to location when in the background.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app need microphone access</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -16,50 +20,33 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
-    <key>UIBackgroundModes</key>
-    <array>
-        <string>audio</string>
-    </array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<!-- <key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>com.googleusercontent.apps.141959691870-me9msoi1adrn75p22klneo9h962sms15</string>
-			</array>
-		</dict>
-	</array> -->
-	<!-- new gopogle auth -->
-
 	<key>GIDClientID</key>
 	<string>505998861423-mihg5teej0n9ba48d7t5qbe1l7rotb0k.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
 	<array>
-	<dict>
-		<key>CFBundleURLSchemes</key>
-		<array>
-		<string>com.googleusercontent.apps.505998861423-mihg5teej0n9ba48d7t5qbe1l7rotb0k</string>
-		</array>
-	</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.505998861423-mihg5teej0n9ba48d7t5qbe1l7rotb0k</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-<!-- geolocator permissions for ios -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs access to location when open.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location when in the background.</string>
-	<!-- add support to ssave file ios -->
 	<key>UIFileSharingEnabled</key>
 	<true/>
-
-
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -80,15 +67,10 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-    </dict>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-    </dict>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 </dict>
