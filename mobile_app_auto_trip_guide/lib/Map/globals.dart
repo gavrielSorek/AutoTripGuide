@@ -45,8 +45,10 @@ class Globals {
   }
 
   static void addGlobalVisitedPoi(VisitedPoi visitedPoi) {
+    globalVisitedPoi.removeWhere((visitedPoiInList) => visitedPoi.id == visitedPoiInList.id);
     globalVisitedPoi.add(visitedPoi);
     globalVisitedPoiStream.add(visitedPoi);
+    globalServerCommunication.insertPoiToHistory(visitedPoi);
   }
 
   static void addUnhandledPoiKey(String key) {

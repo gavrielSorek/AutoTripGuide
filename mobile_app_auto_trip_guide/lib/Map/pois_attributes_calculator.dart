@@ -1,7 +1,11 @@
+import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/map.dart';
+import 'package:final_project/Map/map_configuration.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
+
+import '../General Wigets/generals.dart';
 
 class PoisAttributesCalculator {
   static Map<int, String> Directions = {
@@ -69,12 +73,35 @@ class PoisAttributesCalculator {
     return Directions[directionNum] ?? 'Undefined';
   }
 
-  static List<Poi> filterPois(List<Poi> pois, Position position) { // can add more filters
-    return filterPoisByDistance(pois, position);
+  static List<Poi> filterPois(List<Poi> pois, Position position) {
+    // can add more filters
+    pois = filterPoisByDistance(pois, position);
+    pois = filterHistoricalPois(pois);
+    return pois;
   }
+
   static List<Poi> filterPoisByDistance(List<Poi> pois, Position position) {
     const double maxDist = 2000; //2000 meters
-    pois.removeWhere((poi) => getDistBetweenPoints(poi.latitude, poi.longitude, position.latitude, position.longitude) > maxDist);
+    pois.removeWhere((poi) =>
+        getDistBetweenPoints(poi.latitude, poi.longitude, position.latitude,
+            position.longitude) >
+        maxDist);
     return pois;
+  }
+
+  static List<Poi> filterHistoricalPois(List<Poi> pois) {
+    String currentTime = Generals.getTime();
+    List<Poi> poisCpy = pois.toList();
+    poisCpy.removeWhere((poi) {
+      try {
+        var visitedPoi = Globals.globalVisitedPoi
+            .firstWhere((element) => element.id == poi.id);
+        return Generals.getDaysBetweenDates(visitedPoi.time, currentTime) <=
+            MapConfiguration.numOfDayNotShowPoi;
+      } catch (e) {
+        return false;
+      }
+    });
+    return poisCpy;
   }
 }
