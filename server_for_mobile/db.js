@@ -165,18 +165,28 @@ async function updateUserInfo(client, userInfo) {
 
 // The function update the favorite categories of specific user
 async function insertPoiToHistory(client, poiInfo) {
-    var emailAddress = poiInfo.emailAddr;
-    const res = await client.db("auto_trip_guide_db").collection("mobileUsers").updateOne({emailAddr: emailAddress}, { $push: { poisHistory: 
+    let userPoisHistory = await getPoisHistory(client, poiInfo.emailAddr);
+    if (userPoisHistory) {
+        const index = await userPoisHistory.findIndex(poi => poi.poiId == poiInfo.id);
+        if(index != -1) {
+            userPoisHistory[index].time = poiInfo.time;
+            const res = await client.db("auto_trip_guide_db").collection("mobileUsers").updateOne({emailAddr: poiInfo.emailAddr}, { $set: {
+                poisHistory: userPoisHistory
+            }});
+            return res;
+        }
+    }
+
+    const res = await client.db("auto_trip_guide_db").collection("mobileUsers").updateOne({emailAddr: poiInfo.emailAddr}, { $push: { poisHistory: 
         {poiId: poiInfo.id, poiName: poiInfo.poiName, time: poiInfo.time, pic: poiInfo.pic}}});
-    console.log("after insertPoiToHistory in the server side");
-    return 1;
+        console.log("after insertPoiToHistory in the server side");
+    return res;
 }
 
 // The function return the favorite categories of specific user from the db
 async function getPoisHistory(client, email) {
     console.log("inside getPoisHistory - db side")
-    var emailAddress = email.emailAddr;
-    var res = await client.db("auto_trip_guide_db").collection("mobileUsers").find({emailAddr: emailAddress});
+    var res = await client.db("auto_trip_guide_db").collection("mobileUsers").find({emailAddr: email});
     var resArr = await res.toArray();
     if (resArr.length > 0) {
         console.log("found pois history for the reuired user")
@@ -217,6 +227,8 @@ async function addCachedAreaInfo(client, parameters) {
 function isEmpty(obj) {
     return Object.keys(obj).length === 0;
 }
+
+
 
 
 
