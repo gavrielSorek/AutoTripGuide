@@ -271,7 +271,7 @@ class _UserMapState extends State<UserMap> {
 
     LocationMarkerDataStreamFactory().compassHeadingStream().listen((event) {
       final double epsilon = 2;
-      double newHeading = -event.heading / pi * 180;
+      double newHeading = -event!.heading / pi * 180;
       if (_centerOnLocationUpdate != CenterOnLocationUpdate.always ||
           (newHeading - mapHeading).abs() < epsilon) return;
       mapHeading = newHeading;
