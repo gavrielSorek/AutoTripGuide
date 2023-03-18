@@ -1,17 +1,21 @@
 import 'dart:async';
 import 'package:final_project/General%20Wigets/menu.dart';
 import 'package:final_project/Map/globals.dart';
+import 'package:final_project/Map/map_configuration.dart';
 import 'package:final_project/Map/personalize_recommendation.dart';
 import 'package:final_project/Map/pois_attributes_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 import 'guide.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:math';
 
 enum MarkersLayer { semiTransparent, grey, blue }
 
@@ -381,108 +385,282 @@ class _UserMapState extends State<UserMap> {
     return false;
   }
 
+  mapbox.MapboxMapController? mapController;
+  var isLight = true;
+
+  // variables
+  mapbox.CameraPosition _position = _kInitialPosition;
+  static final mapbox.CameraPosition _kInitialPosition =
+      const mapbox.CameraPosition(
+    target: mapbox.LatLng(-33.852, 151.211),
+    zoom: 11.0,
+  );
+  bool _isMoving = false;
+  bool _compassEnabled = true;
+  mapbox.CameraTargetBounds _cameraTargetBounds =
+      mapbox.CameraTargetBounds.unbounded;
+  mapbox.MinMaxZoomPreference _minMaxZoomPreference =
+      mapbox.MinMaxZoomPreference.unbounded;
+  List<String> _styleStrings = [
+    mapbox.MapboxStyles.MAPBOX_STREETS,
+    mapbox.MapboxStyles.SATELLITE,
+    "assets/style.json"
+  ];
+  int _styleStringIndex = 0;
+  bool _rotateGesturesEnabled = true;
+  bool _scrollGesturesEnabled = true;
+  bool? _doubleClickToZoomEnabled;
+  bool _tiltGesturesEnabled = true;
+  bool _zoomGesturesEnabled = true;
+  bool _myLocationEnabled = true;
+  bool _telemetryEnabled = true;
+  mapbox.MyLocationTrackingMode _myLocationTrackingMode =
+      mapbox.MyLocationTrackingMode.None;
+  List<Object>? _featureQueryFilter;
+  mapbox.Fill? _selectedFill;
+
+  void _extractMapInfo() {
+    final position = mapController!.cameraPosition;
+    if (position != null) _position = position;
+    _isMoving = mapController!.isCameraMoving;
+  }
+
+  void _onMapChanged() {
+    setState(() {
+      _extractMapInfo();
+    });
+  }
+
+  void _onMapCreated(mapbox.MapboxMapController controller) {
+    mapController = controller;
+    mapController!.addListener(_onMapChanged);
+    _extractMapInfo();
+
+    mapController!.getTelemetryEnabled().then((isEnabled) => setState(() {
+          _telemetryEnabled = isEnabled;
+        }));
+  }
+
+  _onStyleLoadedCallback() {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("Style loaded :)"),
+      backgroundColor: Theme.of(context).primaryColor,
+      duration: Duration(seconds: 1),
+    ));
+  }
+
+
+  _clearFill() {
+    if (_selectedFill != null) {
+      mapController!.removeFill(_selectedFill!);
+      setState(() {
+        _selectedFill = null;
+      });
+    }
+  }
+
+  _drawFill(List<dynamic> features) async {
+    Map<String, dynamic>? feature =
+    features.firstWhereOrNull((f) => f['geometry']['type'] == 'Polygon');
+
+    if (feature != null) {
+      List<List<mapbox.LatLng>> geometry = feature['geometry']['coordinates']
+          .map(
+              (ll) => ll.map((l) => LatLng(l[1], l[0])).toList().cast<LatLng>())
+          .toList()
+          .cast<List<LatLng>>();
+      mapbox.Fill fill = await mapController!.addFill(mapbox.FillOptions(
+        geometry: geometry,
+        fillColor: "#FF0000",
+        fillOutlineColor: "#FF0000",
+        fillOpacity: 0.6,
+      ));
+      setState(() {
+        _selectedFill = fill;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     print("hello from build map");
-    return FlutterMap(
-      mapController: _mapController,
-      options: MapOptions(
-          rotation: mapHeading,
-          onPositionChanged: (MapPosition position, bool hasGesture) {
-            if (hasGesture) {
-              setState(
-                () => _centerOnLocationUpdate = CenterOnLocationUpdate.never,
-              );
-            }
-          },
-          center: LatLng(
-              UserMap.USER_LOCATION.latitude, UserMap.USER_LOCATION.longitude),
-          minZoom: 5.0),
-      // ignore: sort_child_properties_last
-      children: [
-        TileLayer(
-          urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-          subdomains: ['a', 'b', 'c'],
-          maxZoom: 19,
-        ),
-        CurrentLocationLayer(
-          positionStream: _currentLocationStreamController.stream,
-          // centerCurrentLocationStream:
-          //     _centerCurrentLocationStreamController.stream,
-          // centerOnLocationUpdate: _centerOnLocationUpdate),
-        ),
-        MarkerLayer(
-            markers: listOfMarkersLayers[MarkersLayer.semiTransparent.index]),
-        MarkerLayer(markers: listOfMarkersLayers[MarkersLayer.grey.index]),
-        MarkerLayer(markers: listOfMarkersLayers[MarkersLayer.blue.index]),
-      ],
-      nonRotatedChildren: [
-        Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 60),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child:
-                        NavigationDrawer.buildNavigationDrawerButton(context),
-                  ),
-                  widget.showLoadingPoisAnimation
-                      ? Container(
-                          color: Colors.transparent,
-                          alignment: Alignment.bottomRight,
-                          margin: EdgeInsets.only(
-                              right: MediaQuery.of(context).size.width / 60),
-                          height: MediaQuery.of(context).size.width / 10,
-                          width: MediaQuery.of(context).size.width / 10,
-                          child: LoadingAnimationWidget.threeArchedCircle(
-                            size: 30,
-                            color: Colors.blue,
-                          ))
-                      : Container(),
-                ],
-              ),
-            ),
-            Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.width / 20,
-                      left: MediaQuery.of(context).size.width / 40),
-                  width: MediaQuery.of(context).size.width / 10,
-                  child: FloatingActionButton(
-                    heroTag: null,
-                    onPressed: () {
-                      _centerOnLocationUpdate = CenterOnLocationUpdate.always;
-                      _mapController.move(getRelativeCenterToUserPosition(),
-                          _mapController.zoom); // need to be called twice!
+    return mapbox.MapboxMap(
+      accessToken: MapConfiguration.mapboxAccessToken,
+      // myLocationRenderMode: mapbox.MyLocationRenderMode.GPS,
+      //myLocationTrackingMode: mapbox.MyLocationTrackingMode.Tracking,
+      onMapCreated: _onMapCreated,
+      initialCameraPosition: _kInitialPosition,
+      compassEnabled: _compassEnabled,
+      cameraTargetBounds: _cameraTargetBounds,
+      minMaxZoomPreference: _minMaxZoomPreference,
+      styleString: _styleStrings[_styleStringIndex],
+      rotateGesturesEnabled: _rotateGesturesEnabled,
+      scrollGesturesEnabled: _scrollGesturesEnabled,
+      tiltGesturesEnabled: _tiltGesturesEnabled,
+      zoomGesturesEnabled: _zoomGesturesEnabled,
+      doubleClickZoomEnabled: _doubleClickToZoomEnabled,
+      myLocationEnabled: _myLocationEnabled,
+      myLocationTrackingMode: _myLocationTrackingMode,
+      myLocationRenderMode: mapbox.MyLocationRenderMode.GPS,
+      onMapClick: (point, latLng) async {
+        print(
+            "Map click: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
+        print("Filter $_featureQueryFilter");
+        List features = await mapController!
+            .queryRenderedFeatures(point, ["landuse"], _featureQueryFilter);
+        print('# features: ${features.length}');
+        _clearFill();
+        if (features.isEmpty && _featureQueryFilter != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('QueryRenderedFeatures: No features found!')));
+        } else if (features.isNotEmpty) {
+          _drawFill(features);
+        }
+      },
+      onMapLongClick: (point, latLng) async {
+        print(
+            "Map long press: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
+        Point convertedPoint = await mapController!.toScreenLocation(latLng);
+        mapbox.LatLng convertedLatLng = await mapController!.toLatLng(point);
+        print(
+            "Map long press converted: ${convertedPoint.x},${convertedPoint.y}   ${convertedLatLng.latitude}/${convertedLatLng.longitude}");
+        double metersPerPixel =
+            await mapController!.getMetersPerPixelAtLatitude(latLng.latitude);
 
-                      // Center the location marker on the map and zoom the map to level 14.
-                      // _centerCurrentLocationStreamController.add(13);
-                    },
-                    child: const Icon(
-                      Icons.my_location,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Expanded(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Expanded(child: guideTool.storiesDialogBox)
-                // guideTool.guideDialogBox,
-              ],
-            ))
-          ],
-        ),
-      ],
+        print(
+            "Map long press The distance measured in meters at latitude ${latLng.latitude} is $metersPerPixel m");
+
+        List features =
+            await mapController!.queryRenderedFeatures(point, [], null);
+        if (features.length > 0) {
+          print(features[0]);
+        }
+      },
+      onCameraTrackingDismissed: () {
+        this.setState(() {
+          _myLocationTrackingMode = mapbox.MyLocationTrackingMode.None;
+        });
+      },
+      onUserLocationUpdated: (location) {
+        print(
+            "new location: ${location.position}, alt.: ${location.altitude}, bearing: ${location.bearing}, speed: ${location.speed}, horiz. accuracy: ${location.horizontalAccuracy}, vert. accuracy: ${location.verticalAccuracy}");
+      },
+       onStyleLoadedCallback: _onStyleLoadedCallback,
     );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // return FlutterMap(
+    //   mapController: _mapController,
+    //   options: MapOptions(
+    //       rotation: mapHeading,
+    //       onPositionChanged: (MapPosition position, bool hasGesture) {
+    //         if (hasGesture) {
+    //           setState(
+    //             () => _centerOnLocationUpdate = CenterOnLocationUpdate.never,
+    //           );
+    //         }
+    //       },
+    //       center: LatLng(
+    //           UserMap.USER_LOCATION.latitude, UserMap.USER_LOCATION.longitude),
+    //       minZoom: 5.0),
+    //   // ignore: sort_child_properties_last
+    //   children: [
+    //     TileLayer(
+    //       urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    //       subdomains: ['a', 'b', 'c'],
+    //       maxZoom: 19,
+    //     ),
+    //     CurrentLocationLayer(
+    //       positionStream: _currentLocationStreamController.stream,
+    //       // centerCurrentLocationStream:
+    //       //     _centerCurrentLocationStreamController.stream,
+    //       // centerOnLocationUpdate: _centerOnLocationUpdate),
+    //     ),
+    //     MarkerLayer(
+    //         markers: listOfMarkersLayers[MarkersLayer.semiTransparent.index]),
+    //     MarkerLayer(markers: listOfMarkersLayers[MarkersLayer.grey.index]),
+    //     MarkerLayer(markers: listOfMarkersLayers[MarkersLayer.blue.index]),
+    //   ],
+    //   nonRotatedChildren: [
+    //     Column(
+    //       children: [
+    //         Container(
+    //           margin: EdgeInsets.only(top: 60),
+    //           child: Row(
+    //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //             children: [
+    //               Container(
+    //                 child:
+    //                     NavigationDrawer.buildNavigationDrawerButton(context),
+    //               ),
+    //               widget.showLoadingPoisAnimation
+    //                   ? Container(
+    //                       color: Colors.transparent,
+    //                       alignment: Alignment.bottomRight,
+    //                       margin: EdgeInsets.only(
+    //                           right: MediaQuery.of(context).size.width / 60),
+    //                       height: MediaQuery.of(context).size.width / 10,
+    //                       width: MediaQuery.of(context).size.width / 10,
+    //                       child: LoadingAnimationWidget.threeArchedCircle(
+    //                         size: 30,
+    //                         color: Colors.blue,
+    //                       ))
+    //                   : Container(),
+    //             ],
+    //           ),
+    //         ),
+    //         Row(
+    //           children: [
+    //             Container(
+    //               margin: EdgeInsets.only(
+    //                   top: MediaQuery.of(context).size.width / 20,
+    //                   left: MediaQuery.of(context).size.width / 40),
+    //               width: MediaQuery.of(context).size.width / 10,
+    //               child: FloatingActionButton(
+    //                 heroTag: null,
+    //                 onPressed: () {
+    //                   _centerOnLocationUpdate = CenterOnLocationUpdate.always;
+    //                   _mapController.move(getRelativeCenterToUserPosition(),
+    //                       _mapController.zoom); // need to be called twice!
+    //
+    //                   // Center the location marker on the map and zoom the map to level 14.
+    //                   // _centerCurrentLocationStreamController.add(13);
+    //                 },
+    //                 child: const Icon(
+    //                   Icons.my_location,
+    //                   color: Colors.white,
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //         Expanded(
+    //             child: Column(
+    //           crossAxisAlignment: CrossAxisAlignment.center,
+    //           mainAxisSize: MainAxisSize.max,
+    //           mainAxisAlignment: MainAxisAlignment.end,
+    //           children: [
+    //             Expanded(child: guideTool.storiesDialogBox)
+    //             // guideTool.guideDialogBox,
+    //           ],
+    //         ))
+    //       ],
+    //     ),
+    //   ],
+    // );
   }
 
   void showNextButton() {
