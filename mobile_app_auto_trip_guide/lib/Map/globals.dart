@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:ui';
 import 'package:audio_service/audio_service.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../General Wigets/generals.dart';
 import 'background_audio_player.dart';
 import '../Pages/login_controller.dart';
 import 'apps_launcher.dart';
@@ -36,6 +38,7 @@ class Globals {
   static StreamController<MapPoi> globalClickedPoiStream =
       StreamController<MapPoi>.broadcast();
   static String? svgMarkerString;
+  static PoisIconsBytesHolder svgPoiMarkerBytes = PoisIconsBytesHolder();
   static SharedPreferences? globalPrefs;
   static bool globalIsInitialized = false;
   static late AudioHandler globalAudioHandler;
@@ -94,6 +97,10 @@ class Globals {
     globalUserInfoObj = null;
     svgMarkerString =
         await rootBundle.loadString('assets/images/mapMarker.svg');
+    svgPoiMarkerBytes.greyIcon = (await Generals.svgStringToUint8List(svgMarkerString!, Colors.grey))!;
+    svgPoiMarkerBytes.blueIcon = (await Generals.svgStringToUint8List(svgMarkerString!, Colors.blue))!;
+    svgPoiMarkerBytes.yellowIcon = (await Generals.svgStringToUint8List(svgMarkerString!, Colors.yellow))!;
+
     await globalGuideAudioPlayerHandler.initAudioPlayer();
     await globalController.init();
     if (globalController.isUserSignIn) {

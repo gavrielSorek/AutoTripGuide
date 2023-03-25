@@ -32,8 +32,8 @@ allprojects {
         google()
         mavenCentral()
         maven {
-            url 'https://google.bintray.com/exoplayer/'
-//            url 'https://api.mapbox.com/downloads/v2/releases/maven'
+//            url 'https://google.bintray.com/exoplayer/'
+            url 'https://api.mapbox.com/downloads/v2/releases/maven'
             authentication {
                 basic(BasicAuthentication)
             }
@@ -59,8 +59,8 @@ rootProject.allprojects {
         google()
         mavenCentral()
         maven {
-            url 'https://google.bintray.com/exoplayer/'
-           // url 'https://api.mapbox.com/downloads/v2/releases/maven'
+            //url 'https://google.bintray.com/exoplayer/'
+           url 'https://api.mapbox.com/downloads/v2/releases/maven'
             authentication {
                 basic(BasicAuthentication)
             }

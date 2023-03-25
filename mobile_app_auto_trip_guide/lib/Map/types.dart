@@ -1,9 +1,12 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:latlong2/latlong.dart';
 import 'globals.dart';
+import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 
 extension HexColor on Color {
   /// Prefixes a hash sign if [leadingHashSign] is set to `true` (default is `true`).
@@ -157,7 +160,6 @@ class MapPoi {
     // replace the fill color
     String markerIconString =
         Globals.svgMarkerString!.replaceAll(originalMarkerColor, color.toHex());
-
     return Marker(
       width: 50.0,
       height: 50.0,
@@ -176,6 +178,16 @@ class MapPoi {
     );
   }
 
+  mapbox.Symbol getSymbolFromPoi(PoiIconColor color) {
+    List<String> colors = ['greyPoi', 'bluePoi', 'yellowPoi'];
+    String iconImage = colors[color.index];
+    return mapbox.Symbol(poi.id, mapbox.SymbolOptions(
+      geometry: mapbox.LatLng(poi.latitude, poi.longitude),
+        iconImage: iconImage, // this is the icon you want to use
+      iconSize: 0.12)
+    );
+  }
+
   Poi poi;
 
   MapPoi(this.poi) {}
@@ -186,6 +198,8 @@ enum GuideStatus { voice, text }
 enum GuideState { working, waiting, stopped }
 
 enum WidgetVisibility { hide, view }
+
+enum PoiIconColor { grey, blue, yellow }
 
 // contain data about the guid type
 class GuideData {

@@ -19,22 +19,15 @@ import 'dart:math';
 
 enum MarkersLayer { semiTransparent, grey, blue }
 
-enum Action { add, remove }
+enum PoiAction { add, remove }
 
 class MapPoiAction {
   MarkersLayer layer;
-  Action action;
+  PoiAction action;
   MapPoi mapPoi;
 
   MapPoiAction(
       {required this.layer, required this.action, required this.mapPoi});
-}
-
-class MapPoisLayer {
-  final MarkersLayer layer;
-  final List<MapPoi> mapPois;
-
-  MapPoisLayer({required this.layer, required this.mapPois});
 }
 
 class UserMap extends StatefulWidget {
@@ -47,8 +40,6 @@ class UserMap extends StatefulWidget {
   static late Position LAST_AREA_USER_LOCATION;
   static double DISTANCE_BETWEEN_AREAS = 1000; //1000 meters
   static List userChangeLocationFuncs = [];
-  StreamController<MapPoisLayer> mapPoisLayerStreamController =
-      StreamController<MapPoisLayer>.broadcast();
   StreamController<MapPoiAction> mapPoiActionStreamController =
       StreamController<MapPoiAction>.broadcast();
   StreamController<LatLng> highlightedPoiStreamController =
@@ -103,8 +94,6 @@ class UserMap extends StatefulWidget {
   }
 
   void highlightPoi(MapPoi mapPoi) {
-    mapPoisLayerStreamController
-        .add(MapPoisLayer(layer: MarkersLayer.blue, mapPois: [mapPoi]));
     highlightedPoiStreamController
         .add(LatLng(mapPoi.poi.latitude, mapPoi.poi.longitude));
   }
@@ -128,17 +117,12 @@ class UserMap extends StatefulWidget {
     return userMapState!;
   }
 
-  void setMapPoisLayer(MapPoisLayer mapPoisLayer) {
-    mapPoisLayerStreamController.add(mapPoisLayer);
-  }
-
   void setMapPoiOnLayer(MapPoiAction mapPoiAction) {
     mapPoiActionStreamController.add(mapPoiAction);
   }
 }
 
 class _UserMapState extends State<UserMap> {
-  late StreamSubscription mapPoisLayerSubscription;
   late StreamSubscription mapPoiActionSubscription;
   List<List<Marker>> listOfMarkersLayers = [];
   StreamController<LocationMarkerPosition> _currentLocationStreamController =
@@ -159,6 +143,7 @@ class _UserMapState extends State<UserMap> {
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
   final MapController _mapController = MapController();
+
   double mapHeading = 0;
 
   bool isNewPoisNeededFlag = true;
@@ -215,25 +200,18 @@ class _UserMapState extends State<UserMap> {
     setState(() {});
   }
 
-  void setMapPoisLayer(MapPoisLayer mapPoisLayer) {
-    List<Marker> newMarkerLayer = <Marker>[];
-    mapPoisLayer.mapPois.forEach((element) {
-      Marker marker =
-          element.createMarkerFromPoi(layersColor[mapPoisLayer.layer.index]);
-      newMarkerLayer.add(marker);
-    });
-    listOfMarkersLayers[mapPoisLayer.layer.index] = newMarkerLayer;
-  }
-
   void setMapPoiAction(MapPoiAction mapPoiAction) {
     // first remove the element
     listOfMarkersLayers[mapPoiAction.layer.index].removeWhere((marker) =>
         marker.point.latitude == mapPoiAction.mapPoi.poi.latitude &&
         marker.point.longitude == mapPoiAction.mapPoi.poi.longitude);
-    if (mapPoiAction.action == Action.add) {
+    if (mapPoiAction.action == PoiAction.add) {
       listOfMarkersLayers[mapPoiAction.layer.index].add(mapPoiAction.mapPoi
           .createMarkerFromPoi(layersColor[mapPoiAction.layer.index]));
     }
+    _symbolManager.add(mapPoiAction.mapPoi.
+    getSymbolFromPoi(PoiIconColor.yellow));
+    // mapController!.addSymbol(mapPoiAction.mapPoi.getSymbolOptionFromPoi('TODO'));
   }
 
   bool isValidScreenPoint(CustomPoint? screenPoint) {
@@ -253,11 +231,6 @@ class _UserMapState extends State<UserMap> {
 
   @override
   void initState() {
-    mapPoisLayerSubscription =
-        widget.mapPoisLayerStreamController.stream.listen((event) {
-      setMapPoisLayer(event);
-      updateState();
-    });
     mapPoiActionSubscription =
         widget.mapPoiActionStreamController.stream.listen((event) {
       setMapPoiAction(event);
@@ -315,7 +288,6 @@ class _UserMapState extends State<UserMap> {
   @override
   void dispose() {
     print("____________________dispose statful map");
-    mapPoisLayerSubscription.cancel();
     mapPoiActionSubscription.cancel();
     _centerCurrentLocationStreamController.close();
     _currentLocationStreamController.close();
@@ -351,7 +323,7 @@ class _UserMapState extends State<UserMap> {
           Globals.addUnhandledPoiKey(poi.id);
           widget.mapPoiActionStreamController.add(MapPoiAction(
               layer: MarkersLayer.semiTransparent,
-              action: Action.add,
+              action: PoiAction.add,
               mapPoi: MapPoi(poi)));
         }
       }
@@ -385,7 +357,7 @@ class _UserMapState extends State<UserMap> {
     return false;
   }
 
-  mapbox.MapboxMapController? mapController;
+  late mapbox.MapboxMapController mapController;
   var isLight = true;
 
   // variables
@@ -414,6 +386,8 @@ class _UserMapState extends State<UserMap> {
   bool _zoomGesturesEnabled = true;
   bool _myLocationEnabled = true;
   bool _telemetryEnabled = true;
+  late mapbox.SymbolManager _symbolManager;
+
   mapbox.MyLocationTrackingMode _myLocationTrackingMode =
       mapbox.MyLocationTrackingMode.None;
   List<Object>? _featureQueryFilter;
@@ -433,12 +407,23 @@ class _UserMapState extends State<UserMap> {
 
   void _onMapCreated(mapbox.MapboxMapController controller) {
     mapController = controller;
-    mapController!.addListener(_onMapChanged);
+    _symbolManager = mapbox.SymbolManager(mapController, iconAllowOverlap: true);
+    mapController.addListener(_onMapChanged);
     _extractMapInfo();
-
     mapController!.getTelemetryEnabled().then((isEnabled) => setState(() {
           _telemetryEnabled = isEnabled;
         }));
+    mapController.addImage('greyPoi', Globals.svgPoiMarkerBytes.greyIcon);
+    mapController.addImage('bluePoi', Globals.svgPoiMarkerBytes.blueIcon);
+    mapController.addImage('yellowPoi', Globals.svgPoiMarkerBytes.yellowIcon);
+
+    //mapController!.addImage("poi", bytes);
+    // mapController!.moveCamera(mapbox.CameraUpdate.newCameraPosition(mapbox.CameraPosition(target: mapController!.cameraPosition!.target, )));
+    // var cameraPosition = mapbox.CameraPosition.
+    //     .target(location)
+    //     .zoom(zoomLevel)
+    //     .padding(0, screenHeight / 2, 0, 0)
+    //     .build()
   }
 
   _onStyleLoadedCallback() {
@@ -484,183 +469,144 @@ class _UserMapState extends State<UserMap> {
   @override
   Widget build(BuildContext context) {
     print("hello from build map");
-    return mapbox.MapboxMap(
-      accessToken: MapConfiguration.mapboxAccessToken,
-      // myLocationRenderMode: mapbox.MyLocationRenderMode.GPS,
-      //myLocationTrackingMode: mapbox.MyLocationTrackingMode.Tracking,
-      onMapCreated: _onMapCreated,
-      initialCameraPosition: _kInitialPosition,
-      compassEnabled: _compassEnabled,
-      cameraTargetBounds: _cameraTargetBounds,
-      minMaxZoomPreference: _minMaxZoomPreference,
-      styleString: _styleStrings[_styleStringIndex],
-      rotateGesturesEnabled: _rotateGesturesEnabled,
-      scrollGesturesEnabled: _scrollGesturesEnabled,
-      tiltGesturesEnabled: _tiltGesturesEnabled,
-      zoomGesturesEnabled: _zoomGesturesEnabled,
-      doubleClickZoomEnabled: _doubleClickToZoomEnabled,
-      myLocationEnabled: _myLocationEnabled,
-      myLocationTrackingMode: _myLocationTrackingMode,
-      myLocationRenderMode: mapbox.MyLocationRenderMode.GPS,
-      onMapClick: (point, latLng) async {
-        print(
-            "Map click: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
-        print("Filter $_featureQueryFilter");
-        List features = await mapController!
-            .queryRenderedFeatures(point, ["landuse"], _featureQueryFilter);
-        print('# features: ${features.length}');
-        _clearFill();
-        if (features.isEmpty && _featureQueryFilter != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('QueryRenderedFeatures: No features found!')));
-        } else if (features.isNotEmpty) {
-          _drawFill(features);
-        }
-      },
-      onMapLongClick: (point, latLng) async {
-        print(
-            "Map long press: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
-        Point convertedPoint = await mapController!.toScreenLocation(latLng);
-        mapbox.LatLng convertedLatLng = await mapController!.toLatLng(point);
-        print(
-            "Map long press converted: ${convertedPoint.x},${convertedPoint.y}   ${convertedLatLng.latitude}/${convertedLatLng.longitude}");
-        double metersPerPixel =
-            await mapController!.getMetersPerPixelAtLatitude(latLng.latitude);
+    return Stack(
+      children: [mapbox.MapboxMap(
+        accessToken: MapConfiguration.mapboxAccessToken,
+        onMapCreated: _onMapCreated,
+        initialCameraPosition: _kInitialPosition,
+        compassEnabled: _compassEnabled,
+        cameraTargetBounds: _cameraTargetBounds,
+        minMaxZoomPreference: _minMaxZoomPreference,
+        styleString: _styleStrings[_styleStringIndex],
+        rotateGesturesEnabled: _rotateGesturesEnabled,
+        scrollGesturesEnabled: _scrollGesturesEnabled,
+        tiltGesturesEnabled: _tiltGesturesEnabled,
+        zoomGesturesEnabled: _zoomGesturesEnabled,
+        doubleClickZoomEnabled: _doubleClickToZoomEnabled,
+        myLocationEnabled: _myLocationEnabled,
+        myLocationTrackingMode: _myLocationTrackingMode,
+        myLocationRenderMode: mapbox.MyLocationRenderMode.GPS,
+        onMapClick: (point, latLng) async {
+          print(
+              "Map click: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
+          print("Filter $_featureQueryFilter");
+          List features = await mapController!
+              .queryRenderedFeatures(point, ["landuse"], _featureQueryFilter);
+          print('# features: ${features.length}');
+          _clearFill();
+          if (features.isEmpty && _featureQueryFilter != null) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('QueryRenderedFeatures: No features found!')));
+          } else if (features.isNotEmpty) {
+            _drawFill(features);
+          }
+        },
+        onMapLongClick: (point, latLng) async {
+          print(
+              "Map long press: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
+          Point convertedPoint = await mapController!.toScreenLocation(latLng);
+          mapbox.LatLng convertedLatLng = await mapController!.toLatLng(point);
+          print(
+              "Map long press converted: ${convertedPoint.x},${convertedPoint.y}   ${convertedLatLng.latitude}/${convertedLatLng.longitude}");
+          double metersPerPixel =
+              await mapController!.getMetersPerPixelAtLatitude(latLng.latitude);
 
-        print(
-            "Map long press The distance measured in meters at latitude ${latLng.latitude} is $metersPerPixel m");
+          print(
+              "Map long press The distance measured in meters at latitude ${latLng.latitude} is $metersPerPixel m");
 
-        List features =
-            await mapController!.queryRenderedFeatures(point, [], null);
-        if (features.length > 0) {
-          print(features[0]);
-        }
-      },
-      onCameraTrackingDismissed: () {
-        this.setState(() {
-          _myLocationTrackingMode = mapbox.MyLocationTrackingMode.None;
-        });
-      },
-      onUserLocationUpdated: (location) {
-        print(
-            "new location: ${location.position}, alt.: ${location.altitude}, bearing: ${location.bearing}, speed: ${location.speed}, horiz. accuracy: ${location.horizontalAccuracy}, vert. accuracy: ${location.verticalAccuracy}");
-      },
-       onStyleLoadedCallback: _onStyleLoadedCallback,
+          List features =
+              await mapController!.queryRenderedFeatures(point, [], null);
+          if (features.length > 0) {
+            print(features[0]);
+          }
+        },
+        onCameraTrackingDismissed: () {
+          this.setState(() {
+            _myLocationTrackingMode = mapbox.MyLocationTrackingMode.None;
+          });
+        },
+        onUserLocationUpdated: (location) {
+          print(
+              "new location: ${location.position}, alt.: ${location.altitude}, bearing: ${location.bearing}, speed: ${location.speed}, horiz. accuracy: ${location.horizontalAccuracy}, vert. accuracy: ${location.verticalAccuracy}");
+        },
+         onStyleLoadedCallback: _onStyleLoadedCallback,
+      ),
+
+        Column(
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 60),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    child:
+                    NavigationDrawer.buildNavigationDrawerButton(context),
+                  ),
+                  widget.showLoadingPoisAnimation
+                      ? Container(
+                      color: Colors.transparent,
+                      alignment: Alignment.bottomRight,
+                      margin: EdgeInsets.only(
+                          right: MediaQuery.of(context).size.width / 60),
+                      height: MediaQuery.of(context).size.width / 10,
+                      width: MediaQuery.of(context).size.width / 10,
+                      child: LoadingAnimationWidget.threeArchedCircle(
+                        size: 30,
+                        color: Colors.blue,
+                      ))
+                      : Container(),
+                ],
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.width / 20,
+                      left: MediaQuery.of(context).size.width / 40),
+                  width: MediaQuery.of(context).size.width / 10,
+                  child: FloatingActionButton(
+                    heroTag: null,
+                    onPressed: () {
+                      setState(() {
+                        _myLocationTrackingMode = mapbox.MyLocationTrackingMode.Tracking;
+
+                        // mapbox.CameraPosition cameraPosition = mapbox.CameraPosition(
+                        //   target: mapController.cameraPosition.target
+                        // );
+                        //
+                        //     .target(location)
+                        //     .zoom(zoomLevel)
+                        //     .padding(0, screenHeight / 2, 0, 0)
+                        //     .build()
+                        //
+                        // mapController.moveCamera(mapbox.CameraUpdate())
+                      });
+                    },
+                    child: const Icon(
+                      Icons.my_location,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Expanded(child: guideTool.storiesDialogBox)
+                    // guideTool.guideDialogBox,
+                  ],
+                ))
+          ],
+        ),
+
+      ]
     );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // return FlutterMap(
-    //   mapController: _mapController,
-    //   options: MapOptions(
-    //       rotation: mapHeading,
-    //       onPositionChanged: (MapPosition position, bool hasGesture) {
-    //         if (hasGesture) {
-    //           setState(
-    //             () => _centerOnLocationUpdate = CenterOnLocationUpdate.never,
-    //           );
-    //         }
-    //       },
-    //       center: LatLng(
-    //           UserMap.USER_LOCATION.latitude, UserMap.USER_LOCATION.longitude),
-    //       minZoom: 5.0),
-    //   // ignore: sort_child_properties_last
-    //   children: [
-    //     TileLayer(
-    //       urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    //       subdomains: ['a', 'b', 'c'],
-    //       maxZoom: 19,
-    //     ),
-    //     CurrentLocationLayer(
-    //       positionStream: _currentLocationStreamController.stream,
-    //       // centerCurrentLocationStream:
-    //       //     _centerCurrentLocationStreamController.stream,
-    //       // centerOnLocationUpdate: _centerOnLocationUpdate),
-    //     ),
-    //     MarkerLayer(
-    //         markers: listOfMarkersLayers[MarkersLayer.semiTransparent.index]),
-    //     MarkerLayer(markers: listOfMarkersLayers[MarkersLayer.grey.index]),
-    //     MarkerLayer(markers: listOfMarkersLayers[MarkersLayer.blue.index]),
-    //   ],
-    //   nonRotatedChildren: [
-    //     Column(
-    //       children: [
-    //         Container(
-    //           margin: EdgeInsets.only(top: 60),
-    //           child: Row(
-    //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //             children: [
-    //               Container(
-    //                 child:
-    //                     NavigationDrawer.buildNavigationDrawerButton(context),
-    //               ),
-    //               widget.showLoadingPoisAnimation
-    //                   ? Container(
-    //                       color: Colors.transparent,
-    //                       alignment: Alignment.bottomRight,
-    //                       margin: EdgeInsets.only(
-    //                           right: MediaQuery.of(context).size.width / 60),
-    //                       height: MediaQuery.of(context).size.width / 10,
-    //                       width: MediaQuery.of(context).size.width / 10,
-    //                       child: LoadingAnimationWidget.threeArchedCircle(
-    //                         size: 30,
-    //                         color: Colors.blue,
-    //                       ))
-    //                   : Container(),
-    //             ],
-    //           ),
-    //         ),
-    //         Row(
-    //           children: [
-    //             Container(
-    //               margin: EdgeInsets.only(
-    //                   top: MediaQuery.of(context).size.width / 20,
-    //                   left: MediaQuery.of(context).size.width / 40),
-    //               width: MediaQuery.of(context).size.width / 10,
-    //               child: FloatingActionButton(
-    //                 heroTag: null,
-    //                 onPressed: () {
-    //                   _centerOnLocationUpdate = CenterOnLocationUpdate.always;
-    //                   _mapController.move(getRelativeCenterToUserPosition(),
-    //                       _mapController.zoom); // need to be called twice!
-    //
-    //                   // Center the location marker on the map and zoom the map to level 14.
-    //                   // _centerCurrentLocationStreamController.add(13);
-    //                 },
-    //                 child: const Icon(
-    //                   Icons.my_location,
-    //                   color: Colors.white,
-    //                 ),
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //         Expanded(
-    //             child: Column(
-    //           crossAxisAlignment: CrossAxisAlignment.center,
-    //           mainAxisSize: MainAxisSize.max,
-    //           mainAxisAlignment: MainAxisAlignment.end,
-    //           children: [
-    //             Expanded(child: guideTool.storiesDialogBox)
-    //             // guideTool.guideDialogBox,
-    //           ],
-    //         ))
-    //       ],
-    //     ),
-    //   ],
-    // );
   }
 
   void showNextButton() {
