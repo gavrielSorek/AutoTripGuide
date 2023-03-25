@@ -35,8 +35,8 @@ class Globals {
   static var globalColor = Color.fromRGBO(51, 153, 255, 0.8);
   static StreamController<VisitedPoi> globalVisitedPoiStream =
       StreamController<VisitedPoi>.broadcast();
-  static StreamController<MapPoi> globalClickedPoiStream =
-      StreamController<MapPoi>.broadcast();
+  static StreamController<String> globalClickedPoiStream =
+      StreamController<String>.broadcast();
   static String? svgMarkerString;
   static PoisIconsBytesHolder svgPoiMarkerBytes = PoisIconsBytesHolder();
   static SharedPreferences? globalPrefs;
@@ -97,9 +97,9 @@ class Globals {
     globalUserInfoObj = null;
     svgMarkerString =
         await rootBundle.loadString('assets/images/mapMarker.svg');
-    svgPoiMarkerBytes.greyIcon = (await Generals.svgStringToUint8List(svgMarkerString!, Colors.grey))!;
-    svgPoiMarkerBytes.blueIcon = (await Generals.svgStringToUint8List(svgMarkerString!, Colors.blue))!;
-    svgPoiMarkerBytes.yellowIcon = (await Generals.svgStringToUint8List(svgMarkerString!, Colors.yellow))!;
+    svgPoiMarkerBytes.greyIcon = (await Generals.poiIconSvgStringToUint8List(Colors.grey))!;
+    svgPoiMarkerBytes.blueIcon = (await Generals.poiIconSvgStringToUint8List(Colors.blue))!;
+    svgPoiMarkerBytes.greyTransIcon = (await Generals.poiIconSvgStringToUint8List(Colors.grey.withOpacity(0.40)))!;
 
     await globalGuideAudioPlayerHandler.initAudioPlayer();
     await globalController.init();

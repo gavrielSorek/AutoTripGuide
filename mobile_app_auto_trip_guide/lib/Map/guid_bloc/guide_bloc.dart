@@ -64,7 +64,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       List<MapPoi> poisToPlay = List.from(event.poisToPlay.values);
       for (MapPoi poi in poisToPlay) {
         Globals.globalUserMap.mapPoiActionStreamController.add(MapPoiAction(
-            layer: MarkersLayer.grey,
+            color: PoiIconColor.grey,
             action: PoiAction.add,
             mapPoi: poi));
       }

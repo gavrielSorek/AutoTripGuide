@@ -22,12 +22,12 @@ enum MarkersLayer { semiTransparent, grey, blue }
 enum PoiAction { add, remove }
 
 class MapPoiAction {
-  MarkersLayer layer;
+  PoiIconColor color;
   PoiAction action;
   MapPoi mapPoi;
 
   MapPoiAction(
-      {required this.layer, required this.action, required this.mapPoi});
+      {required this.color, required this.action, required this.mapPoi});
 }
 
 class UserMap extends StatefulWidget {
@@ -42,8 +42,8 @@ class UserMap extends StatefulWidget {
   static List userChangeLocationFuncs = [];
   StreamController<MapPoiAction> mapPoiActionStreamController =
       StreamController<MapPoiAction>.broadcast();
-  StreamController<LatLng> highlightedPoiStreamController =
-      StreamController<LatLng>.broadcast();
+  StreamController<MapPoi> highlightedPoiStreamController =
+      StreamController<MapPoi>.broadcast();
 
   static Future<void> mapInit() async {
     //permissions handling
@@ -94,8 +94,7 @@ class UserMap extends StatefulWidget {
   }
 
   void highlightPoi(MapPoi mapPoi) {
-    highlightedPoiStreamController
-        .add(LatLng(mapPoi.poi.latitude, mapPoi.poi.longitude));
+    highlightedPoiStreamController.add(mapPoi);
   }
 
   void setLoadingAnimationState(bool isActive) {
@@ -133,7 +132,6 @@ class _UserMapState extends State<UserMap> {
   WidgetVisibility nextButtonState = WidgetVisibility.hide;
   WidgetVisibility loadingPois = WidgetVisibility.view;
   MapPoi? highlightedPoi;
-  LatLng? pointShouldBeOnMap;
   List<Color> layersColor = [
     Color(0xffB0B0B0).withAlpha(130),
     Color(0xffB0B0B0),
@@ -200,18 +198,23 @@ class _UserMapState extends State<UserMap> {
     setState(() {});
   }
 
-  void setMapPoiAction(MapPoiAction mapPoiAction) {
+  Future<void> setMapPoiAction(MapPoiAction mapPoiAction) async {
     // first remove the element
-    listOfMarkersLayers[mapPoiAction.layer.index].removeWhere((marker) =>
+    listOfMarkersLayers[mapPoiAction.color.index].removeWhere((marker) =>
         marker.point.latitude == mapPoiAction.mapPoi.poi.latitude &&
         marker.point.longitude == mapPoiAction.mapPoi.poi.longitude);
     if (mapPoiAction.action == PoiAction.add) {
-      listOfMarkersLayers[mapPoiAction.layer.index].add(mapPoiAction.mapPoi
-          .createMarkerFromPoi(layersColor[mapPoiAction.layer.index]));
+      listOfMarkersLayers[mapPoiAction.color.index].add(mapPoiAction.mapPoi
+          .createMarkerFromPoi(layersColor[mapPoiAction.color.index]));
     }
-    _symbolManager.add(mapPoiAction.mapPoi.
-    getSymbolFromPoi(PoiIconColor.yellow));
-    // mapController!.addSymbol(mapPoiAction.mapPoi.getSymbolOptionFromPoi('TODO'));
+    mapbox.Symbol symbolToAdd =
+        mapPoiAction.mapPoi.getSymbolFromPoi(mapPoiAction.color);
+    mapbox.Symbol? oldSymbol = _symbolManager.byId(symbolToAdd.id);
+    if (oldSymbol != null) {
+      _symbolManager.set(symbolToAdd);
+    } else {
+      _symbolManager.add(symbolToAdd);
+    }
   }
 
   bool isValidScreenPoint(CustomPoint? screenPoint) {
@@ -242,8 +245,17 @@ class _UserMapState extends State<UserMap> {
     guideTool = Guide(context, guideData);
 
     widget.highlightedPoiStreamController.stream.listen((event) {
-      pointShouldBeOnMap = event;
-      setMapToHighlightedPoint(pointShouldBeOnMap!);
+      if (highlightedPoi != null) {
+        widget.mapPoiActionStreamController.add(MapPoiAction(
+            color: PoiIconColor.grey,
+            action: PoiAction.add,
+            mapPoi: highlightedPoi!));
+      }
+      highlightedPoi = event;
+      widget.mapPoiActionStreamController.add(MapPoiAction(
+          color: PoiIconColor.blue,
+          action: PoiAction.add,
+          mapPoi: highlightedPoi!));
     });
 
     LocationMarkerDataStreamFactory().compassHeadingStream().listen((event) {
@@ -322,7 +334,7 @@ class _UserMapState extends State<UserMap> {
           Globals.globalAllPois[poi.id] = mapPoi;
           Globals.addUnhandledPoiKey(poi.id);
           widget.mapPoiActionStreamController.add(MapPoiAction(
-              layer: MarkersLayer.semiTransparent,
+              color: PoiIconColor.greyTrans,
               action: PoiAction.add,
               mapPoi: MapPoi(poi)));
         }
@@ -375,7 +387,14 @@ class _UserMapState extends State<UserMap> {
       mapbox.MinMaxZoomPreference.unbounded;
   List<String> _styleStrings = [
     mapbox.MapboxStyles.MAPBOX_STREETS,
+    mapbox.MapboxStyles.OUTDOORS,
+    mapbox.MapboxStyles.LIGHT,
+    mapbox.MapboxStyles.EMPTY,
+    mapbox.MapboxStyles.DARK,
     mapbox.MapboxStyles.SATELLITE,
+    mapbox.MapboxStyles.SATELLITE_STREETS,
+    mapbox.MapboxStyles.TRAFFIC_DAY,
+    mapbox.MapboxStyles.TRAFFIC_DAY,
     "assets/style.json"
   ];
   int _styleStringIndex = 0;
@@ -407,7 +426,10 @@ class _UserMapState extends State<UserMap> {
 
   void _onMapCreated(mapbox.MapboxMapController controller) {
     mapController = controller;
-    _symbolManager = mapbox.SymbolManager(mapController, iconAllowOverlap: true);
+    _symbolManager = mapbox.SymbolManager(mapController, iconAllowOverlap: true,
+        onTap: (mapbox.Symbol symbol) {
+      Globals.globalClickedPoiStream.add(symbol.id);
+    });
     mapController.addListener(_onMapChanged);
     _extractMapInfo();
     mapController!.getTelemetryEnabled().then((isEnabled) => setState(() {
@@ -415,7 +437,8 @@ class _UserMapState extends State<UserMap> {
         }));
     mapController.addImage('greyPoi', Globals.svgPoiMarkerBytes.greyIcon);
     mapController.addImage('bluePoi', Globals.svgPoiMarkerBytes.blueIcon);
-    mapController.addImage('yellowPoi', Globals.svgPoiMarkerBytes.yellowIcon);
+    mapController.addImage(
+        'greyTransPoi', Globals.svgPoiMarkerBytes.greyTransIcon);
 
     //mapController!.addImage("poi", bytes);
     // mapController!.moveCamera(mapbox.CameraUpdate.newCameraPosition(mapbox.CameraPosition(target: mapController!.cameraPosition!.target, )));
@@ -434,7 +457,6 @@ class _UserMapState extends State<UserMap> {
     ));
   }
 
-
   _clearFill() {
     if (_selectedFill != null) {
       mapController!.removeFill(_selectedFill!);
@@ -446,7 +468,7 @@ class _UserMapState extends State<UserMap> {
 
   _drawFill(List<dynamic> features) async {
     Map<String, dynamic>? feature =
-    features.firstWhereOrNull((f) => f['geometry']['type'] == 'Polygon');
+        features.firstWhereOrNull((f) => f['geometry']['type'] == 'Polygon');
 
     if (feature != null) {
       List<List<mapbox.LatLng>> geometry = feature['geometry']['coordinates']
@@ -469,8 +491,8 @@ class _UserMapState extends State<UserMap> {
   @override
   Widget build(BuildContext context) {
     print("hello from build map");
-    return Stack(
-      children: [mapbox.MapboxMap(
+    return Stack(children: [
+      mapbox.MapboxMap(
         accessToken: MapConfiguration.mapboxAccessToken,
         onMapCreated: _onMapCreated,
         initialCameraPosition: _kInitialPosition,
@@ -529,84 +551,81 @@ class _UserMapState extends State<UserMap> {
           print(
               "new location: ${location.position}, alt.: ${location.altitude}, bearing: ${location.bearing}, speed: ${location.speed}, horiz. accuracy: ${location.horizontalAccuracy}, vert. accuracy: ${location.verticalAccuracy}");
         },
-         onStyleLoadedCallback: _onStyleLoadedCallback,
+        onStyleLoadedCallback: _onStyleLoadedCallback,
       ),
-
-        Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 60),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    child:
-                    NavigationDrawer.buildNavigationDrawerButton(context),
-                  ),
-                  widget.showLoadingPoisAnimation
-                      ? Container(
-                      color: Colors.transparent,
-                      alignment: Alignment.bottomRight,
-                      margin: EdgeInsets.only(
-                          right: MediaQuery.of(context).size.width / 60),
-                      height: MediaQuery.of(context).size.width / 10,
-                      width: MediaQuery.of(context).size.width / 10,
-                      child: LoadingAnimationWidget.threeArchedCircle(
-                        size: 30,
-                        color: Colors.blue,
-                      ))
-                      : Container(),
-                ],
-              ),
-            ),
-            Row(
+      Column(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 60),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.width / 20,
-                      left: MediaQuery.of(context).size.width / 40),
-                  width: MediaQuery.of(context).size.width / 10,
-                  child: FloatingActionButton(
-                    heroTag: null,
-                    onPressed: () {
-                      setState(() {
-                        _myLocationTrackingMode = mapbox.MyLocationTrackingMode.Tracking;
-
-                        // mapbox.CameraPosition cameraPosition = mapbox.CameraPosition(
-                        //   target: mapController.cameraPosition.target
-                        // );
-                        //
-                        //     .target(location)
-                        //     .zoom(zoomLevel)
-                        //     .padding(0, screenHeight / 2, 0, 0)
-                        //     .build()
-                        //
-                        // mapController.moveCamera(mapbox.CameraUpdate())
-                      });
-                    },
-                    child: const Icon(
-                      Icons.my_location,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: NavigationDrawer.buildNavigationDrawerButton(context),
                 ),
+                widget.showLoadingPoisAnimation
+                    ? Container(
+                        color: Colors.transparent,
+                        alignment: Alignment.bottomRight,
+                        margin: EdgeInsets.only(
+                            right: MediaQuery.of(context).size.width / 60),
+                        height: MediaQuery.of(context).size.width / 10,
+                        width: MediaQuery.of(context).size.width / 10,
+                        child: LoadingAnimationWidget.threeArchedCircle(
+                          size: 30,
+                          color: Colors.blue,
+                        ))
+                    : Container(),
               ],
             ),
-            Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Expanded(child: guideTool.storiesDialogBox)
-                    // guideTool.guideDialogBox,
-                  ],
-                ))
-          ],
-        ),
+          ),
+          Row(
+            children: [
+              Container(
+                margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.width / 20,
+                    left: MediaQuery.of(context).size.width / 40),
+                width: MediaQuery.of(context).size.width / 10,
+                child: FloatingActionButton(
+                  heroTag: null,
+                  onPressed: () {
+                    setState(() {
+                      _myLocationTrackingMode =
+                          mapbox.MyLocationTrackingMode.Tracking;
 
-      ]
-    );
+                      // mapbox.CameraPosition cameraPosition = mapbox.CameraPosition(
+                      //   target: mapController.cameraPosition.target
+                      // );
+                      //
+                      //     .target(location)
+                      //     .zoom(zoomLevel)
+                      //     .padding(0, screenHeight / 2, 0, 0)
+                      //     .build()
+                      //
+                      // mapController.moveCamera(mapbox.CameraUpdate())
+                    });
+                  },
+                  child: const Icon(
+                    Icons.my_location,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Expanded(child: guideTool.storiesDialogBox)
+              // guideTool.guideDialogBox,
+            ],
+          ))
+        ],
+      ),
+    ]);
   }
 
   void showNextButton() {

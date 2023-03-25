@@ -39,8 +39,8 @@ class Guide {
       Globals.globalUserMap.userMapState?.loadNewPois();
     });
     Stream stream = Globals.globalClickedPoiStream.stream;
-    stream.listen((mapPoi) {
-      mapPoiClicked(mapPoi);
+    stream.listen((mapPoiId) {
+      mapPoiClicked(Globals.globalAllPois[mapPoiId]!);
     });
     // StoriesDialogBox(key: UniqueKey());
   }
