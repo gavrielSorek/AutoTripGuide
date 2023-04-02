@@ -204,16 +204,19 @@ class _UserMapState extends State<UserMap> {
         marker.point.latitude == mapPoiAction.mapPoi.poi.latitude &&
         marker.point.longitude == mapPoiAction.mapPoi.poi.longitude);
     if (mapPoiAction.action == PoiAction.add) {
-      listOfMarkersLayers[mapPoiAction.color.index].add(mapPoiAction.mapPoi
-          .createMarkerFromPoi(layersColor[mapPoiAction.color.index]));
-    }
-    mapbox.Symbol symbolToAdd =
-        mapPoiAction.mapPoi.getSymbolFromPoi(mapPoiAction.color);
-    mapbox.Symbol? oldSymbol = _symbolManager.byId(symbolToAdd.id);
-    if (oldSymbol != null) {
-      _symbolManager.set(symbolToAdd);
-    } else {
-      _symbolManager.add(symbolToAdd);
+      mapbox.Symbol symbolToAdd =
+      mapPoiAction.mapPoi.getSymbolFromPoi(mapPoiAction.color);
+      mapbox.Symbol? oldSymbol = _symbolManager.byId(symbolToAdd.id);
+      if (oldSymbol != null) {
+        _symbolManager.set(symbolToAdd);
+      } else {
+        _symbolManager.add(symbolToAdd);
+      }
+    } else if(mapPoiAction.action == PoiAction.remove) {
+      mapbox.Symbol? oldSymbol = _symbolManager.byId(mapPoiAction.mapPoi.poi.id);
+      if (oldSymbol != null) {
+        _symbolManager.remove(oldSymbol);
+      }
     }
   }
 
@@ -424,7 +427,7 @@ class _UserMapState extends State<UserMap> {
     });
   }
 
-  void _onMapCreated(mapbox.MapboxMapController controller) {
+  Future<void> _onMapCreated(mapbox.MapboxMapController controller) async {
     mapController = controller;
     _symbolManager = mapbox.SymbolManager(mapController, iconAllowOverlap: true,
         onTap: (mapbox.Symbol symbol) {
@@ -439,6 +442,37 @@ class _UserMapState extends State<UserMap> {
     mapController.addImage('bluePoi', Globals.svgPoiMarkerBytes.blueIcon);
     mapController.addImage(
         'greyTransPoi', Globals.svgPoiMarkerBytes.greyTransIcon);
+
+
+
+
+
+
+    // Get the current zoom level of the map
+    double zoom = mapController.cameraPosition!.zoom;
+    zoom = 15;
+// Calculate the latitude degrees per pixel at the current zoom level
+    double latPerPx = 360 / pow(2, zoom) / 256;
+
+// Calculate the new target latitude value based on the desired offset in pixels
+    double newTargetLat = UserMap.USER_LOCATION.latitude - 100 * latPerPx;
+
+    mapbox.LatLng targetLatLng = await mapController.toLatLng(Point(MediaQuery.of(context).size.width / 2,
+        MediaQuery.of(context).size.height / 2 - Globals.globalWidgetsSizes.dialogBoxTotalHeight / 2));
+
+// Set the desired bearing (rotation) of the map in degrees
+    double bearing = 0.0;
+
+// Update the center and bearing of the map
+    mapController.animateCamera(
+      mapbox.CameraUpdate.newCameraPosition(
+        mapbox.CameraPosition(
+          target: targetLatLng,
+          bearing: 0,
+          zoom: 15
+        ),
+      ),
+    );
 
     //mapController!.addImage("poi", bytes);
     // mapController!.moveCamera(mapbox.CameraUpdate.newCameraPosition(mapbox.CameraPosition(target: mapController!.cameraPosition!.target, )));
