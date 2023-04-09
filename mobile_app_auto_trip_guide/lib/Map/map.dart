@@ -2,10 +2,8 @@ import 'dart:async';
 import 'package:final_project/General%20Wigets/menu.dart';
 import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/map_configuration.dart';
-import 'package:final_project/Map/personalize_recommendation.dart';
 import 'package:final_project/Map/pois_attributes_calculator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
@@ -13,6 +11,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
+import '../General Wigets/UniversalPanGestureRecognizer.dart';
 import 'guide.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:math';
@@ -126,7 +125,6 @@ class _UserMapState extends State<UserMap> {
   GuideData guideData = GuideData();
   late Guide guideTool;
   WidgetVisibility navButtonState = WidgetVisibility.hide;
-  WidgetVisibility nextButtonState = WidgetVisibility.hide;
   WidgetVisibility loadingPois = WidgetVisibility.view;
   MapPoi? highlightedPoi;
   double mapHeading = 0;
@@ -302,13 +300,13 @@ class _UserMapState extends State<UserMap> {
     return false;
   }
 
-  late mapbox.MapboxMapController mapController;
+  late mapbox.MapboxMapController _mapController;
   var isLight = true;
 
   void _extractMapInfo() {
-    final position = mapController!.cameraPosition;
+    final position = _mapController!.cameraPosition;
     if (position != null) _cameraPosition = position;
-    _isMoving = mapController!.isCameraMoving;
+    _isMoving = _mapController!.isCameraMoving;
   }
 
   void _onMapChanged() {
@@ -327,30 +325,34 @@ class _UserMapState extends State<UserMap> {
   }
 
   Future<void> _onMapCreated(mapbox.MapboxMapController controller) async {
-    mapController = controller;
-    _symbolManager = mapbox.SymbolManager(mapController, iconAllowOverlap: true,
-        onTap: (mapbox.Symbol symbol) {
+    _mapController = controller;
+    _symbolManager = mapbox.SymbolManager(_mapController,
+        iconAllowOverlap: true, onTap: (mapbox.Symbol symbol) {
       Globals.globalClickedPoiStream.add(symbol.id);
     });
-    mapController.addListener(_onMapChanged);
+    _mapController.addListener(_onMapChanged);
     _extractMapInfo();
-    mapController!.getTelemetryEnabled().then((isEnabled) => setState(() {
+    _mapController!.getTelemetryEnabled().then((isEnabled) => setState(() {
           _telemetryEnabled = isEnabled;
         }));
-    mapController.addImage('greyPoi', Globals.svgPoiMarkerBytes.greyIcon);
-    mapController.addImage('bluePoi', Globals.svgPoiMarkerBytes.blueIcon);
-    mapController.addImage(
+
+    _mapController.addImage('greyPoi', Globals.svgPoiMarkerBytes.greyIcon);
+    _mapController.addImage('bluePoi', Globals.svgPoiMarkerBytes.blueIcon);
+    _mapController.addImage(
         'greyTransPoi', Globals.svgPoiMarkerBytes.greyTransIcon);
 
     LocationMarkerDataStreamFactory()
         .fromCompassHeadingStream()
         .listen((event) async {
+      if (_myLocationTrackingMode == mapbox.MyLocationTrackingMode.None) {
+        return;
+      }
       final double epsilon = 2;
       double newHeading = event!.heading / pi * 180;
       if ((newHeading - mapHeading).abs() < epsilon) return;
       mapHeading = newHeading;
 
-      mapController.animateCamera(
+      _mapController.animateCamera(
         mapbox.CameraUpdate.newCameraPosition(
           mapbox.CameraPosition(
               target: _getRelativeCenterLatLng(_cameraPosition.zoom),
@@ -371,7 +373,7 @@ class _UserMapState extends State<UserMap> {
 
   _clearFill() {
     if (_selectedFill != null) {
-      mapController!.removeFill(_selectedFill!);
+      _mapController!.removeFill(_selectedFill!);
       setState(() {
         _selectedFill = null;
       });
@@ -388,7 +390,7 @@ class _UserMapState extends State<UserMap> {
               (ll) => ll.map((l) => LatLng(l[1], l[0])).toList().cast<LatLng>())
           .toList()
           .cast<List<LatLng>>();
-      mapbox.Fill fill = await mapController!.addFill(mapbox.FillOptions(
+      mapbox.Fill fill = await _mapController!.addFill(mapbox.FillOptions(
         geometry: geometry,
         fillColor: "#FF0000",
         fillOutlineColor: "#FF0000",
@@ -400,10 +402,23 @@ class _UserMapState extends State<UserMap> {
     }
   }
 
+  void _onMapDrag(DragUpdateDetails details) {
+    _myLocationTrackingMode = mapbox.MyLocationTrackingMode.None;
+  }
+
   @override
   Widget build(BuildContext context) {
+    UniversalPanGestureRecognizer _panGestureRecognizer =
+        UniversalPanGestureRecognizer(
+      onUpdate: (details) {
+        _onMapDrag(details);
+      },
+    );
     print("hello from build map");
     map = mapbox.MapboxMap(
+      gestureRecognizers: Set()
+        ..add(Factory<UniversalPanGestureRecognizer>(
+            () => _panGestureRecognizer)),
       accessToken: MapConfiguration.mapboxAccessToken,
       onMapCreated: _onMapCreated,
       initialCameraPosition: _cameraPosition,
@@ -417,14 +432,14 @@ class _UserMapState extends State<UserMap> {
       zoomGesturesEnabled: _zoomGesturesEnabled,
       doubleClickZoomEnabled: _doubleClickToZoomEnabled,
       myLocationEnabled: _myLocationEnabled,
-      myLocationTrackingMode: _myLocationTrackingMode,
+      myLocationTrackingMode: mapbox.MyLocationTrackingMode.None,
       myLocationRenderMode: mapbox.MyLocationRenderMode.COMPASS,
       trackCameraPosition: true,
       onMapClick: (point, latLng) async {
         print(
             "Map click: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
         print("Filter $_featureQueryFilter");
-        List features = await mapController!
+        List features = await _mapController!
             .queryRenderedFeatures(point, ["landuse"], _featureQueryFilter);
         print('# features: ${features.length}');
         _clearFill();
@@ -438,26 +453,21 @@ class _UserMapState extends State<UserMap> {
       onMapLongClick: (point, latLng) async {
         print(
             "Map long press: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
-        Point convertedPoint = await mapController!.toScreenLocation(latLng);
-        mapbox.LatLng convertedLatLng = await mapController!.toLatLng(point);
+        Point convertedPoint = await _mapController.toScreenLocation(latLng);
+        mapbox.LatLng convertedLatLng = await _mapController.toLatLng(point);
         print(
             "Map long press converted: ${convertedPoint.x},${convertedPoint.y}   ${convertedLatLng.latitude}/${convertedLatLng.longitude}");
         double metersPerPixel =
-            await mapController!.getMetersPerPixelAtLatitude(latLng.latitude);
+            await _mapController.getMetersPerPixelAtLatitude(latLng.latitude);
 
         print(
             "Map long press The distance measured in meters at latitude ${latLng.latitude} is $metersPerPixel m");
 
         List features =
-            await mapController!.queryRenderedFeatures(point, [], null);
+            await _mapController.queryRenderedFeatures(point, [], null);
         if (features.length > 0) {
           print(features[0]);
         }
-      },
-      onCameraTrackingDismissed: () {
-        this.setState(() {
-          _myLocationTrackingMode = mapbox.MyLocationTrackingMode.None;
-        });
       },
       onUserLocationUpdated: (location) {
         print(
@@ -504,29 +514,24 @@ class _UserMapState extends State<UserMap> {
                 child: FloatingActionButton(
                   heroTag: null,
                   onPressed: () {
-                    setState(() async {
-                      // _myLocationTrackingMode =
-                      //     mapbox.MyLocationTrackingMode.Tracking;
-                      double zoom = 17;
-                      // zoom = 15;
+                    if (_myLocationTrackingMode !=
+                        mapbox.MyLocationTrackingMode.Tracking) {
+                      _myLocationTrackingMode =
+                          mapbox.MyLocationTrackingMode.Tracking;
+                    }
 
-                      double latPerPx = 360 / pow(2, zoom) / 256;
-
-                      await mapController.moveCamera(
+                    () async {
+                      _mapController.animateCamera(
                         mapbox.CameraUpdate.newCameraPosition(
                           mapbox.CameraPosition(
-                              target: mapbox.LatLng(
-                                  UserMap.USER_LOCATION.latitude -
-                                      latPerPx *
-                                          (Globals.globalWidgetsSizes
-                                                  .dialogBoxTotalHeight /
-                                              5),
-                                  UserMap.USER_LOCATION.longitude),
-                              bearing: 0,
-                              zoom: zoom),
+                              target: _getRelativeCenterLatLng(
+                                  _cameraPosition.zoom),
+                              bearing: mapHeading,
+                              zoom: _cameraPosition.zoom),
                         ),
                       );
-                    });
+                      updateState();
+                    };
                   },
                   child: const Icon(
                     Icons.my_location,
@@ -549,18 +554,6 @@ class _UserMapState extends State<UserMap> {
         ],
       ),
     ]);
-  }
-
-  void showNextButton() {
-    setState(() {
-      nextButtonState = WidgetVisibility.view;
-    });
-  }
-
-  void hideNextButton() {
-    setState(() {
-      nextButtonState = WidgetVisibility.hide;
-    });
   }
 
   void showNavButton() {
