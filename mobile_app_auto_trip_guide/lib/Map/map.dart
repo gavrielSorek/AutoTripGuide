@@ -41,9 +41,9 @@ class UserMap extends StatefulWidget {
   static double DISTANCE_BETWEEN_AREAS = 1000; //1000 meters
   static List userChangeLocationFuncs = [];
   StreamController<MapPoiAction> mapPoiActionStreamController =
-      StreamController<MapPoiAction>.broadcast();
+  StreamController<MapPoiAction>.broadcast();
   StreamController<MapPoi> highlightedPoiStreamController =
-      StreamController<MapPoi>.broadcast();
+  StreamController<MapPoi>.broadcast();
 
   static Future<void> mapInit() async {
     //permissions handling
@@ -125,7 +125,7 @@ class _UserMapState extends State<UserMap> {
   late StreamSubscription mapPoiActionSubscription;
   List<List<Marker>> listOfMarkersLayers = [];
   StreamController<LocationMarkerPosition> _currentLocationStreamController =
-      StreamController<LocationMarkerPosition>();
+  StreamController<LocationMarkerPosition>();
   GuideData guideData = GuideData();
   late Guide guideTool;
   WidgetVisibility navButtonState = WidgetVisibility.hide;
@@ -201,7 +201,7 @@ class _UserMapState extends State<UserMap> {
   Future<void> setMapPoiAction(MapPoiAction mapPoiAction) async {
     // first remove the element
     listOfMarkersLayers[mapPoiAction.color.index].removeWhere((marker) =>
-        marker.point.latitude == mapPoiAction.mapPoi.poi.latitude &&
+    marker.point.latitude == mapPoiAction.mapPoi.poi.latitude &&
         marker.point.longitude == mapPoiAction.mapPoi.poi.longitude);
     if (mapPoiAction.action == PoiAction.add) {
       mapbox.Symbol symbolToAdd =
@@ -212,8 +212,9 @@ class _UserMapState extends State<UserMap> {
       } else {
         _symbolManager.add(symbolToAdd);
       }
-    } else if(mapPoiAction.action == PoiAction.remove) {
-      mapbox.Symbol? oldSymbol = _symbolManager.byId(mapPoiAction.mapPoi.poi.id);
+    } else if (mapPoiAction.action == PoiAction.remove) {
+      mapbox.Symbol? oldSymbol = _symbolManager.byId(
+          mapPoiAction.mapPoi.poi.id);
       if (oldSymbol != null) {
         _symbolManager.remove(oldSymbol);
       }
@@ -239,9 +240,9 @@ class _UserMapState extends State<UserMap> {
   void initState() {
     mapPoiActionSubscription =
         widget.mapPoiActionStreamController.stream.listen((event) {
-      setMapPoiAction(event);
-      updateState();
-    });
+          setMapPoiAction(event);
+          updateState();
+        });
     print("init _UserMapState");
     _centerOnLocationUpdate = CenterOnLocationUpdate.always;
     _centerCurrentLocationStreamController = StreamController<double?>();
@@ -261,24 +262,46 @@ class _UserMapState extends State<UserMap> {
           mapPoi: highlightedPoi!));
     });
 
-    LocationMarkerDataStreamFactory().compassHeadingStream().listen((event) {
+
+    LocationMarkerDataStreamFactory().fromCompassHeadingStream().listen((event) async {
       final double epsilon = 2;
-      double newHeading = -event!.heading / pi * 180;
+      double newHeading = event!.heading / pi * 180;
       if (_centerOnLocationUpdate != CenterOnLocationUpdate.always ||
           (newHeading - mapHeading).abs() < epsilon) return;
       mapHeading = newHeading;
-      print(mapHeading);
-      _mapController.rotate(mapHeading);
-      updateMapRelativePosition(UserMap.USER_LOCATION);
+
+
+
+
+
+
+
+
+
+      double zoom = mapController.cameraPosition?.zoom ?? 17;
+
+      double latPerPx = 360 / pow(2, zoom) / 256;
+      const double R = 6371000; // Mean radius of the Earth in meters
+
+      mapbox.LatLng lngLat = PoisAttributesCalculator.getPointAtAngle( UserMap.USER_LOCATION.latitude, UserMap.USER_LOCATION.longitude,latPerPx * (Globals.globalWidgetsSizes.dialogBoxTotalHeight / 4.5), ( 270 - mapHeading));
+      mapController.animateCamera(
+      mapbox.CameraUpdate.newCameraPosition(
+        mapbox.CameraPosition(
+            target: lngLat,
+            bearing: mapHeading,
+            zoom: zoom
+        ),
+      ),
+    );
     });
     super.initState();
   }
 
   void setMapToHighlightedPoint(LatLng point) {
     double xMarginFromCenter =
-        (UserMap.USER_LOCATION.longitude - point.longitude).abs();
+    (UserMap.USER_LOCATION.longitude - point.longitude).abs();
     double yMarginFromCenter =
-        (UserMap.USER_LOCATION.latitude - point.latitude).abs();
+    (UserMap.USER_LOCATION.latitude - point.latitude).abs();
     _mapController.rotate(0);
     _mapController.fitBounds(
       LatLngBounds(
@@ -327,7 +350,6 @@ class _UserMapState extends State<UserMap> {
             selectedLocation.heading, selectedLocation.speed));
 
     pois = PoisAttributesCalculator.filterPois(pois, selectedLocation);
-// pois = [new Poi(latitude: 32.100084,longitude: 34.881173,country: 'Israel',poiName: 'Roy1',Categories: [],id:'a',audio: null,shortDesc:'Adullam-France Park (Hebrew: פארק עדולם-צרפת), also known as Parc de France-Adoulam, is a sprawling park of 50,000 dunams (50 km2; 19 sq mi)(ca. 12,350 acres) in the Central District of Israel, located south of Beit Shemesh. The park, established in 2008 for public recreation, features two major hiking and biking trails, and four major archaeological sites from the Second Temple period. It stretches between Naḥal Ha-Elah (Highway 375), its northernmost boundary, to Naḥal Guvrin (Highway 35), its southernmost boundary. To its west lies the Beit Guvrin-Beit Shemesh highway, and to its east the "green line" – now territories under joint Israeli-Palestinian Arab control – which marks its limit.'),new Poi(latitude: 32.100080,longitude: 34.881170,poiName: 'Roy2',country: 'Israel',Categories: [],id:'b',audio: null,shortDesc: 'bbbb')];
     setState(() {
       // add all the new poi
       print("add pois to map");
@@ -376,9 +398,10 @@ class _UserMapState extends State<UserMap> {
   var isLight = true;
 
   // variables
+  late mapbox.MapboxMap map;
   mapbox.CameraPosition _position = _kInitialPosition;
   static final mapbox.CameraPosition _kInitialPosition =
-      const mapbox.CameraPosition(
+  const mapbox.CameraPosition(
     target: mapbox.LatLng(-33.852, 151.211),
     zoom: 11.0,
   );
@@ -410,8 +433,9 @@ class _UserMapState extends State<UserMap> {
   bool _telemetryEnabled = true;
   late mapbox.SymbolManager _symbolManager;
 
+
   mapbox.MyLocationTrackingMode _myLocationTrackingMode =
-      mapbox.MyLocationTrackingMode.None;
+      mapbox.MyLocationTrackingMode.Tracking;
   List<Object>? _featureQueryFilter;
   mapbox.Fill? _selectedFill;
 
@@ -431,58 +455,19 @@ class _UserMapState extends State<UserMap> {
     mapController = controller;
     _symbolManager = mapbox.SymbolManager(mapController, iconAllowOverlap: true,
         onTap: (mapbox.Symbol symbol) {
-      Globals.globalClickedPoiStream.add(symbol.id);
-    });
+          Globals.globalClickedPoiStream.add(symbol.id);
+        });
     mapController.addListener(_onMapChanged);
     _extractMapInfo();
-    mapController!.getTelemetryEnabled().then((isEnabled) => setState(() {
+    mapController!.getTelemetryEnabled().then((isEnabled) =>
+        setState(() {
           _telemetryEnabled = isEnabled;
         }));
     mapController.addImage('greyPoi', Globals.svgPoiMarkerBytes.greyIcon);
     mapController.addImage('bluePoi', Globals.svgPoiMarkerBytes.blueIcon);
     mapController.addImage(
         'greyTransPoi', Globals.svgPoiMarkerBytes.greyTransIcon);
-
-
-
-
-
-
-    // Get the current zoom level of the map
-    double zoom = mapController.cameraPosition!.zoom;
-    zoom = 15;
-// Calculate the latitude degrees per pixel at the current zoom level
-    double latPerPx = 360 / pow(2, zoom) / 256;
-
-// Calculate the new target latitude value based on the desired offset in pixels
-    double newTargetLat = UserMap.USER_LOCATION.latitude - 100 * latPerPx;
-
-    mapbox.LatLng targetLatLng = await mapController.toLatLng(Point(MediaQuery.of(context).size.width / 2,
-        MediaQuery.of(context).size.height / 2 - Globals.globalWidgetsSizes.dialogBoxTotalHeight / 2));
-
-// Set the desired bearing (rotation) of the map in degrees
-    double bearing = 0.0;
-
-// Update the center and bearing of the map
-    mapController.animateCamera(
-      mapbox.CameraUpdate.newCameraPosition(
-        mapbox.CameraPosition(
-          target: targetLatLng,
-          bearing: 0,
-          zoom: 15
-        ),
-      ),
-    );
-
-    //mapController!.addImage("poi", bytes);
-    // mapController!.moveCamera(mapbox.CameraUpdate.newCameraPosition(mapbox.CameraPosition(target: mapController!.cameraPosition!.target, )));
-    // var cameraPosition = mapbox.CameraPosition.
-    //     .target(location)
-    //     .zoom(zoomLevel)
-    //     .padding(0, screenHeight / 2, 0, 0)
-    //     .build()
   }
-
   _onStyleLoadedCallback() {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text("Style loaded :)"),
@@ -502,7 +487,7 @@ class _UserMapState extends State<UserMap> {
 
   _drawFill(List<dynamic> features) async {
     Map<String, dynamic>? feature =
-        features.firstWhereOrNull((f) => f['geometry']['type'] == 'Polygon');
+    features.firstWhereOrNull((f) => f['geometry']['type'] == 'Polygon');
 
     if (feature != null) {
       List<List<mapbox.LatLng>> geometry = feature['geometry']['coordinates']
@@ -525,68 +510,80 @@ class _UserMapState extends State<UserMap> {
   @override
   Widget build(BuildContext context) {
     print("hello from build map");
+    map = mapbox.MapboxMap(
+      accessToken: MapConfiguration.mapboxAccessToken,
+      onMapCreated: _onMapCreated,
+      initialCameraPosition: _kInitialPosition,
+      compassEnabled: _compassEnabled,
+      cameraTargetBounds: _cameraTargetBounds,
+      minMaxZoomPreference: _minMaxZoomPreference,
+      styleString: _styleStrings[_styleStringIndex],
+      rotateGesturesEnabled: _rotateGesturesEnabled,
+      scrollGesturesEnabled: _scrollGesturesEnabled,
+      tiltGesturesEnabled: _tiltGesturesEnabled,
+      zoomGesturesEnabled: _zoomGesturesEnabled,
+      doubleClickZoomEnabled: _doubleClickToZoomEnabled,
+      myLocationEnabled: _myLocationEnabled,
+      myLocationTrackingMode: _myLocationTrackingMode,
+      myLocationRenderMode: mapbox.MyLocationRenderMode.COMPASS,
+      onMapClick: (point, latLng) async {
+        print(
+            "Map click: ${point.x},${point.y}   ${latLng.latitude}/${latLng
+                .longitude}");
+        print("Filter $_featureQueryFilter");
+        List features = await mapController!
+            .queryRenderedFeatures(point, ["landuse"], _featureQueryFilter);
+        print('# features: ${features.length}');
+        _clearFill();
+        if (features.isEmpty && _featureQueryFilter != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('QueryRenderedFeatures: No features found!')));
+        } else if (features.isNotEmpty) {
+          _drawFill(features);
+        }
+      },
+      onMapLongClick: (point, latLng) async {
+        print(
+            "Map long press: ${point.x},${point.y}   ${latLng
+                .latitude}/${latLng.longitude}");
+        Point convertedPoint = await mapController!.toScreenLocation(latLng);
+        mapbox.LatLng convertedLatLng = await mapController!.toLatLng(point);
+        print(
+            "Map long press converted: ${convertedPoint.x},${convertedPoint
+                .y}   ${convertedLatLng.latitude}/${convertedLatLng
+                .longitude}");
+        double metersPerPixel =
+        await mapController!.getMetersPerPixelAtLatitude(latLng.latitude);
+
+        print(
+            "Map long press The distance measured in meters at latitude ${latLng
+                .latitude} is $metersPerPixel m");
+
+        List features =
+        await mapController!.queryRenderedFeatures(point, [], null);
+        if (features.length > 0) {
+          print(features[0]);
+        }
+      },
+      onCameraTrackingDismissed: () {
+        this.setState(() {
+          _myLocationTrackingMode = mapbox.MyLocationTrackingMode.None;
+        });
+      },
+      onUserLocationUpdated: (location) {
+        print(
+            "new location: ${location.position}, alt.: ${location
+                .altitude}, bearing: ${location.bearing}, speed: ${location
+                .speed}, horiz. accuracy: ${location
+                .horizontalAccuracy}, vert. accuracy: ${location
+                .verticalAccuracy}");
+      },
+      onStyleLoadedCallback: _onStyleLoadedCallback,
+    );
+
+
     return Stack(children: [
-      mapbox.MapboxMap(
-        accessToken: MapConfiguration.mapboxAccessToken,
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: _kInitialPosition,
-        compassEnabled: _compassEnabled,
-        cameraTargetBounds: _cameraTargetBounds,
-        minMaxZoomPreference: _minMaxZoomPreference,
-        styleString: _styleStrings[_styleStringIndex],
-        rotateGesturesEnabled: _rotateGesturesEnabled,
-        scrollGesturesEnabled: _scrollGesturesEnabled,
-        tiltGesturesEnabled: _tiltGesturesEnabled,
-        zoomGesturesEnabled: _zoomGesturesEnabled,
-        doubleClickZoomEnabled: _doubleClickToZoomEnabled,
-        myLocationEnabled: _myLocationEnabled,
-        myLocationTrackingMode: _myLocationTrackingMode,
-        myLocationRenderMode: mapbox.MyLocationRenderMode.GPS,
-        onMapClick: (point, latLng) async {
-          print(
-              "Map click: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
-          print("Filter $_featureQueryFilter");
-          List features = await mapController!
-              .queryRenderedFeatures(point, ["landuse"], _featureQueryFilter);
-          print('# features: ${features.length}');
-          _clearFill();
-          if (features.isEmpty && _featureQueryFilter != null) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('QueryRenderedFeatures: No features found!')));
-          } else if (features.isNotEmpty) {
-            _drawFill(features);
-          }
-        },
-        onMapLongClick: (point, latLng) async {
-          print(
-              "Map long press: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
-          Point convertedPoint = await mapController!.toScreenLocation(latLng);
-          mapbox.LatLng convertedLatLng = await mapController!.toLatLng(point);
-          print(
-              "Map long press converted: ${convertedPoint.x},${convertedPoint.y}   ${convertedLatLng.latitude}/${convertedLatLng.longitude}");
-          double metersPerPixel =
-              await mapController!.getMetersPerPixelAtLatitude(latLng.latitude);
-
-          print(
-              "Map long press The distance measured in meters at latitude ${latLng.latitude} is $metersPerPixel m");
-
-          List features =
-              await mapController!.queryRenderedFeatures(point, [], null);
-          if (features.length > 0) {
-            print(features[0]);
-          }
-        },
-        onCameraTrackingDismissed: () {
-          this.setState(() {
-            _myLocationTrackingMode = mapbox.MyLocationTrackingMode.None;
-          });
-        },
-        onUserLocationUpdated: (location) {
-          print(
-              "new location: ${location.position}, alt.: ${location.altitude}, bearing: ${location.bearing}, speed: ${location.speed}, horiz. accuracy: ${location.horizontalAccuracy}, vert. accuracy: ${location.verticalAccuracy}");
-        },
-        onStyleLoadedCallback: _onStyleLoadedCallback,
-      ),
+      map,
       Column(
         children: [
           Container(
@@ -599,16 +596,25 @@ class _UserMapState extends State<UserMap> {
                 ),
                 widget.showLoadingPoisAnimation
                     ? Container(
-                        color: Colors.transparent,
-                        alignment: Alignment.bottomRight,
-                        margin: EdgeInsets.only(
-                            right: MediaQuery.of(context).size.width / 60),
-                        height: MediaQuery.of(context).size.width / 10,
-                        width: MediaQuery.of(context).size.width / 10,
-                        child: LoadingAnimationWidget.threeArchedCircle(
-                          size: 30,
-                          color: Colors.blue,
-                        ))
+                    color: Colors.transparent,
+                    alignment: Alignment.bottomRight,
+                    margin: EdgeInsets.only(
+                        right: MediaQuery
+                            .of(context)
+                            .size
+                            .width / 60),
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .width / 10,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width / 10,
+                    child: LoadingAnimationWidget.threeArchedCircle(
+                      size: 30,
+                      color: Colors.blue,
+                    ))
                     : Container(),
               ],
             ),
@@ -617,26 +623,38 @@ class _UserMapState extends State<UserMap> {
             children: [
               Container(
                 margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.width / 20,
-                    left: MediaQuery.of(context).size.width / 40),
-                width: MediaQuery.of(context).size.width / 10,
+                    top: MediaQuery
+                        .of(context)
+                        .size
+                        .width / 20,
+                    left: MediaQuery
+                        .of(context)
+                        .size
+                        .width / 40),
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width / 10,
                 child: FloatingActionButton(
                   heroTag: null,
                   onPressed: () {
-                    setState(() {
-                      _myLocationTrackingMode =
-                          mapbox.MyLocationTrackingMode.Tracking;
+                    setState(() async {
+                      // _myLocationTrackingMode =
+                      //     mapbox.MyLocationTrackingMode.Tracking;
+                      double zoom = 17;
+                      // zoom = 15;
 
-                      // mapbox.CameraPosition cameraPosition = mapbox.CameraPosition(
-                      //   target: mapController.cameraPosition.target
-                      // );
-                      //
-                      //     .target(location)
-                      //     .zoom(zoomLevel)
-                      //     .padding(0, screenHeight / 2, 0, 0)
-                      //     .build()
-                      //
-                      // mapController.moveCamera(mapbox.CameraUpdate())
+                      double latPerPx = 360 / pow(2, zoom) / 256;
+
+                      await mapController.moveCamera(
+                        mapbox.CameraUpdate.newCameraPosition(
+                          mapbox.CameraPosition(
+                              target: mapbox.LatLng(UserMap.USER_LOCATION.latitude - latPerPx * (Globals.globalWidgetsSizes.dialogBoxTotalHeight / 5), UserMap.USER_LOCATION.longitude),
+                              bearing: 0,
+                              zoom: zoom
+                          ),
+                        ),
+                      );
                     });
                   },
                   child: const Icon(
@@ -649,14 +667,14 @@ class _UserMapState extends State<UserMap> {
           ),
           Expanded(
               child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Expanded(child: guideTool.storiesDialogBox)
-              // guideTool.guideDialogBox,
-            ],
-          ))
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(child: guideTool.storiesDialogBox)
+                  // guideTool.guideDialogBox,
+                ],
+              ))
         ],
       ),
     ]);
