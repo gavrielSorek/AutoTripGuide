@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv'
 import axios from 'axios';
 import { Poi } from './types/poi';
 import { getPoiCategory } from './utils/switch_categories';
-dotenv.config()
+// dotenv.config()
 // additioal place types from: https://developers.google.com/maps/documentation/javascript/supported_types
 
 function isEnglish(result: any): boolean {
@@ -13,7 +13,7 @@ function isEnglish(result: any): boolean {
 
 
 export async function getNearbyPois(latitude: number, longitude: number, radius: number, type: string = ""): Promise<Poi[]> {
-    const API_KEY ='AIzaSyD4sN0b5ki-gefxB_7tNIpNR5b8YQoz-sk' // process.env.GM_API_KEY;
+    const API_KEY =process.env.GM_API_KEY; //  'AIzaSyD4sN0b5ki-gefxB_7tNIpNR5b8YQoz-sk' // process.env.GM_API_KEY;
     const response = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', {
         params: {
             location: `${latitude},${longitude}`,

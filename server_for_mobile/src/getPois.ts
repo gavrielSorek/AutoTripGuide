@@ -12,6 +12,7 @@ const long = 34.8833617;
 const distance = 1200;
 
 
+
 export async function getPois(lat:number, long:number, distance:number){
     const pois_set = new Set<Poi>();
     // for each place category

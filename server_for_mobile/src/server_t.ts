@@ -8,6 +8,9 @@ import { getPois } from "./getPois";
 import { Poi } from "./types/poi";
 import { Request, Response } from 'express';
 import { getDistance } from 'geolib';
+import { Coordinate } from "./types/coordinate";
+import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+import { gptPlaceInfo } from "./chat-gpt/gpt-api";
 
 
 const { MongoClient } = require('mongodb');
@@ -36,6 +39,7 @@ const geoHashPrecitionLevel = 5;
 //init
 async function init() {
     try {
+        dotenv.config()
         await dbClientSearcher.connect();
         await dbClientAudio.connect();
         globaltokenAndPermission = await tokenGetter.getToken('crawler@gmail.com', '1234', serverCommunication.getServerUrl()) //get tokens and permissions for web server
@@ -43,6 +47,7 @@ async function init() {
         // tryModule()
         
     } catch (e) {
+        console.log('Failed to connect to mongo DB')
         console.error(e); 
     }
 }
@@ -53,8 +58,6 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
  })
  // get searchPage page
  app.get("/searchNearbyPois", async function (req:any, res:Response) { //next requrie (the function will not stop the program)
-    //roy temp 
-    // const t = getPois(lat, long, distance)
     const userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language}
     const searchParams = {}
     addUserDataTosearchParams(searchParams, userData)
@@ -70,9 +73,10 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
         let tempPoisArr = await db.findPois(dbClientSearcher, searchParams, boundsArr[i], MAX_POIS_FOR_USER, false);
         pois = pois.concat(tempPoisArr);
     }
+    const filterdPois = pois.filter(poi => poi._shortDesc.length > 10)
 
     res.status(200);
-    res.json(pois);
+    res.json(filterdPois);
     res.end();
     
     // update the db with new pois if needed
@@ -105,6 +109,7 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
     const lng = (southWest.lng + northEast.lng) /2;
     const distance = getDistance({ latitude: lat, longitude: lng },    { latitude: northEast.lat, longitude: northEast.lng })
     const pois = await getPois(lat, lng, distance)
+    console.log(pois)
     serverCommunication.sendPoisToServer(pois, globaltokenAndPermission)
  }
  
@@ -224,6 +229,13 @@ app.get("/getPoisHistory", async function (req:Request, res:Response) { //next r
  app.listen(port, async ()=>{
     await init()
     console.log(`Server is runing on port ${port}`)
+
+    // const lat = 32.1000895;
+    // const long = 34.8833617;
+    // const distance = 1200;
+    // const t= await getPois(lat, long, distance)
+   // const t =await gptPlaceInfo('Yekhezkel Bekhor Synagogue',200)
+    //console.log(t);
 })
 
 
