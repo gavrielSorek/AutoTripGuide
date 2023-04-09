@@ -123,27 +123,13 @@ class UserMap extends StatefulWidget {
 
 class _UserMapState extends State<UserMap> {
   late StreamSubscription mapPoiActionSubscription;
-  List<List<Marker>> listOfMarkersLayers = [];
-  StreamController<LocationMarkerPosition> _currentLocationStreamController =
-      StreamController<LocationMarkerPosition>();
   GuideData guideData = GuideData();
   late Guide guideTool;
   WidgetVisibility navButtonState = WidgetVisibility.hide;
   WidgetVisibility nextButtonState = WidgetVisibility.hide;
   WidgetVisibility loadingPois = WidgetVisibility.view;
   MapPoi? highlightedPoi;
-  List<Color> layersColor = [
-    Color(0xffB0B0B0).withAlpha(130),
-    Color(0xffB0B0B0),
-    Color(0xff0A84FF)
-  ];
-
-  late CenterOnLocationUpdate _centerOnLocationUpdate;
-  late StreamController<double?> _centerCurrentLocationStreamController;
-  final MapController _mapController = MapController();
-
   double mapHeading = 0;
-
   bool isNewPoisNeededFlag = true;
   int _numOfPoisRequests = 0;
 
@@ -153,49 +139,49 @@ class _UserMapState extends State<UserMap> {
   // at new area the we snooze to the server in order to seek new pois
   static int SECONDS_BETWEEN_SNOOZES = 15;
 
+  // mapbox variables
+  late mapbox.MapboxMap map;
+  late mapbox.CameraPosition _cameraPosition;
+  bool _isMoving = false;
+  bool _compassEnabled = true;
+  mapbox.CameraTargetBounds _cameraTargetBounds =
+      mapbox.CameraTargetBounds.unbounded;
+  mapbox.MinMaxZoomPreference _minMaxZoomPreference =
+      mapbox.MinMaxZoomPreference.unbounded;
+  List<String> _styleStrings = [
+    mapbox.MapboxStyles.MAPBOX_STREETS,
+    mapbox.MapboxStyles.OUTDOORS,
+    mapbox.MapboxStyles.LIGHT,
+    mapbox.MapboxStyles.EMPTY,
+    mapbox.MapboxStyles.DARK,
+    mapbox.MapboxStyles.SATELLITE,
+    mapbox.MapboxStyles.SATELLITE_STREETS,
+    mapbox.MapboxStyles.TRAFFIC_DAY,
+    mapbox.MapboxStyles.TRAFFIC_DAY,
+    "assets/style.json"
+  ];
+  int _styleStringIndex = 0;
+  bool _rotateGesturesEnabled = true;
+  bool _scrollGesturesEnabled = true;
+  bool? _doubleClickToZoomEnabled;
+  bool _tiltGesturesEnabled = true;
+  bool _zoomGesturesEnabled = true;
+  bool _myLocationEnabled = true;
+  bool _telemetryEnabled = true;
+  late mapbox.SymbolManager _symbolManager;
+
+  mapbox.MyLocationTrackingMode _myLocationTrackingMode =
+      mapbox.MyLocationTrackingMode.Tracking;
+  List<Object>? _featureQueryFilter;
+  mapbox.Fill? _selectedFill;
+
   _UserMapState() : super() {
     UserMap.userChangeLocationFuncs.add(onLocationChanged);
-    UserMap.userChangeLocationFuncs.add(updateMapRelativePosition);
-    UserMap.userChangeLocationFuncs.add((Position currentLocation) {
-      _currentLocationStreamController.add(LocationMarkerPosition(
-          latitude: currentLocation.latitude,
-          longitude: currentLocation.longitude,
-          accuracy: currentLocation.accuracy));
-    });
-
-    // add a layer for every value in the MarkersLayer enum
-    MarkersLayer.values.forEach((element) {
-      listOfMarkersLayers.add([]);
-    });
-
     double initialZoom = 15;
     _cameraPosition = mapbox.CameraPosition(
-        target: _getRelativeCenterLatLng(initialZoom), bearing: mapHeading, zoom: initialZoom);
-  }
-
-  CustomPoint? getRelativeScreenCenterToUserPosition() {
-    CustomPoint? userPoint = _mapController.latLngToScreenPoint(LatLng(
-        UserMap.USER_LOCATION.latitude, UserMap.USER_LOCATION.longitude));
-    return CustomPoint(userPoint!.x,
-        userPoint!.y + Globals.globalWidgetsSizes.dialogBoxTotalHeight / 2);
-  }
-
-  LatLng getRelativeCenterToUserPosition() {
-    return _mapController.pointToLatLng(
-        getRelativeScreenCenterToUserPosition() ?? CustomPoint(0, 0))!;
-  }
-
-  void updateMapRelativePosition(Position currentLocation) async {
-    double epsilon = 0.0001;
-    if (_centerOnLocationUpdate == CenterOnLocationUpdate.always) {
-      LatLng oldCenter = _mapController.center;
-      LatLng newCenter = getRelativeCenterToUserPosition();
-      if ((newCenter.longitude - oldCenter.longitude).abs() < epsilon &&
-          (newCenter.latitude - oldCenter.latitude).abs() < epsilon) {
-        return; // the location didn't changed really
-      }
-      _mapController.move(newCenter, _mapController.zoom);
-    }
+        target: _getRelativeCenterLatLng(initialZoom),
+        bearing: mapHeading,
+        zoom: initialZoom);
   }
 
   void updateState() {
@@ -203,10 +189,6 @@ class _UserMapState extends State<UserMap> {
   }
 
   Future<void> setMapPoiAction(MapPoiAction mapPoiAction) async {
-    // first remove the element
-    listOfMarkersLayers[mapPoiAction.color.index].removeWhere((marker) =>
-        marker.point.latitude == mapPoiAction.mapPoi.poi.latitude &&
-        marker.point.longitude == mapPoiAction.mapPoi.poi.longitude);
     if (mapPoiAction.action == PoiAction.add) {
       mapbox.Symbol symbolToAdd =
           mapPoiAction.mapPoi.getSymbolFromPoi(mapPoiAction.color);
@@ -225,21 +207,6 @@ class _UserMapState extends State<UserMap> {
     }
   }
 
-  bool isValidScreenPoint(CustomPoint? screenPoint) {
-    double margin = 20;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-    double dialogHeight = Globals.globalWidgetsSizes.dialogBoxTotalHeight;
-
-    if (screenPoint == null) return false;
-    if (screenPoint.x > screenWidth ||
-        screenPoint.x < 0 ||
-        screenPoint.y > screenHeight ||
-        screenHeight - screenPoint.y - margin < dialogHeight ||
-        screenPoint.y < 0) return false;
-    return true;
-  }
-
   @override
   void initState() {
     mapPoiActionSubscription =
@@ -248,8 +215,6 @@ class _UserMapState extends State<UserMap> {
       updateState();
     });
     print("init _UserMapState");
-    _centerOnLocationUpdate = CenterOnLocationUpdate.always;
-    _centerCurrentLocationStreamController = StreamController<double?>();
     guideTool = Guide(context, guideData);
 
     widget.highlightedPoiStreamController.stream.listen((event) {
@@ -268,38 +233,10 @@ class _UserMapState extends State<UserMap> {
     super.initState();
   }
 
-  void setMapToHighlightedPoint(LatLng point) {
-    double xMarginFromCenter =
-        (UserMap.USER_LOCATION.longitude - point.longitude).abs();
-    double yMarginFromCenter =
-        (UserMap.USER_LOCATION.latitude - point.latitude).abs();
-    _mapController.rotate(0);
-    _mapController.fitBounds(
-      LatLngBounds(
-        LatLng(UserMap.USER_LOCATION.latitude + yMarginFromCenter,
-            UserMap.USER_LOCATION.longitude + xMarginFromCenter),
-        LatLng(UserMap.USER_LOCATION.latitude - yMarginFromCenter,
-            UserMap.USER_LOCATION.longitude - xMarginFromCenter),
-      ),
-      options: FitBoundsOptions(
-          padding: EdgeInsets.only(
-              bottom: Globals.globalWidgetsSizes.dialogBoxTotalHeight + 100,
-              top: 100,
-              right: 100,
-              left: 100),
-          forceIntegerZoomLevel: false),
-    );
-    _mapController.rotate(mapHeading);
-    // need to move because bounds can change the center a little bit
-    updateMapRelativePosition(UserMap.USER_LOCATION);
-  }
-
   @override
   void dispose() {
     print("____________________dispose statful map");
     mapPoiActionSubscription.cancel();
-    _centerCurrentLocationStreamController.close();
-    _currentLocationStreamController.close();
     super.dispose();
   }
 
@@ -368,42 +305,6 @@ class _UserMapState extends State<UserMap> {
   late mapbox.MapboxMapController mapController;
   var isLight = true;
 
-  // variables
-  late mapbox.MapboxMap map;
-  late mapbox.CameraPosition _cameraPosition;
-  bool _isMoving = false;
-  bool _compassEnabled = true;
-  mapbox.CameraTargetBounds _cameraTargetBounds =
-      mapbox.CameraTargetBounds.unbounded;
-  mapbox.MinMaxZoomPreference _minMaxZoomPreference =
-      mapbox.MinMaxZoomPreference.unbounded;
-  List<String> _styleStrings = [
-    mapbox.MapboxStyles.MAPBOX_STREETS,
-    mapbox.MapboxStyles.OUTDOORS,
-    mapbox.MapboxStyles.LIGHT,
-    mapbox.MapboxStyles.EMPTY,
-    mapbox.MapboxStyles.DARK,
-    mapbox.MapboxStyles.SATELLITE,
-    mapbox.MapboxStyles.SATELLITE_STREETS,
-    mapbox.MapboxStyles.TRAFFIC_DAY,
-    mapbox.MapboxStyles.TRAFFIC_DAY,
-    "assets/style.json"
-  ];
-  int _styleStringIndex = 0;
-  bool _rotateGesturesEnabled = true;
-  bool _scrollGesturesEnabled = true;
-  bool? _doubleClickToZoomEnabled;
-  bool _tiltGesturesEnabled = true;
-  bool _zoomGesturesEnabled = true;
-  bool _myLocationEnabled = true;
-  bool _telemetryEnabled = true;
-  late mapbox.SymbolManager _symbolManager;
-
-  mapbox.MyLocationTrackingMode _myLocationTrackingMode =
-      mapbox.MyLocationTrackingMode.Tracking;
-  List<Object>? _featureQueryFilter;
-  mapbox.Fill? _selectedFill;
-
   void _extractMapInfo() {
     final position = mapController!.cameraPosition;
     if (position != null) _cameraPosition = position;
@@ -446,14 +347,15 @@ class _UserMapState extends State<UserMap> {
         .listen((event) async {
       final double epsilon = 2;
       double newHeading = event!.heading / pi * 180;
-      if (_centerOnLocationUpdate != CenterOnLocationUpdate.always ||
-          (newHeading - mapHeading).abs() < epsilon) return;
+      if ((newHeading - mapHeading).abs() < epsilon) return;
       mapHeading = newHeading;
 
       mapController.animateCamera(
         mapbox.CameraUpdate.newCameraPosition(
           mapbox.CameraPosition(
-              target: _getRelativeCenterLatLng(_cameraPosition.zoom), bearing: mapHeading, zoom: _cameraPosition.zoom),
+              target: _getRelativeCenterLatLng(_cameraPosition.zoom),
+              bearing: mapHeading,
+              zoom: _cameraPosition.zoom),
         ),
       );
     });
@@ -677,15 +579,5 @@ class _UserMapState extends State<UserMap> {
     setState(() {
       navButtonState = WidgetVisibility.hide;
     });
-  }
-
-  void triggerGuide() {
-    // guideTool.handlePois();
-  }
-
-  void guideAboutMapPoi(MapPoi mapPoi) {
-    //TODO ADD LOGIC
-    // guideTool.stop();
-    // guideTool.askPoi(mapPoi);
   }
 }
