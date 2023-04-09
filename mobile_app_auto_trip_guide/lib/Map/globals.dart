@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'package:audio_service/audio_service.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'guide_audio_player.dart';
+import 'background_audio_player.dart';
 import '../Pages/login_controller.dart';
 import 'apps_launcher.dart';
 import 'map.dart';
@@ -28,7 +29,7 @@ class Globals {
   static AppLauncher globalAppLauncher = AppLauncher();
   static MapPoi? mainMapPoi; // spoken poi
   static final globalController = Get.put(LoginController());
-  static GuideAudioPlayer globalGuideAudioPlayer = GuideAudioPlayer();
+  static late BackgroundAudioHandler globalGuideAudioPlayerHandler; // the initialization is in the main
   static var globalColor = Color.fromRGBO(51, 153, 255, 0.8);
   static StreamController<VisitedPoi> globalVisitedPoiStream =
       StreamController<VisitedPoi>.broadcast();
@@ -36,14 +37,18 @@ class Globals {
       StreamController<MapPoi>.broadcast();
   static String? svgMarkerString;
   static SharedPreferences? globalPrefs;
+  static bool globalIsInitialized = false;
+  static late AudioHandler globalAudioHandler;
 
   static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {
     globalVisitedPoi = visitedPoisList;
   }
 
   static void addGlobalVisitedPoi(VisitedPoi visitedPoi) {
+    globalVisitedPoi.removeWhere((visitedPoiInList) => visitedPoi.id == visitedPoiInList.id);
     globalVisitedPoi.add(visitedPoi);
     globalVisitedPoiStream.add(visitedPoi);
+    globalServerCommunication.insertPoiToHistory(visitedPoi);
   }
 
   static void addUnhandledPoiKey(String key) {
@@ -89,12 +94,13 @@ class Globals {
     globalUserInfoObj = null;
     svgMarkerString =
         await rootBundle.loadString('assets/images/mapMarker.svg');
-    await globalGuideAudioPlayer.initAudioPlayer();
+    await globalGuideAudioPlayerHandler.initAudioPlayer();
     await globalController.init();
     if (globalController.isUserSignIn) {
       await globalController.login();
       await loadUserDetails();
     }
+    globalIsInitialized = true;
   }
 
   static clearAll() async {

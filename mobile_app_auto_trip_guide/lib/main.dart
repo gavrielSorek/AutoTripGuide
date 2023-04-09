@@ -1,26 +1,30 @@
 import 'dart:io';
+import 'package:final_project/Map/background_audio_player.dart';
 import 'package:final_project/Pages/history_page.dart';
 import 'package:final_project/Pages/home_page.dart';
+import 'package:final_project/Pages/app_loading_page.dart';
 import 'package:final_project/Pages/personal_details_page.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'Map/globals.dart';
 import 'Map/onboarding.dart';
 import 'Pages/favorite_categories_page.dart';
 import 'Pages/login_page.dart';
 import 'dart:math';
-
-// inits
-Future<void> init() async {
-  // initialization order is very important
-  await Globals.init();
-}
+import 'package:audio_service/audio_service.dart';
 
 // start logic
-void main() async {
+Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
-  await init();
+  // store this in a singleton
+  Globals.globalGuideAudioPlayerHandler = await AudioService.init(
+    builder: () => BackgroundAudioHandler(),
+    config: AudioServiceConfig(
+      androidNotificationChannelId: 'com.mycompany.myapp.channel.audio',
+      androidNotificationChannelName: 'Audio playback',
+      androidNotificationOngoing: true,
+    ),
+  );
   runApp(const AutoGuideApp());
 }
 
@@ -29,19 +33,20 @@ class AutoGuideApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool? isIntroDone = Globals.globalPrefs?.getBool('introDone');
-    String initialRoute =
-        isIntroDone != null ? '/login-screen' : '/onboard-screen';
-    if (Globals.globalController.isUserSignIn) {
-      initialRoute = '/HomePage';
+    AppLoadingPage initializationPage = AppLoadingPage();
+    if (!Globals.globalIsInitialized) {
+      Globals.init().then((result) {
+        initializationPage.nextPage();
+      });
     }
+
     return MaterialApp(
       title: 'Auto Trip Guide',
       theme: ThemeData(
         primarySwatch: generateMaterialColor(Globals.globalColor),
         fontFamily: 'Roboto',
       ),
-      initialRoute: initialRoute,
+      initialRoute: '/init-screen',
       routes: {
         // When navigating to the "/" route, build the FirstScreen widget.
         '/login-screen': (context) => LoginPage(),
@@ -49,7 +54,8 @@ class AutoGuideApp extends StatelessWidget {
         '/history-screen': (context) => HistoryPage(),
         '/favorite-categories-screen': (context) => FavoriteCategoriesPage(),
         '/personal-details-screen': (context) => PersonalDetailsPage(),
-        '/onboard-screen': (context) => OnBoardingPage()
+        '/onboard-screen': (context) => OnBoardingPage(),
+        '/init-screen': (context) => initializationPage
       },
       // routes: {'/': (BuildContext ctx) => HomePage()}
     );

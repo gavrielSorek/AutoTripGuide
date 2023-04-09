@@ -26,7 +26,11 @@ class ServerCommunication {
   }
 
   String getAudioStreamUrl(Poi poi) {
-    return 'http://' + serverUrl+'/getAudioStream'+ '?poiId=' + poi.id.toString();
+    return 'http://' +
+        serverUrl +
+        '/getAudioStream' +
+        '?poiId=' +
+        poi.id.toString();
   }
 
   Future<List<Poi>> getPoisByLocation(LocationInfo? locationInfo) async {
@@ -120,21 +124,19 @@ class ServerCommunication {
   }
 
   static Uri addLangToUrl(String url, String path, String language) {
-    final queryParameters = {
-      'language': language.toString()
-    };
+    final queryParameters = {'language': language.toString()};
     final uri = Uri.http(url, path, queryParameters);
     return uri;
   }
 
   Future<Map<String, List<String>>> getCategories(String language) async {
-    Uri newUri =
-    addLangToUrl(serverUrl, '/getCategories', language);
+    Uri newUri = addLangToUrl(serverUrl, '/getCategories', language);
     try {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {
         final categoriesMap = jsonDecode(response.body);
-        Map<String, List<String>> newMap = Map.from(categoriesMap.map((key, value) {
+        Map<String, List<String>> newMap =
+            Map.from(categoriesMap.map((key, value) {
           List<dynamic> values = List.from(value);
           return MapEntry(
               key.toString(),
@@ -157,22 +159,23 @@ class ServerCommunication {
   }
 
   static Uri addMailToUrl(String url, String path, String emailAddr) {
-    final queryParameters = {
-      'email': emailAddr.toString()
-    };
+    final queryParameters = {'email': emailAddr.toString()};
     final uri = Uri.http(url, path, queryParameters);
     return uri;
   }
 
-  Future getFavorCategories(String emailAddr) async {
-    Uri newUri =
-    addMailToUrl(serverUrl, '/getFavorCategories', emailAddr);
+  Future<List<String>> getFavorCategories(String emailAddr) async {
+    Uri newUri = addMailToUrl(serverUrl, '/getFavorCategories', emailAddr);
     try {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {
         final favorCategoriesMap = jsonDecode(response.body);
-        List<String> favorCategoriesList = favorCategoriesMap.cast<String>();
-        return favorCategoriesList;
+        try {
+          List<String> favorCategoriesList = favorCategoriesMap.cast<String>();
+          return favorCategoriesList;
+        } catch (e) {
+          return [];
+        }
       } else {
         if (response.contentLength == 0) {
           return [];
@@ -186,7 +189,8 @@ class ServerCommunication {
     }
   }
 
-  static Uri addMailAndCategoriesToUrl(String url, String path, String emailAddr) {
+  static Uri addMailAndCategoriesToUrl(
+      String url, String path, String emailAddr) {
     final queryParameters = {
       'email': emailAddr.toString(),
       'categories': Globals.globalFavoriteCategories
@@ -196,7 +200,8 @@ class ServerCommunication {
   }
 
   void updateFavorCategories(String emailAddr) async {
-    Uri newUri = addMailAndCategoriesToUrl(serverUrl, '/updateFavorCategories', emailAddr);
+    Uri newUri = addMailAndCategoriesToUrl(
+        serverUrl, '/updateFavorCategories', emailAddr);
     try {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {
@@ -212,8 +217,7 @@ class ServerCommunication {
   }
 
   Future<Map<String, String>> getUserInfo(String emailAddr) async {
-    Uri newUri =
-    addMailToUrl(serverUrl, '/getUserInfo', emailAddr);
+    Uri newUri = addMailToUrl(serverUrl, '/getUserInfo', emailAddr);
     try {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {
@@ -233,7 +237,8 @@ class ServerCommunication {
     }
   }
 
-  static Uri addUpdatedUserInfoToUrl(String url, String path, UserInfo? userInfo) {
+  static Uri addUpdatedUserInfoToUrl(
+      String url, String path, UserInfo? userInfo) {
     final queryParameters = {
       'email': userInfo?.emailAddr.toString(),
       'name': userInfo?.name.toString(),
@@ -246,7 +251,8 @@ class ServerCommunication {
   }
 
   void updateUserInfo() async {
-    Uri newUri = addUpdatedUserInfoToUrl(serverUrl, '/updateUserInfo', Globals.globalUserInfoObj);
+    Uri newUri = addUpdatedUserInfoToUrl(
+        serverUrl, '/updateUserInfo', Globals.globalUserInfoObj);
     try {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {
@@ -261,12 +267,13 @@ class ServerCommunication {
     }
   }
 
-  static Uri addVisitedPoiToUrl(String url, String path, VisitedPoi visitedPoi) {
+  static Uri addVisitedPoiToUrl(
+      String url, String path, VisitedPoi visitedPoi) {
     final queryParameters = {
       'id': visitedPoi.id.toString(),
       'poiName': visitedPoi.poiName.toString(),
       'time': visitedPoi.time.toString(),
-      'pic' : visitedPoi.pic.toString(),
+      'pic': visitedPoi.pic.toString(),
       'emailAddr': Globals.globalEmail
     };
     final uri = Uri.http(url, path, queryParameters);
@@ -274,7 +281,8 @@ class ServerCommunication {
   }
 
   void insertPoiToHistory(VisitedPoi visitedPoi) async {
-    Uri newUri = addVisitedPoiToUrl(serverUrl, '/insertPoiToHistory', visitedPoi);
+    Uri newUri =
+        addVisitedPoiToUrl(serverUrl, '/insertPoiToHistory', visitedPoi);
     try {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {
@@ -295,7 +303,9 @@ class ServerCommunication {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {
         final parsed = jsonDecode(response.body).cast<Map<String, dynamic>>();
-        return parsed.map<VisitedPoi>((json) => VisitedPoi.fromJson(json)).toList();
+        return parsed
+            .map<VisitedPoi>((json) => VisitedPoi.fromJson(json))
+            .toList();
       } else {
         if (response.contentLength == 0) {
           return [];

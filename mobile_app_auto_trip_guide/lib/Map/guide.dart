@@ -9,6 +9,7 @@ import '../Adjusted Libs/story_view/story_view.dart';
 import '../Adjusted Libs/story_view/utils.dart';
 import '../General Wigets/progress_button.dart';
 import '../General Wigets/uniform_widgets.dart';
+import 'background_audio_player.dart';
 import 'guid_bloc/guide_bloc.dart';
 import 'globals.dart';
 import 'package:share_plus/share_plus.dart';
@@ -268,15 +269,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                         children: [
                           Expanded(child: state.storyView),
                           Container(
-                              child: Globals.globalGuideAudioPlayer,
+                              child: GuideAudioPlayerUI(
+                                  Globals.globalGuideAudioPlayerHandler),
                               height: 56),
-                          // Container(
-                          //   child: UniformButtons.getPreferenceButton(
-                          //       onPressed: () {
-                          //     Navigator.pushNamed(
-                          //         context, '/favorite-categories-screen');
-                          //   }),
-                          // )
                         ],
                       )),
                   Positioned(
@@ -304,23 +299,23 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                       ],
                     ),
                   ),
-                  // Positioned(
-                  //   top: Constants.avatarRadius,
-                  //   right: Constants.sidesMarginOfButtons,
-                  //   child: Container(child:
-                  //       UniformButtons.getGuidePreferencesButton(onPressed: () {
-                  //     context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
-                  //         pois:
-                  //             state.lastShowOptionalCategoriesState.idToPoisMap,
-                  //         onShowStory:
-                  //             state.lastShowOptionalCategoriesState.onShowStory,
-                  //         onFinishedFunc: state
-                  //             .lastShowOptionalCategoriesState.onFinishedFunc,
-                  //         isCheckedCategory: state
-                  //             .lastShowOptionalCategoriesState
-                  //             .isCheckedCategory));
-                  //   })),
-                  // )
+                  Positioned(
+                    top: Constants.avatarRadius,
+                    right: Constants.sidesMarginOfButtons,
+                    child: Container(child:
+                        UniformButtons.getGuidePreferencesButton(onPressed: () {
+                      context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
+                          pois:
+                              state.lastShowOptionalCategoriesState.idToPoisMap,
+                          onShowStory:
+                              state.lastShowOptionalCategoriesState.onShowStory,
+                          onFinishedFunc: state
+                              .lastShowOptionalCategoriesState.onFinishedFunc,
+                          isCheckedCategory: state
+                              .lastShowOptionalCategoriesState
+                              .isCheckedCategory));
+                    })),
+                  )
                 ],
               )
             ])),
@@ -516,22 +511,22 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                 child: buildImageWidget(state.currentPoi.poi.pic ?? ""),
               ),
             ),
-            // Positioned(
-            //   top: Constants.avatarRadius,
-            //   right: Constants.sidesMarginOfButtons,
-            //   child: Container(child:
-            //       UniformButtons.getGuidePreferencesButton(onPressed: () {
-            //     context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
-            //         pois: state.savedStoriesState
-            //             .lastShowOptionalCategoriesState.idToPoisMap,
-            //         onShowStory: state.savedStoriesState
-            //             .lastShowOptionalCategoriesState.onShowStory,
-            //         onFinishedFunc: state.savedStoriesState
-            //             .lastShowOptionalCategoriesState.onFinishedFunc,
-            //         isCheckedCategory: state.savedStoriesState
-            //             .lastShowOptionalCategoriesState.isCheckedCategory));
-            //   })),
-            // ),
+            Positioned(
+              top: Constants.avatarRadius,
+              right: Constants.sidesMarginOfButtons,
+              child: Container(child:
+                  UniformButtons.getGuidePreferencesButton(onPressed: () {
+                context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
+                    pois: state.savedStoriesState
+                        .lastShowOptionalCategoriesState.idToPoisMap,
+                    onShowStory: state.savedStoriesState
+                        .lastShowOptionalCategoriesState.onShowStory,
+                    onFinishedFunc: state.savedStoriesState
+                        .lastShowOptionalCategoriesState.onFinishedFunc,
+                    isCheckedCategory: state.savedStoriesState
+                        .lastShowOptionalCategoriesState.isCheckedCategory));
+              })),
+            ),
             Positioned(
                 top: Constants.avatarRadius,
                 child: UniformButtons.getReturnDialogButton(onPressed: () {

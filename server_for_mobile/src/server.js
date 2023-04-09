@@ -23,7 +23,7 @@ const port = 5600
 app.use(bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 extended: false}));
-const MAX_POIS_FOR_USER = 20
+const MAX_POIS_FOR_USER = 300
 const MAX_DAYS_USE_AREA_CACHE = 30
 
 const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
@@ -208,8 +208,7 @@ app.get("/insertPoiToHistory", async function (req, res) { //next requrie (the f
  // get the history pois of specific user
 app.get("/getPoisHistory", async function (req, res) { //next requrie (the function will not stop the program)
     console.log("inside get pois history - server side")
-    emailAddr = {'emailAddr': req.query.email};
-    result = await db.getPoisHistory(dbClientSearcher, emailAddr)
+    result = await db.getPoisHistory(dbClientSearcher, req.query.email)
     res.status(200);
     res.json(result);
     res.end();
