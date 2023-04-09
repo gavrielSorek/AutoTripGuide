@@ -1,8 +1,8 @@
 const axios = require('axios');
-var geo = require("../services/countryByPosition");
-var wikiTool = require("../services/wikiTool");
-var textAnalysisTool = require("../services/textAnalysisTool");
-var internetServices = require("../services/generalInternetServices");
+var geo = require("../../services/countryByPosition");
+var wikiTool = require("../../services/wikiTool");
+var textAnalysisTool = require("../../services/textAnalysisTool");
+var internetServices = require("../../services/generalInternetServices");
 module.exports = { getPoisList};
 const maxPois = 200;
 

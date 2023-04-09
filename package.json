@@ -15,6 +15,7 @@
     "mongo": "^0.1.0",
     "mongoose": "^6.2.8",
     "ngeohash": "^0.6.3",
+    "node-fetch": "^2.6.1",
     "node-gtts": "^2.0.2",
     "request": "^2.88.2",
     "translatte": "^3.0.1",
