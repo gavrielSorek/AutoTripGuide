@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/map.dart';
 import 'package:final_project/Map/map_configuration.dart';
@@ -6,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../General Wigets/generals.dart';
+import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 
 class PoisAttributesCalculator {
   static Map<int, String> Directions = {
@@ -103,5 +106,19 @@ class PoisAttributesCalculator {
       }
     });
     return poisCpy;
+  }
+
+  // Define a function that takes in the x and y coordinates of a point,
+// a radius, and an angle in degrees, and returns the x and y coordinates
+// of the point at that angle and distance.
+  static mapbox.LatLng getPointAtAngle(double lat, double lng,double radius, double angleDegrees) {
+    // Convert the angle from degrees to radians.
+    double angleRadians = angleDegrees * pi / 180.0;
+
+
+    double pointLng = lng + radius * cos(angleRadians);
+    double pointLat = lat + radius * sin(angleRadians);
+    // Return the coordinates as a list.
+    return mapbox.LatLng(pointLat, pointLng);
   }
 }

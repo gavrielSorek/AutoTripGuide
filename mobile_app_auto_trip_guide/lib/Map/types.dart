@@ -1,9 +1,12 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:latlong2/latlong.dart';
 import 'globals.dart';
+import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 
 extension HexColor on Color {
   /// Prefixes a hash sign if [leadingHashSign] is set to `true` (default is `true`).
@@ -151,28 +154,14 @@ class Audio {
 }
 
 class MapPoi {
-  // return marker from poi
-  Marker createMarkerFromPoi(Color color) {
-    const String originalMarkerColor = '#B0B0B0';
-    // replace the fill color
-    String markerIconString =
-        Globals.svgMarkerString!.replaceAll(originalMarkerColor, color.toHex());
-
-    return Marker(
-      width: 50.0,
-      height: 50.0,
-      point: LatLng(poi.latitude, poi.longitude),
-      builder: (context) => Container(
-          child: SizedBox(
-        child: IconButton(
-            icon: Opacity(
-              opacity: color.opacity,
-              child: SvgPicture.string(
-                markerIconString,
-              ),
-            ),
-            onPressed: () => {Globals.globalClickedPoiStream.add(this)}),
-      )),
+  mapbox.Symbol getSymbolFromPoi(PoiIconColor color) {
+    List<String> colors = ['greyPoi', 'bluePoi', 'greyTransPoi'];
+    String iconImage = colors[color.index];
+    return mapbox.Symbol(poi.id, mapbox.SymbolOptions(
+      geometry: mapbox.LatLng(poi.latitude, poi.longitude),
+        iconImage: iconImage, // this is the icon you want to use
+      iconSize: 0.12,
+        textField: poi.poiName, textSize: 10)
     );
   }
 
@@ -186,6 +175,8 @@ enum GuideStatus { voice, text }
 enum GuideState { working, waiting, stopped }
 
 enum WidgetVisibility { hide, view }
+
+enum PoiIconColor { grey, blue, greyTrans }
 
 // contain data about the guid type
 class GuideData {

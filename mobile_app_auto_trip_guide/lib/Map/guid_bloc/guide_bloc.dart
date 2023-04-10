@@ -62,9 +62,13 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       };
 
       List<MapPoi> poisToPlay = List.from(event.poisToPlay.values);
-      // update the gray pois to be the playing pois
-      Globals.globalUserMap.setMapPoisLayer(
-          MapPoisLayer(layer: MarkersLayer.grey, mapPois: poisToPlay));
+      for (MapPoi poi in poisToPlay) {
+        Globals.globalUserMap.mapPoiActionStreamController.add(MapPoiAction(
+            color: PoiIconColor.grey,
+            action: PoiAction.add,
+            mapPoi: poi));
+      }
+
       // sorting the pois
       poisToPlay.sort(PersonalizeRecommendation.sortMapPoisByWeightedScore);
 
