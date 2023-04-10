@@ -14,7 +14,7 @@ import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 import '../General Wigets/UniversalPanGestureRecognizer.dart';
 import 'guide.dart';
 import 'package:flutter/foundation.dart';
-import 'dart:math';
+import 'dart:math' as math;
 
 enum MarkersLayer { semiTransparent, grey, blue }
 
@@ -205,6 +205,32 @@ class _UserMapState extends State<UserMap> {
     }
   }
 
+  // given distance in pixels and distance in meters, return the zoom such that distInPixels = distInMeters
+  double _getZoomLevel(
+      double distInPixels, double distInMeters, double latitude) {
+    // Calculate the pixel density (i.e. how many meters each pixel represents)
+    double metersPerPixel = distInMeters / distInPixels;
+    // zoom calculation
+    double zoom = (math.log(156543.03392 *
+            math.cos(latitude * math.pi / 180) /
+            metersPerPixel) /
+        math.log(2));
+    return zoom.floor().toDouble();
+  }
+
+  Future<double> _getZoomPointInDistFromUser(
+      double maxDistInPixels, mapbox.LatLng point) async {
+    double distanceInMeters = await Geolocator.distanceBetween(
+      UserMap.USER_LOCATION.latitude, // latitude of first location
+      UserMap.USER_LOCATION.longitude, // longitude of first location
+      point.latitude, // latitude of second location
+      point.longitude, // longitude of second location
+    );
+
+    return _getZoomLevel(
+        maxDistInPixels, distanceInMeters, UserMap.USER_LOCATION.latitude);
+  }
+
   @override
   void initState() {
     mapPoiActionSubscription =
@@ -215,7 +241,7 @@ class _UserMapState extends State<UserMap> {
     print("init _UserMapState");
     guideTool = Guide(context, guideData);
 
-    widget.highlightedPoiStreamController.stream.listen((event) {
+    widget.highlightedPoiStreamController.stream.listen((event) async {
       if (highlightedPoi != null) {
         widget.mapPoiActionStreamController.add(MapPoiAction(
             color: PoiIconColor.grey,
@@ -227,6 +253,24 @@ class _UserMapState extends State<UserMap> {
           color: PoiIconColor.blue,
           action: PoiAction.add,
           mapPoi: highlightedPoi!));
+
+      _cameraPosition = mapbox.CameraPosition(
+          target: _cameraPosition.target,
+          // TODO calculate maxDistInPixels
+          zoom: await _getZoomPointInDistFromUser(
+              (MediaQuery.of(context).size.height -
+                      Globals.globalWidgetsSizes.dialogBoxTotalHeight) /
+                  4,
+              mapbox.LatLng(highlightedPoi!.poi.latitude,
+                  highlightedPoi!.poi.longitude)));
+      _mapController.animateCamera(
+        mapbox.CameraUpdate.newCameraPosition(
+          mapbox.CameraPosition(
+              target: _getRelativeCenterLatLng(_cameraPosition.zoom),
+              bearing: mapHeading,
+              zoom: _cameraPosition.zoom),
+        ),
+      );
     });
     super.initState();
   }
@@ -316,7 +360,7 @@ class _UserMapState extends State<UserMap> {
   }
 
   mapbox.LatLng _getRelativeCenterLatLng(double zoom) {
-    double latPerPx = 360 / pow(2, zoom) / 256;
+    double latPerPx = 360 / math.pow(2, zoom) / 256;
     return PoisAttributesCalculator.getPointAtAngle(
         UserMap.USER_LOCATION.latitude,
         UserMap.USER_LOCATION.longitude,
@@ -453,7 +497,8 @@ class _UserMapState extends State<UserMap> {
       onMapLongClick: (point, latLng) async {
         print(
             "Map long press: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
-        Point convertedPoint = await _mapController.toScreenLocation(latLng);
+        math.Point convertedPoint =
+            await _mapController.toScreenLocation(latLng);
         mapbox.LatLng convertedLatLng = await _mapController.toLatLng(point);
         print(
             "Map long press converted: ${convertedPoint.x},${convertedPoint.y}   ${convertedLatLng.latitude}/${convertedLatLng.longitude}");
