@@ -257,7 +257,7 @@ class _UserMapState extends State<UserMap> {
           zoom: await _getZoomPointInDistFromUser(
               (MediaQuery.of(context).size.height -
                       Globals.globalWidgetsSizes.dialogBoxTotalHeight) /
-                  4,
+                  4.75,
               mapbox.LatLng(highlightedPoi!.poi.latitude,
                   highlightedPoi!.poi.longitude)));
       _mapController.animateCamera(
@@ -407,6 +407,8 @@ class _UserMapState extends State<UserMap> {
     await _mapController.addImage(
         'greyTransPoi', Globals.svgPoiMarkerBytes.greyTransIcon);
     await _symbolManager.addAll(_symbolsOnMap);
+    _mapController.setSymbolIconAllowOverlap(true);
+    _mapController.setSymbolIconIgnorePlacement(true);
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text("Style loaded :)"),
