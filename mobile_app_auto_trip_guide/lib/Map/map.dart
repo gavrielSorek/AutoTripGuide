@@ -150,12 +150,11 @@ class _UserMapState extends State<UserMap> {
     mapbox.MapboxStyles.MAPBOX_STREETS,
     mapbox.MapboxStyles.OUTDOORS,
     mapbox.MapboxStyles.LIGHT,
-    mapbox.MapboxStyles.EMPTY,
     mapbox.MapboxStyles.DARK,
     mapbox.MapboxStyles.SATELLITE,
     mapbox.MapboxStyles.SATELLITE_STREETS,
     mapbox.MapboxStyles.TRAFFIC_DAY,
-    mapbox.MapboxStyles.TRAFFIC_DAY,
+    mapbox.MapboxStyles.TRAFFIC_NIGHT,
     "assets/style.json"
   ];
   int _styleStringIndex = 0;
@@ -550,6 +549,7 @@ class _UserMapState extends State<UserMap> {
             ),
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 margin: EdgeInsets.only(
@@ -564,22 +564,26 @@ class _UserMapState extends State<UserMap> {
                       _myLocationTrackingMode =
                           mapbox.MyLocationTrackingMode.Tracking;
                     }
-
-                    () async {
-                      _mapController.animateCamera(
-                        mapbox.CameraUpdate.newCameraPosition(
-                          mapbox.CameraPosition(
-                              target: _getRelativeCenterLatLng(
-                                  _cameraPosition.zoom),
-                              bearing: mapHeading,
-                              zoom: _cameraPosition.zoom),
-                        ),
-                      );
-                      updateState();
-                    };
                   },
                   child: const Icon(
                     Icons.my_location,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.width / 20,
+                    right: MediaQuery.of(context).size.width / 40),
+                width: MediaQuery.of(context).size.width / 10,
+                child: FloatingActionButton(
+                  heroTag: null,
+                  onPressed: () {
+                    _styleStringIndex = (_styleStringIndex + 1) % _styleStrings.length;
+                    updateState();
+                  },
+                  child: const Icon(
+                    Icons.map_outlined,
                     color: Colors.white,
                   ),
                 ),
