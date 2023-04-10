@@ -1,9 +1,10 @@
 const fs = require('fs')
 const db = require("./db");
-const generalServices = require('../services/generalServices')
+const generalServices = require('../../services/generalServices')
 const onlinePoisFinder = require("./onlinePoisFinder");
-const serverCommunication = require("../services/serverCommunication");
-var tokenGetter = require("../services/serverTokenGetter");
+const serverCommunication = require("../../services/serverCommunication");
+var tokenGetter = require("../../services/serverTokenGetter");
+// const onlineGoogleApi = require("./");
 var geohash = require('ngeohash');
 
 
@@ -54,6 +55,12 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
  })
  // get searchPage page
  app.get("/searchNearbyPois", async function (req, res) { //next requrie (the function will not stop the program)
+    // //roy temp 
+    // const lat = 32.1000895;
+    // const long = 34.8833617;
+    // const distance = 3000;
+    //const t = onlineGoogleApi.getPois(lat, long, distance)
+    ttt.temp();
     userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language}
     searchParams = {}
     addUserDataTosearchParams(searchParams, userData)
@@ -81,6 +88,7 @@ app.get("/", async function (req, res) { //next requrie (the function will not s
             // do nothing - everything is updated
         } else {
             updateDbWithOnlinePois(getGeoHashBoundsByGeoStr(geoHashStr), 'en');
+
             params = {geoHashStr: geoHashStr, lastUpdated: generalServices.getTodayDate()}
             db.addCachedAreaInfo(dbClientSearcher, params)
         }

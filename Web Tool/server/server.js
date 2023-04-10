@@ -84,6 +84,9 @@ async function createNewPois(pois) {
                 isAllPoisAdded = false;
                 continue;
             }
+            if(pois[i]._id){
+                pois[i]._id = undefined
+            }
             // if everthing is ok
             pois[i] = await poiHandler(pois[i]);
             filteredPois.push(pois[i])
