@@ -165,6 +165,7 @@ class _UserMapState extends State<UserMap> {
   bool _zoomGesturesEnabled = true;
   bool _myLocationEnabled = true;
   bool _telemetryEnabled = true;
+  Set<mapbox.Symbol> _symbolsOnMap = Set();
   late mapbox.SymbolManager _symbolManager;
 
   mapbox.MyLocationTrackingMode _myLocationTrackingMode =
@@ -189,17 +190,14 @@ class _UserMapState extends State<UserMap> {
     if (mapPoiAction.action == PoiAction.add) {
       mapbox.Symbol symbolToAdd =
           mapPoiAction.mapPoi.getSymbolFromPoi(mapPoiAction.color);
-      mapbox.Symbol? oldSymbol = _symbolManager.byId(symbolToAdd.id);
-      if (oldSymbol != null) {
-        _symbolManager.set(symbolToAdd);
-      } else {
-        _symbolManager.add(symbolToAdd);
-      }
+      _symbolManager.add(symbolToAdd);
+      _symbolsOnMap.add(symbolToAdd);
     } else if (mapPoiAction.action == PoiAction.remove) {
       mapbox.Symbol? oldSymbol =
           _symbolManager.byId(mapPoiAction.mapPoi.poi.id);
       if (oldSymbol != null) {
         _symbolManager.remove(oldSymbol);
+        _symbolsOnMap.remove(oldSymbol);
       }
     }
   }
@@ -369,20 +367,11 @@ class _UserMapState extends State<UserMap> {
 
   Future<void> _onMapCreated(mapbox.MapboxMapController controller) async {
     _mapController = controller;
-    _symbolManager = mapbox.SymbolManager(_mapController,
-        iconAllowOverlap: true, onTap: (mapbox.Symbol symbol) {
-      Globals.globalClickedPoiStream.add(symbol.id);
-    });
     _mapController.addListener(_onMapChanged);
     _extractMapInfo();
     _mapController!.getTelemetryEnabled().then((isEnabled) => setState(() {
           _telemetryEnabled = isEnabled;
         }));
-
-    _mapController.addImage('greyPoi', Globals.svgPoiMarkerBytes.greyIcon);
-    _mapController.addImage('bluePoi', Globals.svgPoiMarkerBytes.blueIcon);
-    _mapController.addImage(
-        'greyTransPoi', Globals.svgPoiMarkerBytes.greyTransIcon);
 
     LocationMarkerDataStreamFactory()
         .fromCompassHeadingStream()
@@ -406,7 +395,19 @@ class _UserMapState extends State<UserMap> {
     });
   }
 
-  _onStyleLoadedCallback() {
+  _onStyleLoadedCallback() async {
+    _symbolManager = mapbox.SymbolManager(_mapController,
+        iconAllowOverlap: true, onTap: (mapbox.Symbol symbol) {
+      Globals.globalClickedPoiStream.add(symbol.id);
+    });
+    await _mapController.addImage(
+        'greyPoi', Globals.svgPoiMarkerBytes.greyIcon);
+    await _mapController.addImage(
+        'bluePoi', Globals.svgPoiMarkerBytes.blueIcon);
+    await _mapController.addImage(
+        'greyTransPoi', Globals.svgPoiMarkerBytes.greyTransIcon);
+    await _symbolManager.addAll(_symbolsOnMap);
+
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text("Style loaded :)"),
       backgroundColor: Theme.of(context).primaryColor,
@@ -579,7 +580,9 @@ class _UserMapState extends State<UserMap> {
                 child: FloatingActionButton(
                   heroTag: null,
                   onPressed: () {
-                    _styleStringIndex = (_styleStringIndex + 1) % _styleStrings.length;
+                    _symbolManager.dispose();
+                    _styleStringIndex =
+                        (_styleStringIndex + 1) % _styleStrings.length;
                     updateState();
                   },
                   child: const Icon(
