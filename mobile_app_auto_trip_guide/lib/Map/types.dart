@@ -161,7 +161,7 @@ class MapPoi {
       geometry: mapbox.LatLng(poi.latitude, poi.longitude),
         iconImage: iconImage, // this is the icon you want to use
       iconSize: 0.12,
-        textField: poi.poiName, textSize: 10)
+        textField: poi.poiName, textSize: 10, textOpacity: 0.4)
     );
   }
 
