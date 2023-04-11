@@ -33,7 +33,8 @@ class UserMap extends StatefulWidget {
   bool showLoadingPoisAnimation = false;
 
   // inits
-  static late Position USER_LOCATION;
+  static late Position USER_LOCATION; // the heading here isn't updated
+  static double USER_HEADING = 0; // the correct heading
 
   // the last known location of the user in the old area - for new pois purposes
   static late Position LAST_AREA_USER_LOCATION;
@@ -64,6 +65,15 @@ class UserMap extends StatefulWidget {
             locationSettings: LocationSettings(accuracy: LocationAccuracy.high))
         .listen(locationChangedEvent);
     LAST_AREA_USER_LOCATION = USER_LOCATION;
+
+    LocationMarkerDataStreamFactory()
+        .fromCompassHeadingStream()
+        .listen((event) async {
+          USER_HEADING = (event?.heading ?? 0) / pi * 180;
+          if(USER_HEADING < 0) {
+            USER_HEADING = 360 + USER_HEADING;
+          }
+    });
   }
 
   static bool isUserInNewArea() {
@@ -411,12 +421,6 @@ class _UserMapState extends State<UserMap> {
     _symbolManager.setIconAllowOverlap(true);
     _mapController.setSymbolTextAllowOverlap(true);
     _mapController.setSymbolTextIgnorePlacement(true);
-
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("Style loaded :)"),
-      backgroundColor: Theme.of(context).primaryColor,
-      duration: Duration(seconds: 1),
-    ));
   }
 
   _clearFill() {
@@ -462,7 +466,6 @@ class _UserMapState extends State<UserMap> {
         _onMapDrag(details);
       },
     );
-    print("hello from build map");
     map = mapbox.MapboxMap(
       gestureRecognizers: Set()
         ..add(Factory<UniversalPanGestureRecognizer>(

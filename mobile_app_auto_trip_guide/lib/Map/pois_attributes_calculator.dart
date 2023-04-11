@@ -4,36 +4,23 @@ import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/map.dart';
 import 'package:final_project/Map/map_configuration.dart';
 import 'package:final_project/Map/types.dart';
-import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../General Wigets/generals.dart';
 import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 
 class PoisAttributesCalculator {
-  static Map<int, String> Directions = {
-    0: 'North',
-    4: 'South',
-    6: 'West',
-    2: 'East',
-    7: 'Northwest',
-    1: 'Northeast',
-    5: 'Southwest',
-    3: 'Southeast',
+  static Map<int, String> USER_RELATIVE_DIRECTIONS = {
+    0: 'ahead of you',
+    4: 'behind you',
+    6: 'to your left',
+    2: 'to your right',
+    7: 'to your upper left',
+    1: 'to your upper right',
+    5: 'to your lower left',
+    3: 'to your lower right',
     -1: 'Undefined'
   };
-
-  // static Map<int, String> USER_RELATIVE_DIRECTIONS = {
-  //   0: 'ahead',
-  //   4: 'behind',
-  //   6: 'left',
-  //   2: 'right',
-  //   7: 'ahead left',
-  //   1: 'ahead left',
-  //   5: 'behind left',
-  //   3: 'behind right',
-  //   -1: 'Undefined'
-  // };
 
   static double getBearingBetweenPoints(startLat, startLong, endLat, endLong) {
     double bearing =
@@ -52,7 +39,7 @@ class PoisAttributesCalculator {
   }
 
   static double getBearingBetweenPointsWithHeading(
-      double lat1, double lng1, double lat2, double lng2, double heading) {
+      double lat1, double lng1, double heading, double lat2, double lng2) {
     double trueBearing = getBearingBetweenPoints(lat1, lng1, lat2, lng2);
     double relativeUserHeadingToPoint = trueBearing - heading;
     if (relativeUserHeadingToPoint >= 0) {
@@ -62,18 +49,18 @@ class PoisAttributesCalculator {
     }
   }
 
-  static String getDirection(
-      double? lat1, double? lng1, double? lat2, double? lng2) {
-    if (lat1 == null || lng1 == null || lat2 == null || lng2 == null) {
-      return 'Undefined';
-    }
+  static String getDirectionStr(Poi poi) {
     // double bearing = getBearingBetweenPoints(lat1, lng1, lat2, lng2);
     double bearing = getBearingBetweenPointsWithHeading(
-        lat1, lng1, lat2, lng2, UserMap.USER_LOCATION.heading);
+        UserMap.USER_LOCATION.latitude,
+        UserMap.USER_LOCATION.longitude,
+        UserMap.USER_HEADING,
+        poi.latitude,
+        poi.longitude);
     int halfQuarter = 45;
     int directionNum = bearing ~/ halfQuarter;
     print("direction Num " + directionNum.toString());
-    return Directions[directionNum] ?? 'Undefined';
+    return USER_RELATIVE_DIRECTIONS[directionNum] ?? '';
   }
 
   static List<Poi> filterPois(List<Poi> pois, Position position) {
@@ -111,14 +98,30 @@ class PoisAttributesCalculator {
   // Define a function that takes in the x and y coordinates of a point,
 // a radius, and an angle in degrees, and returns the x and y coordinates
 // of the point at that angle and distance.
-  static mapbox.LatLng getPointAtAngle(double lat, double lng,double radius, double angleDegrees) {
+  static mapbox.LatLng getPointAtAngle(
+      double lat, double lng, double radius, double angleDegrees) {
     // Convert the angle from degrees to radians.
     double angleRadians = angleDegrees * pi / 180.0;
-
 
     double pointLng = lng + radius * cos(angleRadians);
     double pointLat = lat + radius * sin(angleRadians);
     // Return the coordinates as a list.
     return mapbox.LatLng(pointLat, pointLng);
+  }
+
+  static String getPoiIntro(Poi poi) {
+    double distInMeters = Geolocator.distanceBetween(UserMap.USER_LOCATION.latitude,
+        UserMap.USER_LOCATION.longitude, poi.latitude, poi.longitude);
+    double distInTensOfMeters = (distInMeters / 10).round() * 10;
+    String directionStr = getDirectionStr(poi);
+    String poiName = poi.poiName ?? "";
+    String intro = 'In ' +
+        distInTensOfMeters.toString() +
+        'meters,' +
+        directionStr +
+        ", is " +
+        poiName +
+        ".";
+    return intro;
   }
 }

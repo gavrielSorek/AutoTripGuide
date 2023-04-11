@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:bloc/bloc.dart';
 import 'package:final_project/Map/map.dart';
+import 'package:final_project/Map/pois_attributes_calculator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
@@ -64,9 +65,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       List<MapPoi> poisToPlay = List.from(event.poisToPlay.values);
       for (MapPoi poi in poisToPlay) {
         Globals.globalUserMap.mapPoiActionStreamController.add(MapPoiAction(
-            color: PoiIconColor.grey,
-            action: PoiAction.add,
-            mapPoi: poi));
+            color: PoiIconColor.grey, action: PoiAction.add, mapPoi: poi));
       }
 
       // sorting the pois
@@ -111,8 +110,9 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             .toString()
             .replaceAll(RegExp(r"<|>|\[|\]|'"), '');
         MapPoi currentPoi = Globals.globalAllPois[poiId]!;
-        Globals.globalGuideAudioPlayerHandler
-            .setTextToPlay(currentPoi!.poi.shortDesc!, 'en-US');
+        String poiIntro = PoisAttributesCalculator.getPoiIntro(currentPoi.poi);
+        Globals.globalGuideAudioPlayerHandler.setTextToPlay(
+            poiIntro + " " + currentPoi!.poi.shortDesc!, 'en-US');
         Globals.globalGuideAudioPlayerHandler.trackTitle =
             currentPoi!.poi.poiName;
         Globals.globalGuideAudioPlayerHandler.picUrl = currentPoi!.poi.pic;
