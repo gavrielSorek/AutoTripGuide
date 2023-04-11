@@ -110,9 +110,9 @@ class PoisAttributesCalculator {
   }
 
   static String getPoiIntro(Poi poi) {
-    double distInMeters = Geolocator.distanceBetween(UserMap.USER_LOCATION.latitude,
-        UserMap.USER_LOCATION.longitude, poi.latitude, poi.longitude);
-    double distInTensOfMeters = (distInMeters / 10).round() * 10;
+    int distInMeters = Geolocator.distanceBetween(UserMap.USER_LOCATION.latitude,
+        UserMap.USER_LOCATION.longitude, poi.latitude, poi.longitude).toInt();
+    int distInTensOfMeters = (distInMeters / 10).round() * 10;
     String directionStr = getDirectionStr(poi);
     String poiName = poi.poiName ?? "";
     String intro = 'In ' +
