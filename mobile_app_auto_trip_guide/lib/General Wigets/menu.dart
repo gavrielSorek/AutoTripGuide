@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:final_project/Map/speed_slider_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -114,10 +115,12 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               NavigationDrawer.closeDrawer(
                   NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)?.settings.name]);
               Navigator.of(context).popUntil((route) => route.isFirst);
-              // Navigator.of(context).pushNamedAndRemoveUntil('/history-screen', (Route<dynamic> route) => false);
               Navigator.pushNamed(context, '/favorite-categories-screen');
             },
           ),
+          SpeedSliderTile(initialSpeed: Globals.globalGuideAudioPlayerHandler.speed * SpeedSliderTile.DEFAULT_MAX, onChanged: (double val){
+            Globals.globalGuideAudioPlayerHandler.setSpeed(val / SpeedSliderTile.DEFAULT_MAX);
+          }, title: Container(alignment: Alignment.center, child: Text('Audio Speed:')),),
         ],
       ),
     );

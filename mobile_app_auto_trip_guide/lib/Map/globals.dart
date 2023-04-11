@@ -41,7 +41,6 @@ class Globals {
   static PoisIconsBytesHolder svgPoiMarkerBytes = PoisIconsBytesHolder();
   static SharedPreferences? globalPrefs;
   static bool globalIsInitialized = false;
-  static late AudioHandler globalAudioHandler;
 
   static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {
     globalVisitedPoi = visitedPoisList;

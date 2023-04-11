@@ -49,6 +49,11 @@ class BackgroundAudioHandler extends BaseAudioHandler
     _onPressPrev = onPressPrev;
   }
 
+  @override
+  Future<void> setSpeed(double speed) async {
+    ttsAudioPlayer.setSpeed(speed);
+  }
+
   // must be called before using the player
   initAudioPlayer() async {
     await ttsAudioPlayer.iniPlayer();
@@ -73,6 +78,8 @@ class BackgroundAudioHandler extends BaseAudioHandler
   set onPlay(dynamic onPlay) {
     ttsAudioPlayer.onPlay = onPlay;
   }
+
+  get speed => ttsAudioPlayer.speed;
 
   @override
   Future<void> skipToNext() async {

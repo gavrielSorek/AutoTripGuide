@@ -33,6 +33,9 @@ class TtsAudioPlayer {
 
   get status => _ttsState;
 
+  get speed => _rate;
+
+
   bool get isIOS => !kIsWeb && Platform.isIOS;
 
   bool get isAndroid => !kIsWeb && Platform.isAndroid;
@@ -65,6 +68,17 @@ class TtsAudioPlayer {
 
   set onPause(dynamic onPause) {
     _onPause = onPause;
+  }
+
+  void setSpeed(double speed) async{
+    _rate = speed;
+    if (isPlaying || isContinued) {
+      await pauseAudio();
+      await flutterTts.setSpeechRate(_rate);
+      await resumeAudio();
+    } else {
+      await flutterTts.setSpeechRate(_rate);
+    }
   }
 
   TtsAudioPlayer() {
@@ -178,7 +192,7 @@ class TtsAudioPlayer {
     await flutterTts.speak(_allTextToPlay);
   }
 
-  void unPauseAudio() async {
+  Future<void> resumeAudio() async {
     await flutterTts.speak(_allTextToPlay);
   }
 
