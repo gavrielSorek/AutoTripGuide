@@ -241,11 +241,15 @@ app.get("/getPoisHistory", async function (req:Request, res:Response) { //next r
 });
 
 //TODO ,add permissions.authContributor
-app.get("/insertUserPoiPreference",async function (req:Request, res:Response) { //next require (the function will not stop the program)
-    await db.insertPoiPreference(dbClientSearcher, req.query.emailAddr, req.query.poiId, req.query.preference);
-    res.status(200);
-    res.end();
-})
+app.post("/insertUserPoiPreference", async function (req:Request, res:Response) {
+    try {
+      await db.insertPoiPreference(dbClientSearcher, req.query.emailAddr, req.query.poiId, req.query.preference);
+      res.status(200).end();
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    }
+});
 
 app.get("/getUserPoiPreference",async function (req:Request, res:Response) { //next require (the function will not stop the program)
     req.query.id
