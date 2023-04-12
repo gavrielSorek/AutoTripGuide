@@ -1,8 +1,8 @@
 var XMLHttpRequest = require('xhr2');
 module.exports = { convertArrayToServerCategories, convertToServerCategories, splitMulti, translate, detectLanguage, translateIfNotInTargetLanguage};
 
-
-const serverUrl = 'https://autotripguide.loca.lt';
+const serverCommunication = require("./serverCommunication");
+const serverUrl = serverCommunication.getServerUrl;
 
 var globalServerCategories = undefined;
 

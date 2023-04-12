@@ -1,6 +1,7 @@
 
 (function (global) {
-    const uriBeginningTemp = 'https://autotripguide.loca.lt/';
+    const serverCommunication = require("./serverCommunication");
+    const serverUrl = serverCommunication.getServerUrl + '/';
     global.communication = {}
     global.communication.uriBeginning = uriBeginningTemp
 

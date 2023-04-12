@@ -18,7 +18,7 @@ const serverCommunication = require("./serverCommunication");
 
  //const serverUrl = 'https://autotripguide.loca.lt';
 //const serverUrl = serverCommunication.getServerUrl()
-const serverUrl = 'http://localhost:5500'
+const serverUrl = serverCommunication.getServerUrl;
 
 //init
 var globalTokenAndPermission = undefined

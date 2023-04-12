@@ -1,5 +1,4 @@
 module.exports = { getToken };
-// serverUrl = 'https://autotripguide.loca.lt'
 var XMLHttpRequest = require('xhr2');
 
 async function getToken(mail, password, serverUrl) {

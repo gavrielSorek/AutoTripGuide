@@ -6,8 +6,8 @@ let fs = require("fs");
 const gTTS = require('gtts');
 var gtts = require('node-gtts')('en');
 var path = require('path');
-
-const serverUrl = 'https://autotripguide.loca.lt';
+const serverCommunication = require("./serverCommunication");
+const serverUrl = serverCommunication.getServerUrl;
 
 // const serverUrl = 'http://localhost:5500'
 
