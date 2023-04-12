@@ -214,6 +214,20 @@ app.get("/getPoisHistory", async function (req, res) { //next requrie (the funct
     res.end();
  })
 
+ app.get("/getPoiById", async function (req, res) {
+    console.log("inside get poi - server side")
+    const poiId = req.query.poiId;
+    const poiInfo = await db.getPoi(dbClientSearcher, poiId);
+    if (poiInfo) {
+        res.status(200);
+        res.json(poiInfo);
+        res.end();
+    } else {
+        res.status(404);
+        res.end();
+    }
+});
+
  app.listen(port, async ()=>{
     await init()
     console.log(`Server is runing on port ${port}`)

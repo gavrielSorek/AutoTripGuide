@@ -1,4 +1,4 @@
-module.exports = { getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength, addCachedAreaInfo, getCachedAreaInfo ,getFavorCategories, updateFavorCategories, getUserInfo, updateUserInfo, insertPoiToHistory, getPoisHistory};
+module.exports = { getPoi, getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength, addCachedAreaInfo, getCachedAreaInfo ,getFavorCategories, updateFavorCategories, getUserInfo, updateUserInfo, insertPoiToHistory, getPoisHistory};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -107,6 +107,16 @@ async function getCategories(client, lang) {
         return {};
     }
 }
+
+async function getPoi(client, poiId) {
+     const res = await client.db("auto_trip_guide_db").collection("poisCollection").findOne({ _id: poiId });
+    if (res) {
+        return res;
+    } else {
+        return null;
+    }
+}
+
 
 // The function return the favorite categories of specific user from the db
 async function getFavorCategories(client, email) {
