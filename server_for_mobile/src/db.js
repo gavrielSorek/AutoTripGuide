@@ -1,4 +1,4 @@
-module.exports = { getPoi, getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength, addCachedAreaInfo, getCachedAreaInfo ,getFavorCategories, updateFavorCategories, getUserInfo, updateUserInfo, insertPoiToHistory, getPoisHistory};
+module.exports = {insertPoiPreference, getPoiPreference, getPoi, getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength, addCachedAreaInfo, getCachedAreaInfo ,getFavorCategories, updateFavorCategories, getUserInfo, updateUserInfo, insertPoiToHistory, getPoisHistory};
 // var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
@@ -237,6 +237,39 @@ async function addCachedAreaInfo(client, parameters) {
 function isEmpty(obj) {
     return Object.keys(obj).length === 0;
 }
+
+// The function inserts a new user to the db
+async function getPoiPreference(client, email, poiId) { //preference 1= like, -1 = dislike, 0 = nothing
+    const query = {"poiId": poiId, "email": email}
+    const res = await client.db("auto_trip_guide_db").collection("poisPreference").findOne(query);
+    if (res) {
+        // User has a preference for the POI, return it
+        return res.preference;
+      } else {
+        return 0; // nothing
+      }
+}
+
+async function insertPoiPreference(client, email, poiId, preference) { //preference 1= like, -1 = dislike, 0 = nothing
+    const filter = {
+      poiId: poiId,
+      email: email,
+    };
+    const update = {
+      $set: {
+        preference: preference,
+      },
+    };
+    const options = {
+      upsert: true,
+    };
+    const result = await client
+      .db("auto_trip_guide_db")
+      .collection("poisPreference")
+      .updateOne(filter, update, options);
+    console.log(`Document inserted/updated: ${result}`);
+}
+  
 
 
 

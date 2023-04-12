@@ -222,6 +222,21 @@ app.get("/getPoisHistory", async function (req, res) { //next requrie (the funct
     }
 });
 
+//TODO ,add permissions.authContributor
+app.get("/insertUserPoiPreference",async function (req, res) { //next require (the function will not stop the program)
+    await db.insertPoiPreference(dbClientSearcher, req.query.emailAddr, req.query.poiId, req.query.preference);
+    res.status(200);
+    res.end();
+})
+
+app.get("/getUserPoiPreference",async function (req, res) { //next require (the function will not stop the program)
+    req.query.id
+    const preference = await db.getPoiPreference(dbClientSearcher, req.query.emailAddr, req.query.poiId);
+    res.status(200);
+    res.json({ 'preference': preference });
+    res.end();
+})
+
  app.listen(port, async ()=>{
     await init()
     console.log(`Server is runing on port ${port}`)
