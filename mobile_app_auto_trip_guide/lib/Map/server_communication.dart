@@ -9,7 +9,6 @@ class ServerCommunication {
   //String serverUrl = "autotripguidemobile.loca.lt";
   String serverUrl = "212.80.207.83:5600";
 
-
   var client = RetryClient(http.Client());
 
   // var client = http.Client();
@@ -25,8 +24,7 @@ class ServerCommunication {
     return uri;
   }
 
-  static Uri addInfoToUrl(
-      String url, String path, Map<String, String> info) {
+  static Uri addInfoToUrl(String url, String path, Map<String, String> info) {
     return Uri.http(url, path, info);
   }
 
@@ -61,9 +59,7 @@ class ServerCommunication {
   }
 
   Future<Poi?> getPoiById(String poiId) async {
-    Map<String, String> params = {
-      'poiId': poiId
-    };
+    Map<String, String> params = {'poiId': poiId};
     Uri newUri = Uri.http(serverUrl, '/getPoiById', params);
 
     try {
@@ -71,6 +67,57 @@ class ServerCommunication {
       if (response.statusCode == 200 && response.contentLength! > 0) {
         final parsed = jsonDecode(response.body);
         return Poi.fromJson(parsed);
+      } else {
+        return null;
+      }
+    } finally {
+      // client.close();
+    }
+  }
+
+  Future<int?> getPoiPreferences(String poiId, UserInfo? userInfo) async {
+    if (userInfo == null) {
+      return 0;
+    }
+
+    Map<String, String> params = {
+      'emailAddr': userInfo.emailAddr!,
+      'poiId': poiId,
+    };
+    Uri newUri = Uri.http(serverUrl, '/getUserPoiPreference', params);
+
+    try {
+      var response = await client.get(newUri);
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        final parsed = jsonDecode(response.body);
+        final preference = parsed['preference'];
+        return int.tryParse(preference);
+      } else {
+        return null;
+      }
+    } finally {
+      // client.close();
+    }
+  }
+
+  void insertPoiPreferences(
+      String poiId, UserInfo? userInfo, int preference) async {
+    if (userInfo == null) {
+      return;
+    }
+
+    Map<String, dynamic> params = {
+      'emailAddr': userInfo.emailAddr!,
+      'poiId': poiId,
+      'preference': preference.toString()
+    };
+
+    Uri newUri = Uri.http(serverUrl, '/insertUserPoiPreference', params);
+
+    try {
+      var response = await client.post(newUri);
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        print('insertPoiPreferences succeeded');
       } else {
         return null;
       }

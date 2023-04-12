@@ -558,7 +558,6 @@ class PageBarState extends State<PageBar> {
       setState(() {
         this.progress = progress;
       });
-      print("change duration");
     });
   }
 

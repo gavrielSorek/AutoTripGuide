@@ -246,7 +246,7 @@ async function getPoiPreference(client, email, poiId) { //preference 1= like, -1
         // User has a preference for the POI, return it
         return res.preference;
       } else {
-        return 0; // nothing
+        return '0'; // nothing
       }
 }
 

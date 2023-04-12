@@ -69,10 +69,10 @@ class UserMap extends StatefulWidget {
     LocationMarkerDataStreamFactory()
         .fromCompassHeadingStream()
         .listen((event) async {
-          USER_HEADING = (event?.heading ?? 0) / pi * 180;
-          if(USER_HEADING < 0) {
-            USER_HEADING = 360 + USER_HEADING;
-          }
+      USER_HEADING = (event?.heading ?? 0) / pi * 180;
+      if (USER_HEADING < 0) {
+        USER_HEADING = 360 + USER_HEADING;
+      }
     });
   }
 
@@ -521,10 +521,7 @@ class _UserMapState extends State<UserMap> {
           print(features[0]);
         }
       },
-      onUserLocationUpdated: (location) {
-        print(
-            "new location: ${location.position}, alt.: ${location.altitude}, bearing: ${location.bearing}, speed: ${location.speed}, horiz. accuracy: ${location.horizontalAccuracy}, vert. accuracy: ${location.verticalAccuracy}");
-      },
+      onUserLocationUpdated: (location) {},
       onStyleLoadedCallback: _onStyleLoadedCallback,
     );
 
