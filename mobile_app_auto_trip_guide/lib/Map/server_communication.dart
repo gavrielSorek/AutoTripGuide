@@ -25,6 +25,11 @@ class ServerCommunication {
     return uri;
   }
 
+  static Uri addInfoToUrl(
+      String url, String path, Map<String, String> info) {
+    return Uri.http(url, path, info);
+  }
+
   String getAudioStreamUrl(Poi poi) {
     return 'http://' +
         serverUrl +
@@ -49,6 +54,25 @@ class ServerCommunication {
         // If the server did not return a 200 OK response,
         // then throw an exception.
         throw Exception('Failed to load Pois');
+      }
+    } finally {
+      // client.close();
+    }
+  }
+
+  Future<Poi?> getPoiById(String poiId) async {
+    Map<String, String> params = {
+      'poiId': poiId
+    };
+    Uri newUri = Uri.http(serverUrl, '/getPoiById', params);
+
+    try {
+      var response = await client.get(newUri);
+      if (response.statusCode == 200 && response.contentLength! > 0) {
+        final parsed = jsonDecode(response.body);
+        return Poi.fromJson(parsed);
+      } else {
+        return null;
       }
     } finally {
       // client.close();
