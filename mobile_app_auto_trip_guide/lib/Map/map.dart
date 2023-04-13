@@ -421,7 +421,7 @@ class _UserMapState extends State<UserMap> {
       Globals.globalClickedPoiStream.add(symbol.id);
     });
     _highlightSymbolManager = mapbox.SymbolManager(_mapController,
-        iconAllowOverlap: true, onTap: (mapbox.Symbol symbol) {
+        iconAllowOverlap: true, textAllowOverlap: true, onTap: (mapbox.Symbol symbol) {
       Globals.globalClickedPoiStream.add(symbol.id);
     });
     await _mapController.addImage(
