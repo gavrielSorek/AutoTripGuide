@@ -18,7 +18,11 @@ import 'dart:math' as math;
 
 enum MarkersLayer { semiTransparent, grey, blue }
 
-enum PoiAction { add, remove }
+enum PoiAction {
+  add,
+  remove,
+  highlight
+} // highlight cause that the poi wont delete from the map if no space
 
 class MapPoiAction {
   PoiIconColor color;
@@ -177,6 +181,7 @@ class _UserMapState extends State<UserMap> {
   bool _telemetryEnabled = true;
   Set<mapbox.Symbol> _symbolsOnMap = Set();
   late mapbox.SymbolManager _symbolManager;
+  late mapbox.SymbolManager _highlightSymbolManager;
 
   mapbox.MyLocationTrackingMode _myLocationTrackingMode =
       mapbox.MyLocationTrackingMode.Tracking;
@@ -197,10 +202,16 @@ class _UserMapState extends State<UserMap> {
   }
 
   Future<void> setMapPoiAction(MapPoiAction mapPoiAction) async {
-    if (mapPoiAction.action == PoiAction.add) {
+    if (mapPoiAction.action == PoiAction.add ||
+        mapPoiAction.action == PoiAction.highlight) {
       mapbox.Symbol symbolToAdd =
           mapPoiAction.mapPoi.getSymbolFromPoi(mapPoiAction.color);
-      _symbolManager.add(symbolToAdd);
+      if (mapPoiAction.action == PoiAction.add) {
+        _symbolManager.add(symbolToAdd);
+      } else {
+        _highlightSymbolManager.removeAll(_highlightSymbolManager.annotations);
+        _highlightSymbolManager.add(symbolToAdd);
+      }
       _symbolsOnMap.add(symbolToAdd);
     } else if (mapPoiAction.action == PoiAction.remove) {
       mapbox.Symbol? oldSymbol =
@@ -258,7 +269,7 @@ class _UserMapState extends State<UserMap> {
       highlightedPoi = event;
       widget.mapPoiActionStreamController.add(MapPoiAction(
           color: PoiIconColor.blue,
-          action: PoiAction.add,
+          action: PoiAction.highlight,
           mapPoi: highlightedPoi!));
 
       _cameraPosition = mapbox.CameraPosition(
@@ -406,7 +417,10 @@ class _UserMapState extends State<UserMap> {
   }
 
   _onStyleLoadedCallback() async {
-    _symbolManager = mapbox.SymbolManager(_mapController,
+    _symbolManager = mapbox.SymbolManager(_mapController, onTap: (mapbox.Symbol symbol) {
+      Globals.globalClickedPoiStream.add(symbol.id);
+    });
+    _highlightSymbolManager = mapbox.SymbolManager(_mapController,
         iconAllowOverlap: true, onTap: (mapbox.Symbol symbol) {
       Globals.globalClickedPoiStream.add(symbol.id);
     });
@@ -417,10 +431,6 @@ class _UserMapState extends State<UserMap> {
     await _mapController.addImage(
         'greyTransPoi', Globals.svgPoiMarkerBytes.greyTransIcon);
     await _symbolManager.addAll(_symbolsOnMap);
-    _symbolManager.setIconIgnorePlacement(true);
-    _symbolManager.setIconAllowOverlap(true);
-    _mapController.setSymbolTextAllowOverlap(true);
-    _mapController.setSymbolTextIgnorePlacement(true);
   }
 
   _clearFill() {
@@ -564,11 +574,16 @@ class _UserMapState extends State<UserMap> {
                 child: FloatingActionButton(
                   heroTag: null,
                   onPressed: () {
-                    if (_myLocationTrackingMode !=
-                        mapbox.MyLocationTrackingMode.Tracking) {
-                      _myLocationTrackingMode =
-                          mapbox.MyLocationTrackingMode.Tracking;
-                    }
+                    _myLocationTrackingMode =
+                        mapbox.MyLocationTrackingMode.Tracking;
+                    _mapController.animateCamera(
+                      mapbox.CameraUpdate.newCameraPosition(
+                        mapbox.CameraPosition(
+                            target: _getRelativeCenterLatLng(_cameraPosition.zoom),
+                            bearing: mapHeading,
+                            zoom: _cameraPosition.zoom),
+                      ),
+                    );
                   },
                   child: const Icon(
                     Icons.my_location,
