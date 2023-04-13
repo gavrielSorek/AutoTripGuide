@@ -40,7 +40,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         progressPosition: ProgressPosition.bottom,
         onStoryShow: storiesEvents.onShowStory,
         onComplete: () {
-          storiesEvents.onStoryFinished();
+          storiesEvents.onStoriesFinished();
         },
         storyItems: storyItems,
         // To disable vertical swipe gestures, ignore this parameter.
@@ -70,7 +70,10 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         storyController.setProgressValue(progress);
       };
       Globals.globalGuideAudioPlayerHandler.onPlayerFinishedFunc = () {
-        storyController.next();
+        final int secondToWaitBetweenStories = 3;
+        Future.delayed(Duration(seconds: secondToWaitBetweenStories), () {
+          storyController.next();
+        });
       };
     }
 
@@ -249,7 +252,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           isCheckedCategory: event.isCheckedCategory,
           onShowStory: event.storiesEvents.onShowStory,
           idToPoisMap: event.pois,
-          onFinishedFunc: event.storiesEvents.onStoryFinished,
+          onFinishedFunc: event.storiesEvents.onStoriesFinished,
           lastShowStoriesState: lastShowStoriesState));
     });
   }

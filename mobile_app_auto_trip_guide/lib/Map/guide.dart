@@ -27,7 +27,7 @@ class Constants {
 class StoriesEvents {
   BuildContext context;
   dynamic onShowStory;
-  dynamic onStoryFinished;
+  dynamic onStoriesFinished;
   dynamic onPoiClicked;
   dynamic onStoryTap;
   dynamic onVerticalSwipeComplete;
@@ -35,7 +35,7 @@ class StoriesEvents {
   StoriesEvents(
       {required this.context,
       required this.onShowStory,
-      required this.onStoryFinished,
+      required this.onStoriesFinished,
       required this.onPoiClicked,
       required this.onStoryTap,
       required this.onVerticalSwipeComplete});
@@ -60,7 +60,7 @@ class Guide {
         onShowStory: (StoryItem s) async {
           context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
         },
-        onStoryFinished: () {
+        onStoriesFinished: () {
           if (_queuedPoisToPlay.isEmpty) return;
           context.read<GuideBloc>().add(ShowLoadingMorePoisEvent());
 
