@@ -466,6 +466,7 @@ class _UserMapState extends State<UserMap> {
 
   void _onMapDrag(DragUpdateDetails details) {
     _myLocationTrackingMode = mapbox.MyLocationTrackingMode.None;
+    updateState();
   }
 
   @override
@@ -571,7 +572,7 @@ class _UserMapState extends State<UserMap> {
                     top: MediaQuery.of(context).size.width / 20,
                     left: MediaQuery.of(context).size.width / 40),
                 width: MediaQuery.of(context).size.width / 10,
-                child: FloatingActionButton(
+                child: _myLocationTrackingMode == mapbox.MyLocationTrackingMode.None ? FloatingActionButton(
                   heroTag: null,
                   onPressed: () {
                     _myLocationTrackingMode =
@@ -584,12 +585,13 @@ class _UserMapState extends State<UserMap> {
                             zoom: _cameraPosition.zoom),
                       ),
                     );
+                    updateState();
                   },
                   child: const Icon(
                     Icons.my_location,
                     color: Colors.white,
                   ),
-                ),
+                ) : null,
               ),
               Container(
                 margin: EdgeInsets.only(
