@@ -10,7 +10,7 @@ class ShowStoriesState extends GuideDialogState {
   final MapPoi? currentPoi;
   final StoryView storyView;
   final StoryController controller;
-  final ShowOptionalCategoriesState lastShowOptionalCategoriesState;
+  final ShowOptionalCategoriesState? lastShowOptionalCategoriesState;
 
   ShowStoriesState(
       {this.currentPoi, required this.storyView, required this.controller,required this.lastShowOptionalCategoriesState}) {}

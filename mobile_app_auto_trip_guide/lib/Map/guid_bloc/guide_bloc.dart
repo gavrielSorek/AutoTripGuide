@@ -11,6 +11,7 @@ import '../../Adjusted Libs/story_view/story_view.dart';
 import '../../General Wigets/generals.dart';
 import '../../General Wigets/scrolled_text.dart';
 import '../globals.dart';
+import '../guide.dart';
 import '../personalize_recommendation.dart';
 import '../types.dart';
 
@@ -30,6 +31,49 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       Globals.globalUserMap.setLoadingAnimationState(true);
       emit(LoadingMorePoisState());
     });
+
+    StoryView createStoryView(
+        StoryController controller, StoriesEvents storiesEvents, storyItems) {
+      return StoryView(
+        controller: controller,
+        repeat: true,
+        progressPosition: ProgressPosition.bottom,
+        onStoryShow: storiesEvents.onShowStory,
+        onComplete: () {
+          storiesEvents.onStoryFinished();
+        },
+        storyItems: storyItems,
+        // To disable vertical swipe gestures, ignore this parameter.
+        onStoryTap: storiesEvents.onStoryTap,
+        onVerticalSwipeComplete: storiesEvents.onVerticalSwipeComplete,
+      );
+    }
+
+    void initAudioPlayerByController(StoryController storyController) {
+      Globals.globalGuideAudioPlayerHandler.onPressNext = () {
+        Globals.globalGuideAudioPlayerHandler.stop();
+        storyController.pause();
+        storyController.next();
+      };
+      Globals.globalGuideAudioPlayerHandler.onPressPrev = () {
+        Globals.globalGuideAudioPlayerHandler.stop();
+        storyController.previous();
+      };
+      Globals.globalGuideAudioPlayerHandler.onPause = () {
+        storyController.pause();
+      };
+      Globals.globalGuideAudioPlayerHandler.onResume = () {
+        storyController.play();
+      };
+      Globals.globalGuideAudioPlayerHandler.onProgressChanged =
+          (double progress) {
+        storyController.setProgressValue(progress);
+      };
+      Globals.globalGuideAudioPlayerHandler.onPlayerFinishedFunc = () {
+        storyController.next();
+      };
+    }
+
     on<SetStoriesListEvent>((event, emit) {
       final ShowOptionalCategoriesState lastShowOptionalCategoriesState;
       if (state is ShowOptionalCategoriesState) {
@@ -39,28 +83,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       }
 
       StoryController controller = StoryController();
-      Globals.globalGuideAudioPlayerHandler.onPressNext = () {
-        Globals.globalGuideAudioPlayerHandler.stop();
-        controller.pause();
-        controller.next();
-      };
-      Globals.globalGuideAudioPlayerHandler.onPressPrev = () {
-        Globals.globalGuideAudioPlayerHandler.stop();
-        controller.previous();
-      };
-      Globals.globalGuideAudioPlayerHandler.onPause = () {
-        controller.pause();
-      };
-      Globals.globalGuideAudioPlayerHandler.onResume = () {
-        controller.play();
-      };
-      Globals.globalGuideAudioPlayerHandler.onProgressChanged =
-          (double progress) {
-        controller.setProgressValue(progress);
-      };
-      Globals.globalGuideAudioPlayerHandler.onPlayerFinishedFunc = () {
-        controller.next();
-      };
+      initAudioPlayerByController(controller);
 
       List<MapPoi> poisToPlay = List.from(event.poisToPlay.values);
       for (MapPoi poi in poisToPlay) {
@@ -83,24 +106,14 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             duration: Duration(hours: 100))); // infinite
       });
 
-      final StoryView storyView = StoryView(
-        controller: controller,
-        repeat: true,
-        progressPosition: ProgressPosition.bottom,
-        onStoryShow: event.onShowStory,
-        onComplete: () {
-          event.onFinishedFunc();
-        },
-        storyItems: storyItems,
-        // To disable vertical swipe gestures, ignore this parameter.
-        onStoryTap: event.onStoryTap,
-        onVerticalSwipeComplete: event.onVerticalSwipeComplete,
-      );
+      final StoryView storyView =
+          createStoryView(controller, event.storiesEvents, storyItems);
       emit(ShowStoriesState(
           storyView: storyView,
           controller: controller,
           lastShowOptionalCategoriesState: lastShowOptionalCategoriesState));
     });
+
     on<SetCurrentPoiEvent>((event, emit) {
       if (state is ShowStoriesState) {
         final state = this.state as ShowStoriesState;
@@ -159,10 +172,10 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     });
 
     on<playPoiEvent>((event, emit) {
+      Globals.globalGuideAudioPlayerHandler.stop();
+      Globals.globalUserMap.highlightPoi(event.mapPoi);
       if (state is ShowStoriesState) {
         final state = this.state as ShowStoriesState;
-        Globals.globalGuideAudioPlayerHandler.stop();
-        Globals.globalUserMap.highlightPoi(event.mapPoi);
         StoryItem requestedStoryItem = ScrolledText.textStory(
             id: event.mapPoi.poi.id,
             title: event.mapPoi.poi.poiName ?? 'No Name',
@@ -178,6 +191,32 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             controller: state.controller,
             lastShowOptionalCategoriesState:
                 state.lastShowOptionalCategoriesState));
+      } else if (event.storiesEvents != null) { //create story of one story
+        StoryController controller = StoryController();
+        initAudioPlayerByController(controller);
+
+        Globals.globalUserMap.mapPoiActionStreamController.add(MapPoiAction(
+            color: PoiIconColor.grey,
+            action: PoiAction.add,
+            mapPoi: event.mapPoi));
+
+        final List<StoryItem> storyItems = [];
+        storyItems.add(ScrolledText.textStory(
+            id: event.mapPoi.poi.id,
+            title: event.mapPoi.poi.poiName ?? 'No Name',
+            text: event.mapPoi.poi.shortDesc,
+            backgroundColor: Colors.white,
+            key: Key(event.mapPoi.poi.id),
+            // duration: Duration(seconds: double.infinity.toInt()))); // infinite
+            duration: Duration(hours: 100)));
+
+        final StoryView storyView =
+            createStoryView(controller, event.storiesEvents!, storyItems);
+
+        emit(ShowStoriesState(
+            storyView: storyView,
+            controller: controller,
+            lastShowOptionalCategoriesState: null));
       }
     });
 
@@ -208,9 +247,9 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       emit(ShowOptionalCategoriesState(
           categoriesToPoisMap: categoriesToMapPois,
           isCheckedCategory: event.isCheckedCategory,
-          onShowStory: event.onShowStory,
+          onShowStory: event.storiesEvents.onShowStory,
           idToPoisMap: event.pois,
-          onFinishedFunc: event.onFinishedFunc,
+          onFinishedFunc: event.storiesEvents.onStoryFinished,
           lastShowStoriesState: lastShowStoriesState));
     });
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:final_project/Adjusted%20Libs/story_view/story_view.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +23,24 @@ class Constants {
   static const double sidesMarginOfButtons = 10;
 }
 
+// To organize this code this class is separated, its events holder
+class StoriesEvents {
+  BuildContext context;
+  dynamic onShowStory;
+  dynamic onStoryFinished;
+  dynamic onPoiClicked;
+  dynamic onStoryTap;
+  dynamic onVerticalSwipeComplete;
+
+  StoriesEvents(
+      {required this.context,
+      required this.onShowStory,
+      required this.onStoryFinished,
+      required this.onPoiClicked,
+      required this.onStoryTap,
+      required this.onVerticalSwipeComplete});
+}
+
 class Guide {
   BuildContext context;
   GuideData guideData;
@@ -29,22 +48,54 @@ class Guide {
   Map<String, MapPoi> _poisToPlay = HashMap<String, MapPoi>();
   Map<String, MapPoi> _queuedPoisToPlay = HashMap<String, MapPoi>();
   late GuidDialogBox storiesDialogBox;
+  late StoriesEvents storiesEvent;
 
   Guide(this.context, this.guideData) {
-    storiesDialogBox = GuidDialogBox(onRefreshFunc: () {
-      clearAllPois();
-      context.read<GuideBloc>().add(ShowSearchingPoisAnimationEvent());
-      Globals.globalUserMap.userMapState?.loadNewPois();
-    });
     Stream stream = Globals.globalClickedPoiStream.stream;
     stream.listen((mapPoiId) {
       mapPoiClicked(Globals.globalAllPois[mapPoiId]!);
     });
-    // StoriesDialogBox(key: UniqueKey());
+    storiesEvent = StoriesEvents(
+        context: context,
+        onShowStory: (StoryItem s) async {
+          context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
+        },
+        onStoryFinished: () {
+          if (_queuedPoisToPlay.isEmpty) return;
+          context.read<GuideBloc>().add(ShowLoadingMorePoisEvent());
+
+          Future.delayed(Duration(seconds: 3)).then((value) {
+            _poisToPlay.clear();
+            _poisToPlay.addAll(_queuedPoisToPlay);
+            _queuedPoisToPlay.clear();
+            if (!_poisToPlay.isEmpty) {
+              setPoisToPlay(_poisToPlay);
+            }
+          });
+        },
+        onPoiClicked: () {
+          context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+        },
+        onStoryTap: (StoryItem? story) {
+          context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+        },
+        onVerticalSwipeComplete: (Direction? d) {
+          context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
+        });
+
+    storiesDialogBox = GuidDialogBox(
+        onRefreshFunc: () {
+          clearAllPois();
+          context.read<GuideBloc>().add(ShowSearchingPoisAnimationEvent());
+          Globals.globalUserMap.userMapState?.loadNewPois();
+        },
+        storiesEvents: storiesEvent);
   }
 
   Future<void> mapPoiClicked(MapPoi mapPoi) async {
-    context.read<GuideBloc>().add(playPoiEvent(mapPoi: mapPoi));
+    context
+        .read<GuideBloc>()
+        .add(playPoiEvent(mapPoi: mapPoi, storiesEvents: storiesEvent));
   }
 
   void setPoisInQueue(List<Poi> pois) {
@@ -66,25 +117,8 @@ class Guide {
   void setPoisToPlay(Map<String, MapPoi> mapPois) {
     context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
         pois: mapPois,
-        onShowStory: (s) async {
-          context.read<GuideBloc>().add(SetCurrentPoiEvent(storyItem: s));
-        },
-        onFinishedFunc: onStoryFinished,
+        storiesEvents: storiesEvent,
         isCheckedCategory: HashMap<String, bool>()));
-  }
-
-  void onStoryFinished() {
-    if (_queuedPoisToPlay.isEmpty) return;
-    context.read<GuideBloc>().add(ShowLoadingMorePoisEvent());
-
-    Future.delayed(Duration(seconds: 3)).then((value) {
-      _poisToPlay.clear();
-      _poisToPlay.addAll(_queuedPoisToPlay);
-      _queuedPoisToPlay.clear();
-      if (!_poisToPlay.isEmpty) {
-        setPoisToPlay(_poisToPlay);
-      }
-    });
   }
 
   void clearAllPois() {
@@ -95,8 +129,9 @@ class Guide {
 
 class GuidDialogBox extends StatefulWidget {
   dynamic onRefreshFunc;
+  StoriesEvents storiesEvents;
 
-  GuidDialogBox({required this.onRefreshFunc}) {}
+  GuidDialogBox({required this.onRefreshFunc, required this.storiesEvents}) {}
 
   @override
   State<StatefulWidget> createState() {
@@ -275,19 +310,21 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                   Positioned(
                     top: Constants.avatarRadius,
                     right: Constants.sidesMarginOfButtons,
-                    child: Container(child:
-                        UniformButtons.getGuidePreferencesButton(onPressed: () {
-                      context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
-                          pois:
-                              state.lastShowOptionalCategoriesState.idToPoisMap,
-                          onShowStory:
-                              state.lastShowOptionalCategoriesState.onShowStory,
-                          onFinishedFunc: state
-                              .lastShowOptionalCategoriesState.onFinishedFunc,
-                          isCheckedCategory: state
-                              .lastShowOptionalCategoriesState
-                              .isCheckedCategory));
-                    })),
+                    child: Container(
+                        child: UniformButtons.getGuidePreferencesButton(
+                            onPressed: () {
+                              context.read<GuideBloc>().add(
+                                  ShowOptionalCategoriesEvent(
+                                      pois: state
+                                          .lastShowOptionalCategoriesState
+                                          .idToPoisMap,
+                                      storiesEvents: widget.storiesEvents,
+                                      isCheckedCategory: state
+                                          .lastShowOptionalCategoriesState
+                                          .isCheckedCategory));
+                            },
+                            enabled:
+                                state.lastShowOptionalCategoriesState != null)),
                   )
                 ],
               )
@@ -300,9 +337,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
     final showOptionalCategoriesState = state as ShowOptionalCategoriesState;
     return OptionalCategoriesSelection(
         state: showOptionalCategoriesState,
-        onPoiClicked: () {
-          context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-        },
+        storiesEvents: widget.storiesEvents,
         onRefreshFunc: widget.onRefreshFunc);
   }
 
@@ -315,7 +350,10 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         } else if (state is ShowStoriesState) {
           return buildStoriesWidget(state);
         } else if (state is ShowPoiState) {
-          return FullPoiInfo(showPoiState: state);
+          return FullPoiInfo(
+            showPoiState: state,
+            storiesEvents: widget.storiesEvents,
+          );
         } else if (state is ShowOptionalCategoriesState) {
           return buildOptionalCategoriesSelectionWidget(state);
         } else if (state is LoadingMorePoisState) {
@@ -336,11 +374,11 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
 class OptionalCategoriesSelection extends StatefulWidget {
   final ShowOptionalCategoriesState state;
   final dynamic onRefreshFunc;
-  final dynamic onPoiClicked;
+  StoriesEvents storiesEvents;
 
   OptionalCategoriesSelection(
       {required this.state,
-      required this.onPoiClicked,
+      required this.storiesEvents,
       required this.onRefreshFunc}) {}
 
   @override
@@ -482,18 +520,9 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
             key: (item) => item.poi.id,
             value: (item) => item);
         if (filteredPois.length > 0) {
-          context.read<GuideBloc>().add(
-                SetStoriesListEvent(
-                    poisToPlay: filteredMapPois,
-                    onShowStory: widget.state.onShowStory,
-                    onFinishedFunc: widget.state.onFinishedFunc,
-                    onStoryTap: (story) {
-                      widget.onPoiClicked();
-                    },
-                    onVerticalSwipeComplete: (Direction? d) {
-                      widget.onPoiClicked();
-                    }),
-              );
+          context.read<GuideBloc>().add(SetStoriesListEvent(
+              poisToPlay: filteredMapPois,
+              storiesEvents: widget.storiesEvents));
         }
       },
       content: "Start Playing",
@@ -602,8 +631,11 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
 
 class FullPoiInfo extends StatefulWidget {
   final ShowPoiState showPoiState;
+  final StoriesEvents storiesEvents;
 
-  FullPoiInfo({Key? key, required this.showPoiState}) : super(key: key);
+  FullPoiInfo(
+      {Key? key, required this.showPoiState, required this.storiesEvents})
+      : super(key: key);
 
   @override
   _FullPoiInfoState createState() => _FullPoiInfoState();
@@ -831,18 +863,27 @@ class _FullPoiInfoState extends State<FullPoiInfo> {
             Positioned(
               top: Constants.avatarRadius,
               right: Constants.sidesMarginOfButtons,
-              child: Container(child:
-                  UniformButtons.getGuidePreferencesButton(onPressed: () {
-                context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
-                    pois: widget.showPoiState.savedStoriesState
-                        .lastShowOptionalCategoriesState.idToPoisMap,
-                    onShowStory: widget.showPoiState.savedStoriesState
-                        .lastShowOptionalCategoriesState.onShowStory,
-                    onFinishedFunc: widget.showPoiState.savedStoriesState
-                        .lastShowOptionalCategoriesState.onFinishedFunc,
-                    isCheckedCategory: widget.showPoiState.savedStoriesState
-                        .lastShowOptionalCategoriesState.isCheckedCategory));
-              })),
+              child: Container(
+                  child: UniformButtons.getGuidePreferencesButton(
+                      onPressed: () {
+                        context.read<GuideBloc>().add(
+                            ShowOptionalCategoriesEvent(
+                                pois:
+                                    widget
+                                        .showPoiState
+                                        .savedStoriesState
+                                        .lastShowOptionalCategoriesState!
+                                        .idToPoisMap,
+                                storiesEvents: widget.storiesEvents,
+                                isCheckedCategory: widget
+                                    .showPoiState
+                                    .savedStoriesState
+                                    .lastShowOptionalCategoriesState!
+                                    .isCheckedCategory));
+                      },
+                      enabled: widget.showPoiState.savedStoriesState
+                              .lastShowOptionalCategoriesState !=
+                          null)),
             ),
             Positioned(
                 top: Constants.avatarRadius,

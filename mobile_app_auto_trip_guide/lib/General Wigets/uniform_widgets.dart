@@ -23,13 +23,13 @@ class UniformButtons {
     );
   }
 
-  static IconButton getGuidePreferencesButton({required dynamic onPressed}) {
+  static IconButton getGuidePreferencesButton({required dynamic onPressed, enabled = true}) {
     final String assetName = 'assets/images/settings_horizontal_lines.svg';
     return IconButton(icon: SvgPicture.asset(
         assetName,
-        color: Color.fromRGBO(10, 132, 255, 1),
+        color:enabled ? Color.fromRGBO(10, 132, 255, 1) : Colors.grey,
         semanticsLabel: 'Label'
-    ), onPressed: onPressed);
+    ), onPressed: enabled ? onPressed : null);
   }
 
   static IconButton getReturnDialogButton({required dynamic onPressed, enabled = true}) {
