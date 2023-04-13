@@ -5,6 +5,7 @@ import 'package:final_project/Pages/home_page.dart';
 import 'package:final_project/Pages/app_loading_page.dart';
 import 'package:final_project/Pages/personal_details_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'Map/globals.dart';
 import 'Map/onboarding.dart';
 import 'Pages/favorite_categories_page.dart';
@@ -25,7 +26,10 @@ Future<void> main() async {
       androidNotificationOngoing: true,
     ),
   );
-  runApp(const AutoGuideApp());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
+      .then((_) {
+    runApp(const AutoGuideApp());
+  });
 }
 
 class AutoGuideApp extends StatelessWidget {
