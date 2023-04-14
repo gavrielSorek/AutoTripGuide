@@ -15,6 +15,7 @@ import '../General Wigets/UniversalPanGestureRecognizer.dart';
 import 'guide.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
+import 'package:wakelock/wakelock.dart';
 
 enum MarkersLayer { semiTransparent, grey, blue }
 
@@ -291,6 +292,7 @@ class _UserMapState extends State<UserMap> {
       );
     });
     super.initState();
+    Wakelock.enable();
   }
 
   @override
@@ -298,6 +300,7 @@ class _UserMapState extends State<UserMap> {
     print("____________________dispose statful map");
     mapPoiActionSubscription.cancel();
     super.dispose();
+    Wakelock.disable();
   }
 
   // add new pois if location changed
