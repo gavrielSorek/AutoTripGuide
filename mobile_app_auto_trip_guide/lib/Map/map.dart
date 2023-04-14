@@ -18,7 +18,10 @@ import 'dart:math' as math;
 import 'package:wakelock/wakelock.dart';
 
 enum MarkersLayer { semiTransparent, grey, blue }
-
+enum CameraOption{
+  move,
+  animate
+}
 enum PoiAction {
   add,
   remove,
@@ -198,6 +201,28 @@ class _UserMapState extends State<UserMap> {
         zoom: initialZoom);
   }
 
+  void updateCameraByRelativePosition({CameraOption option = CameraOption.animate}) {
+    mapbox.CameraUpdate newCameraPosition = mapbox.CameraUpdate.newCameraPosition(
+      mapbox.CameraPosition(
+          target: _getRelativeCenterLatLng(_cameraPosition.zoom),
+          bearing: mapHeading,
+          zoom: _cameraPosition.zoom),
+    );
+
+    switch (option) {
+      case CameraOption.move:
+        _mapController.moveCamera(newCameraPosition);
+        break;
+      case CameraOption.animate:
+        _mapController.animateCamera(newCameraPosition);
+        break;
+      default:
+        _mapController.animateCamera(newCameraPosition);
+        break;
+    }
+    updateState();
+  }
+
   void updateState() {
     setState(() {});
   }
@@ -282,14 +307,7 @@ class _UserMapState extends State<UserMap> {
                   5.3,
               mapbox.LatLng(highlightedPoi!.poi.latitude,
                   highlightedPoi!.poi.longitude)));
-      _mapController.animateCamera(
-        mapbox.CameraUpdate.newCameraPosition(
-          mapbox.CameraPosition(
-              target: _getRelativeCenterLatLng(_cameraPosition.zoom),
-              bearing: mapHeading,
-              zoom: _cameraPosition.zoom),
-        ),
-      );
+      updateCameraByRelativePosition();
     });
     super.initState();
     Wakelock.enable();
@@ -307,6 +325,9 @@ class _UserMapState extends State<UserMap> {
   void onLocationChanged(Position currentLocation) async {
     if (!mounted) return;
     print("hello from location changed");
+    if (_myLocationTrackingMode != mapbox.MyLocationTrackingMode.None) {
+      updateCameraByRelativePosition(option: CameraOption.move);
+    }
     // TODO add a condition that won't crazy the server
     if (isNewPoisNeeded()) {
       loadNewPois(location: currentLocation);
@@ -408,23 +429,18 @@ class _UserMapState extends State<UserMap> {
       if ((newHeading - mapHeading).abs() < epsilon) return;
       mapHeading = newHeading;
 
-      _mapController.animateCamera(
-        mapbox.CameraUpdate.newCameraPosition(
-          mapbox.CameraPosition(
-              target: _getRelativeCenterLatLng(_cameraPosition.zoom),
-              bearing: mapHeading,
-              zoom: _cameraPosition.zoom),
-        ),
-      );
+      updateCameraByRelativePosition();
     });
   }
 
   _onStyleLoadedCallback() async {
-    _symbolManager = mapbox.SymbolManager(_mapController, onTap: (mapbox.Symbol symbol) {
+    _symbolManager =
+        mapbox.SymbolManager(_mapController, onTap: (mapbox.Symbol symbol) {
       Globals.globalClickedPoiStream.add(symbol.id);
     });
     _highlightSymbolManager = mapbox.SymbolManager(_mapController,
-        iconAllowOverlap: true, textAllowOverlap: true, onTap: (mapbox.Symbol symbol) {
+        iconAllowOverlap: true,
+        textAllowOverlap: true, onTap: (mapbox.Symbol symbol) {
       Globals.globalClickedPoiStream.add(symbol.id);
     });
     await _mapController.addImage(
@@ -575,26 +591,21 @@ class _UserMapState extends State<UserMap> {
                     top: MediaQuery.of(context).size.width / 20,
                     left: MediaQuery.of(context).size.width / 40),
                 width: MediaQuery.of(context).size.width / 10,
-                child: _myLocationTrackingMode == mapbox.MyLocationTrackingMode.None ? FloatingActionButton(
-                  heroTag: null,
-                  onPressed: () {
-                    _myLocationTrackingMode =
-                        mapbox.MyLocationTrackingMode.Tracking;
-                    _mapController.animateCamera(
-                      mapbox.CameraUpdate.newCameraPosition(
-                        mapbox.CameraPosition(
-                            target: _getRelativeCenterLatLng(_cameraPosition.zoom),
-                            bearing: mapHeading,
-                            zoom: _cameraPosition.zoom),
-                      ),
-                    );
-                    updateState();
-                  },
-                  child: const Icon(
-                    Icons.my_location,
-                    color: Colors.white,
-                  ),
-                ) : null,
+                child: _myLocationTrackingMode ==
+                        mapbox.MyLocationTrackingMode.None
+                    ? FloatingActionButton(
+                        heroTag: null,
+                        onPressed: () {
+                          _myLocationTrackingMode =
+                              mapbox.MyLocationTrackingMode.Tracking;
+                          updateCameraByRelativePosition();
+                        },
+                        child: const Icon(
+                          Icons.my_location,
+                          color: Colors.white,
+                        ),
+                      )
+                    : null,
               ),
               Container(
                 margin: EdgeInsets.only(
