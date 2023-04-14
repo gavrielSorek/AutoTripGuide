@@ -18,10 +18,9 @@ import 'dart:math' as math;
 import 'package:wakelock/wakelock.dart';
 
 enum MarkersLayer { semiTransparent, grey, blue }
-enum CameraOption{
-  move,
-  animate
-}
+
+enum CameraOption { move, animate }
+
 enum PoiAction {
   add,
   remove,
@@ -139,6 +138,8 @@ class UserMap extends StatefulWidget {
 }
 
 class _UserMapState extends State<UserMap> {
+  late mapbox.UserLocation
+      _userIconLocation; // sometimes it's different from user location of UserMap
   late StreamSubscription mapPoiActionSubscription;
   GuideData guideData = GuideData();
   late Guide guideTool;
@@ -193,6 +194,22 @@ class _UserMapState extends State<UserMap> {
   mapbox.Fill? _selectedFill;
 
   _UserMapState() : super() {
+    _userIconLocation = mapbox.UserLocation(
+        altitude: 0,
+        position: mapbox.LatLng(0, 0),
+        bearing: 0,
+        heading: mapbox.UserHeading(
+            headingAccuracy: 0,
+            magneticHeading: 0,
+            timestamp: DateTime(0),
+            trueHeading: 0,
+            x: 0,
+            y: 0,
+            z: 0),
+        horizontalAccuracy: 0,
+        speed: 0,
+        timestamp: DateTime(0),
+        verticalAccuracy: 0);
     UserMap.userChangeLocationFuncs.add(onLocationChanged);
     double initialZoom = 15;
     _cameraPosition = mapbox.CameraPosition(
@@ -201,8 +218,10 @@ class _UserMapState extends State<UserMap> {
         zoom: initialZoom);
   }
 
-  void updateCameraByRelativePosition({CameraOption option = CameraOption.animate}) {
-    mapbox.CameraUpdate newCameraPosition = mapbox.CameraUpdate.newCameraPosition(
+  void updateCameraByRelativePosition(
+      {CameraOption option = CameraOption.animate}) {
+    mapbox.CameraUpdate newCameraPosition =
+        mapbox.CameraUpdate.newCameraPosition(
       mapbox.CameraPosition(
           target: _getRelativeCenterLatLng(_cameraPosition.zoom),
           bearing: mapHeading,
@@ -325,9 +344,6 @@ class _UserMapState extends State<UserMap> {
   void onLocationChanged(Position currentLocation) async {
     if (!mounted) return;
     print("hello from location changed");
-    if (_myLocationTrackingMode != mapbox.MyLocationTrackingMode.None) {
-      updateCameraByRelativePosition(option: CameraOption.move);
-    }
     // TODO add a condition that won't crazy the server
     if (isNewPoisNeeded()) {
       loadNewPois(location: currentLocation);
@@ -404,8 +420,8 @@ class _UserMapState extends State<UserMap> {
   mapbox.LatLng _getRelativeCenterLatLng(double zoom) {
     double latPerPx = 360 / math.pow(2, zoom) / 256;
     return PoisAttributesCalculator.getPointAtAngle(
-        UserMap.USER_LOCATION.latitude,
-        UserMap.USER_LOCATION.longitude,
+        _userIconLocation.position.latitude,
+        _userIconLocation.position.longitude,
         latPerPx * (Globals.globalWidgetsSizes.dialogBoxTotalHeight / 4.5),
         (270 - mapHeading));
   }
@@ -551,7 +567,12 @@ class _UserMapState extends State<UserMap> {
           print(features[0]);
         }
       },
-      onUserLocationUpdated: (location) {},
+      onUserLocationUpdated: (location) {
+        _userIconLocation = location;
+        if (_myLocationTrackingMode != mapbox.MyLocationTrackingMode.None) {
+          updateCameraByRelativePosition(option: CameraOption.animate);
+        }
+      },
       onStyleLoadedCallback: _onStyleLoadedCallback,
     );
 
