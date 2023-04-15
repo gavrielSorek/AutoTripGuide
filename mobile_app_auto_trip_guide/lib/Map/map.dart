@@ -16,6 +16,7 @@ import 'guide.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
 import 'package:wakelock/wakelock.dart';
+import 'mapbox/user_location.dart';
 
 enum MarkersLayer { semiTransparent, grey, blue }
 
@@ -137,9 +138,7 @@ class UserMap extends StatefulWidget {
   }
 }
 
-class _UserMapState extends State<UserMap> {
-  late mapbox.UserLocation
-      _userIconLocation; // sometimes it's different from user location of UserMap
+class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
   late StreamSubscription mapPoiActionSubscription;
   GuideData guideData = GuideData();
   late Guide guideTool;
@@ -187,6 +186,7 @@ class _UserMapState extends State<UserMap> {
   Set<mapbox.Symbol> _symbolsOnMap = Set();
   late mapbox.SymbolManager _symbolManager;
   late mapbox.SymbolManager _highlightSymbolManager;
+  UserLocationMarker? _userLocationMarker;
 
   mapbox.MyLocationTrackingMode _myLocationTrackingMode =
       mapbox.MyLocationTrackingMode.Tracking;
@@ -194,22 +194,6 @@ class _UserMapState extends State<UserMap> {
   mapbox.Fill? _selectedFill;
 
   _UserMapState() : super() {
-    _userIconLocation = mapbox.UserLocation(
-        altitude: 0,
-        position: mapbox.LatLng(0, 0),
-        bearing: 0,
-        heading: mapbox.UserHeading(
-            headingAccuracy: 0,
-            magneticHeading: 0,
-            timestamp: DateTime(0),
-            trueHeading: 0,
-            x: 0,
-            y: 0,
-            z: 0),
-        horizontalAccuracy: 0,
-        speed: 0,
-        timestamp: DateTime(0),
-        verticalAccuracy: 0);
     UserMap.userChangeLocationFuncs.add(onLocationChanged);
     double initialZoom = 15;
     _cameraPosition = mapbox.CameraPosition(
@@ -223,7 +207,7 @@ class _UserMapState extends State<UserMap> {
     mapbox.CameraUpdate newCameraPosition =
         mapbox.CameraUpdate.newCameraPosition(
       mapbox.CameraPosition(
-          target: _getRelativeCenterLatLng(_cameraPosition.zoom),
+          target: _getRelativeCenterLatLng(_mapController.cameraPosition!.zoom),
           bearing: mapHeading,
           zoom: _cameraPosition.zoom),
     );
@@ -336,6 +320,7 @@ class _UserMapState extends State<UserMap> {
   void dispose() {
     print("____________________dispose statful map");
     mapPoiActionSubscription.cancel();
+    _userLocationMarker?.stop();
     super.dispose();
     Wakelock.disable();
   }
@@ -420,14 +405,25 @@ class _UserMapState extends State<UserMap> {
   mapbox.LatLng _getRelativeCenterLatLng(double zoom) {
     double latPerPx = 360 / math.pow(2, zoom) / 256;
     return PoisAttributesCalculator.getPointAtAngle(
-        _userIconLocation.position.latitude,
-        _userIconLocation.position.longitude,
+        _userLocationMarker?.locationMarkerInfo.latLng.latitude ?? 0,
+        _userLocationMarker?.locationMarkerInfo.latLng.longitude ?? 0,
         latPerPx * (Globals.globalWidgetsSizes.dialogBoxTotalHeight / 4.5),
         (270 - mapHeading));
   }
 
   Future<void> _onMapCreated(mapbox.MapboxMapController controller) async {
     _mapController = controller;
+
+    // Create a UserLocationMarker object
+    _userLocationMarker = UserLocationMarker(
+        mapController: _mapController,
+        vsync: this,
+        onMarkerLocationUpdated: (LocationMarkerInfo locationMarkerInfo) {
+          if (_myLocationTrackingMode != mapbox.MyLocationTrackingMode.None) {
+            updateCameraByRelativePosition(option: CameraOption.move);
+          }
+        });
+
     _mapController.addListener(_onMapChanged);
     _extractMapInfo();
     _mapController!.getTelemetryEnabled().then((isEnabled) => setState(() {
@@ -450,6 +446,9 @@ class _UserMapState extends State<UserMap> {
   }
 
   _onStyleLoadedCallback() async {
+// Start the UserLocationMarker
+    _userLocationMarker?.start();
+
     _symbolManager =
         mapbox.SymbolManager(_mapController, onTap: (mapbox.Symbol symbol) {
       Globals.globalClickedPoiStream.add(symbol.id);
@@ -567,12 +566,7 @@ class _UserMapState extends State<UserMap> {
           print(features[0]);
         }
       },
-      onUserLocationUpdated: (location) {
-        _userIconLocation = location;
-        if (_myLocationTrackingMode != mapbox.MyLocationTrackingMode.None) {
-          updateCameraByRelativePosition(option: CameraOption.animate);
-        }
-      },
+      onUserLocationUpdated: (location) {},
       onStyleLoadedCallback: _onStyleLoadedCallback,
     );
 
