@@ -30,7 +30,7 @@ dependencies:
   url_launcher: ^6.1.2
   audioplayers: ^3.0.1
   wakelock: ^0.6.2
-  #  flutter_compass: ^0.7.0
+  flutter_compass: ^0.7.0
   flutter_map: ^3.0.0
   flutter:
     sdk: flutter

@@ -38,7 +38,7 @@ class Globals {
   static StreamController<String> globalClickedPoiStream =
       StreamController<String>.broadcast();
   static String? svgMarkerString;
-  static PoisIconsBytesHolder svgPoiMarkerBytes = PoisIconsBytesHolder();
+  static IconsBytesHolder svgPoiMarkerBytes = IconsBytesHolder();
   static SharedPreferences? globalPrefs;
   static bool globalIsInitialized = false;
 
@@ -96,6 +96,7 @@ class Globals {
     globalUserInfoObj = null;
     svgMarkerString =
         await rootBundle.loadString('assets/images/mapMarker.svg');
+    svgPoiMarkerBytes.userIcon = await Generals.loadSvgStringAsUint8List(await rootBundle.loadString('assets/images/location_marker.svg'));
     svgPoiMarkerBytes.greyIcon = (await Generals.poiIconSvgStringToUint8List(Colors.grey))!;
     svgPoiMarkerBytes.blueIcon = (await Generals.poiIconSvgStringToUint8List(Colors.blue))!;
     svgPoiMarkerBytes.greyTransIcon = (await Generals.poiIconSvgStringToUint8List(Colors.grey.withOpacity(0.40)))!;

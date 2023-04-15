@@ -45,7 +45,11 @@ class Generals {
         (svgString.replaceAll(originalMarkerColor, color.toHex())).replaceAll(
             'opacity="1"/>',
             'opacity=' + '\"' + color.opacity!.toString() + '\"/>');
-    final DrawableRoot svgRoot = await svg.fromSvgString(markerIconString, '');
+    return loadSvgStringAsUint8List(markerIconString);
+  }
+
+  static Future<Uint8List> loadSvgStringAsUint8List(String svgStr) async {
+    final DrawableRoot svgRoot = await svg.fromSvgString(svgStr, '');
     final PictureRecorder recorder = PictureRecorder();
     final Canvas canvas = Canvas(recorder);
     final Rect svgViewBox = Rect.fromLTWH(
@@ -57,18 +61,20 @@ class Generals {
     final pngBytes = (await img.toByteData(format: ImageByteFormat.png))
         ?.buffer
         .asUint8List();
-    return pngBytes;
+    return pngBytes!;
   }
 }
 
-class PoisIconsBytesHolder {
-  late Uint8List _greyIcon, _blueIcon, _greyTransIcon;
+class IconsBytesHolder {
+  late Uint8List _greyIcon, _blueIcon, _greyTransIcon, _userIcon;
 
   Uint8List get greyIcon => _greyIcon;
 
   Uint8List get blueIcon => _blueIcon;
 
   Uint8List get greyTransIcon => _greyTransIcon;
+
+  Uint8List get userIcon => _userIcon;
 
   set greyIcon(Uint8List value) {
     _greyIcon = value;
@@ -80,5 +86,9 @@ class PoisIconsBytesHolder {
 
   set greyTransIcon(Uint8List value) {
     _greyTransIcon = value;
+  }
+
+  set userIcon(Uint8List value) {
+    _userIcon = value;
   }
 }
