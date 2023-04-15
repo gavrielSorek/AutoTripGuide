@@ -18,6 +18,7 @@ class UserLocationMarker {
   dynamic onMarkerUpdated;
   StreamSubscription<CompassEvent>? _compassSubscription;
   StreamSubscription<Position>? _positionSubscription;
+  late SymbolManager _userSymbolManager;
   UserLocationMarker({
     required this.mapController,
     required TickerProvider vsync,
@@ -35,6 +36,9 @@ class UserLocationMarker {
 
   LocationMarkerInfo  get locationMarkerInfo => _locationMarkerInfo;
   Future<void> start() async {
+    _userSymbolManager = SymbolManager(mapController,
+        iconAllowOverlap: true,
+        textAllowOverlap: true);
     // Get the user's current location
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
@@ -43,7 +47,8 @@ class UserLocationMarker {
     locationMarkerInfo.latLng = userLocation;
 
     // Add a marker to the map at the user's location
-    _symbol = await mapController.addSymbol(
+    _symbol = Symbol(
+      'userLocation',
       SymbolOptions(
         geometry: locationMarkerInfo.latLng,
         iconImage: "userLocation",
@@ -51,7 +56,7 @@ class UserLocationMarker {
         zIndex: 1000,
       ),
     );
-
+    _userSymbolManager.add(_symbol);
 
     // Create a Tween to animate the marker's heading
     HeadingTween headingTween = HeadingTween(
@@ -102,26 +107,23 @@ class UserLocationMarker {
         // Reset and start the animation
         _moveAnimationController.reset();
         _moveAnimationController.forward();
-      }); 
+      });
     }
   }
 
   Future<void> stop() async {
     // Remove the marker from the map
-    await mapController.removeSymbol(_symbol);
+    _userSymbolManager.remove(_symbol);
     _compassSubscription?.cancel();
     _positionSubscription?.cancel();
   }
 
   void _updateSymbol() {
-    // Update the marker's location on the map
-    mapController.updateSymbol(
-      _symbol,
-      SymbolOptions(
-          geometry: locationMarkerInfo.latLng,
-        iconRotate: (locationMarkerInfo.heading - (mapController.cameraPosition?.bearing ?? 0)),
-      ),
-    );
+    _symbol = Symbol(_symbol.id, _symbol.options.copyWith(SymbolOptions(
+      geometry: locationMarkerInfo.latLng,
+      iconRotate: (locationMarkerInfo.heading - (mapController.cameraPosition?.bearing ?? 0))),
+    ));
+    _userSymbolManager.set(_symbol);
     onMarkerUpdated(locationMarkerInfo);
   }
 }

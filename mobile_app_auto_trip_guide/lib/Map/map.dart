@@ -433,9 +433,6 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
   }
 
   _onStyleLoadedCallback() async {
-// Start the UserLocationMarker
-    _userLocationMarker?.start();
-
     _symbolManager =
         mapbox.SymbolManager(_mapController, onTap: (mapbox.Symbol symbol) {
       Globals.globalClickedPoiStream.add(symbol.id);
@@ -445,6 +442,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
         textAllowOverlap: true, onTap: (mapbox.Symbol symbol) {
       Globals.globalClickedPoiStream.add(symbol.id);
     });
+    _userLocationMarker?.start();
     await _mapController.addImage(
         'userLocation', Globals.svgPoiMarkerBytes.userIcon);
     await _mapController.addImage(
