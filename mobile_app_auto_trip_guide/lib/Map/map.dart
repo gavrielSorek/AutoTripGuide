@@ -446,6 +446,8 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
       Globals.globalClickedPoiStream.add(symbol.id);
     });
     await _mapController.addImage(
+        'userLocation', Globals.svgPoiMarkerBytes.userIcon);
+    await _mapController.addImage(
         'greyPoi', Globals.svgPoiMarkerBytes.greyIcon);
     await _mapController.addImage(
         'bluePoi', Globals.svgPoiMarkerBytes.blueIcon);

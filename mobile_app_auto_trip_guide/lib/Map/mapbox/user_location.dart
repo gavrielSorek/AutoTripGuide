@@ -31,11 +31,6 @@ class UserLocationMarker {
       vsync: vsync,
       duration: const Duration(milliseconds: 1000),
     );
-
-
-
-
-
   }
 
   LocationMarkerInfo  get locationMarkerInfo => _locationMarkerInfo;
@@ -51,7 +46,8 @@ class UserLocationMarker {
     _symbol = await mapController.addSymbol(
       SymbolOptions(
         geometry: locationMarkerInfo.latLng,
-        iconImage: "airport-15",
+        iconImage: "userLocation",
+        iconSize: 1,
         zIndex: 1000,
       ),
     );
@@ -123,7 +119,7 @@ class UserLocationMarker {
       _symbol,
       SymbolOptions(
           geometry: locationMarkerInfo.latLng,
-          //iconRotate: locationMarkerInfo.heading,
+        iconRotate: (locationMarkerInfo.heading - (mapController.cameraPosition?.bearing ?? 0)),
       ),
     );
     onMarkerUpdated(locationMarkerInfo);
