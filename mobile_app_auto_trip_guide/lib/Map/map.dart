@@ -418,7 +418,8 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
     _userLocationMarker = UserLocationMarker(
         mapController: _mapController,
         vsync: this,
-        onMarkerLocationUpdated: (LocationMarkerInfo locationMarkerInfo) {
+        onMarkerUpdated: (LocationMarkerInfo locationMarkerInfo) {
+          mapHeading = locationMarkerInfo.heading;
           if (_myLocationTrackingMode != mapbox.MyLocationTrackingMode.None) {
             updateCameraByRelativePosition(option: CameraOption.move);
           }
@@ -429,20 +430,6 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
     _mapController!.getTelemetryEnabled().then((isEnabled) => setState(() {
           _telemetryEnabled = isEnabled;
         }));
-
-    LocationMarkerDataStreamFactory()
-        .fromCompassHeadingStream()
-        .listen((event) async {
-      if (_myLocationTrackingMode == mapbox.MyLocationTrackingMode.None) {
-        return;
-      }
-      final double epsilon = 2;
-      double newHeading = event!.heading / pi * 180;
-      if ((newHeading - mapHeading).abs() < epsilon) return;
-      mapHeading = newHeading;
-
-      updateCameraByRelativePosition();
-    });
   }
 
   _onStyleLoadedCallback() async {
@@ -527,7 +514,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
       tiltGesturesEnabled: _tiltGesturesEnabled,
       zoomGesturesEnabled: _zoomGesturesEnabled,
       doubleClickZoomEnabled: _doubleClickToZoomEnabled,
-      myLocationEnabled: _myLocationEnabled,
+      myLocationEnabled: false,
       myLocationTrackingMode: mapbox.MyLocationTrackingMode.None,
       myLocationRenderMode: mapbox.MyLocationRenderMode.COMPASS,
       trackCameraPosition: true,
