@@ -19,7 +19,7 @@ import 'package:wakelock/wakelock.dart';
 import 'mapbox/user_location.dart';
 
 enum MarkersLayer { semiTransparent, grey, blue }
-
+enum UserStatus{driving, walking}
 enum CameraOption { move, animate }
 
 enum PoiAction {
@@ -140,6 +140,7 @@ class UserMap extends StatefulWidget {
 
 class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
   late StreamSubscription mapPoiActionSubscription;
+  UserStatus _userStatus = UserStatus.walking; // this effects on the rotation
   GuideData guideData = GuideData();
   late Guide guideTool;
   WidgetVisibility navButtonState = WidgetVisibility.hide;
@@ -405,8 +406,8 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
   mapbox.LatLng _getRelativeCenterLatLng(double zoom) {
     double latPerPx = 360 / math.pow(2, zoom) / 256;
     return PoisAttributesCalculator.getPointAtAngle(
-        _userLocationMarker?.locationMarkerInfo.latLng.latitude ?? 0,
-        _userLocationMarker?.locationMarkerInfo.latLng.longitude ?? 0,
+        _userLocationMarker?.locationMarkerInfo.latLng.latitude ?? UserMap.USER_LOCATION.latitude,
+        _userLocationMarker?.locationMarkerInfo.latLng.longitude ?? UserMap.USER_LOCATION.longitude,
         latPerPx * (Globals.globalWidgetsSizes.dialogBoxTotalHeight / 4.5),
         (270 - mapHeading));
   }
@@ -582,6 +583,25 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
                           color: Colors.blue,
                         ))
                     : Container(),
+                Container(
+                  margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.width / 20,
+                      right: MediaQuery.of(context).size.width / 40),
+                  width: MediaQuery.of(context).size.width / 10,
+                  child: FloatingActionButton(
+                    heroTag: null,
+                    onPressed: () {
+                      _symbolManager.dispose();
+                      _styleStringIndex =
+                          (_styleStringIndex + 1) % _styleStrings.length;
+                      updateState();
+                    },
+                    child: const Icon(
+                      Icons.map_outlined,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -590,7 +610,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
             children: [
               Container(
                 margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.width / 20,
+                    top: MediaQuery.of(context).size.height / 90,
                     left: MediaQuery.of(context).size.width / 40),
                 width: MediaQuery.of(context).size.width / 10,
                 child: _myLocationTrackingMode ==
@@ -611,19 +631,25 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
               ),
               Container(
                 margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.width / 20,
+                    top: MediaQuery.of(context).size.height / 90,
                     right: MediaQuery.of(context).size.width / 40),
                 width: MediaQuery.of(context).size.width / 10,
                 child: FloatingActionButton(
                   heroTag: null,
                   onPressed: () {
-                    _symbolManager.dispose();
-                    _styleStringIndex =
-                        (_styleStringIndex + 1) % _styleStrings.length;
-                    updateState();
+                    setState(() {
+                      if (_userLocationMarker != null) {
+                        _userStatus = UserStatus.values[(_userStatus.index +
+                            1) % 2];
+                        _userLocationMarker!.updateRotationMode(_userStatus ==
+                            UserStatus.walking
+                            ? RotationMode.compass
+                            : RotationMode.drivingDirection);
+                      }
+                    });
                   },
-                  child: const Icon(
-                    Icons.map_outlined,
+                  child: Icon(
+                    _userStatus == UserStatus.walking ? Icons.directions_walk : Icons.drive_eta_sharp,
                     color: Colors.white,
                   ),
                 ),

@@ -659,27 +659,99 @@ class _FullPoiInfoState extends State<FullPoiInfo> {
     });
   }
 
+  Widget buildBottomBar() {
+    double bottomIconSize = 20;
+    return Container(
+      child: Row(children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            RawMaterialButton(
+              onPressed: () {
+                Globals.globalAppLauncher.launchWaze(
+                    widget.showPoiState.currentPoi.poi.latitude,
+                    widget.showPoiState.currentPoi.poi.longitude);
+              },
+              elevation: 2.0,
+              fillColor: Colors.blue,
+              child: Icon(
+                Icons.directions,
+                size: bottomIconSize,
+              ),
+              shape: CircleBorder(),
+            ),
+            Opacity(
+              opacity: poiPreference == -1 ? 1.0 : 0.5,
+              child: RawMaterialButton(
+                onPressed: () {
+                  poiPreference = -1;
+                  Globals.globalServerCommunication.insertPoiPreferences(
+                      widget.showPoiState.currentPoi.poi.id,
+                      Globals.globalUserInfoObj,
+                      poiPreference);
+                  setState(() {});
+                },
+                elevation: 2.0,
+                fillColor: Colors.red,
+                child: Icon(
+                  Icons.thumb_down,
+                  size: bottomIconSize,
+                ),
+                shape: CircleBorder(),
+              ),
+            ),
+            Opacity(
+              opacity: poiPreference == 1 ? 1.0 : 0.5,
+              child: RawMaterialButton(
+                onPressed: () {
+                  poiPreference = 1;
+                  Globals.globalServerCommunication.insertPoiPreferences(
+                      widget.showPoiState.currentPoi.poi.id,
+                      Globals.globalUserInfoObj,
+                      poiPreference);
+                  setState(() {});
+                },
+                elevation: 2.0,
+                fillColor: Colors.green,
+                child: Icon(
+                  Icons.thumb_up,
+                  size: bottomIconSize,
+                ),
+                shape: CircleBorder(),
+              ),
+            ),
+            RawMaterialButton(
+              onPressed: () {
+                Share.share(widget.showPoiState.currentPoi.poi.shortDesc ?? "",
+                    subject: widget.showPoiState.currentPoi.poi.poiName);
+              },
+              elevation: 2.0,
+              fillColor: Colors.blue,
+              child: Icon(
+                Icons.share,
+                size: bottomIconSize,
+              ),
+              shape: CircleBorder(),
+            )
+          ],
+        ),
+      ]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double containerHeightDivider = screenHeight > 660
-        ? 1.55
-        : 1.9; // consider different sizes of screen - temporary fix
-    double bottomIconSize = 20;
     return Dialog(
-      insetPadding: const EdgeInsets.all(Constants.edgesDist),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(Constants.padding),
-      ),
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      child: Column(children: [
-        Spacer(),
-        Stack(
-          children: <Widget>[
+        insetPadding: const EdgeInsets.all(Constants.edgesDist),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Constants.padding),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          child: Stack(children: [
             Container(
                 alignment: Alignment.bottomCenter,
-                height: screenHeight / containerHeightDivider,
                 width: MediaQuery.of(context).size.width - 30,
                 //TODO HANDLE ALL SIZES OF SCREENS
                 padding: const EdgeInsets.only(
@@ -699,146 +771,53 @@ class _FullPoiInfoState extends State<FullPoiInfo> {
                         blurRadius: 20)
                   ],
                 ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 24, right: 0),
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: Container(
-                              child: Text(
-                                widget.showPoiState.currentPoi.poi.poiName ??
-                                    "",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontFamily: 'Inter',
-                                    fontSize: 22,
-                                    letterSpacing: 0.3499999940395355,
-                                    fontWeight: FontWeight.normal,
-                                    height: 1.2727272727272727),
-                                textAlign: TextAlign.left,
-                              ),
+                child: Column(children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 24, right: 0),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Container(
+                            child: Text(
+                              widget.showPoiState.currentPoi.poi.poiName ?? "",
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Inter',
+                                  fontSize: 22,
+                                  letterSpacing: 0.3499999940395355,
+                                  fontWeight: FontWeight.normal,
+                                  height: 1.2727272727272727),
+                              textAlign: TextAlign.left,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Expanded(
-                        child: Container(
-                            alignment: Alignment.topCenter,
-                            child: SingleChildScrollView(
-                                scrollDirection: Axis.vertical,
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 24, right: 24),
-                                  child: Text(
-                                    widget.showPoiState.currentPoi.poi
-                                            .shortDesc ??
-                                        "",
-                                    style: TextStyle(
-                                        color: Color(0xff6C6F70),
-                                        fontFamily: 'Inter',
-                                        fontSize: 16,
-                                        letterSpacing: 0,
-                                        fontWeight: FontWeight.normal,
-                                        height: 1.5),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                )))),
-                    Padding(
-                        padding: EdgeInsets.only(top: 15),
-                        child: Column(
-                          children: [
-                            Container(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  RawMaterialButton(
-                                    onPressed: () {
-                                      Globals.globalAppLauncher.launchWaze(
-                                          widget.showPoiState.currentPoi.poi
-                                              .latitude,
-                                          widget.showPoiState.currentPoi.poi
-                                              .longitude);
-                                    },
-                                    elevation: 2.0,
-                                    fillColor: Colors.blue,
-                                    child: Icon(
-                                      Icons.directions,
-                                      size: bottomIconSize,
-                                    ),
-                                    shape: CircleBorder(),
-                                  ),
-                                  Opacity(
-                                    opacity: poiPreference == -1 ? 1.0 : 0.5,
-                                    child: RawMaterialButton(
-                                      onPressed: () {
-                                        poiPreference = -1;
-                                        Globals.globalServerCommunication
-                                            .insertPoiPreferences(
-                                                widget.showPoiState.currentPoi
-                                                    .poi.id,
-                                                Globals.globalUserInfoObj,
-                                                poiPreference);
-                                        setState(() {});
-                                      },
-                                      elevation: 2.0,
-                                      fillColor: Colors.red,
-                                      child: Icon(
-                                        Icons.thumb_down,
-                                        size: bottomIconSize,
-                                      ),
-                                      shape: CircleBorder(),
-                                    ),
-                                  ),
-                                  Opacity(
-                                    opacity: poiPreference == 1 ? 1.0 : 0.5,
-                                    child: RawMaterialButton(
-                                      onPressed: () {
-                                        poiPreference = 1;
-                                        Globals.globalServerCommunication
-                                            .insertPoiPreferences(
-                                                widget.showPoiState.currentPoi
-                                                    .poi.id,
-                                                Globals.globalUserInfoObj,
-                                                poiPreference);
-                                        setState(() {});
-                                      },
-                                      elevation: 2.0,
-                                      fillColor: Colors.green,
-                                      child: Icon(
-                                        Icons.thumb_up,
-                                        size: bottomIconSize,
-                                      ),
-                                      shape: CircleBorder(),
-                                    ),
-                                  ),
-                                  RawMaterialButton(
-                                    onPressed: () {
-                                      Share.share(
-                                          widget.showPoiState.currentPoi.poi
-                                                  .shortDesc ??
-                                              "",
-                                          subject: widget.showPoiState
-                                              .currentPoi.poi.poiName);
-                                    },
-                                    elevation: 2.0,
-                                    fillColor: Colors.blue,
-                                    child: Icon(
-                                      Icons.share,
-                                      size: bottomIconSize,
-                                    ),
-                                    shape: CircleBorder(),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        )),
-                  ],
-                )),
+                  ),
+                  Expanded(
+                      child: Container(
+                          alignment: Alignment.topCenter,
+                          child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 24, right: 24),
+                                child: Text(
+                                  widget.showPoiState.currentPoi.poi
+                                          .shortDesc ??
+                                      "",
+                                  style: TextStyle(
+                                      color: Color(0xff6C6F70),
+                                      fontFamily: 'Inter',
+                                      fontSize: 16,
+                                      letterSpacing: 0,
+                                      fontWeight: FontWeight.normal,
+                                      height: 1.5),
+                                  textAlign: TextAlign.left,
+                                ),
+                              )))),
+                  buildBottomBar(),
+                ])),
             Positioned(
               left: Constants.padding,
               right: Constants.padding,
@@ -894,10 +873,8 @@ class _FullPoiInfoState extends State<FullPoiInfo> {
                       controller:
                           widget.showPoiState.savedStoriesState.controller));
                 }))
-          ],
-        )
-      ]),
-    );
+          ]),
+        ));
   }
 }
 

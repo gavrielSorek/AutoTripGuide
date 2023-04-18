@@ -39,6 +39,7 @@ dependencies:
   webview_flutter: ^4.0.6
   path_provider: ^2.0.1
   flutter_tts: ^3.6.3
+  location: ^4.3.0
   firebase_crashlytics: ^3.0.17
   geolocator: 9.0.2
   story_view: 0.14.0
