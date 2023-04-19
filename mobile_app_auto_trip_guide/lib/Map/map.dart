@@ -4,7 +4,6 @@ import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/map_configuration.dart';
 import 'package:final_project/Map/pois_attributes_calculator.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
@@ -73,15 +72,6 @@ class UserMap extends StatefulWidget {
             locationSettings: LocationSettings(accuracy: LocationAccuracy.high))
         .listen(locationChangedEvent);
     LAST_AREA_USER_LOCATION = USER_LOCATION;
-
-    LocationMarkerDataStreamFactory()
-        .fromCompassHeadingStream()
-        .listen((event) async {
-      USER_HEADING = (event?.heading ?? 0) / pi * 180;
-      if (USER_HEADING < 0) {
-        USER_HEADING = 360 + USER_HEADING;
-      }
-    });
   }
 
   static bool isUserInNewArea() {
@@ -146,7 +136,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
   WidgetVisibility navButtonState = WidgetVisibility.hide;
   WidgetVisibility loadingPois = WidgetVisibility.view;
   MapPoi? highlightedPoi;
-  double mapHeading = 0;
+  double userIconHeading = 0;
   bool isNewPoisNeededFlag = true;
   int _numOfPoisRequests = 0;
 
@@ -199,7 +189,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
     double initialZoom = 15;
     _cameraPosition = mapbox.CameraPosition(
         target: _getRelativeCenterLatLng(initialZoom),
-        bearing: mapHeading,
+        bearing: userIconHeading,
         zoom: initialZoom);
   }
 
@@ -209,7 +199,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
         mapbox.CameraUpdate.newCameraPosition(
       mapbox.CameraPosition(
           target: _getRelativeCenterLatLng(_mapController.cameraPosition!.zoom),
-          bearing: mapHeading,
+          bearing: userIconHeading,
           zoom: _cameraPosition.zoom),
     );
 
@@ -409,7 +399,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
         _userLocationMarker?.locationMarkerInfo.latLng.latitude ?? UserMap.USER_LOCATION.latitude,
         _userLocationMarker?.locationMarkerInfo.latLng.longitude ?? UserMap.USER_LOCATION.longitude,
         latPerPx * (Globals.globalWidgetsSizes.dialogBoxTotalHeight / 4.5),
-        (270 - mapHeading));
+        (270 - userIconHeading));
   }
 
   Future<void> _onMapCreated(mapbox.MapboxMapController controller) async {
@@ -420,7 +410,9 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
         mapController: _mapController,
         vsync: this,
         onMarkerUpdated: (LocationMarkerInfo locationMarkerInfo) {
-          mapHeading = locationMarkerInfo.heading;
+
+          userIconHeading = locationMarkerInfo.heading; // heading if user centered
+          UserMap.USER_HEADING = userIconHeading;
           if (_myLocationTrackingMode != mapbox.MyLocationTrackingMode.None) {
             updateCameraByRelativePosition(option: CameraOption.move);
           }
