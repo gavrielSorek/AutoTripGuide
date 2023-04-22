@@ -13,7 +13,8 @@ function isEnglish(result: any): boolean {
 
 
 export async function getNearbyPois(latitude: number, longitude: number, radius: number, type: string = ""): Promise<Poi[]> {
-    const API_KEY =process.env.GM_API_KEY; //  'AIzaSyD4sN0b5ki-gefxB_7tNIpNR5b8YQoz-sk' // process.env.GM_API_KEY;
+    console.log('searching POIS in google for type '  + type , latitude, longitude, radius);
+    const API_KEY = process.env.GM_API_KEY; //  'AIzaSyD4sN0b5ki-gefxB_7tNIpNR5b8YQoz-sk' // process.env.GM_API_KEY;
     const response = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', {
         params: {
             location: `${latitude},${longitude}`,
@@ -27,7 +28,7 @@ export async function getNearbyPois(latitude: number, longitude: number, radius:
     var pois_list: Poi[] = [];
     for (const place of places) {
         const poi = new Poi(place.name, place.geometry.location.lat, place.geometry.location.lng)
-        // poi._pic = place.photos
+        poi._pic = place.photos?.length ? place.photos[0].photo_reference : ''
         poi._Categories = []
         let categories_set = new Set<string>();
         // var not_interesting = 0
@@ -42,12 +43,32 @@ export async function getNearbyPois(latitude: number, longitude: number, radius:
         poi._Categories = [...categories_set]
         poi._country = place.vicinity
         pois_list.push(poi)
-        // logger.write(place.place_id + " " + place.name + " " + place.geometry.location.lng + " " +
-        //     place.geometry.location.lat + " " + place.types + " " + place.photos + " " + place.vicinity + "\n")
-        // logger.write("* CATEGORIES: " + poi._Categories + "\n\n")
     }
+    console.log('find total:' + pois_list.length)
     return pois_list;
 }
+
+export async function fetchGoogleMapsPhotoUrl(photoReference: string, apiKey = process.env.GM_API_KEY,maxwidth = 150): Promise<string> {
+    return axios.get(`https://maps.googleapis.com/maps/api/place/photo`, {
+      params: {
+        photo_reference: photoReference,
+        key: apiKey,
+        maxwidth: maxwidth
+      },
+    }).then(response => {
+        //console.log(response)
+        if(response.status === 200) {
+            return response?.request?.res?.responseUrl
+        } else{
+            return ''
+        }
+    }
+      
+    ).catch(error => {
+        console.log('status 400 error for fetching photo for: ', photoReference)
+        return ''
+    });
+  }
 
 
 // export function writePoisToJsonFile(pois_list: Poi[], json_name: string = "") {

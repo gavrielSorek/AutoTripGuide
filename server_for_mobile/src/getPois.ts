@@ -1,5 +1,5 @@
 import { gptPlaceInfo } from "./chat-gpt/gpt-api";
-import { getNearbyPois } from "./nearby_pois_objects";
+import { fetchGoogleMapsPhotoUrl, getNearbyPois } from "./nearby_pois_objects";
 import { Poi } from "./types/poi";
 import { Sources } from "./types/sources";
 
@@ -14,6 +14,7 @@ const distance = 1200;
 
 
 export async function getPois(lat:number, long:number, distance:number){
+    console.log('searching POIS in google', lat, long, distance);
     const pois_set = new Set<Poi>();
     // for each place category
     for (const poi_type of poi_types) {
@@ -32,11 +33,17 @@ export async function getPois(lat:number, long:number, distance:number){
     // in this step we will fetch from chat/wiki
     const promises = new_pois_list.map((poi : any) =>  gptPlaceInfo(poi._poiName, 128).then(desc =>{
       if(desc !== undefined){
-        poi._shortDesc = desc;
+        poi._shortDesc = `[chatGPT] ${desc}`;
         poi._source = Sources.CHAT_GPT
       }
     }));
-    await Promise.all(promises)
+
+   const p2 = new_pois_list.map(poi => fetchGoogleMapsPhotoUrl(poi._pic).then(pic_url => {
+    if(pic_url !== undefined){
+      poi._pic = pic_url;
+    } }));
+    await Promise.all([...promises,...p2])
+    console.log('total after gpt add desc: ' +new_pois_list.length)
      return new_pois_list;
 } 
 

@@ -86,7 +86,7 @@ async function checkInfo(client, userInfo) {
 
 // The function inserts a new user to the db
 async function addUser(client, newUserInfo) {
-    checkCode = await checkInfo(client, newUserInfo);
+    const checkCode = await checkInfo(client, newUserInfo);
     if(checkCode == 0) {    //the user's info not exist in the db
         const res = await client.db("auto_trip_guide_db").collection("mobileUsers").insertOne(newUserInfo);
         console.log(`new user created with the following id: ${res.insertedId}`);

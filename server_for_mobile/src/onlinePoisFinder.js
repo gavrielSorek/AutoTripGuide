@@ -27,7 +27,7 @@ async function getPoisList(bounds, languageCode, onSinglePoiFound = undefined) {
             description = await textAnalysisTool.translateIfNotInTargetLanguage(description, languageCode);
         }
 
-        poi = {
+        const poi = {
             _poiName : fullPoi.name , 
             _latitude : fullPoi.point.lat, 
             _longitude : fullPoi.point.lon, 
@@ -82,7 +82,7 @@ function getTodayDate(){
 // debug
 
 function getBounds(){
-    user_data = {lat : 32.80, lng : 35.114} 
+    const user_data = {lat : 32.80, lng : 35.114} 
     var epsilon = 0.02
     var relevantBounds = {}
     relevantBounds['southWest'] = {lat : user_data.lat - epsilon, lng : user_data.lng - epsilon}

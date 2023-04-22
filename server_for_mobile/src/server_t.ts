@@ -11,6 +11,7 @@ import { getDistance } from 'geolib';
 import { Coordinate } from "./types/coordinate";
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 import { gptPlaceInfo } from "./chat-gpt/gpt-api";
+import { fetchGoogleMapsPhotoUrl } from "./nearby_pois_objects";
 
 
 const { MongoClient } = require('mongodb');
@@ -73,7 +74,7 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
         let tempPoisArr = await db.findPois(dbClientSearcher, searchParams, boundsArr[i], MAX_POIS_FOR_USER, false);
         pois = pois.concat(tempPoisArr);
     }
-    const filterdPois = pois.filter(poi => poi._shortDesc.length > 10)
+    const filterdPois = pois.filter(poi => poi?._shortDesc.split(' ').length > 10)
 
     res.status(200);
     res.json(filterdPois);
@@ -109,7 +110,6 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
     const lng = (southWest.lng + northEast.lng) /2;
     const distance = getDistance({ latitude: lat, longitude: lng },    { latitude: northEast.lat, longitude: northEast.lng })
     const pois = await getPois(lat, lng, distance)
-    console.log(pois)
     serverCommunication.sendPoisToServer(pois, globaltokenAndPermission)
  }
  
@@ -262,13 +262,7 @@ app.get("/getUserPoiPreference",async function (req:Request, res:Response) { //n
  app.listen(port, async ()=>{
     await init()
     console.log(`Server is runing on port ${port}`)
-
-    // const lat = 32.1000895;
-    // const long = 34.8833617;
-    // const distance = 1200;
-    // const t= await getPois(lat, long, distance)
-   // const t =await gptPlaceInfo('Yekhezkel Bekhor Synagogue',200)
-    //console.log(t);
+    fetchGoogleMapsPhotoUrl('AUjq9jk-qbmeswDv_zhguPqhK2dRdCJ79nkGJ2ignqjnP0xzh9gfktDj5fYyfXry5w6Vu88-ybfE1a7oGmZNeI274BC4KT2ttjWDlRtF3OglqP9TP7AIvjIojR3PE0U9ABls0a1nmLLihETFfksYaMGqXDIqQDW-zOBHt4hQ4T5tDGfaWDhP')
 })
 
 
