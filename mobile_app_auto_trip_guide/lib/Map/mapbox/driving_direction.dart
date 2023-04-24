@@ -9,7 +9,7 @@ class DrivingDirection {
   StreamController<double> _controller = StreamController<double>();
   final double threshold; // minimum distance in meters
 
-  DrivingDirection({this.threshold = 0.5}) {
+  DrivingDirection({this.threshold = 1}) {
     location.onLocationChanged.listen((LocationData currentLocation) {
       if (lastLocation != null) {
         // calculate the distance between the last two locations

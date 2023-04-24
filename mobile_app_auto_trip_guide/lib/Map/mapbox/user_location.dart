@@ -37,7 +37,7 @@ class UserLocationMarker {
       this.onMarkerUpdated}) {
     _headingAnimationController = AnimationController(
       vsync: vsync,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 600),
     );
     // Create a Tween to animate the marker's heading
     _headingTween = HeadingTween(
