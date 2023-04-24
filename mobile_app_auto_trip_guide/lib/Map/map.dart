@@ -3,6 +3,7 @@ import 'package:final_project/General%20Wigets/menu.dart';
 import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/map_configuration.dart';
 import 'package:final_project/Map/pois_attributes_calculator.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
@@ -200,7 +201,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
       mapbox.CameraPosition(
           target: _getRelativeCenterLatLng(_mapController.cameraPosition!.zoom),
           bearing: userIconHeading,
-          zoom: _cameraPosition.zoom),
+          zoom: _mapController.cameraPosition?.zoom ?? _cameraPosition.zoom),
     );
 
     switch (option) {
