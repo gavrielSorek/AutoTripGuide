@@ -66,7 +66,7 @@ class Generals {
 }
 
 class IconsBytesHolder {
-  late Uint8List _greyIcon, _blueIcon, _greyTransIcon, _userIcon;
+  late Uint8List _greyIcon, _blueIcon, _greyTransIcon, _userIcon, _carLocationIcon;
 
   Uint8List get greyIcon => _greyIcon;
 
@@ -75,6 +75,8 @@ class IconsBytesHolder {
   Uint8List get greyTransIcon => _greyTransIcon;
 
   Uint8List get userIcon => _userIcon;
+
+  Uint8List get carLocationIcon => _carLocationIcon;
 
   set greyIcon(Uint8List value) {
     _greyIcon = value;
@@ -90,5 +92,9 @@ class IconsBytesHolder {
 
   set userIcon(Uint8List value) {
     _userIcon = value;
+  }
+
+  set carLocationIcon(Uint8List value) {
+    _carLocationIcon = value;
   }
 }

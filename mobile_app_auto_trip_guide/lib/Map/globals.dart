@@ -97,6 +97,7 @@ class Globals {
     svgMarkerString =
         await rootBundle.loadString('assets/images/mapMarker.svg');
     svgPoiMarkerBytes.userIcon = await Generals.loadSvgStringAsUint8List(await rootBundle.loadString('assets/images/location_marker.svg'));
+    svgPoiMarkerBytes.carLocationIcon = await Generals.loadSvgStringAsUint8List(await rootBundle.loadString('assets/images/car_location_marker.svg'));
     svgPoiMarkerBytes.greyIcon = (await Generals.poiIconSvgStringToUint8List(Colors.grey))!;
     svgPoiMarkerBytes.blueIcon = (await Generals.poiIconSvgStringToUint8List(Colors.blue))!;
     svgPoiMarkerBytes.greyTransIcon = (await Generals.poiIconSvgStringToUint8List(Colors.grey.withOpacity(0.40)))!;

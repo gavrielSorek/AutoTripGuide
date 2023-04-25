@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:final_project/General%20Wigets/menu.dart';
 import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/map_configuration.dart';
+import 'package:final_project/Map/mapbox/user_location_marker.dart';
+import 'package:final_project/Map/mapbox/user_location_marker_car.dart';
 import 'package:final_project/Map/pois_attributes_calculator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -16,10 +18,12 @@ import 'guide.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
 import 'package:wakelock/wakelock.dart';
-import 'mapbox/user_location.dart';
+import 'mapbox/user_location_marker_foot.dart';
 
 enum MarkersLayer { semiTransparent, grey, blue }
-enum UserStatus{driving, walking}
+
+enum UserStatus { driving, walking }
+
 enum CameraOption { move, animate }
 
 enum PoiAction {
@@ -178,7 +182,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
   Set<mapbox.Symbol> _symbolsOnMap = Set();
   late mapbox.SymbolManager _symbolManager;
   late mapbox.SymbolManager _highlightSymbolManager;
-  UserLocationMarker? _userLocationMarker;
+  List<UserLocationMarker> _userLocationMarkers = <UserLocationMarker>[];
 
   mapbox.MyLocationTrackingMode _myLocationTrackingMode =
       mapbox.MyLocationTrackingMode.Tracking;
@@ -312,7 +316,9 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
   void dispose() {
     print("____________________dispose statful map");
     mapPoiActionSubscription.cancel();
-    _userLocationMarker?.stop();
+    _userLocationMarkers.forEach((element) {
+      element.stop();
+    });
     super.dispose();
     Wakelock.disable();
   }
@@ -396,28 +402,46 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
 
   mapbox.LatLng _getRelativeCenterLatLng(double zoom) {
     double latPerPx = 360 / math.pow(2, zoom) / 256;
-    return PoisAttributesCalculator.getPointAtAngle(
-        _userLocationMarker?.locationMarkerInfo.latLng.latitude ?? UserMap.USER_LOCATION.latitude,
-        _userLocationMarker?.locationMarkerInfo.latLng.longitude ?? UserMap.USER_LOCATION.longitude,
-        latPerPx * (Globals.globalWidgetsSizes.dialogBoxTotalHeight / 4.5),
-        (270 - userIconHeading));
+    if (!_userLocationMarkers.isEmpty) {
+      return PoisAttributesCalculator.getPointAtAngle(
+          _userLocationMarkers[_userStatus.index]
+              .locationMarkerInfo
+              .latLng
+              .latitude,
+          _userLocationMarkers[_userStatus.index]
+              .locationMarkerInfo
+              .latLng
+              .longitude,
+          latPerPx * (Globals.globalWidgetsSizes.dialogBoxTotalHeight / 4.5),
+          (270 - userIconHeading));
+    } else {
+      return PoisAttributesCalculator.getPointAtAngle(
+          UserMap.USER_LOCATION.latitude,
+          UserMap.USER_LOCATION.longitude,
+          latPerPx * (Globals.globalWidgetsSizes.dialogBoxTotalHeight / 4.5),
+          (270 - userIconHeading));
+    }
   }
 
   Future<void> _onMapCreated(mapbox.MapboxMapController controller) async {
     _mapController = controller;
 
-    // Create a UserLocationMarker object
-    _userLocationMarker = UserLocationMarker(
-        mapController: _mapController,
-        vsync: this,
-        onMarkerUpdated: (LocationMarkerInfo locationMarkerInfo) {
-
-          userIconHeading = locationMarkerInfo.heading; // heading if user centered
-          UserMap.USER_HEADING = userIconHeading;
-          if (_myLocationTrackingMode != mapbox.MyLocationTrackingMode.None) {
-            updateCameraByRelativePosition(option: CameraOption.move);
-          }
-        });
+    _userLocationMarkers.add(UserLocationMarkerCar(controller, this,
+        (LocationMarkerInfo locationMarkerInfo) {
+      userIconHeading = locationMarkerInfo.heading; // heading if user centered
+      UserMap.USER_HEADING = userIconHeading;
+      if (_myLocationTrackingMode != mapbox.MyLocationTrackingMode.None) {
+        updateCameraByRelativePosition(option: CameraOption.move);
+      }
+    }));
+    _userLocationMarkers.add(UserLocationMarkerFoot(controller, this,
+        (LocationMarkerInfo locationMarkerInfo) {
+      userIconHeading = locationMarkerInfo.heading; // heading if user centered
+      UserMap.USER_HEADING = userIconHeading;
+      if (_myLocationTrackingMode != mapbox.MyLocationTrackingMode.None) {
+        updateCameraByRelativePosition(option: CameraOption.move);
+      }
+    }));
 
     _mapController.addListener(_onMapChanged);
     _extractMapInfo();
@@ -436,9 +460,11 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
         textAllowOverlap: true, onTap: (mapbox.Symbol symbol) {
       Globals.globalClickedPoiStream.add(symbol.id);
     });
-    _userLocationMarker?.start();
+    _userLocationMarkers[_userStatus.index].start();
     await _mapController.addImage(
         'userLocation', Globals.svgPoiMarkerBytes.userIcon);
+    await _mapController.addImage(
+        'carLocation', Globals.svgPoiMarkerBytes.carLocationIcon);
     await _mapController.addImage(
         'greyPoi', Globals.svgPoiMarkerBytes.greyIcon);
     await _mapController.addImage(
@@ -629,20 +655,16 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
                 width: MediaQuery.of(context).size.width / 10,
                 child: FloatingActionButton(
                   heroTag: null,
-                  onPressed: () {
-                    setState(() {
-                      if (_userLocationMarker != null) {
-                        _userStatus = UserStatus.values[(_userStatus.index +
-                            1) % 2];
-                        _userLocationMarker!.updateRotationMode(_userStatus ==
-                            UserStatus.walking
-                            ? RotationMode.compass
-                            : RotationMode.drivingDirection);
-                      }
-                    });
+                  onPressed: () async {
+                      await _userLocationMarkers[_userStatus.index].stop();
+                      _userStatus =
+                          UserStatus.values[(_userStatus.index + 1) % 2];
+                      _userLocationMarkers[_userStatus.index].start();
                   },
                   child: Icon(
-                    _userStatus == UserStatus.walking ? Icons.directions_walk : Icons.drive_eta_sharp,
+                    _userStatus == UserStatus.walking
+                        ? Icons.directions_walk
+                        : Icons.drive_eta_sharp,
                     color: Colors.white,
                   ),
                 ),
