@@ -22,7 +22,7 @@ class UserLocationMarkerCar extends UserLocationMarker {
             onMarkerUpdated,
             AnimationController(
               vsync: vsync,
-              duration: const Duration(milliseconds: 600),
+              duration: const Duration(milliseconds: 1600),
             ),
             AnimationController(
               vsync: vsync,

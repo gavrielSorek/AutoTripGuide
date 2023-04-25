@@ -24,7 +24,7 @@ class UserLocationMarkerFoot extends UserLocationMarker {
       onMarkerUpdated,
       AnimationController(
         vsync: vsync,
-        duration: const Duration(milliseconds: 600),
+        duration: const Duration(milliseconds: 1200),
       ),
       AnimationController(
         vsync: vsync,

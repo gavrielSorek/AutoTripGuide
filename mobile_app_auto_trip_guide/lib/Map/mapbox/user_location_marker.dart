@@ -60,7 +60,7 @@ abstract class UserLocationMarker {
 
   get headingAnimationController => _headingAnimationController;
 
-  void _updateSymbol() {
+  Future<void> _updateSymbol() async {
     _symbol = Symbol(
         _symbol.id,
         _symbol.options.copyWith(
@@ -69,7 +69,7 @@ abstract class UserLocationMarker {
               iconRotate: (_locationMarkerInfo.heading -
                   (mapController.cameraPosition?.bearing ?? 0))),
         ));
-    _userSymbolManager.set(_symbol);
+    await _userSymbolManager.set(_symbol);
     onMarkerUpdated(_locationMarkerInfo);
   }
 
@@ -88,10 +88,12 @@ abstract class UserLocationMarker {
     _positionSubscription?.cancel();
     _positionSubscription = Geolocator.getPositionStream(
       locationSettings: LocationSettings(
-        accuracy: LocationAccuracy.bestForNavigation,
+        accuracy: LocationAccuracy.best,
         distanceFilter: 0,
       ),
     ).listen((Position position) {
+      print("position.speed");
+      print(position.speed);
       _locationTween.begin = _symbol.options.geometry;
       _locationTween.end = LatLng(position.latitude, position.longitude);
       // Reset and start the animation
