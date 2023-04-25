@@ -205,7 +205,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
       mapbox.CameraPosition(
           target: _getRelativeCenterLatLng(_mapController.cameraPosition!.zoom),
           bearing: userIconHeading,
-          zoom: _mapController.cameraPosition?.zoom ?? _cameraPosition.zoom),
+          zoom: _cameraPosition.zoom),
     );
 
     switch (option) {
