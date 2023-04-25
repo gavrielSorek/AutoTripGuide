@@ -92,8 +92,6 @@ abstract class UserLocationMarker {
         distanceFilter: 0,
       ),
     ).listen((Position position) {
-      print("position.speed");
-      print(position.speed);
       _locationTween.begin = _symbol.options.geometry;
       _locationTween.end = LatLng(position.latitude, position.longitude);
       // Reset and start the animation
@@ -104,7 +102,8 @@ abstract class UserLocationMarker {
 
   Future<void> stop() async {
     // Remove the marker from the map
-    await _userSymbolManager.removeAll(_userSymbolManager.annotations);
+    await _userSymbolManager.remove(_symbol);
+    _userSymbolManager.dispose();
     _headingAnimationController.reset();
     _moveAnimationController.reset();
     _positionSubscription?.cancel();

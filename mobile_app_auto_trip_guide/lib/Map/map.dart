@@ -313,12 +313,12 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    super.dispose();
     print("____________________dispose statful map");
     mapPoiActionSubscription.cancel();
-    _userLocationMarkers.forEach((element) {
-      element.stop();
+    _userLocationMarkers.forEach((element) async {
+      await element.stop();
     });
-    super.dispose();
     Wakelock.disable();
   }
 
