@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:final_project/Map/mapbox/user_location_marker.dart';
 import 'package:flutter/animation.dart';
@@ -7,13 +6,15 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 
 class UserLocationMarkerFoot extends UserLocationMarker {
   StreamSubscription<CompassEvent>? _compassSubscription;
+  final double threshold = 7; //degrees
 
-  UserLocationMarkerFoot(MapboxMapController mapController, TickerProvider vsync,
-      dynamic onMarkerUpdated)
+  UserLocationMarkerFoot(
+      MapboxMapController mapController,
+      TickerProvider vsync,
+      dynamic onMarkerUpdated) // Add threshold to constructor
       : super(
       mapController,
-      Symbol(
-          'userLocation',
+      Symbol('userLocation',
           SymbolOptions(
             geometry: LatLng(0, 0),
             iconImage: "userLocation",
@@ -34,14 +35,16 @@ class UserLocationMarkerFoot extends UserLocationMarker {
   Future<void> start() async {
     super.start();
     _compassSubscription?.cancel();
-            _compassSubscription =
-            FlutterCompass.events?.listen((CompassEvent event) {
-              super.headingTween.begin = locationMarkerInfo.heading;
-              headingTween.end = event.heading;
-              // Reset and start the animation
-              headingAnimationController.reset();
-              headingAnimationController.forward();
-        });
+    _compassSubscription = FlutterCompass.events?.listen((CompassEvent event) {
+      // Add a threshold for the angle difference
+      if (event.heading != null && (event.heading! - locationMarkerInfo.heading).abs() > threshold) {
+        super.headingTween.begin = locationMarkerInfo.heading;
+        headingTween.end = event.heading;
+        // Reset and start the animation
+        headingAnimationController.reset();
+        headingAnimationController.forward();
+      }
+    });
   }
 
   @override

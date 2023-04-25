@@ -71,7 +71,6 @@ abstract class UserLocationMarker {
         ));
     _userSymbolManager.set(_symbol);
     onMarkerUpdated(_locationMarkerInfo);
-    print("update user symbol");
   }
 
   Future<void> start() async {
@@ -103,7 +102,7 @@ abstract class UserLocationMarker {
 
   Future<void> stop() async {
     // Remove the marker from the map
-    await _userSymbolManager.remove(_symbol);
+    await _userSymbolManager.removeAll(_userSymbolManager.annotations);
     _headingAnimationController.reset();
     _moveAnimationController.reset();
     _positionSubscription?.cancel();

@@ -219,7 +219,6 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
         _mapController.animateCamera(newCameraPosition);
         break;
     }
-    updateState();
   }
 
   void updateState() {
