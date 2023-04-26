@@ -659,6 +659,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
                       _userStatus =
                           UserStatus.values[(_userStatus.index + 1) % 2];
                       _userLocationMarkers[_userStatus.index].start();
+                      updateState();
                   },
                   child: Icon(
                     _userStatus == UserStatus.walking
