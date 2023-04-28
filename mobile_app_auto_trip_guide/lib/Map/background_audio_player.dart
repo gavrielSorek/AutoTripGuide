@@ -1,6 +1,7 @@
 import 'package:final_project/Map/globals.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../General Wigets/tts_audio_player.dart';
 import 'package:audio_service/audio_service.dart';
@@ -216,36 +217,31 @@ class _GuideAudioPlayerUIState extends State<GuideAudioPlayerUI> {
         width: double.infinity,
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Spacer(),
-          Container(
-              width: 47,
-              height: 47,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                  bottomLeft: Radius.circular(24),
-                  bottomRight: Radius.circular(24),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.25),
-                      offset: Offset(0, 2),
-                      blurRadius: 10)
-                ],
-                color: Color(0xff0A84FF),
-              ),
-              child: IconButton(
-                onPressed: () {
-                  if (widget._audioHandler._onPressPrev != null) {
-                    widget._audioHandler._onPressPrev();
-                  }
-                  ;
-                },
-                icon: Icon(Icons.keyboard_double_arrow_left_outlined),
-                color: Colors.white,
-                iconSize: 35,
-              )),
-          Spacer(),
+Container(
+  width: 47,
+  height: 47,
+  decoration: BoxDecoration(
+    shape: BoxShape.circle,
+    boxShadow: [
+      BoxShadow(
+        color: Color.fromRGBO(0, 0, 0, 0.25),
+        offset: Offset(0, 2),
+        blurRadius: 10
+      )
+    ],
+    color: Color(0xff0A84FF),
+  ),
+  child: IconButton(
+    onPressed: () {
+      if (widget._audioHandler._onPressPrev != null) {
+        widget._audioHandler._onPressPrev();
+      }
+    },
+    icon: SvgPicture.asset('assets/images/double-chevron-left-svgrepo-com.svg', width: 22, height: 22,  color: Colors.white,),
+    iconSize: 35,
+    color: Colors.white,
+  )
+),      Spacer(),
           Container(
               width: 117,
               height: 47,
@@ -283,36 +279,32 @@ class _GuideAudioPlayerUIState extends State<GuideAudioPlayerUI> {
                   icon: playerIcon,
                   iconSize: 35)),
           Spacer(),
-          Container(
-              width: 47,
-              height: 47,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                  bottomLeft: Radius.circular(24),
-                  bottomRight: Radius.circular(24),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.25),
-                      offset: Offset(0, 2),
-                      blurRadius: 10)
-                ],
-                color: Color(0xff0A84FF),
-              ),
-              child: IconButton(
-                onPressed: () {
-                  if (widget._audioHandler._onPressNext != null) {
-                    widget._audioHandler._onPressNext();
-                  }
-                  ;
-                },
-                icon: Icon(Icons.keyboard_double_arrow_right_rounded),
-                iconSize: 35,
-                color: Colors.white,
-              )),
-          Spacer()
+Container(
+  width: 47,
+  height: 47,
+  decoration: BoxDecoration(
+    shape: BoxShape.circle,
+    boxShadow: [
+      BoxShadow(
+        color: Color.fromRGBO(0, 0, 0, 0.25),
+        offset: Offset(0, 2),
+        blurRadius: 10
+      )
+    ],
+    color: Color(0xff0A84FF),
+  ),
+  child: IconButton(
+    onPressed: () {
+      if (widget._audioHandler._onPressNext != null) {
+        widget._audioHandler._onPressNext();
+      }
+    },
+    icon: SvgPicture.asset('assets/images/double-right-chevron-svgrepo-com.svg', width: 22, height: 22,  color: Colors.white,),
+    iconSize: 35,
+    color: Colors.white,
+  )
+),
+   Spacer()
         ]),
       );
 }

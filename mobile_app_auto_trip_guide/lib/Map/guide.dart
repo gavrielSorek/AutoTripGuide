@@ -280,7 +280,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                           Container(
                               child: GuideAudioPlayerUI(
                                   Globals.globalGuideAudioPlayerHandler),
-                              height: 80),
+                              height: 70),
                         ],
                       )),
                   Positioned(
