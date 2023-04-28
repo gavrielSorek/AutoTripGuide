@@ -203,7 +203,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
     mapbox.CameraUpdate newCameraPosition =
         mapbox.CameraUpdate.newCameraPosition(
       mapbox.CameraPosition(
-          target: _getRelativeCenterLatLng(_mapController.cameraPosition!.zoom),
+          target: _getRelativeCenterLatLng(_cameraPosition.zoom),
           bearing: userIconHeading,
           zoom: _cameraPosition.zoom),
     );
@@ -257,7 +257,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
             math.cos(latitude * math.pi / 180) /
             metersPerPixel) /
         math.log(2));
-    return zoom.floor().toDouble();
+    return zoom;
   }
 
   Future<double> _getZoomPointInDistFromUser(
