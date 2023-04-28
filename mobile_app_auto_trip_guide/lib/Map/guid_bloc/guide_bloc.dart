@@ -194,7 +194,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             controller: state.controller,
             lastShowOptionalCategoriesState:
                 state.lastShowOptionalCategoriesState));
-      } else if (event.storiesEvents != null) { //create story of one story
+      } else if (event.storiesEvents != null) {
+        //create story of one story
         StoryController controller = StoryController();
         initAudioPlayerByController(controller);
 
@@ -243,17 +244,18 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           categoriesToMapPois[category]?.add(mapPoi);
         });
       });
-      ShowStoriesState? lastShowStoriesState = null;
-      if (state is ShowStoriesState) {
-        lastShowStoriesState = state as ShowStoriesState;
-      }
+
       emit(ShowOptionalCategoriesState(
+          lastState: state is PoisSearchingState ? null : state,
           categoriesToPoisMap: categoriesToMapPois,
           isCheckedCategory: event.isCheckedCategory,
           onShowStory: event.storiesEvents.onShowStory,
           idToPoisMap: event.pois,
-          onFinishedFunc: event.storiesEvents.onStoriesFinished,
-          lastShowStoriesState: lastShowStoriesState));
+          onFinishedFunc: event.storiesEvents.onStoriesFinished));
+    });
+
+    on<SetGuideState>((event, emit) {
+      emit(event.state);
     });
   }
 }

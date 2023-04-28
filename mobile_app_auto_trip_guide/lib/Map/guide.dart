@@ -563,13 +563,10 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                         UniformButtons.getReturnDialogButton(
                             onPressed: () {
                               context.read<GuideBloc>().add(
-                                  SetLoadedStoriesEvent(
-                                      storyView: widget.state
-                                          .lastShowStoriesState!.storyView,
-                                      controller: widget.state
-                                          .lastShowStoriesState!.controller));
+                                  SetGuideState(state: widget.state.lastState!)
+                              );
                             },
-                            enabled: widget.state.lastShowStoriesState != null),
+                            enabled: widget.state.lastState != null),
                         Text(
                           widget.state.idToPoisMap.keys.length.toString() +
                               " Places near you: ",

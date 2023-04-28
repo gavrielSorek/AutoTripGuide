@@ -48,3 +48,9 @@ class ShowOptionalCategoriesEvent extends GuideEvent {
     required this.isCheckedCategory,
   }) {}
 }
+
+class SetGuideState extends GuideEvent {
+  final GuideDialogState state;
+
+  SetGuideState({required this.state}) {}
+}
