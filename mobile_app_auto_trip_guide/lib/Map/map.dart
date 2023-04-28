@@ -445,7 +445,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
 
     _mapController.addListener(_onMapChanged);
     _extractMapInfo();
-    _mapController!.getTelemetryEnabled().then((isEnabled) => setState(() {
+   await _mapController!.getTelemetryEnabled().then((isEnabled) => setState(() {
           _telemetryEnabled = isEnabled;
         }));
   }
@@ -460,7 +460,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
         textAllowOverlap: true, onTap: (mapbox.Symbol symbol) {
       Globals.globalClickedPoiStream.add(symbol.id);
     });
-    _userLocationMarkers[_userStatus.index].start();
+    await _userLocationMarkers[_userStatus.index].start();
     await _mapController.addImage(
         'userLocation', Globals.svgPoiMarkerBytes.userIcon);
     await _mapController.addImage(
