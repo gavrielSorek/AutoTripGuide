@@ -30,6 +30,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   void initState() {
+    Globals.appEvents.introStarted();
     super.initState();
     _visitedPoisStreamSubscription = stream.listen((value) {
       //TODO DELETE

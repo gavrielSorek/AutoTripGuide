@@ -4,7 +4,9 @@ import 'dart:ui';
 import 'package:audio_service/audio_service.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
+import 'package:final_project/Utils/appEvents.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -41,6 +43,9 @@ class Globals {
   static IconsBytesHolder svgPoiMarkerBytes = IconsBytesHolder();
   static SharedPreferences? globalPrefs;
   static bool globalIsInitialized = false;
+  static late AppEvents appEvents;
+  static late Mixpanel mixpanel;
+
 
   static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {
     globalVisitedPoi = visitedPoisList;
@@ -52,6 +57,7 @@ class Globals {
     globalVisitedPoiStream.add(visitedPoi);
     globalServerCommunication.insertPoiToHistory(visitedPoi);
   }
+  
 
   static void addUnhandledPoiKey(String key) {
     if (globalUnhandledKeys.isEmpty) {
@@ -88,6 +94,9 @@ class Globals {
 
   static init() async {
     // initialization order is very important
+    mixpanel = await Mixpanel.init("cb8330c185f7677aac8efe418058e344", trackAutomaticEvents: true);
+    appEvents = new AppEvents(email:'unknownUser@gmail.com');
+    await appEvents.init();
     await UserMap.mapInit();
     globalPrefs = await SharedPreferences.getInstance();
     globalAllPois.clear();
@@ -107,6 +116,9 @@ class Globals {
     if (globalController.isUserSignIn) {
       await globalController.login();
       await loadUserDetails();
+      if(globalUserInfoObj != null && globalUserInfoObj!.emailAddr != null){
+       appEvents.email = globalUserInfoObj!.emailAddr!;
+      }
     }
     globalIsInitialized = true;
   }
