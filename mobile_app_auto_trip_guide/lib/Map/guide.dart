@@ -395,11 +395,11 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
 
   List<Widget> buildGridView(Map<String, List<MapPoi>> categoriesMap) {
     List<String> categoriesList = categoriesMap.keys.toList();
-    List<Widget> genereatedList =
+    List<Widget> generatedList =
         List.generate(widget.state.categoriesToPoisMap.length, (index) {
       return GestureDetector(
           key: Key(categoriesList[index]),
-          onTap: () => {handleSelectedCatrgotyClicked(categoriesList[index])},
+          onTap: () => {handleSelectedCategoryClicked(categoriesList[index])},
           child: Center(
             child: Stack(children: [
               ClipRRect(
@@ -464,7 +464,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                           categoriesList[index]] ??
                                       false,
                                   onChanged: (value) {
-                                    handleSelectedCatrgotyClicked(
+                                    handleSelectedCategoryClicked(
                                         categoriesList[index]);
                                   })),
                         ],
@@ -472,11 +472,11 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
             ]),
           ));
     });
-    genereatedList.sort((a, b) => a.key.toString().compareTo(b.key.toString()));
-    return genereatedList;
+    generatedList.sort((a, b) => a.key.toString().compareTo(b.key.toString()));
+    return generatedList;
   }
 
-  void handleSelectedCatrgotyClicked(selectedCategory) {
+  void handleSelectedCategoryClicked(selectedCategory) {
     bool currentValue =
         (widget.state.isCheckedCategory[selectedCategory] ?? false);
     setState(() {
