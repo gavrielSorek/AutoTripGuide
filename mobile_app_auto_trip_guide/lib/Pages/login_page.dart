@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../Map/globals.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -59,7 +60,13 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: PADDING_BETWEEN_BUTTONS),
               FloatingActionButton.extended(
                 onPressed: () async {
-                  // Add your sign in with Apple logic here
+                  final credential = await SignInWithApple.getAppleIDCredential(
+                    scopes: [
+                      AppleIDAuthorizationScopes.email,
+                      AppleIDAuthorizationScopes.fullName,
+                    ],
+                  );
+                  // Use the credential to sign in to your backend service
                 },
                 icon: Image.asset(
                   "assets/images/apple_logo_black.png", // Change this to the path of your Apple logo asset

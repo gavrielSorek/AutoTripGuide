@@ -45,6 +45,7 @@ dependencies:
       url: https://github.com/hemanthrajv/flutter_compass.git
       ref: 8f753ae
   story_view: 0.14.0
+  sign_in_with_apple: ^4.3.0
   flutter_bloc: ^8.0.1
   equatable: ^2.0.3
   async: 2.9.0
