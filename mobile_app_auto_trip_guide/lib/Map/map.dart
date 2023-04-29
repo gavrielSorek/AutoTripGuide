@@ -494,6 +494,9 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
     await _mapController.addImage(
         'greyTransPoi', Globals.svgPoiMarkerBytes.greyTransIcon);
     await _symbolManager.addAll(_symbolsOnMap);
+    if (highlightedPoi != null) {
+      await _highlightSymbolManager.add(highlightedPoi!.getSymbolFromPoi(PoiIconColor.blue));
+    }
   }
 
   _clearFill() {
