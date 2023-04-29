@@ -1,11 +1,10 @@
-import 'package:final_project/Pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../Map/globals.dart';
-import '../Map/types.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
+  static const double PADDING_BETWEEN_BUTTONS = 15;
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +14,8 @@ class LoginPage extends StatelessWidget {
   Widget buildLoginWidget(BuildContext context) {
     return Scaffold(
       body: Container(
-          width: MediaQuery.of(context).size.width / 1,
-          height: MediaQuery.of(context).size.height / 1,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/images/login_bg.jpeg"),
@@ -41,7 +40,7 @@ class LoginPage extends StatelessWidget {
                   )
                 ],
               ),
-              SizedBox(height: MediaQuery.of(context).size.height / 2),
+              SizedBox(height: MediaQuery.of(context).size.height / 2.7),
               FloatingActionButton.extended(
                 onPressed: () async {
                   await Globals.globalController.login();
@@ -54,6 +53,20 @@ class LoginPage extends StatelessWidget {
                   height: MediaQuery.of(context).size.height / 12,
                 ),
                 label: const Text('Sign in with Google'),
+                backgroundColor: Colors.white70,
+                foregroundColor: Colors.black,
+              ),
+              SizedBox(height: PADDING_BETWEEN_BUTTONS),
+              FloatingActionButton.extended(
+                onPressed: () async {
+                  // Add your sign in with Apple logic here
+                },
+                icon: Image.asset(
+                  "assets/images/apple_logo_black.png", // Change this to the path of your Apple logo asset
+                  width: MediaQuery.of(context).size.width / 12,
+                  height: MediaQuery.of(context).size.height / 12,
+                ),
+                label: const Text('Sign in with Apple'),
                 backgroundColor: Colors.white70,
                 foregroundColor: Colors.black,
               ),
