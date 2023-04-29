@@ -16,7 +16,7 @@ class TtsAudioPlayer {
   dynamic _onPlay = null, _onPause = null, _onResume = null;
   String? _language;
   String? _engine;
-  double _volume = 0.5;
+  double _volume = 1;
   double _pitch = 1.0;
   double _rate = 0.5;
   bool _isCurrentLanguageInstalled = false;
