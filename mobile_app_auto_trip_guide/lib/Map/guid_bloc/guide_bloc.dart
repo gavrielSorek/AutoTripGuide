@@ -244,11 +244,17 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           categoriesToMapPois[category]?.add(mapPoi);
         });
       });
+      Map<String, bool>isCheckedCategory = event.isCheckedCategory;
 
+      if (isCheckedCategory.isEmpty) { // if not initialized
+        categoriesToMapPois.keys.forEach((category) {
+          isCheckedCategory[category] = false;
+        });
+      }
       emit(ShowOptionalCategoriesState(
           lastState: state is PoisSearchingState ? null : state,
           categoriesToPoisMap: categoriesToMapPois,
-          isCheckedCategory: event.isCheckedCategory,
+          isCheckedCategory: isCheckedCategory,
           onShowStory: event.storiesEvents.onShowStory,
           idToPoisMap: event.pois,
           onFinishedFunc: event.storiesEvents.onStoriesFinished));

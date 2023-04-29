@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class ProgressButton extends StatefulWidget {
   final Color color;
   final Duration fillDuration;
+  final Function onCountDownFinished;
   final Function onPressed;
   final double width;
   final double height;
@@ -15,6 +16,7 @@ class ProgressButton extends StatefulWidget {
       {required this.color,
       required this.fillDuration,
       required this.onPressed,
+      required this.onCountDownFinished,
       required this.width,
       required this.height,
       required this.content});
@@ -58,7 +60,7 @@ class _ProgressButtonState extends State<ProgressButton>
     });
     _animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        widget.onPressed();
+        widget.onCountDownFinished();
       }
     });
     _animationController.forward();

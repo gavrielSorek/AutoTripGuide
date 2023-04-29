@@ -526,6 +526,22 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
               storiesEvents: widget.storiesEvents));
         }
       },
+
+      onCountDownFinished: (){
+        Set<MapPoi> filteredPois = Set();
+        widget.state.isCheckedCategory.forEach((key, value) {
+          filteredPois.addAll(widget.state.categoriesToPoisMap[key] ?? []);
+        });
+        Map<String, MapPoi> filteredMapPois = Map.fromIterable(
+            filteredPois.toList(),
+            key: (item) => item.poi.id,
+            value: (item) => item);
+        if (filteredPois.length > 0) {
+          context.read<GuideBloc>().add(SetStoriesListEvent(
+              poisToPlay: filteredMapPois,
+              storiesEvents: widget.storiesEvents));
+        }
+      },
       content: "Start Playing",
       width: 140,
       height: 40,
