@@ -342,6 +342,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
     _userLocationMarkers.forEach((element) async {
       await element.stop();
     });
+    _userLocationMarkers.clear();
     Wakelock.disable();
   }
 

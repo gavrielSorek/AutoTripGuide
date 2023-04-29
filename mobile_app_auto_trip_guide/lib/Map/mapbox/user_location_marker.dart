@@ -25,6 +25,7 @@ abstract class UserLocationMarker {
   late HeadingTween _headingTween;
   late LatLngTween _locationTween;
   StreamSubscription<Position>? _positionSubscription;
+  bool isActive = false;
 
   UserLocationMarker(this.mapController, this._symbol, this.onMarkerUpdated,
       this._moveAnimationController, this._headingAnimationController) {
@@ -61,6 +62,8 @@ abstract class UserLocationMarker {
   get headingAnimationController => _headingAnimationController;
 
   Future<void> _updateSymbol() async {
+    if (!isActive)
+      return;
     _symbol = Symbol(
         _symbol.id,
         _symbol.options.copyWith(
@@ -74,6 +77,7 @@ abstract class UserLocationMarker {
   }
 
   Future<void> start() async {
+    isActive = true;
     _userSymbolManager = SymbolManager(mapController,
         iconAllowOverlap: true, textAllowOverlap: true);
     // Get the user's current location
@@ -101,11 +105,12 @@ abstract class UserLocationMarker {
   }
 
   Future<void> stop() async {
+    isActive = false;
     // Remove the marker from the map
     await _userSymbolManager.remove(_symbol);
     _userSymbolManager.dispose();
-    _headingAnimationController.reset();
-    _moveAnimationController.reset();
+    _moveAnimationController.stop();
+    _headingAnimationController.stop();
     _positionSubscription?.cancel();
   }
 }
