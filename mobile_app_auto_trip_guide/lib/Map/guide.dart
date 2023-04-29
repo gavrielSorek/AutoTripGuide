@@ -237,7 +237,8 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   }
 
   Widget buildStoriesWidget(state) {
-    Globals.globalWidgetsSizes.dialogBoxTotalHeight =
+    final dialogBoxHeight = MediaQuery.of(context).size.height / 2.2;
+    Globals.globalWidgetsSizes.dialogBoxTotalHeight = dialogBoxHeight + Constants.avatarRadius + Constants.padding;
         MediaQuery.of(context).size.height / 2.2;
     return Column(
       children: [
@@ -254,7 +255,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                 children: <Widget>[
                   Container(
                       alignment: Alignment.bottomCenter,
-                      height: Globals.globalWidgetsSizes.dialogBoxTotalHeight,
+                      height: dialogBoxHeight,
                       width: MediaQuery.of(context).size.width - 30,
                       padding: const EdgeInsets.only(
                           left: Constants.padding,

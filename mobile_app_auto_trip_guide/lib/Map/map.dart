@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:final_project/General%20Wigets/menu.dart';
 import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/map_configuration.dart';
@@ -19,6 +20,14 @@ import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
 import 'package:wakelock/wakelock.dart';
 import 'mapbox/user_location_marker_foot.dart';
+
+double log2(num x) => log(x) / ln2;
+
+double toRadians(double degrees) {
+  return degrees * (math.pi / 180.0);
+}
+
+const double EARTH_RADIUS = 6378137;
 
 enum MarkersLayer { semiTransparent, grey, blue }
 
@@ -247,21 +256,34 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
     }
   }
 
+  // double getMetersPerPixelAtLatitude(double latitude, double zoom) {
+  //   const double EARTH_RADIUS = 6378137;
+  //   const int TILE_SIZE = 256;
+  //   const double MIN_ZOOM = 0;
+  //   const double MAX_ZOOM = 22;
+  //   const double MIN_LATITUDE = -85.05112878;
+  //   const double MAX_LATITUDE = 85.05112878;
+  //   double constrainedZoom = math.max(math.min(zoom, MAX_ZOOM), MIN_ZOOM);
+  //   double constrainedLatitude =
+  //   math.max(math.min(latitude, MAX_LATITUDE), MIN_LATITUDE);
+  //   double metersPerPixel = ((2 *
+  //       math.pi *
+  //       EARTH_RADIUS *
+  //       math.cos(toRadians(constrainedLatitude))) /
+  //       (TILE_SIZE * math.pow(2, constrainedZoom))) / 2;
+  //   return metersPerPixel;
+  // }
+
   // given distance in pixels and distance in meters, return the zoom such that distInPixels = distInMeters
-  double _getZoomLevel(
-      double distInPixels, double distInMeters, double latitude) {
-    // Calculate the pixel density (i.e. how many meters each pixel represents)
-    double metersPerPixel = distInMeters / distInPixels;
-    // zoom calculation
-    double zoom = (math.log(156543.03392 *
-            math.cos(latitude * math.pi / 180) /
-            metersPerPixel) /
-        math.log(2));
+  Future<double> _getZoomLevel(metersPerPixel,
+      double latitude) async {
+    double zoom = log2((2 * math.pi * EARTH_RADIUS *
+        math.cos(toRadians(latitude))) / (512 * metersPerPixel));
     return zoom;
   }
 
-  Future<double> _getZoomPointInDistFromUser(
-      double maxDistInPixels, mapbox.LatLng point) async {
+  Future<double> _getZoomPointInDistFromUser(double distInPixels,
+      mapbox.LatLng point) async {
     double distanceInMeters = await Geolocator.distanceBetween(
       UserMap.USER_LOCATION.latitude, // latitude of first location
       UserMap.USER_LOCATION.longitude, // longitude of first location
@@ -270,7 +292,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
     );
 
     return _getZoomLevel(
-        maxDistInPixels, distanceInMeters, UserMap.USER_LOCATION.latitude);
+        distanceInMeters / distInPixels, UserMap.USER_LOCATION.latitude);
   }
 
   @override
@@ -295,14 +317,14 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
           color: PoiIconColor.blue,
           action: PoiAction.highlight,
           mapPoi: highlightedPoi!));
-
+      final padding = 80;
+      final userPixelDistFromHighlightedPoi = min((MediaQuery.of(context).size
+          .height - Globals.globalWidgetsSizes.dialogBoxTotalHeight) / 2,
+          MediaQuery.of(context).size.width / 2) - padding;
       _cameraPosition = mapbox.CameraPosition(
           target: _cameraPosition.target,
-          // TODO calculate maxDistInPixels
           zoom: await _getZoomPointInDistFromUser(
-              (MediaQuery.of(context).size.height -
-                      Globals.globalWidgetsSizes.dialogBoxTotalHeight) /
-                  5.3,
+              userPixelDistFromHighlightedPoi,
               mapbox.LatLng(highlightedPoi!.poi.latitude,
                   highlightedPoi!.poi.longitude)));
       updateCameraByRelativePosition();
