@@ -168,7 +168,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
   mapbox.CameraTargetBounds _cameraTargetBounds =
       mapbox.CameraTargetBounds.unbounded;
   mapbox.MinMaxZoomPreference _minMaxZoomPreference =
-      mapbox.MinMaxZoomPreference.unbounded;
+      mapbox.MinMaxZoomPreference(1, 16);
   List<String> _styleStrings = [
     mapbox.MapboxStyles.MAPBOX_STREETS,
     mapbox.MapboxStyles.OUTDOORS,
