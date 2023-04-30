@@ -50,6 +50,7 @@ class TtsAudioPlayer {
     _language = language;
   }
 
+  get onResume => _onResume;
   set onResume(dynamic onResume) {
     _onResume = onResume;
   }
@@ -62,10 +63,12 @@ class TtsAudioPlayer {
     _onProgress = onProgress;
   }
 
+  get onPlay => _onPlay;
   set onPlay(dynamic onPlay) {
     _onPlay = onPlay;
   }
 
+  get onPause => _onPause;
   set onPause(dynamic onPause) {
     _onPause = onPause;
   }

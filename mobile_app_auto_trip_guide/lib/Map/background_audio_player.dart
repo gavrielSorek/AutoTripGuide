@@ -67,15 +67,17 @@ class BackgroundAudioHandler extends BaseAudioHandler
   set onProgressChanged(dynamic onProgressChanged) {
     ttsAudioPlayer.onProgress = onProgressChanged;
   }
-
+  get onPause => ttsAudioPlayer.onPause;
   set onPause(dynamic onPause) {
     ttsAudioPlayer.onPause = onPause;
   }
 
+  get onResume => ttsAudioPlayer.onResume;
   set onResume(dynamic onResume) {
     ttsAudioPlayer.onResume = onResume;
   }
 
+  get onPlay => ttsAudioPlayer.onPlay;
   set onPlay(dynamic onPlay) {
     ttsAudioPlayer.onPlay = onPlay;
   }
@@ -177,15 +179,21 @@ class _GuideAudioPlayerUIState extends State<GuideAudioPlayerUI> {
 
   @override
   void initState() {
+    dynamic savedOnPause = widget._audioHandler.onPause;
     widget._audioHandler.onPause = () {
+      savedOnPause != null ? savedOnPause() : null;
       updatePlayerButton();
     };
 
+    dynamic savedOnResume = widget._audioHandler.onResume;
     widget._audioHandler.onResume = () {
+      savedOnResume != null ? savedOnResume() : null;
       updatePlayerButton();
     };
 
+    dynamic savedOnPlay = widget._audioHandler.onPlay;
     widget._audioHandler.onPlay = () {
+      savedOnPlay != null ? savedOnPlay() : null;
       updatePlayerButton();
     };
     super.initState();
