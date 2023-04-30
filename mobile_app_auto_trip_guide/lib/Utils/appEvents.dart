@@ -15,9 +15,7 @@ class User {
 
   Future<void>  init() async{
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-    device = (Platform.isAndroid ? androidInfo.model : iosInfo.model)!;
+    device = (Platform.isAndroid ? (await deviceInfo.androidInfo).model : (await deviceInfo.iosInfo).model)!;
   }
 }
 
