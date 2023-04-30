@@ -222,10 +222,12 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
         _mapController.moveCamera(newCameraPosition);
         break;
       case CameraOption.animate:
-        _mapController.animateCamera(newCameraPosition);
+        _mapController.moveCamera(newCameraPosition);
+        // _mapController.animateCamera(newCameraPosition);
         break;
       default:
-        _mapController.animateCamera(newCameraPosition);
+        _mapController.moveCamera(newCameraPosition);
+        // _mapController.animateCamera(newCameraPosition);
         break;
     }
   }
@@ -423,7 +425,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
     });
   }
 
-  mapbox.LatLng _getRelativeCenterLatLng(double zoom) {
+  mapbox.LatLng   _getRelativeCenterLatLng(double zoom) {
     double latPerPx = 360 / math.pow(2, zoom) / 256;
     if (!_userLocationMarkers.isEmpty) {
       return PoisAttributesCalculator.getPointAtAngle(
@@ -685,7 +687,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
                       await _userLocationMarkers[_userStatus.index].stop();
                       _userStatus =
                           UserStatus.values[(_userStatus.index + 1) % 2];
-                      _userLocationMarkers[_userStatus.index].start();
+                      await _userLocationMarkers[_userStatus.index].start();
                       updateState();
                   },
                   child: Icon(

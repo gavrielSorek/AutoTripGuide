@@ -2,3 +2,4 @@
 *.env
 /node_modules/
 /.idea/
+/mobile_app_auto_trip_guide/build/
