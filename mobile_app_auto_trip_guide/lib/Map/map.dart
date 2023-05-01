@@ -56,7 +56,8 @@ class UserMap extends StatefulWidget {
   // inits
   static late Position USER_LOCATION; // the heading here isn't updated
   static double USER_HEADING = 0; // the correct heading
-
+  MapPoi? currentHighlightedPoi = null;
+  bool isFirstScanning = true;
   // the last known location of the user in the old area - for new pois purposes
   static late Position LAST_AREA_USER_LOCATION;
   static double DISTANCE_BETWEEN_AREAS = 1000; //1000 meters
@@ -115,6 +116,7 @@ class UserMap extends StatefulWidget {
   }
 
   void highlightPoi(MapPoi mapPoi) {
+    currentHighlightedPoi = mapPoi;
     highlightedPoiStreamController.add(mapPoi);
   }
 
@@ -222,12 +224,10 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
         _mapController.moveCamera(newCameraPosition);
         break;
       case CameraOption.animate:
-        _mapController.moveCamera(newCameraPosition);
-        // _mapController.animateCamera(newCameraPosition);
+        _mapController.animateCamera(newCameraPosition);
         break;
       default:
-        _mapController.moveCamera(newCameraPosition);
-        // _mapController.animateCamera(newCameraPosition);
+        _mapController.animateCamera(newCameraPosition);
         break;
     }
   }
@@ -361,10 +361,12 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
   Future<void> loadNewPois({Position? location = null}) async {
     Position selectedLocation = location ?? UserMap.USER_LOCATION;
     List<Poi> pois;
+    Globals.appEvents.scanningStarted(widget.isFirstScanning, true, selectedLocation.latitude, selectedLocation.longitude,);
     pois = await Globals.globalServerCommunication.getPoisByLocation(
         LocationInfo(selectedLocation.latitude, selectedLocation.longitude,
             selectedLocation.heading, selectedLocation.speed));
-
+   Globals.appEvents.scanningFinished(true,pois.length);
+    widget.isFirstScanning = false;
     pois = PoisAttributesCalculator.filterPois(pois, selectedLocation);
     setState(() {
       // add all the new poi
@@ -425,7 +427,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
     });
   }
 
-  mapbox.LatLng   _getRelativeCenterLatLng(double zoom) {
+  mapbox.LatLng _getRelativeCenterLatLng(double zoom) {
     double latPerPx = 360 / math.pow(2, zoom) / 256;
     if (!_userLocationMarkers.isEmpty) {
       return PoisAttributesCalculator.getPointAtAngle(

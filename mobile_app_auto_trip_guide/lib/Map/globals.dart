@@ -115,6 +115,7 @@ class Globals {
     await globalController.init();
     if (globalController.isUserSignIn) {
       await globalController.login();
+      Globals.appEvents.signInCompleted('success');
       await loadUserDetails();
       if(globalUserInfoObj != null && globalUserInfoObj!.emailAddr != null){
        appEvents.email = globalUserInfoObj!.emailAddr!;

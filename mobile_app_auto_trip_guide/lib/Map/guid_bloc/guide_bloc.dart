@@ -51,6 +51,10 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
 
     void initAudioPlayerByController(StoryController storyController) {
       Globals.globalGuideAudioPlayerHandler.onPressNext = () {
+        if(Globals.globalUserMap.currentHighlightedPoi != null){
+          var poi =Globals.globalUserMap.currentHighlightedPoi;
+          Globals.appEvents.poiPlaybackSkipped(poi!.poi.poiName!, poi.poi.Categories, poi.poi.id);
+        }
         Globals.globalGuideAudioPlayerHandler.stop();
         storyController.pause();
         storyController.next();
@@ -60,6 +64,10 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         storyController.previous();
       };
       Globals.globalGuideAudioPlayerHandler.onPause = () {
+        if(Globals.globalUserMap.currentHighlightedPoi != null){
+          var poi =Globals.globalUserMap.currentHighlightedPoi;
+          Globals.appEvents.poiPlaybackPaused(poi!.poi.poiName!, poi.poi.Categories, poi.poi.id);
+        }
         storyController.pause();
       };
       Globals.globalGuideAudioPlayerHandler.onResume = () {
@@ -126,6 +134,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             .toString()
             .replaceAll(RegExp(r"<|>|\[|\]|'"), '');
         MapPoi currentPoi = Globals.globalAllPois[poiId]!;
+        Globals.appEvents.poiStartedPlaying(currentPoi.poi.poiName!, currentPoi.poi.Categories, currentPoi.poi.id);
         String poiIntro = PoisAttributesCalculator.getPoiIntro(currentPoi.poi);
         Globals.globalGuideAudioPlayerHandler.setTextToPlay(
             poiIntro + " " + currentPoi!.poi.shortDesc!, 'en-US');
@@ -152,6 +161,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       if (state is ShowStoriesState) {
         Globals.globalGuideAudioPlayerHandler.pause();
         final state = this.state as ShowStoriesState;
+        Globals.appEvents.poiExpanded(state.currentPoi!.poi.poiName ?? '', state.currentPoi!.poi.Categories, state.currentPoi!.poi.id);
         emit(ShowPoiState(
             savedStoriesState: state, currentPoi: state.currentPoi!));
       }
@@ -160,6 +170,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     on<SetLoadedStoriesEvent>((event, emit) {
       if (state is ShowPoiState) {
         final state = this.state as ShowPoiState;
+        Globals.appEvents.poiCollapsed(state.currentPoi.poi.poiName ?? '', state.currentPoi.poi.Categories, state.currentPoi.poi.id);
+
         emit(ShowStoriesState(
             storyView: event.storyView,
             controller: event.controller,

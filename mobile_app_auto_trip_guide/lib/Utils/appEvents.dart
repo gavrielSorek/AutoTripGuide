@@ -38,6 +38,7 @@ class AppEvents {
         Map<String, dynamic> combinedProperties = {
       'Device': user.device,
       'OS': Platform.operatingSystem,
+      'Email': user.email,
     };
 
     if (properties != null) {
@@ -64,152 +65,178 @@ class AppEvents {
   void introCompleted() {
     String eventName = prefix + 'Intro_Completed';
     // send event to analytics
+    pushEvent(eventName);
   }
 
   void introSkipped() {
     String eventName = prefix + 'Intro_Skipped';
     // send event to analytics
+    pushEvent(eventName);
   }
 
   void signIn(String signInType) {
     String eventName = prefix + 'Sign_In';
     Map<String, dynamic> properties = {'Sign_in_type': signInType};
     // send event to analytics
+    pushEvent(eventName,properties);
   }
 
   void signInCompleted(String status) {
     String eventName = prefix + 'Sign_In_Completed';
     Map<String, dynamic> properties = {'Status': status};
     // send event to analytics
+    pushEvent(eventName,properties);
   }
 
   void mainScreenLoaded(bool currentLocation) {
     String eventName = prefix + 'Mainscreen_Loaded';
     Map<String, dynamic> properties = {'Current_location': currentLocation};
     // send event to analytics
+    pushEvent(eventName,properties);
   }
 
   void scanningStarted(bool initialScanning, bool withUI, double lat,
-      double long, String country, String location) {
+      double long ){
+      // , String country, String location) {
     String eventName = prefix + 'Scanning_Started';
     Map<String, dynamic> properties = {
       'Initial_scanning': initialScanning,
       'With_UI': withUI,
       'Lat': lat,
       'Long': long,
-      'Country': country,
-      'Location': location
+      // 'Country': country,
+      // 'Location': location
     };
     // send event to analytics
+    pushEvent(eventName,properties);
   }
 
   void scanningFinished(
-      bool initialScanning, int numberOfPOIsFound, List<dynamic> more) {
+      bool initialScanning, int numberOfPOIsFound) {
     String eventName = prefix + 'Scanning_Finished';
     Map<String, dynamic> properties = {
       'Initial_scanning': initialScanning,
       'Number_of_POIs_found': numberOfPOIsFound,
-      'More': more
     };
     // send event to analytics
+    pushEvent(eventName,properties);
   }
 
   void categoriesSheetShown(int numberOfPOIs, int numberOfCategories) {
     String eventName = prefix + 'Categories_Sheet_Shown';
     Map<String, dynamic> properties = {
       'Number_of_POIs': numberOfPOIs,
-      'Number_of_categories': numberOfCategories
+      'Name_of_Categories': numberOfCategories
     };
     // send event to analytics
+    pushEvent(eventName,properties);
+
   }
 
-  void categoriesSelected(String nameOfCategory, bool valueSet) {
+  void categoriesSelected(List<String> categories, bool valueSet) {
     String eventName = prefix + 'Categories_Selected';
     Map<String, dynamic> properties = {
-      'Name_of_category': nameOfCategory,
+      'Name_of_Categories': categories.toList(),
       'Value_set': valueSet ? 'checked' : 'unchecked'
     };
     // send event to analytics
+    pushEvent(eventName,properties);
+
   }
 
-  void poiStartedPlaying(String nameOfPOI, String nameOfCategory, String poiID) {
+  void poiStartedPlaying(String nameOfPOI, List<String> categories, String poiID) {
     String eventName = prefix + 'POI_Started_Playing';
     Map<String, dynamic> properties = {
       'Name_of_POI': nameOfPOI,
-      'Name_of_Category': nameOfCategory,
+      'Name_of_Categories': categories.toList(),
       'POI_ID': poiID
     };
     // send event to analytics
+    pushEvent(eventName,properties);
   }
 
-  void poiFinishedPlaying(String nameOfPOI, String nameOfCategory, String poiID) {
+  void poiFinishedPlaying(String nameOfPOI, List<String> categories, String poiID) {
     String eventName = prefix + 'POI_Finished_Playing';
     Map<String, dynamic> properties = {
       'Name_of_POI': nameOfPOI,
-      'Name_of_Category': nameOfCategory,
+      'Name_of_Categories': categories.toList(),
       'POI_ID': poiID
     };
     // send event to analytics
+    pushEvent(eventName,properties);
+
   }
 
   void poiPlaybackSkipped(
-      String nameOfPOI, String nameOfCategory, String poiID) {
+      String nameOfPOI, List<String> categories, String poiID) {
     String eventName = prefix + 'POI_Playback_Skipped';
     Map<String, dynamic> properties = {
       'Name_of_POI': nameOfPOI,
-      'Name_of_Category': nameOfCategory,
+      'Name_of_Categories': categories.toList(),
       'POI_ID': poiID
     };
     // send event to analytics
+    pushEvent(eventName,properties);
+
   }
 
   void poiPlaybackPaused(
-      String nameOfPOI, String nameOfCategory, String poiID) {
+      String nameOfPOI, List<String> categories, String poiID) {
     String eventName = prefix + 'POI_Playback_Paused';
     Map<String, dynamic> properties = {
       'Name_of_POI': nameOfPOI,
-      'Name_of_Category': nameOfCategory,
+      'Name_of_Categories': categories.toList(),
       'POI_ID': poiID
     };
     // send event to analytics
+    pushEvent(eventName,properties);
+
   }
 
-  void poiExpanded(String nameOfPOI, String nameOfCategory, String poiID) {
+  void poiExpanded(String nameOfPOI, List<String> categories, String poiID) {
     String eventName = prefix + 'POI_Expanded';
     Map<String, dynamic> properties = {
       'Name_of_POI': nameOfPOI,
-      'Name_of_Category': nameOfCategory,
+      'Name_of_Categories': categories.toList(),
       'POI_ID': poiID
     };
     // send event to analytics
+    pushEvent(eventName,properties);
+
   }
 
-  void poiCollapsed(String nameOfPOI, String nameOfCategory, String poiID) {
+  void poiCollapsed(String nameOfPOI, List<String> categories, String poiID) {
     String eventName = prefix + 'POI_Collapsed';
     Map<String, dynamic> properties = {
       'Name_of_POI': nameOfPOI,
-      'Name_of_Category': nameOfCategory,
+      'Name_of_Categories': categories.toList(),
       'POI_ID': poiID
     };
+
+    pushEvent(eventName,properties);
 }
 
-  void poiShared(String nameOfPoi, String nameOfCategory, String poiId) {
+  void poiShared(String nameOfPoi, List<String> categories, String poiId) {
     String eventName = prefix + 'POI_Shared';
     Map<String, dynamic> properties = {
       'Name_of_POI': nameOfPoi,
-      'Name_of_Category': nameOfCategory,
+      'Name_of_Categories': categories.toList(),
       'POI_ID': poiId,
     };
     // send event to analytics
+    pushEvent(eventName,properties);
+
   }
   
-  void poiNavigationStarted(String nameOfPoi, String nameOfCategory, String poiId) {
+  void poiNavigationStarted(String nameOfPoi, List<String> categories, String poiId) {
     String eventName = prefix + 'POI_Navigation_Started';
     Map<String, dynamic> properties = {
       'Name_of_POI': nameOfPoi,
-      'Name_of_Category': nameOfCategory,
+      'Name_of_Categories': categories.toList(),
       'POI_ID': poiId,
     };
     // send event to analytics
+    pushEvent(eventName,properties);
+
   }
 }
