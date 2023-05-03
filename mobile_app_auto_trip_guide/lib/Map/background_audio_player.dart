@@ -67,17 +67,21 @@ class BackgroundAudioHandler extends BaseAudioHandler
   set onProgressChanged(dynamic onProgressChanged) {
     ttsAudioPlayer.onProgress = onProgressChanged;
   }
+
   get onPause => ttsAudioPlayer.onPause;
+
   set onPause(dynamic onPause) {
     ttsAudioPlayer.onPause = onPause;
   }
 
   get onResume => ttsAudioPlayer.onResume;
+
   set onResume(dynamic onResume) {
     ttsAudioPlayer.onResume = onResume;
   }
 
   get onPlay => ttsAudioPlayer.onPlay;
+
   set onPlay(dynamic onPlay) {
     ttsAudioPlayer.onPlay = onPlay;
   }
@@ -181,20 +185,20 @@ class _GuideAudioPlayerUIState extends State<GuideAudioPlayerUI> {
   void initState() {
     dynamic savedOnPause = widget._audioHandler.onPause;
     widget._audioHandler.onPause = () {
-      savedOnPause != null ? savedOnPause() : null;
       updatePlayerButton();
+      savedOnPause != null ? savedOnPause() : null;
     };
 
     dynamic savedOnResume = widget._audioHandler.onResume;
     widget._audioHandler.onResume = () {
-      savedOnResume != null ? savedOnResume() : null;
       updatePlayerButton();
+      savedOnResume != null ? savedOnResume() : null;
     };
 
     dynamic savedOnPlay = widget._audioHandler.onPlay;
     widget._audioHandler.onPlay = () {
-      savedOnPlay != null ? savedOnPlay() : null;
       updatePlayerButton();
+      savedOnPlay != null ? savedOnPlay() : null;
     };
     super.initState();
   }
@@ -225,31 +229,35 @@ class _GuideAudioPlayerUIState extends State<GuideAudioPlayerUI> {
         width: double.infinity,
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Spacer(),
-Container(
-  width: 47,
-  height: 47,
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    boxShadow: [
-      BoxShadow(
-        color: Color.fromRGBO(0, 0, 0, 0.25),
-        offset: Offset(0, 2),
-        blurRadius: 10
-      )
-    ],
-    color: Color(0xff0A84FF),
-  ),
-  child: IconButton(
-    onPressed: () {
-      if (widget._audioHandler._onPressPrev != null) {
-        widget._audioHandler._onPressPrev();
-      }
-    },
-    icon: SvgPicture.asset('assets/images/double-chevron-left-svgrepo-com.svg', width: 22, height: 22,  color: Colors.white,),
-    iconSize: 35,
-    color: Colors.white,
-  )
-),      Spacer(),
+          Container(
+              width: 47,
+              height: 47,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                      color: Color.fromRGBO(0, 0, 0, 0.25),
+                      offset: Offset(0, 2),
+                      blurRadius: 10)
+                ],
+                color: Color(0xff0A84FF),
+              ),
+              child: IconButton(
+                onPressed: () {
+                  if (widget._audioHandler._onPressPrev != null) {
+                    widget._audioHandler._onPressPrev();
+                  }
+                },
+                icon: SvgPicture.asset(
+                  'assets/images/double-chevron-left-svgrepo-com.svg',
+                  width: 22,
+                  height: 22,
+                  color: Colors.white,
+                ),
+                iconSize: 35,
+                color: Colors.white,
+              )),
+          Spacer(),
           Container(
               width: 117,
               height: 47,
@@ -287,32 +295,35 @@ Container(
                   icon: playerIcon,
                   iconSize: 35)),
           Spacer(),
-Container(
-  width: 47,
-  height: 47,
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    boxShadow: [
-      BoxShadow(
-        color: Color.fromRGBO(0, 0, 0, 0.25),
-        offset: Offset(0, 2),
-        blurRadius: 10
-      )
-    ],
-    color: Color(0xff0A84FF),
-  ),
-  child: IconButton(
-    onPressed: () {
-      if (widget._audioHandler._onPressNext != null) {
-        widget._audioHandler._onPressNext();
-      }
-    },
-    icon: SvgPicture.asset('assets/images/double-right-chevron-svgrepo-com.svg', width: 22, height: 22,  color: Colors.white,),
-    iconSize: 35,
-    color: Colors.white,
-  )
-),
-   Spacer()
+          Container(
+              width: 47,
+              height: 47,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                      color: Color.fromRGBO(0, 0, 0, 0.25),
+                      offset: Offset(0, 2),
+                      blurRadius: 10)
+                ],
+                color: Color(0xff0A84FF),
+              ),
+              child: IconButton(
+                onPressed: () {
+                  if (widget._audioHandler._onPressNext != null) {
+                    widget._audioHandler._onPressNext();
+                  }
+                },
+                icon: SvgPicture.asset(
+                  'assets/images/double-right-chevron-svgrepo-com.svg',
+                  width: 22,
+                  height: 22,
+                  color: Colors.white,
+                ),
+                iconSize: 35,
+                color: Colors.white,
+              )),
+          Spacer()
         ]),
       );
 }
