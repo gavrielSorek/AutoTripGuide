@@ -142,7 +142,7 @@ class UserMap extends StatefulWidget {
   }
 }
 
-class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
+class _UserMapState extends State<UserMap> with TickerProviderStateMixin, WidgetsBindingObserver {
   late StreamSubscription mapPoiActionSubscription;
   UserStatus _userStatus = UserStatus.walking; // this effects on the rotation
   GuideData guideData = GuideData();
@@ -331,20 +331,33 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
     });
     super.initState();
     Wakelock.enable();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
-  void dispose() {
-    super.dispose();
+  Future<void> dispose() async {
     print("____________________dispose statful map");
     mapPoiActionSubscription.cancel();
     _mapController.dispose();
-    _userLocationMarkers.forEach((element) async {
-      await element.stop();
-    });
+    for (final element in _userLocationMarkers) {
+      await element.dispose();
+    }
     _userLocationMarkers.clear();
     Wakelock.disable();
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
   }
+
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   // print(state);
+  //   if ([AppLifecycleState.detached].contains(state)) {
+  //     Wakelock.disable();
+  //   }
+  //    if (state == AppLifecycleState.resumed) {
+  //      Wakelock.enable();
+  //    }
+  // }
 
   // add new pois if location changed
   void onLocationChanged(Position currentLocation) async {
@@ -538,6 +551,9 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
     UniversalPanGestureRecognizer _panGestureRecognizer =
         UniversalPanGestureRecognizer(
       onUpdate: (details) {
@@ -620,9 +636,9 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
                         color: Colors.transparent,
                         alignment: Alignment.bottomRight,
                         margin: EdgeInsets.only(
-                            right: MediaQuery.of(context).size.width / 60),
-                        height: MediaQuery.of(context).size.width / 10,
-                        width: MediaQuery.of(context).size.width / 10,
+                            right: width / 60),
+                        height: width / 10,
+                        width: width / 10,
                         child: LoadingAnimationWidget.threeArchedCircle(
                           size: 30,
                           color: Colors.blue,
@@ -630,9 +646,9 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
                     : Container(),
                 Container(
                   margin: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.width / 20,
-                      right: MediaQuery.of(context).size.width / 40),
-                  width: MediaQuery.of(context).size.width / 10,
+                      top: width / 20,
+                      right: width / 40),
+                  width: width / 10,
                   child: FloatingActionButton(
                     heroTag: null,
                     onPressed: () {
@@ -655,9 +671,9 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
             children: [
               Container(
                 margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height / 90,
-                    left: MediaQuery.of(context).size.width / 40),
-                width: MediaQuery.of(context).size.width / 10,
+                    top: height / 90,
+                    left: width / 40),
+                width: width / 10,
                 child: _myLocationTrackingMode ==
                         mapbox.MyLocationTrackingMode.None
                     ? FloatingActionButton(
@@ -676,9 +692,9 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin {
               ),
               Container(
                 margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height / 90,
-                    right: MediaQuery.of(context).size.width / 40),
-                width: MediaQuery.of(context).size.width / 10,
+                    top: height / 90,
+                    right: width / 40),
+                width: width / 10,
                 child: FloatingActionButton(
                   heroTag: null,
                   onPressed: () async {

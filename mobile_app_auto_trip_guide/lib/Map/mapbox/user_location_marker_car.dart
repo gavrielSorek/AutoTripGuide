@@ -48,4 +48,8 @@ class UserLocationMarkerCar extends UserLocationMarker {
     super.stop();
     _drivingDirectionSubscription?.cancel();
   }
+  dispose() {
+    super.dispose();
+    _drivingDirectionSubscription?.cancel();
+  }
 }

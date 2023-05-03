@@ -52,4 +52,9 @@ class UserLocationMarkerFoot extends UserLocationMarker {
     super.stop();
     _compassSubscription?.cancel();
   }
+
+  dispose() {
+    super.dispose();
+    _compassSubscription?.cancel();
+  }
 }
