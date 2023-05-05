@@ -51,7 +51,8 @@ class MapPoiAction {
 }
 
 class UserMap extends StatefulWidget {
-  bool showLoadingPoisAnimation = false;
+  bool isScanning = false;
+  Timer? _scanningTimer;
 
   // inits
   static late Position USER_LOCATION; // the heading here isn't updated
@@ -65,6 +66,9 @@ class UserMap extends StatefulWidget {
       StreamController<MapPoiAction>.broadcast();
   StreamController<MapPoi> highlightedPoiStreamController =
       StreamController<MapPoi>.broadcast();
+  StreamController<List<Poi>> poisToAddQueue =
+    StreamController<List<Poi>>.broadcast();
+
 
   static Future<void> mapInit() async {
     //permissions handling
@@ -118,8 +122,16 @@ class UserMap extends StatefulWidget {
     highlightedPoiStreamController.add(mapPoi);
   }
 
-  void setLoadingAnimationState(bool isActive) {
-    showLoadingPoisAnimation = isActive;
+  void setPoisScanningStatus(bool isActive) {
+    isScanning = isActive;
+    if (isActive) {
+      _scanningTimer = Timer.periodic(Duration(seconds: 5), (timer) {
+        loadNewPois(location: USER_LOCATION);
+      });
+    } else {
+      _scanningTimer?.cancel();
+      _scanningTimer = null;
+    }
     userMapState?.updateState();
   }
 
@@ -140,10 +152,41 @@ class UserMap extends StatefulWidget {
   void setMapPoiOnLayer(MapPoiAction mapPoiAction) {
     mapPoiActionStreamController.add(mapPoiAction);
   }
+
+  Future<void> loadNewPois({Position? location = null}) async {
+    Position selectedLocation = location ?? UserMap.USER_LOCATION;
+    List<Poi> pois;
+    pois = await Globals.globalServerCommunication.getPoisByLocation(
+        LocationInfo(selectedLocation.latitude, selectedLocation.longitude,
+            selectedLocation.heading, selectedLocation.speed));
+
+    pois = PoisAttributesCalculator.filterPois(pois, selectedLocation);
+    // add all the new poi
+    print("add pois to map");
+    for (Poi poi in pois) {
+      if (!Globals.globalAllPois.containsKey(poi.id)) {
+        MapPoi mapPoi = MapPoi(poi);
+        Globals.globalAllPois[poi.id] = mapPoi;
+        Globals.addUnhandledPoiKey(poi.id);
+        mapPoiActionStreamController.add(MapPoiAction(
+            color: PoiIconColor.greyTrans,
+            action: PoiAction.add,
+            mapPoi: MapPoi(poi)));
+      }
+    }
+
+    if (pois.isNotEmpty) {
+      poisToAddQueue.add(pois);
+    }
+  }
+
 }
 
 class _UserMapState extends State<UserMap> with TickerProviderStateMixin, WidgetsBindingObserver {
   late StreamSubscription mapPoiActionSubscription;
+  late StreamSubscription highlightedPoiSubscription;
+  late StreamSubscription poisToAddSubscription;
+
   UserStatus _userStatus = UserStatus.walking; // this effects on the rotation
   GuideData guideData = GuideData();
   late Guide guideTool;
@@ -305,7 +348,12 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
     print("init _UserMapState");
     guideTool = Guide(context, guideData);
 
-    widget.highlightedPoiStreamController.stream.listen((event) async {
+    poisToAddSubscription = widget.poisToAddQueue.stream.listen((pois) {
+      guideTool.setPoisInQueue(pois);
+
+    });
+
+    highlightedPoiSubscription = widget.highlightedPoiStreamController.stream.listen((event) async {
       if (highlightedPoi != null) {
         widget.mapPoiActionStreamController.add(MapPoiAction(
             color: PoiIconColor.grey,
@@ -338,6 +386,8 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   Future<void> dispose() async {
     print("____________________dispose statful map");
     mapPoiActionSubscription.cancel();
+    highlightedPoiSubscription.cancel();
+    poisToAddSubscription.cancel();
     _mapController.dispose();
     for (final element in _userLocationMarkers) {
       await element.dispose();
@@ -348,16 +398,16 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
     WidgetsBinding.instance.removeObserver(this);
   }
 
-  // @override
-  // void didChangeAppLifecycleState(AppLifecycleState state) {
-  //   // print(state);
-  //   if ([AppLifecycleState.detached].contains(state)) {
-  //     Wakelock.disable();
-  //   }
-  //    if (state == AppLifecycleState.resumed) {
-  //      Wakelock.enable();
-  //    }
-  // }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // print(state);
+    if ([AppLifecycleState.detached, AppLifecycleState.inactive, AppLifecycleState.paused].contains(state)) {
+      Wakelock.disable();
+    }
+     if (state == AppLifecycleState.resumed) {
+       Wakelock.enable();
+     }
+  }
 
   // add new pois if location changed
   void onLocationChanged(Position currentLocation) async {
@@ -631,7 +681,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
                 Container(
                   child: NavigationDrawer.buildNavigationDrawerButton(context),
                 ),
-                widget.showLoadingPoisAnimation
+                widget.isScanning
                     ? Container(
                         color: Colors.transparent,
                         alignment: Alignment.bottomRight,

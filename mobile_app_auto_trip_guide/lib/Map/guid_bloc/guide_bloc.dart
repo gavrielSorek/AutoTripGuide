@@ -23,12 +23,12 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
   GuideBloc() : super(PoisSearchingState()) {
     on<ShowSearchingPoisAnimationEvent>((event, emit) {
       // start loading animation
-      Globals.globalUserMap.setLoadingAnimationState(true);
+      Globals.globalUserMap.setPoisScanningStatus(true);
       emit(PoisSearchingState());
     });
     on<ShowLoadingMorePoisEvent>((event, emit) {
       // start loading animation
-      Globals.globalUserMap.setLoadingAnimationState(true);
+      Globals.globalUserMap.setPoisScanningStatus(true);
       emit(LoadingMorePoisState());
     });
 
@@ -226,7 +226,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
 
     on<ShowOptionalCategoriesEvent>((event, emit) {
       // stop loading animation
-      Globals.globalUserMap.setLoadingAnimationState(false);
+      Globals.globalUserMap.setPoisScanningStatus(false);
 
       Globals.globalGuideAudioPlayerHandler.stop();
       List<MapPoi> mapPoisList = event.pois.values.toList();
