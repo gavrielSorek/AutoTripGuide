@@ -1,5 +1,11 @@
 # ignore ALL .env files
 *.env
 /node_modules/
-/.idea/
+/.dart_tool/
 /mobile_app_auto_trip_guide/build/
+/mobile_app_auto_trip_guide/windows/
+/mobile_app_auto_trip_guide/web/
+/.idea/
+mobile_app_auto_trip_guide/lib/.idea
+mobile_app_auto_trip_guide/.dart_tool
+mobile_app_auto_trip_guide/.idea
