@@ -53,11 +53,7 @@ class _ProgressButtonState extends State<ProgressButton>
     });
     _animationController =
         AnimationController(vsync: this, duration: widget.fillDuration);
-    _animationController.addListener(() {
-      setState(() {
-        fillingPercent = _animationController.value;
-      });
-    });
+    _animationController.addListener(_updateFillingPercent);
     _animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         widget.onCountDownFinished();
@@ -68,6 +64,14 @@ class _ProgressButtonState extends State<ProgressButton>
 
   stopCountDown() {
     _animationController.stop();
+  }
+
+  void _updateFillingPercent() {
+    if (mounted) {
+      setState(() {
+        fillingPercent = _animationController.value;
+      });
+    }
   }
 
   @override
@@ -122,9 +126,9 @@ class _ProgressButtonState extends State<ProgressButton>
   }
 
   @override
-  Future<void> dispose() async {
+  void dispose() {
+    _isAnimationActiveSubscription?.cancel();
+    _animationController?.dispose();
     super.dispose();
-    _isAnimationActiveSubscription.cancel();
-    _animationController.dispose();
   }
 }
