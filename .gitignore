@@ -1,6 +1,6 @@
 # ignore ALL .env files
 *.env
-node_modules/*
+*/node_modules/*
 /.idea/
 *.dart_tool/
 mobile_app_auto_trip_guide/build/*
