@@ -16,7 +16,7 @@ class TtsAudioPlayer {
   dynamic _onPlay = null, _onPause = null, _onResume = null;
   String? _language;
   String? _engine;
-  double _volume = 0.5;
+  double _volume = 1;
   double _pitch = 1.0;
   double _rate = 0.5;
   bool _isCurrentLanguageInstalled = false;
@@ -50,6 +50,7 @@ class TtsAudioPlayer {
     _language = language;
   }
 
+  get onResume => _onResume;
   set onResume(dynamic onResume) {
     _onResume = onResume;
   }
@@ -62,10 +63,12 @@ class TtsAudioPlayer {
     _onProgress = onProgress;
   }
 
+  get onPlay => _onPlay;
   set onPlay(dynamic onPlay) {
     _onPlay = onPlay;
   }
 
+  get onPause => _onPause;
   set onPause(dynamic onPause) {
     _onPause = onPause;
   }
@@ -92,6 +95,10 @@ class TtsAudioPlayer {
     if (isAndroid) {
       _getDefaultEngine();
       _getDefaultVoice();
+    } else if (isIOS){
+      await flutterTts.setIosAudioCategory(IosTextToSpeechAudioCategory.playback, [
+        IosTextToSpeechAudioCategoryOptions.defaultToSpeaker
+      ]);
     }
 
     await flutterTts.setVolume(_volume);

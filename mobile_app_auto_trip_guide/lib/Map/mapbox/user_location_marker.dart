@@ -15,7 +15,7 @@ class LocationMarkerInfo {
 
 abstract class UserLocationMarker {
   final MapboxMapController mapController;
-  late SymbolManager _userSymbolManager;
+  SymbolManager? _userSymbolManager;
   Symbol _symbol;
   late final AnimationController _moveAnimationController;
   late final AnimationController _headingAnimationController;
@@ -72,7 +72,7 @@ abstract class UserLocationMarker {
               iconRotate: (_locationMarkerInfo.heading -
                   (mapController.cameraPosition?.bearing ?? 0))),
         ));
-    await _userSymbolManager.set(_symbol);
+    await _userSymbolManager!.set(_symbol);
     onMarkerUpdated(_locationMarkerInfo);
   }
 
@@ -86,7 +86,7 @@ abstract class UserLocationMarker {
     // Create a LatLng object from the user's location
     LatLng userLocation = LatLng(position.latitude, position.longitude);
     _locationMarkerInfo.latLng = userLocation;
-    await _userSymbolManager.add(_symbol);
+    await _userSymbolManager!.add(_symbol);
     locationMarkerInfo.heading = mapController.cameraPosition?.bearing ?? 0;
     _updateSymbol();
     _positionSubscription?.cancel();
@@ -107,10 +107,17 @@ abstract class UserLocationMarker {
   Future<void> stop() async {
     isActive = false;
     // Remove the marker from the map
-    await _userSymbolManager.remove(_symbol);
-    _userSymbolManager.dispose();
+    await _userSymbolManager?.remove(_symbol);
+    _userSymbolManager?.dispose();
     _moveAnimationController.stop();
     _headingAnimationController.stop();
+    _positionSubscription?.cancel();
+  }
+
+  dispose() {
+    _userSymbolManager?.dispose();
+    _moveAnimationController.dispose();
+    _headingAnimationController.dispose();
     _positionSubscription?.cancel();
   }
 }
