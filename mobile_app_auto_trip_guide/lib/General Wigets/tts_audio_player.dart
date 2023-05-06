@@ -95,6 +95,10 @@ class TtsAudioPlayer {
     if (isAndroid) {
       _getDefaultEngine();
       _getDefaultVoice();
+    } else if (isIOS){
+      await flutterTts.setIosAudioCategory(IosTextToSpeechAudioCategory.playback, [
+        IosTextToSpeechAudioCategoryOptions.defaultToSpeaker
+      ]);
     }
 
     await flutterTts.setVolume(_volume);

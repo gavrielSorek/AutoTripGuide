@@ -28,7 +28,6 @@ class StoriesEvents {
   BuildContext context;
   dynamic onShowStory;
   dynamic onStoriesFinished;
-  dynamic onPoiClicked;
   dynamic onStoryTap;
   dynamic onVerticalSwipeComplete;
 
@@ -36,7 +35,6 @@ class StoriesEvents {
       {required this.context,
       required this.onShowStory,
       required this.onStoriesFinished,
-      required this.onPoiClicked,
       required this.onStoryTap,
       required this.onVerticalSwipeComplete});
 }
@@ -73,9 +71,7 @@ class Guide {
             }
           });
         },
-        onPoiClicked: () {
-          context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
-        },
+
         onStoryTap: (StoryItem? story) {
           context.read<GuideBloc>().add(ShowFullPoiInfoEvent());
         },
@@ -698,6 +694,7 @@ class _FullPoiInfoState extends State<FullPoiInfo> {
               opacity: poiPreference == -1 ? 1.0 : 0.5,
               child: RawMaterialButton(
                 onPressed: () {
+                  Globals.appEvents.poiNavigationStarted(widget.showPoiState.currentPoi.poi.poiName ?? '', widget.showPoiState.currentPoi.poi.Categories, widget.showPoiState.currentPoi.poi.id);
                   poiPreference = -1;
                   Globals.globalServerCommunication.insertPoiPreferences(
                       widget.showPoiState.currentPoi.poi.id,
@@ -736,6 +733,7 @@ class _FullPoiInfoState extends State<FullPoiInfo> {
             ),
             RawMaterialButton(
               onPressed: () {
+                Globals.appEvents.poiShared(widget.showPoiState.currentPoi.poi.poiName ?? '', widget.showPoiState.currentPoi.poi.Categories, widget.showPoiState.currentPoi.poi.id);
                 Share.share(widget.showPoiState.currentPoi.poi.shortDesc ?? "",
                     subject: widget.showPoiState.currentPoi.poi.poiName);
               },
@@ -840,6 +838,7 @@ class _FullPoiInfoState extends State<FullPoiInfo> {
                   int sensitivity = 8;
                   if (details.delta.dy > sensitivity) {
                     // Down Swipe
+
                     context.read<GuideBloc>().add(SetLoadedStoriesEvent(
                         storyView:
                             widget.showPoiState.savedStoriesState.storyView,
