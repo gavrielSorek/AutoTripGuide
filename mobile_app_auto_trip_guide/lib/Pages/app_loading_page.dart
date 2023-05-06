@@ -28,6 +28,7 @@ class AppLoadingPage extends StatelessWidget {
       initialRoute = '/HomePage';
     } else {
       final bool? isIntroDone = Globals.globalPrefs?.getBool('introDone');
+      isIntroDone != null? '':  Globals.appEvents.introStarted();
       initialRoute = isIntroDone != null ? '/login-screen' : '/onboard-screen';
     }
     Navigator.pop(context!);

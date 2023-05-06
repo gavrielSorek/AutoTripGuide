@@ -57,7 +57,8 @@ class UserMap extends StatefulWidget {
   // inits
   static late Position USER_LOCATION; // the heading here isn't updated
   static double USER_HEADING = 0; // the correct heading
-
+  MapPoi? currentHighlightedPoi = null;
+  bool isFirstScanning = true;
   // the last known location of the user in the old area - for new pois purposes
   static late Position LAST_AREA_USER_LOCATION;
   static double DISTANCE_BETWEEN_AREAS = 1000; //1000 meters
@@ -119,6 +120,7 @@ class UserMap extends StatefulWidget {
   }
 
   void highlightPoi(MapPoi mapPoi) {
+    currentHighlightedPoi = mapPoi;
     highlightedPoiStreamController.add(mapPoi);
   }
 
@@ -506,10 +508,12 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   Future<void> loadNewPois({Position? location = null}) async {
     Position selectedLocation = location ?? UserMap.USER_LOCATION;
     List<Poi> pois;
+    Globals.appEvents.scanningStarted(widget.isFirstScanning, true, selectedLocation.latitude, selectedLocation.longitude,);
     pois = await Globals.globalServerCommunication.getPoisByLocation(
         LocationInfo(selectedLocation.latitude, selectedLocation.longitude,
             selectedLocation.heading, selectedLocation.speed));
-
+   Globals.appEvents.scanningFinished(true,pois.length);
+    widget.isFirstScanning = false;
     pois = PoisAttributesCalculator.filterPois(pois, selectedLocation);
     setState(() {
       // add all the new poi
@@ -770,7 +774,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
                       await _userLocationMarkers[_userStatus.index].stop();
                       _userStatus =
                           UserStatus.values[(_userStatus.index + 1) % 2];
-                      _userLocationMarkers[_userStatus.index].start();
+                      await _userLocationMarkers[_userStatus.index].start();
                       updateState();
                   },
                   child: Icon(
