@@ -368,7 +368,7 @@ class ServerCommunication {
 
   Future<List<VisitedPoi>> getPoisHistory(String emailAddr) async {
     Map<String, String> params = {};
-    params.putIfAbsent('emailAddr', () => emailAddr);
+    params.putIfAbsent('email', () => emailAddr);
     Uri newUri = addInfoToUrl(serverUrl, '/getPoisHistory', params);
     try {
       var response = await client.get(newUri);

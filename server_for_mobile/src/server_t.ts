@@ -216,7 +216,7 @@ app.get("/insertPoiToHistory", async function (req:Request, res:Response) { //ne
  // get the history pois of specific user
 app.get("/getPoisHistory", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
     console.log("inside get pois history - server side")
-    const result = await db.getPoisHistory(dbClientSearcher, req.query.emailAddr)
+    const result = await db.getPoisHistory(dbClientSearcher, req.query.email)
     res.status(200);
     res.json(result);
     res.end();
