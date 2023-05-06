@@ -125,6 +125,7 @@ class UserMap extends StatefulWidget {
   void setPoisScanningStatus(bool isActive) {
     isScanning = isActive;
     if (isActive) {
+      loadNewPois(location: USER_LOCATION);
       _scanningTimer = Timer.periodic(Duration(seconds: 5), (timer) {
         loadNewPois(location: USER_LOCATION);
       });
