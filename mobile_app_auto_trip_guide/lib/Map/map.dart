@@ -83,7 +83,7 @@ class UserMap extends StatefulWidget {
     }
 
     USER_LOCATION = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.medium);
+        desiredAccuracy: LocationAccuracy.best);
     // initialization order is very important
 
     Geolocator.getPositionStream(
@@ -186,7 +186,6 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   late StreamSubscription mapPoiActionSubscription;
   late StreamSubscription highlightedPoiSubscription;
   late StreamSubscription poisToAddSubscription;
-
   UserStatus _userStatus = UserStatus.walking; // this effects on the rotation
   GuideData guideData = GuideData();
   late Guide guideTool;
@@ -203,8 +202,11 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   // at new area the we snooze to the server in order to seek new pois
   static int SECONDS_BETWEEN_SNOOZES = 15;
 
+  // for rendering purposes
+  AppLifecycleState _lastLifecycleState = AppLifecycleState.resumed;
   // mapbox variables
   late mapbox.MapboxMap map;
+  Key _mapboxUniqueKey = UniqueKey(); // for recreating the widget purposes
   late mapbox.CameraPosition _cameraPosition;
   bool _isMoving = false;
   bool _compassEnabled = true;
@@ -240,6 +242,72 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
       mapbox.MyLocationTrackingMode.Tracking;
   List<Object>? _featureQueryFilter;
   mapbox.Fill? _selectedFill;
+
+  mapbox.MapboxMap createMapboxMap(Key mapboxWidgetUniqueKey) {
+    UniversalPanGestureRecognizer _panGestureRecognizer =
+    UniversalPanGestureRecognizer(
+      onUpdate: (details) {
+        _onMapDrag(details);
+      },
+    );
+
+    return mapbox.MapboxMap(
+      key: mapboxWidgetUniqueKey,
+      gestureRecognizers: Set()
+        ..add(Factory<UniversalPanGestureRecognizer>(
+                () => _panGestureRecognizer)),
+      accessToken: MapConfiguration.mapboxAccessToken,
+      onMapCreated: _onMapCreated,
+      initialCameraPosition: _cameraPosition,
+      compassEnabled: _compassEnabled,
+      cameraTargetBounds: _cameraTargetBounds,
+      minMaxZoomPreference: _minMaxZoomPreference,
+      styleString: _styleStrings[_styleStringIndex],
+      rotateGesturesEnabled: _rotateGesturesEnabled,
+      scrollGesturesEnabled: _scrollGesturesEnabled,
+      tiltGesturesEnabled: _tiltGesturesEnabled,
+      zoomGesturesEnabled: _zoomGesturesEnabled,
+      doubleClickZoomEnabled: _doubleClickToZoomEnabled,
+      trackCameraPosition: true,
+      onMapClick: (point, latLng) async {
+        print(
+            "Map click: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
+        print("Filter $_featureQueryFilter");
+        List features = await _mapController!
+            .queryRenderedFeatures(point, ["landuse"], _featureQueryFilter);
+        print('# features: ${features.length}');
+        _clearFill();
+        if (features.isEmpty && _featureQueryFilter != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('QueryRenderedFeatures: No features found!')));
+        } else if (features.isNotEmpty) {
+          _drawFill(features);
+        }
+      },
+      onMapLongClick: (point, latLng) async {
+        print(
+            "Map long press: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
+        math.Point convertedPoint =
+        await _mapController.toScreenLocation(latLng);
+        mapbox.LatLng convertedLatLng = await _mapController.toLatLng(point);
+        print(
+            "Map long press converted: ${convertedPoint.x},${convertedPoint.y}   ${convertedLatLng.latitude}/${convertedLatLng.longitude}");
+        double metersPerPixel =
+        await _mapController.getMetersPerPixelAtLatitude(latLng.latitude);
+
+        print(
+            "Map long press The distance measured in meters at latitude ${latLng.latitude} is $metersPerPixel m");
+
+        List features =
+        await _mapController.queryRenderedFeatures(point, [], null);
+        if (features.length > 0) {
+          print(features[0]);
+        }
+      },
+      onUserLocationUpdated: (location) {},
+      onStyleLoadedCallback: _onStyleLoadedCallback,
+    );
+  }
 
   _UserMapState() : super() {
     UserMap.userChangeLocationFuncs.add(onLocationChanged);
@@ -389,24 +457,39 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
     highlightedPoiSubscription.cancel();
     poisToAddSubscription.cancel();
     _mapController.dispose();
-    for (final element in _userLocationMarkers) {
-      await element.dispose();
-    }
-    _userLocationMarkers.clear();
+    disposeLocationMarkers();
     Wakelock.disable();
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
   }
 
+  void disposeLocationMarkers() async {
+    for (final element in _userLocationMarkers) {
+      await element.dispose();
+    }
+    _userLocationMarkers.clear();
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // print(state);
-    if ([AppLifecycleState.detached, AppLifecycleState.inactive, AppLifecycleState.paused].contains(state)) {
+    if ([AppLifecycleState.detached].contains(state)) {
       Wakelock.disable();
     }
      if (state == AppLifecycleState.resumed) {
        Wakelock.enable();
+       if (_lastLifecycleState == AppLifecycleState.detached) {
+         disposeLocationMarkers();
+         _recreateWidget();
+       }
      }
+    _lastLifecycleState = state;
+  }
+
+  void _recreateWidget() {
+    setState(() {
+      _mapboxUniqueKey = UniqueKey();
+    });
   }
 
   // add new pois if location changed
@@ -603,72 +686,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-
-    UniversalPanGestureRecognizer _panGestureRecognizer =
-        UniversalPanGestureRecognizer(
-      onUpdate: (details) {
-        _onMapDrag(details);
-      },
-    );
-    map = mapbox.MapboxMap(
-      gestureRecognizers: Set()
-        ..add(Factory<UniversalPanGestureRecognizer>(
-            () => _panGestureRecognizer)),
-      accessToken: MapConfiguration.mapboxAccessToken,
-      onMapCreated: _onMapCreated,
-      initialCameraPosition: _cameraPosition,
-      compassEnabled: _compassEnabled,
-      cameraTargetBounds: _cameraTargetBounds,
-      minMaxZoomPreference: _minMaxZoomPreference,
-      styleString: _styleStrings[_styleStringIndex],
-      rotateGesturesEnabled: _rotateGesturesEnabled,
-      scrollGesturesEnabled: _scrollGesturesEnabled,
-      tiltGesturesEnabled: _tiltGesturesEnabled,
-      zoomGesturesEnabled: _zoomGesturesEnabled,
-      doubleClickZoomEnabled: _doubleClickToZoomEnabled,
-      myLocationEnabled: false,
-      myLocationTrackingMode: mapbox.MyLocationTrackingMode.None,
-      myLocationRenderMode: mapbox.MyLocationRenderMode.COMPASS,
-      trackCameraPosition: true,
-      onMapClick: (point, latLng) async {
-        print(
-            "Map click: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
-        print("Filter $_featureQueryFilter");
-        List features = await _mapController!
-            .queryRenderedFeatures(point, ["landuse"], _featureQueryFilter);
-        print('# features: ${features.length}');
-        _clearFill();
-        if (features.isEmpty && _featureQueryFilter != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('QueryRenderedFeatures: No features found!')));
-        } else if (features.isNotEmpty) {
-          _drawFill(features);
-        }
-      },
-      onMapLongClick: (point, latLng) async {
-        print(
-            "Map long press: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
-        math.Point convertedPoint =
-            await _mapController.toScreenLocation(latLng);
-        mapbox.LatLng convertedLatLng = await _mapController.toLatLng(point);
-        print(
-            "Map long press converted: ${convertedPoint.x},${convertedPoint.y}   ${convertedLatLng.latitude}/${convertedLatLng.longitude}");
-        double metersPerPixel =
-            await _mapController.getMetersPerPixelAtLatitude(latLng.latitude);
-
-        print(
-            "Map long press The distance measured in meters at latitude ${latLng.latitude} is $metersPerPixel m");
-
-        List features =
-            await _mapController.queryRenderedFeatures(point, [], null);
-        if (features.length > 0) {
-          print(features[0]);
-        }
-      },
-      onUserLocationUpdated: (location) {},
-      onStyleLoadedCallback: _onStyleLoadedCallback,
-    );
-
+    map = createMapboxMap(_mapboxUniqueKey);
     return Stack(children: [
       map,
       Column(
