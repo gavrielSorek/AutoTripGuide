@@ -262,7 +262,6 @@ app.get("/getUserPoiPreference",async function (req:Request, res:Response) { //n
  app.listen(port, async ()=>{
     await init()
     console.log(`Server is runing on port ${port}`)
-    fetchGoogleMapsPhotoUrl('AUjq9jk-qbmeswDv_zhguPqhK2dRdCJ79nkGJ2ignqjnP0xzh9gfktDj5fYyfXry5w6Vu88-ybfE1a7oGmZNeI274BC4KT2ttjWDlRtF3OglqP9TP7AIvjIojR3PE0U9ABls0a1nmLLihETFfksYaMGqXDIqQDW-zOBHt4hQ4T5tDGfaWDhP')
 })
 
 
