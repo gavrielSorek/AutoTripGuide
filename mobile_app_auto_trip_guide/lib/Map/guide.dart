@@ -6,6 +6,7 @@ import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../Adjusted Libs/story_view/utils.dart';
+import '../General Wigets/Image_from_url_list.dart';
 import '../General Wigets/progress_button.dart';
 import '../General Wigets/uniform_widgets.dart';
 import 'background_audio_player.dart';
@@ -389,6 +390,12 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
     return items[0].poi.pic ?? '';
   }
 
+List<String> getImageUrlsFromCategory(List<MapPoi> items) {
+  return items
+      .map((item) => item.poi.pic ?? '')
+      .where((url) => !url.contains('no-photography-allowed'))
+      .toList();
+}
   List<Widget> buildGridView(Map<String, List<MapPoi>> categoriesMap) {
     List<String> categoriesList = categoriesMap.keys.toList();
     List<Widget> generatedList =
@@ -400,16 +407,13 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
             child: Stack(children: [
               ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(20)),
-                child: CachedNetworkImage(
-                  imageUrl: getImageFromCategory(
-                      widget.state.categoriesToPoisMap[categoriesList[index]]!),
-                  height: 100,
-                  width: 200,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) =>
-                      new CircularProgressIndicator(),
-                  errorWidget: (context, url, error) =>
-                      new Icon(Icons.error_outlined, size: 100),
+                  child: ImageFromUrlList(  
+                      imageUrlList: getImageUrlsFromCategory(
+                          widget.state.categoriesToPoisMap[categoriesList[index]]!),
+                    height: 100,
+                    width: 200,
+                    fit: BoxFit.cover,
+                    category: categoriesList[index],
                 ),
               ),
               Positioned(
