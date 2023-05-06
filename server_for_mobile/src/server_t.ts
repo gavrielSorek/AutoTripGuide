@@ -10,9 +10,6 @@ import { Request, Response } from 'express';
 import { getDistance } from 'geolib';
 import { Coordinate } from "./types/coordinate";
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-import { gptPlaceInfo } from "./chat-gpt/gpt-api";
-import { fetchGoogleMapsPhotoUrl } from "./nearby_pois_objects";
-
 
 const { MongoClient } = require('mongodb');
 
