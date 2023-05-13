@@ -3,23 +3,23 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../Map/globals.dart';
 
-class AppLoadingPage extends StatelessWidget {
-  BuildContext? context;
-
-  AppLoadingPage({Key? key}) : super(key: key);
+class AppInitializationPage extends StatefulWidget {
+  const AppInitializationPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    this.context = context;
-    return Scaffold(
-      body: Container(
-        color: Colors.blue,
-        child: SpinKitRotatingCircle(
-          color: Colors.white,
-          size: 50.0,
-        ),
-      ),
-    );
+  _AppInitializationPageState createState() => _AppInitializationPageState();
+}
+
+class _AppInitializationPageState extends State<AppInitializationPage> {
+  @override
+  void initState() {
+    super.initState();
+    initApp();
+  }
+
+  Future<void> initApp() async {
+    await Globals.init(context);
+    nextPage();
   }
 
   void nextPage() {
@@ -28,10 +28,25 @@ class AppLoadingPage extends StatelessWidget {
       initialRoute = '/HomePage';
     } else {
       final bool? isIntroDone = Globals.globalPrefs?.getBool('introDone');
-      isIntroDone != null? '':  Globals.appEvents.introStarted();
+      isIntroDone != null ? '' : Globals.appEvents.introStarted();
       initialRoute = isIntroDone != null ? '/login-screen' : '/onboard-screen';
     }
-    Navigator.pop(context!);
-    Navigator.pushNamed(context!, initialRoute);
+    Navigator.pop(context);
+    Navigator.pushNamed(context, initialRoute);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        color: Colors.blue,
+        child: Center(
+          child: SpinKitRotatingCircle(
+            color: Colors.white,
+            size: 50.0,
+          ),
+        ),
+      ),
+    );
   }
 }

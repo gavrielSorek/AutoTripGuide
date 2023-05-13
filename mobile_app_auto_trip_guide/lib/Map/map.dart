@@ -15,6 +15,7 @@ import 'package:final_project/Map/types.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 import '../General Wigets/UniversalPanGestureRecognizer.dart';
+import '../Pages/location_permission_page.dart';
 import 'guide.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
@@ -55,14 +56,14 @@ class UserMap extends StatefulWidget {
   Timer? _scanningTimer;
 
   // inits
-  static late Position USER_LOCATION; // the heading here isn't updated
-  static double USER_HEADING = 0; // the correct heading
+  late Position userLocation; // the heading here isn't updated
+  double userHeading = 0; // the correct heading
   MapPoi? currentHighlightedPoi = null;
   bool isFirstScanning = true;
   // the last known location of the user in the old area - for new pois purposes
-  static late Position LAST_AREA_USER_LOCATION;
+  late Position lastAreaUserLocation;
   static double DISTANCE_BETWEEN_AREAS = 1000; //1000 meters
-  static List userChangeLocationFuncs = [];
+  List userChangeLocationFuncs = [];
   StreamController<MapPoiAction> mapPoiActionStreamController =
       StreamController<MapPoiAction>.broadcast();
   StreamController<MapPoi> highlightedPoiStreamController =
@@ -71,51 +72,39 @@ class UserMap extends StatefulWidget {
     StreamController<List<Poi>>.broadcast();
 
 
-  static Future<void> mapInit() async {
-    //permissions handling
-    LocationPermission permission = await Geolocator.checkPermission();
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      return Future.error('Location permissions are denied');
-    }
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    USER_LOCATION = await Geolocator.getCurrentPosition(
+  Future<void> mapInit(context) async {
+    await LocationUtils.checkAndRequestLocationPermission(context);
+    userLocation = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
-    // initialization order is very important
-
     Geolocator.getPositionStream(
             locationSettings: LocationSettings(accuracy: LocationAccuracy.high))
         .listen(locationChangedEvent);
-    LAST_AREA_USER_LOCATION = USER_LOCATION;
+    lastAreaUserLocation = userLocation;
   }
 
-  static bool isUserInNewArea() {
+  bool isUserInNewArea() {
     double dist = PoisAttributesCalculator.getDistBetweenPoints(
-        LAST_AREA_USER_LOCATION.latitude,
-        LAST_AREA_USER_LOCATION.longitude,
-        USER_LOCATION.latitude,
-        USER_LOCATION.longitude);
+        lastAreaUserLocation.latitude,
+        lastAreaUserLocation.longitude,
+        userLocation.latitude,
+        userLocation.longitude);
 
     if (dist > DISTANCE_BETWEEN_AREAS) {
-      LAST_AREA_USER_LOCATION = USER_LOCATION;
+      lastAreaUserLocation = userLocation;
       print("The user is in a new area");
       return true;
     }
     return false;
   }
 
-  static void locationChangedEvent(Position currentLocation) async {
-    USER_LOCATION = currentLocation;
-    for (int i = 0; i < UserMap.userChangeLocationFuncs.length; i++) {
+  void locationChangedEvent(Position currentLocation) async {
+    userLocation = currentLocation;
+    for (int i = 0; i < userChangeLocationFuncs.length; i++) {
       userChangeLocationFuncs[i](currentLocation);
     }
   }
 
-  static void preUnmountMap() {
+  void preUnmountMap() {
     userChangeLocationFuncs.clear();
   }
 
@@ -127,9 +116,9 @@ class UserMap extends StatefulWidget {
   void setPoisScanningStatus(bool isActive) {
     isScanning = isActive;
     if (isActive) {
-      loadNewPois(location: USER_LOCATION);
+      loadNewPois(location: userLocation);
       _scanningTimer = Timer.periodic(Duration(seconds: 5), (timer) {
-        loadNewPois(location: USER_LOCATION);
+        loadNewPois(location: userLocation);
       });
     } else {
       _scanningTimer?.cancel();
@@ -140,7 +129,7 @@ class UserMap extends StatefulWidget {
 
   UserMap({Key? key}) : super(key: key) {
     Future.delayed(Duration(seconds: 1),
-        (() => {userMapState?.onLocationChanged(LAST_AREA_USER_LOCATION)}));
+        (() => {userMapState?.onLocationChanged(lastAreaUserLocation)}));
     print("hello from ctor");
   }
 
@@ -157,7 +146,7 @@ class UserMap extends StatefulWidget {
   }
 
   Future<void> loadNewPois({Position? location = null}) async {
-    Position selectedLocation = location ?? UserMap.USER_LOCATION;
+    Position selectedLocation = location ?? userLocation;
     List<Poi> pois;
     pois = await Globals.globalServerCommunication.getPoisByLocation(
         LocationInfo(selectedLocation.latitude, selectedLocation.longitude,
@@ -204,7 +193,6 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
 
   // at new area the we snooze to the server in order to seek new pois
   static int SECONDS_BETWEEN_SNOOZES = 15;
-
   // for rendering purposes
   AppLifecycleState _lastLifecycleState = AppLifecycleState.resumed;
   // mapbox variables
@@ -313,12 +301,6 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   }
 
   _UserMapState() : super() {
-    UserMap.userChangeLocationFuncs.add(onLocationChanged);
-    double initialZoom = 15;
-    _cameraPosition = mapbox.CameraPosition(
-        target: _getRelativeCenterLatLng(initialZoom),
-        bearing: userIconHeading,
-        zoom: initialZoom);
   }
 
   void updateCameraByRelativePosition(
@@ -399,18 +381,24 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   Future<double> _getZoomPointInDistFromUser(double distInPixels,
       mapbox.LatLng point) async {
     double distanceInMeters = await Geolocator.distanceBetween(
-      UserMap.USER_LOCATION.latitude, // latitude of first location
-      UserMap.USER_LOCATION.longitude, // longitude of first location
+      widget.userLocation.latitude, // latitude of first location
+      widget.userLocation.longitude, // longitude of first location
       point.latitude, // latitude of second location
       point.longitude, // longitude of second location
     );
 
     return _getZoomLevel(
-        distanceInMeters / distInPixels, UserMap.USER_LOCATION.latitude);
+        distanceInMeters / distInPixels, widget.userLocation.latitude);
   }
 
   @override
   void initState() {
+    widget.userChangeLocationFuncs.add(onLocationChanged);
+    double initialZoom = 15;
+    _cameraPosition = mapbox.CameraPosition(
+        target: _getRelativeCenterLatLng(initialZoom),
+        bearing: userIconHeading,
+        zoom: initialZoom);
     mapPoiActionSubscription =
         widget.mapPoiActionStreamController.stream.listen((event) {
       setMapPoiAction(event);
@@ -481,6 +469,10 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
     }
      if (state == AppLifecycleState.resumed) {
        Wakelock.enable();
+       Navigator.push(
+         context,
+         MaterialPageRoute(builder: (context) => LocationPermissionPage()),
+       );
        if (_lastLifecycleState == AppLifecycleState.detached) {
          disposeLocationMarkers();
          _recreateWidget();
@@ -506,7 +498,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   }
 
   Future<void> loadNewPois({Position? location = null}) async {
-    Position selectedLocation = location ?? UserMap.USER_LOCATION;
+    Position selectedLocation = location ?? widget.userLocation;
     List<Poi> pois;
     Globals.appEvents.scanningStarted(widget.isFirstScanning, true, selectedLocation.latitude, selectedLocation.longitude,);
     pois = await Globals.globalServerCommunication.getPoisByLocation(
@@ -544,7 +536,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   }
 
   bool isNewPoisNeeded() {
-    if (UserMap.isUserInNewArea()) {
+    if (widget.isUserInNewArea()) {
       _numOfPoisRequests = 0; //restart the counting
       isNewPoisNeededFlag = true;
     }
@@ -590,8 +582,8 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
           (270 - userIconHeading));
     } else {
       return PoisAttributesCalculator.getPointAtAngle(
-          UserMap.USER_LOCATION.latitude,
-          UserMap.USER_LOCATION.longitude,
+          widget.userLocation.latitude,
+          widget.userLocation.longitude,
           latPerPx * (Globals.globalWidgetsSizes.dialogBoxTotalHeight / 4.5),
           (270 - userIconHeading));
     }
@@ -603,7 +595,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
     _userLocationMarkers.add(UserLocationMarkerCar(controller, this,
         (LocationMarkerInfo locationMarkerInfo) {
       userIconHeading = locationMarkerInfo.heading; // heading if user centered
-      UserMap.USER_HEADING = userIconHeading;
+      widget.userHeading = userIconHeading;
       if (_myLocationTrackingMode != mapbox.MyLocationTrackingMode.None) {
         updateCameraByRelativePosition(option: CameraOption.move);
       }
@@ -611,7 +603,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
     _userLocationMarkers.add(UserLocationMarkerFoot(controller, this,
         (LocationMarkerInfo locationMarkerInfo) {
       userIconHeading = locationMarkerInfo.heading; // heading if user centered
-      UserMap.USER_HEADING = userIconHeading;
+      widget.userHeading = userIconHeading;
       if (_myLocationTrackingMode != mapbox.MyLocationTrackingMode.None) {
         updateCameraByRelativePosition(option: CameraOption.move);
       }

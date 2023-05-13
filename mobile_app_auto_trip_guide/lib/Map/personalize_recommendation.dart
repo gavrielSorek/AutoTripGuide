@@ -18,7 +18,7 @@ class PersonalizeRecommendation {
 
   // get distance of poi from user
   static double getDistanceInKm(Poi poi) {
-    Position userLocation = UserMap.USER_LOCATION;
+    Position userLocation = Globals.globalUserMap.userLocation;
     double dist = calculateDistance(userLocation?.latitude ?? poi.latitude, userLocation?.longitude ?? poi.longitude, poi.latitude, poi.longitude);
     return dist;
   }

@@ -42,7 +42,6 @@ class Globals {
   static String? svgMarkerString;
   static IconsBytesHolder svgPoiMarkerBytes = IconsBytesHolder();
   static SharedPreferences? globalPrefs;
-  static bool globalIsInitialized = false;
   static late AppEvents appEvents;
   static late Mixpanel mixpanel;
 
@@ -92,12 +91,12 @@ class Globals {
     mainMapPoi = null;
   }
 
-  static init() async {
+  static init(BuildContext context) async {
     // initialization order is very important
     mixpanel = await Mixpanel.init("cb8330c185f7677aac8efe418058e344", trackAutomaticEvents: true);
     appEvents = new AppEvents(email:'unknownUser@gmail.com');
     await appEvents.init();
-    await UserMap.mapInit();
+    await globalUserMap.mapInit(context);
     globalPrefs = await SharedPreferences.getInstance();
     globalAllPois.clear();
     globalUnhandledKeys.clear();
@@ -121,7 +120,6 @@ class Globals {
        appEvents.email = globalUserInfoObj!.emailAddr!;
       }
     }
-    globalIsInitialized = true;
   }
 
   static clearAll() async {
