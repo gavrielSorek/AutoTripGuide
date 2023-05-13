@@ -462,23 +462,25 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    // print(state);
-    if ([AppLifecycleState.detached].contains(state)) {
-      Wakelock.disable();
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.detached) { // if detached close the app
+      Globals.exitApp();
     }
-     if (state == AppLifecycleState.resumed) {
-       Wakelock.enable();
-       Navigator.push(
-         context,
-         MaterialPageRoute(builder: (context) => LocationPermissionPage()),
-       );
-       if (_lastLifecycleState == AppLifecycleState.detached) {
-         disposeLocationMarkers();
-         _recreateWidget();
-       }
-     }
-    _lastLifecycleState = state;
+    // if ([AppLifecycleState.detached].contains(state)) {
+    //   Wakelock.disable();
+    // }
+    //  if (state == AppLifecycleState.resumed) {
+    //    Wakelock.enable();
+    //    Navigator.push(
+    //      context,
+    //      MaterialPageRoute(builder: (context) => LocationPermissionPage()),
+    //    );
+    //    if (_lastLifecycleState == AppLifecycleState.detached) {
+    //      disposeLocationMarkers();
+    //      _recreateWidget();
+    //    }
+    //  }
+    // _lastLifecycleState = state;
   }
 
   void _recreateWidget() {

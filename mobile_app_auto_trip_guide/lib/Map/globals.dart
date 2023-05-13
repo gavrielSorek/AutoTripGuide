@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 import 'dart:ui';
-import 'package:audio_service/audio_service.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
 import 'package:final_project/Utils/appEvents.dart';
@@ -159,6 +159,10 @@ class Globals {
         Globals.globalController.googleAccount.value?.email ?? ' '));
     Globals.setGlobalVisitedPoisList(await Globals.globalServerCommunication
         .getPoisHistory(Globals.globalEmail));
+  }
+  static exitApp() async{
+    await Globals.globalGuideAudioPlayerHandler.stop();
+    exit(0);
   }
 }
 
