@@ -24,7 +24,37 @@ class _ImageFromUrlListState extends State<ImageFromUrlList> {
 
   final Map<String, String> categoryToAssetName = {
     'default': 'assets/images/auto_trip_guide_logo.png',
-   // 'Churches': 'assets/images/churches.png',
+    'Buildings': 'assets/images/categories/Buildings.jpg',
+    'Parks': 'assets/images/categories/Park.jpg',
+    'Museums':  'assets/images/categories/Museumes.jpg',
+    'Towers':  'assets/images/categories/Towers.jpg',
+    'Bridges':  'assets/images/categories/Bridges.jpg',
+    'Historic architecture':  'assets/images/categories/Historic_architecture.jpg',
+    'Casino':  'assets/images/categories/Casino.jpg',
+    'Resorts':  'assets/images/categories/Resort.jpg',
+    'Theaters':  'assets/images/categories/Theaters.jpg',
+    'Archaeology':  'assets/images/categories/Archaeology.jpg',
+    'Beaches':  'assets/images/categories/Beaches.jpg',
+    'Geological formations':  'assets/images/categories/Geological_formations.jpg.jpg',
+    'Islands':  'assets/images/categories/Island.jpg',
+    'Nature reserves':  'assets/images/categories/Nature_reserves.jpg',
+    'Rivers':  'assets/images/categories/Rivers.jpg',
+    'Waterfalls':  'assets/images/categories/waterfalls.jpg',
+    // 'Lagoons':  'assets/images/categories/Island.jpg',
+    'Lakes':  'assets/images/categories/Lakes.jpg',
+    'Synagogues':  'assets/images/categories/synagogue.jpg',
+    'Cathedrals':  'assets/images/categories/Cathedrals.jpg',
+    'Churches':  'assets/images/categories/church.jpg',
+    'Pools':  'assets/images/categories/Pools.jpg',
+    'Climbing':  'assets/images/categories/Climbing.jpg',
+    'Diving':  'assets/images/categories/Diving.jpg',
+    'Surfing':  'assets/images/categories/Surfing.jpg',
+    'Restaurants':  'assets/images/categories/Restaurants.jpg',
+    'Picnic sites':  'assets/images/categories/Picnic_sites.jpg',
+    'Malls':  'assets/images/categories/Malls.jpg',
+    // 'Marketplaces':  'assets/images/categories/Picnic_sites.jpg',
+
+
   };
 
   @override
