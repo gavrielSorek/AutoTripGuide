@@ -1,0 +1,204 @@
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+
+class LocationUtils {
+  static Future<void> checkAndRequestLocationPermission(
+      BuildContext context) async {
+    final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    final LocationPermission permission = await Geolocator.checkPermission();
+
+    if (!serviceEnabled || permission == LocationPermission.denied) {
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => LocationPermissionPage(),
+        ),
+      );
+    }
+  }
+}
+
+class LocationPermissionPage extends StatefulWidget {
+  @override
+  _LocationPermissionPageState createState() => _LocationPermissionPageState();
+}
+
+class _LocationPermissionPageState extends State<LocationPermissionPage> {
+  late bool _serviceEnabled;
+  late LocationPermission _permission;
+
+  @override
+  void initState() {
+    super.initState();
+    verifyPermissionsAndContinue();
+  }
+
+  Future<void> verifyPermissionsAndContinue() async {
+    if (await _askEnableLocationIfNeeded() &&
+        await _askLocationPermissionIfNeeded()) Navigator.of(context).pop();
+  }
+
+  Future<bool> _askEnableLocationIfNeeded() async {
+    _serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!_serviceEnabled) {
+      _showLocationDialog();
+      _serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    }
+    return _serviceEnabled;
+  }
+
+  Future<bool> _askLocationPermissionIfNeeded() async {
+    _permission = await Geolocator.checkPermission();
+    if (_permission == LocationPermission.denied ||
+        _permission == LocationPermission.deniedForever) {
+      _permission = await Geolocator.requestPermission();
+      _permission = await Geolocator.checkPermission();
+      if (_permission == LocationPermission.denied ||
+          _permission == LocationPermission.deniedForever) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // void _openLocationSettings() async {
+  //   if (Platform.isAndroid) {
+  //     final url = Uri.parse('intent://settings/#Intent;scheme=package;action=android.settings.LOCATION_SOURCE_SETTINGS;end');
+  //     if (await canLaunchUrl(url)) {
+  //       await launchUrl(url);
+  //     } else {
+  //       // Handle error
+  //       showDialog(
+  //         context: context,
+  //         builder: (context) => AlertDialog(
+  //           title: Text('Error'),
+  //           content: Text('Something went wrong. Please check your device settings to ensure location services are enabled.'),
+  //           actions: <Widget>[
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.of(context).pop();
+  //               },
+  //               child: Text('OK'),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     }
+  //   } else if (Platform.isIOS) {
+  //     AppSettings.openAppSettings();
+  //   } else {
+  //     // Handle other platforms
+  //   }
+  // }
+
+  void _showLocationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16.0)),
+        ),
+        title: Text(
+          'Enable Location',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          'Please enable location to use this app.',
+          style: TextStyle(fontSize: 18),
+        ),
+        actionsPadding: EdgeInsets.symmetric(horizontal: 8.0),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              primary: Colors.grey,
+              padding:
+              EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+            ),
+            child: Text(
+              'Cancel',
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+          SizedBox(width: 8.0),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Geolocator.openLocationSettings();
+            },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.blue,
+              onPrimary: Colors.white,
+              padding:
+              EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+            ),
+            child: Text(
+              'Settings',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(height: 40),
+              Text(
+                'Why we need your location',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Our app uses your location to provide you with personalized recommendations and a better overall experience.',
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 20),
+              Image.asset('assets/images/logo.png'),
+              SizedBox(height: 20),
+              Text(
+                'We take your privacy seriously and will only use your location data for the purposes stated in our privacy policy.',
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 40),
+              ElevatedButton(
+                onPressed: () {
+                  verifyPermissionsAndContinue();
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.blue,
+                  onPrimary: Colors.white,
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                ),
+                child: Text(
+                  'Continue',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

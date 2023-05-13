@@ -229,14 +229,10 @@ class ServerCommunication {
     }
   }
 
-  static Uri addMailToUrl(String url, String path, String emailAddr) {
-    final queryParameters = {'email': emailAddr.toString()};
-    final uri = Uri.http(url, path, queryParameters);
-    return uri;
-  }
-
   Future<List<String>> getFavorCategories(String emailAddr) async {
-    Uri newUri = addMailToUrl(serverUrl, '/getFavorCategories', emailAddr);
+    Map<String, String> params = {};
+    params.putIfAbsent('email', () => emailAddr);
+    Uri newUri = addInfoToUrl(serverUrl, '/getFavorCategories', params);
     try {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {
@@ -288,7 +284,9 @@ class ServerCommunication {
   }
 
   Future<Map<String, String>> getUserInfo(String emailAddr) async {
-    Uri newUri = addMailToUrl(serverUrl, '/getUserInfo', emailAddr);
+    Map<String, String> params = {};
+    params.putIfAbsent('email', () => emailAddr);
+    Uri newUri = addInfoToUrl(serverUrl, '/getUserInfo', params);
     try {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {
@@ -369,7 +367,9 @@ class ServerCommunication {
   }
 
   Future<List<VisitedPoi>> getPoisHistory(String emailAddr) async {
-    Uri newUri = addMailToUrl(serverUrl, '/getPoisHistory', emailAddr);
+    Map<String, String> params = {};
+    params.putIfAbsent('email', () => emailAddr);
+    Uri newUri = addInfoToUrl(serverUrl, '/getPoisHistory', params);
     try {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {

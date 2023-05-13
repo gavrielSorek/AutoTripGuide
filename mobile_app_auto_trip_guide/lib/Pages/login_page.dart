@@ -44,6 +44,8 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: MediaQuery.of(context).size.height / 2.7),
               FloatingActionButton.extended(
                 onPressed: () async {
+                  Globals.appEvents.signIn('google');
+                  // TODO: google sign in failed ?
                   await Globals.globalController.login();
                   await Globals.loadUserDetails();
                   Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../Map/globals.dart';
 
 class OnBoardingPage extends StatefulWidget {
   @override
@@ -13,12 +14,16 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   final introKey = GlobalKey<IntroductionScreenState>();
 
   Future<void> _onIntroEnd(context) async {
+    Globals.appEvents.introCompleted();
     Navigator.of(context).pushNamedAndRemoveUntil(
         '/login-screen', (Route<dynamic> route) => false);
     // Obtain shared preferences.
     final prefs = await SharedPreferences.getInstance();
     // Save that the intro has done
     await prefs.setBool('introDone', true);
+  }
+  void _onIntroSkip(context) {
+    Globals.appEvents.introSkipped();
   }
 
   Widget _buildImage(String assetName, [double width = 350]) {
@@ -86,7 +91,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
         )
       ],
       onDone: () => _onIntroEnd(context),
-      //onSkip: () => _onIntroEnd(context), // You can override onSkip callback
+      onSkip: () => _onIntroSkip(context), // You can override onSkip callback
       showSkipButton: false,
       skipOrBackFlex: 0,
       nextFlex: 0,

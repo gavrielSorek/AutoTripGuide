@@ -109,7 +109,7 @@ class AccountPage extends StatelessWidget {
                 backgroundColor: Globals.globalColor,
                 heroTag: null,
                 onPressed: () {
-                  UserMap.preUnmountMap();
+                  Globals.globalUserMap.preUnmountMap();
                   logOut(context);
                 },
                 child: const Icon(
@@ -137,7 +137,7 @@ class AccountPage extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.logout),
               onPressed: () {
-                UserMap.preUnmountMap();
+                Globals.globalUserMap.preUnmountMap();
                 logOut(context);
               },
             ),

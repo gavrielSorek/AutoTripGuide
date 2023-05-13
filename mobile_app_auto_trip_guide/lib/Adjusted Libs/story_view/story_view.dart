@@ -396,7 +396,7 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(
-              bottom: 14.0,
+              bottom: 18.0,
             ),
             child: _currentView,
           ),

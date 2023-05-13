@@ -1,4 +1,16 @@
 # ignore ALL .env files
 *.env
-/node_modules/
+*/node_modules/*
 /.idea/
+*.dart_tool/
+mobile_app_auto_trip_guide/build/*
+mobile_app_auto_trip_guide/android/app/*
+mobile_app_auto_trip_guide/android/build/*
+mobile_app_auto_trip_guide/.idea/*
+mobile_app_auto_trip_guide/ios/Runner/*
+mobile_app_auto_trip_guide/ios/Runner.xcodeproj/*
+mobile_app_auto_trip_guide/lib/.idea/*
+mobile_app_auto_trip_guide/windows/runner/*
+mobile_app_auto_trip_guide/windows/flutter/*
+mobile_app_auto_trip_guide/ios/Runner.xcworkspace/*
+mobile_app_auto_trip_guide/web/icons/*
