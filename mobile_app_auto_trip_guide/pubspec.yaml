@@ -67,6 +67,7 @@ dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.11.0
+  sign_in_with_apple: ^4.3.0
 
 flutter_icons:
   android: "launcher_icon"
