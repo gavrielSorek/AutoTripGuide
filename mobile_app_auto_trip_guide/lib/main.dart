@@ -3,6 +3,7 @@ import 'package:final_project/Map/background_audio_player.dart';
 import 'package:final_project/Pages/history_page.dart';
 import 'package:final_project/Pages/home_page.dart';
 import 'package:final_project/Pages/app_loading_page.dart';
+import 'package:final_project/Pages/location_permission_page.dart';
 import 'package:final_project/Pages/personal_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,8 +27,8 @@ Future<void> main() async {
       androidNotificationOngoing: true,
     ),
   );
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
-      .then((_) {
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
     runApp(const AutoGuideApp());
   });
 }
@@ -37,12 +38,7 @@ class AutoGuideApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppLoadingPage initializationPage = AppLoadingPage();
-    if (!Globals.globalIsInitialized) {
-      Globals.init().then((result) {
-        initializationPage.nextPage();
-      });
-    }
+    AppInitializationPage initializationPage = AppInitializationPage();
 
     return MaterialApp(
       title: 'Auto Trip Guide',
@@ -59,7 +55,8 @@ class AutoGuideApp extends StatelessWidget {
         '/favorite-categories-screen': (context) => FavoriteCategoriesPage(),
         '/personal-details-screen': (context) => PersonalDetailsPage(),
         '/onboard-screen': (context) => OnBoardingPage(),
-        '/init-screen': (context) => initializationPage
+        '/init-screen': (context) => initializationPage,
+        '/location-disabled-screen': (context) => LocationPermissionPage()
       },
       // routes: {'/': (BuildContext ctx) => HomePage()}
     );

@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
 import 'dart:ui';
-import 'package:audio_service/audio_service.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:final_project/Map/server_communication.dart';
+import 'package:final_project/Utils/appEvents.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -40,7 +42,9 @@ class Globals {
   static String? svgMarkerString;
   static IconsBytesHolder svgPoiMarkerBytes = IconsBytesHolder();
   static SharedPreferences? globalPrefs;
-  static bool globalIsInitialized = false;
+  static late AppEvents appEvents;
+  static late Mixpanel mixpanel;
+
 
   static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {
     globalVisitedPoi = visitedPoisList;
@@ -52,6 +56,7 @@ class Globals {
     globalVisitedPoiStream.add(visitedPoi);
     globalServerCommunication.insertPoiToHistory(visitedPoi);
   }
+  
 
   static void addUnhandledPoiKey(String key) {
     if (globalUnhandledKeys.isEmpty) {
@@ -86,9 +91,12 @@ class Globals {
     mainMapPoi = null;
   }
 
-  static init() async {
+  static init(BuildContext context) async {
     // initialization order is very important
-    await UserMap.mapInit();
+    mixpanel = await Mixpanel.init("cb8330c185f7677aac8efe418058e344", trackAutomaticEvents: true);
+    appEvents = new AppEvents(email:'unknownUser@gmail.com');
+    await appEvents.init();
+    await globalUserMap.mapInit(context);
     globalPrefs = await SharedPreferences.getInstance();
     globalAllPois.clear();
     globalUnhandledKeys.clear();
@@ -106,9 +114,12 @@ class Globals {
     await globalController.init();
     if (globalController.isUserSignIn) {
       await globalController.login();
+      Globals.appEvents.signInCompleted('success');
       await loadUserDetails();
+      if(globalUserInfoObj != null && globalUserInfoObj!.emailAddr != null){
+       appEvents.email = globalUserInfoObj!.emailAddr!;
+      }
     }
-    globalIsInitialized = true;
   }
 
   static clearAll() async {
@@ -148,6 +159,10 @@ class Globals {
         Globals.globalController.googleAccount.value?.email ?? ' '));
     Globals.setGlobalVisitedPoisList(await Globals.globalServerCommunication
         .getPoisHistory(Globals.globalEmail));
+  }
+  static exitApp() async{
+    await Globals.globalGuideAudioPlayerHandler.stop();
+    exit(0);
   }
 }
 

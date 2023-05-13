@@ -52,9 +52,9 @@ class PoisAttributesCalculator {
   static String getDirectionStr(Poi poi) {
     // double bearing = getBearingBetweenPoints(lat1, lng1, lat2, lng2);
     double bearing = getBearingBetweenPointsWithHeading(
-        UserMap.USER_LOCATION.latitude,
-        UserMap.USER_LOCATION.longitude,
-        UserMap.USER_HEADING,
+        Globals.globalUserMap.userLocation.latitude,
+        Globals.globalUserMap.userLocation.longitude,
+        Globals.globalUserMap.userHeading,
         poi.latitude,
         poi.longitude);
     int halfQuarter = 45;
@@ -110,8 +110,8 @@ class PoisAttributesCalculator {
   }
 
   static String getPoiIntro(Poi poi) {
-    int distInMeters = Geolocator.distanceBetween(UserMap.USER_LOCATION.latitude,
-        UserMap.USER_LOCATION.longitude, poi.latitude, poi.longitude).toInt();
+    int distInMeters = Geolocator.distanceBetween(Globals.globalUserMap.userLocation.latitude,
+        Globals.globalUserMap.userLocation.longitude, poi.latitude, poi.longitude).toInt();
     int distInTensOfMeters = (distInMeters / 10).round() * 10;
     String directionStr = getDirectionStr(poi);
     String poiName = poi.poiName ?? "";
