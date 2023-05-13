@@ -51,76 +51,115 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             accountName: Row(
               children: <Widget>[
                 GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).popUntil((route) => route.isFirst);
-                      // Navigator.of(context).pushNamedAndRemoveUntil('/history-screen', (Route<dynamic> route) => false);
-                      Navigator.pushNamed(context, '/personal-details-screen');
-                    },
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(shape: BoxShape.circle),
-
-                      child: CircleAvatar(
-                        backgroundColor: Colors.blue,
-                        backgroundImage: NetworkImage(Globals.globalController
-                            .googleAccount.value?.photoUrl ??
-                            ""),
-                      ),
-                    )),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  onTap: () {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.pushNamed(context, '/personal-details-screen');
+                  },
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(shape: BoxShape.circle),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.blue,
+                      backgroundImage: NetworkImage(Globals.globalController
+                          .googleAccount.value?.photoUrl ??
+                          ""),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Container(
-                        margin: EdgeInsets.only(left: 5),
-                        child: Text(Globals.globalUserInfoObj?.name ?? ""))
+                    Text(
+                      Globals.globalUserInfoObj?.name ?? "",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Text(
+                      Globals.globalController.googleAccount.value?.email ?? "",
+                      style: TextStyle(fontSize: 14),
+                    ),
                   ],
                 ),
               ],
             ),
           ),
           ListTile(
-          tileColor: ModalRoute.of(context)?.settings.name == '/HomePage' ? chosenTileColor : null,
+            tileColor: ModalRoute.of(context)?.settings.name == '/HomePage'
+                ? chosenTileColor
+                : null,
             leading: Icon(
               Icons.location_on_sharp,
             ),
             title: const Text('Map'),
             onTap: () {
-              print(ModalRoute.of(context)?.settings.name);
-              // Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
               Navigator.of(context).popUntil((route) => route.isFirst);
             },
           ),
           ListTile(
-            tileColor: ModalRoute.of(context)?.settings.name == '/history-screen' ? chosenTileColor : null,
+            tileColor:
+            ModalRoute.of(context)?.settings.name == '/history-screen'
+                ? chosenTileColor
+                : null,
             leading: Icon(
               Icons.history,
             ),
             title: const Text('History'),
             onTap: () {
               NavigationDrawer.closeDrawer(
-                  NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)?.settings.name]);
+                  NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)
+                      ?.settings
+                      ?.name]);
               Navigator.of(context).popUntil((route) => route.isFirst);
-              // Navigator.of(context).pushNamedAndRemoveUntil('/history-screen', (Route<dynamic> route) => false);
               Navigator.pushNamed(context, '/history-screen');
             },
           ),
           ListTile(
-            tileColor: ModalRoute.of(context)?.settings.name == '/favorite-categories-screen' ? chosenTileColor : null,
+            tileColor:
+            ModalRoute.of(context)?.settings.name == '/favorite-categories-screen'
+                ? chosenTileColor
+                : null,
             leading: Icon(
               Icons.settings,
             ),
             title: const Text('Preferences'),
             onTap: () {
               NavigationDrawer.closeDrawer(
-                  NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)?.settings.name]);
+                  NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)
+                      ?.settings
+                      ?.name]);
               Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.pushNamed(context, '/favorite-categories-screen');
             },
           ),
-          SpeedSliderTile(initialSpeed: Globals.globalGuideAudioPlayerHandler.speed * SpeedSliderTile.DEFAULT_MAX, onChanged: (double val){
-            Globals.globalGuideAudioPlayerHandler.setSpeed(val / SpeedSliderTile.DEFAULT_MAX);
-          }, title: Container(alignment: Alignment.center, child: Text('Audio Speed:')),),
+          Divider(),
+          ListTile(
+            leading: Icon(
+              Icons.exit_to_app,
+              color: Colors.red,
+            ),
+            title: Text(
+              'Sign out',
+              style: TextStyle(color: Colors.red),
+            ),
+            onTap: () async {
+              await Globals.globalController.logout();
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.pushReplacementNamed(context, '/init-screen');
+            },
+          ),
+          SpeedSliderTile(
+            initialSpeed: Globals.globalGuideAudioPlayerHandler.speed *
+                SpeedSliderTile.DEFAULT_MAX,
+            onChanged: (double val) {
+              Globals.globalGuideAudioPlayerHandler.setSpeed(val /
+                  SpeedSliderTile.DEFAULT_MAX);
+            },
+            title: Container(
+              alignment: Alignment.center,
+              child: Text('Audio Speed:'),
+            ),
+          ),
         ],
       ),
     );
