@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:final_project/General%20Wigets/menu.dart';
+import 'package:final_project/General%20Wigets/menu.dart' as menu;
 import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/map_configuration.dart';
 import 'package:final_project/Map/mapbox/user_location_marker.dart';
@@ -696,7 +696,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  child: NavigationDrawer.buildNavigationDrawerButton(context),
+                  child: menu.NavigationDrawer.buildNavigationDrawerButton(context),
                 ),
                 widget.isScanning
                     ? Container(

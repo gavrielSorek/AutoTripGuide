@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../General Wigets/menu.dart';
+import '../General Wigets/menu.dart' as menu;
 import '../Map/globals.dart';
 import '../Map/guid_bloc/guide_bloc.dart';
 
@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    NavigationDrawer.pageNameToScaffoldKey['/HomePage'] = _scaffoldState;
+    menu.NavigationDrawer.pageNameToScaffoldKey['/HomePage'] = _scaffoldState;
     return MultiBlocProvider(
         providers: [
           BlocProvider(
@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
         ],
         child: Scaffold(
           key: _scaffoldState,
-          drawer: NavigationDrawer(),
+          drawer: menu.NavigationDrawer(),
           body: Stack(
             children: [
               Column(

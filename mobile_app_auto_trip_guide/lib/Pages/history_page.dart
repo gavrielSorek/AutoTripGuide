@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import '../General Wigets/Menu.dart';
+import '../General Wigets/Menu.dart' as menu;
 import '../Map/globals.dart';
 import '../Map/types.dart';
 
@@ -53,18 +53,18 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    NavigationDrawer.pageNameToScaffoldKey['/history-screen'] = _scaffoldState;
+    menu.NavigationDrawer.pageNameToScaffoldKey['/history-screen'] = _scaffoldState;
 
     return Scaffold(
         // appBar: buildAppBar(context),
         key: _scaffoldState,
-        drawer: NavigationDrawer(),
+        drawer: menu.NavigationDrawer(),
         body: Column(mainAxisSize: MainAxisSize.min, children: [
           Container(
             margin: const EdgeInsets.only(top: 60),
             alignment: Alignment.topLeft,
 
-            child: NavigationDrawer.buildNavigationDrawerButton(context),
+            child: menu.NavigationDrawer.buildNavigationDrawerButton(context),
           ),
           Expanded(
               child: ListView.separated(

@@ -1,4 +1,4 @@
-import 'package:final_project/General%20Wigets/menu.dart';
+import 'package:final_project/General%20Wigets/menu.dart' as menu;
 import 'package:flutter/material.dart';
 import '../Map/globals.dart';
 
@@ -113,7 +113,7 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
 
   @override
   Widget build(BuildContext context) {
-    NavigationDrawer.pageNameToScaffoldKey['/favorite-categories-screen'] =
+    menu.NavigationDrawer.pageNameToScaffoldKey['/favorite-categories-screen'] =
         _scaffoldState;
     return Scaffold(
         key: _scaffoldState,
@@ -125,7 +125,7 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
         //   elevation: 0,
         //   leading: const BackButton(),
         //   centerTitle: true,),
-        drawer: NavigationDrawer(),
+        drawer: menu.NavigationDrawer(),
         body: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -133,7 +133,7 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
             Container(
                 margin: const EdgeInsets.only(top: 60),
                 alignment: Alignment.topLeft,
-                child: NavigationDrawer.buildNavigationDrawerButton(context)),
+                child: menu.NavigationDrawer.buildNavigationDrawerButton(context)),
             // buildBackButton(context),
 
             SizedBox(height: MediaQuery.of(context).size.height / 50),
