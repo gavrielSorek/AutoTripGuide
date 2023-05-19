@@ -60,36 +60,6 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
     return true;
   }
 
-  // void _openLocationSettings() async {
-  //   if (Platform.isAndroid) {
-  //     final url = Uri.parse('intent://settings/#Intent;scheme=package;action=android.settings.LOCATION_SOURCE_SETTINGS;end');
-  //     if (await canLaunchUrl(url)) {
-  //       await launchUrl(url);
-  //     } else {
-  //       // Handle error
-  //       showDialog(
-  //         context: context,
-  //         builder: (context) => AlertDialog(
-  //           title: Text('Error'),
-  //           content: Text('Something went wrong. Please check your device settings to ensure location services are enabled.'),
-  //           actions: <Widget>[
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.of(context).pop();
-  //               },
-  //               child: Text('OK'),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     }
-  //   } else if (Platform.isIOS) {
-  //     AppSettings.openAppSettings();
-  //   } else {
-  //     // Handle other platforms
-  //   }
-  // }
-
   void _showLocationDialog() {
     showDialog(
       context: context,
@@ -111,8 +81,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
             onPressed: () => Navigator.of(context).pop(),
             style: TextButton.styleFrom(
               primary: Colors.grey,
-              padding:
-              EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),
               ),
@@ -131,8 +100,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
             style: ElevatedButton.styleFrom(
               primary: Colors.blue,
               onPrimary: Colors.white,
-              padding:
-              EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),
               ),
@@ -149,53 +117,58 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(height: 40),
-              Text(
-                'Why we need your location',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Our app uses your location to provide you with personalized recommendations and a better overall experience.',
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 20),
-              Image.asset('assets/images/logo.png'),
-              SizedBox(height: 20),
-              Text(
-                'We take your privacy seriously and will only use your location data for the purposes stated in our privacy policy.',
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: () {
-                  verifyPermissionsAndContinue();
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.blue,
-                  onPrimary: Colors.white,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.0),
+    return WillPopScope(
+      onWillPop: () async {
+        return false; // the user wont be able to pop this page, only the application
+      },
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: 40),
+                Text(
+                  'Why we need your location',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: Text(
-                  'Continue',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                SizedBox(height: 20),
+                Text(
+                  'Our app uses your location to provide you with personalized recommendations and a better overall experience.',
+                  style: TextStyle(fontSize: 18),
                 ),
-              ),
-            ],
+                SizedBox(height: 20),
+                Image.asset('assets/images/logo.png'),
+                SizedBox(height: 20),
+                Text(
+                  'We take your privacy seriously and will only use your location data for the purposes stated in our privacy policy.',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(height: 40),
+                ElevatedButton(
+                  onPressed: () {
+                    verifyPermissionsAndContinue();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue,
+                    onPrimary: Colors.white,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                  ),
+                  child: Text(
+                    'Continue',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
