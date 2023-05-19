@@ -144,6 +144,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             ),
             onTap: () async {
               await Globals.globalController.logout();
+              await Globals.stopAll();
               Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.pushReplacementNamed(context, '/init-screen');
             },

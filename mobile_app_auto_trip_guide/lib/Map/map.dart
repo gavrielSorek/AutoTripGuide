@@ -104,9 +104,18 @@ class UserMap extends StatefulWidget {
     }
   }
 
-  void preUnmountMap() {
+  Future<void> preUnmountMap() async {
     userChangeLocationFuncs.clear();
   }
+
+  Future<void> stopAll() async {
+    if (userMapState == null)
+      return;
+    for (UserLocationMarker element in userMapState!._userLocationMarkers) {
+      await element.stop();
+    }
+  }
+
 
   void highlightPoi(MapPoi mapPoi) {
     currentHighlightedPoi = mapPoi;
@@ -305,6 +314,8 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
 
   void updateCameraByRelativePosition(
       {CameraOption option = CameraOption.animate}) {
+    print('updateCameraByRelativePosition');
+
     mapbox.CameraUpdate newCameraPosition =
         mapbox.CameraUpdate.newCameraPosition(
       mapbox.CameraPosition(
@@ -444,18 +455,17 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   @override
   Future<void> dispose() async {
     print("____________________dispose statful map");
+    disposeLocationMarkers();
     mapPoiActionSubscription.cancel();
     highlightedPoiSubscription.cancel();
     poisToAddSubscription.cancel();
-    _mapController.dispose();
-    disposeLocationMarkers();
     Wakelock.disable();
-    super.dispose();
     WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   void disposeLocationMarkers() async {
-    for (final element in _userLocationMarkers) {
+    for (UserLocationMarker element in _userLocationMarkers) {
       await element.dispose();
     }
     _userLocationMarkers.clear();
@@ -509,21 +519,21 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
    Globals.appEvents.scanningFinished(true,pois.length);
     widget.isFirstScanning = false;
     pois = PoisAttributesCalculator.filterPois(pois, selectedLocation);
-    setState(() {
-      // add all the new poi
-      print("add pois to map");
-      for (Poi poi in pois) {
-        if (!Globals.globalAllPois.containsKey(poi.id)) {
-          MapPoi mapPoi = MapPoi(poi);
-          Globals.globalAllPois[poi.id] = mapPoi;
-          Globals.addUnhandledPoiKey(poi.id);
-          widget.mapPoiActionStreamController.add(MapPoiAction(
-              color: PoiIconColor.greyTrans,
-              action: PoiAction.add,
-              mapPoi: MapPoi(poi)));
-        }
+    // add all the new poi
+    print("add pois to map");
+    for (Poi poi in pois) {
+      if (!Globals.globalAllPois.containsKey(poi.id)) {
+        MapPoi mapPoi = MapPoi(poi);
+        Globals.globalAllPois[poi.id] = mapPoi;
+        Globals.addUnhandledPoiKey(poi.id);
+        widget.mapPoiActionStreamController.add(MapPoiAction(
+            color: PoiIconColor.greyTrans,
+            action: PoiAction.add,
+            mapPoi: MapPoi(poi)));
       }
-    });
+    }
+    if (mounted)
+      updateState();
 
     // if there is new pois and guideTool waiting
     if (pois.isNotEmpty) {

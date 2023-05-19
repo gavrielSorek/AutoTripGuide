@@ -130,6 +130,11 @@ class Globals {
     globalUserInfoObj = null;
   }
 
+  static stopAll() async {
+    await globalUserMap.stopAll();
+    globalGuideAudioPlayerHandler.stop();
+  }
+
   static loadUserDetails() async {
     Globals.globalEmail =
         Globals.globalController.googleAccount.value?.email ?? ' ';
