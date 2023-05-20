@@ -13,54 +13,59 @@ class LoginPage extends StatelessWidget {
   }
 
   Widget buildLoginWidget(BuildContext context) {
-    return Scaffold(
-      body: Container(
-          width: MediaQuery.of(context).size.width / 1,
-          height: MediaQuery.of(context).size.height / 1,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/images/login_bg.jpeg"),
-              fit: BoxFit.cover,
+    return WillPopScope(
+      onWillPop: () async { return false; },
+      child: Scaffold(
+        body: Container(
+            width: MediaQuery.of(context).size.width / 1,
+            height: MediaQuery.of(context).size.height / 1,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/login_bg.jpeg"),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: MediaQuery.of(context).size.height / 10),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Image.asset(
-                    'assets/images/logo.png',
-                    width: MediaQuery.of(context).size.width / 1.1,
-                    height: MediaQuery.of(context).size.height / 4,
-                    //fit: BoxFit.cover,
-                  )
-                ],
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height / 2),
-              FloatingActionButton.extended(
-                onPressed: () async {
-                  Globals.appEvents.signIn('google');
-                  // TODO: google sign in failed ?
-                  await Globals.globalController.login();
-                  await Globals.loadUserDetails();
-                  Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
-                },
-                icon: Image.asset(
-                  "assets/images/google.png",
-                  width: MediaQuery.of(context).size.width / 12,
-                  height: MediaQuery.of(context).size.height / 12,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: MediaQuery.of(context).size.height / 10),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Image.asset(
+                      'assets/images/logo.png',
+                      width: MediaQuery.of(context).size.width / 1.1,
+                      height: MediaQuery.of(context).size.height / 4,
+                      //fit: BoxFit.cover,
+                    )
+                  ],
                 ),
-                label: const Text('Sign in with Google'),
-                backgroundColor: Colors.white70,
-                foregroundColor: Colors.black,
-              ),
-            ],
-          )),
+                SizedBox(height: MediaQuery.of(context).size.height / 2),
+                FloatingActionButton.extended(
+                  onPressed: () async {
+                    Globals.appEvents.signIn('google');
+                    // TODO: google sign in failed ?
+                    await Globals.globalController.login();
+                    if (Globals.globalController.isUserSignIn) {
+                      await Globals.loadUserDetails();
+                      Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
+                    }
+                  },
+                  icon: Image.asset(
+                    "assets/images/google.png",
+                    width: MediaQuery.of(context).size.width / 12,
+                    height: MediaQuery.of(context).size.height / 12,
+                  ),
+                  label: const Text('Sign in with Google'),
+                  backgroundColor: Colors.white70,
+                  foregroundColor: Colors.black,
+                ),
+              ],
+            )),
+      ),
     );
   }
 
