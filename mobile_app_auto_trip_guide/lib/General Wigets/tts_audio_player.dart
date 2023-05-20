@@ -22,6 +22,7 @@ class TtsAudioPlayer {
   bool _isCurrentLanguageInstalled = false;
   TtsState _ttsState = TtsState.stopped;
   Timer? _periodicProgressTimer;
+  double _estimatedProgress = 0;
 
   get isPlaying => _ttsState == TtsState.playing;
 
@@ -35,6 +36,7 @@ class TtsAudioPlayer {
 
   get speed => _rate;
 
+  get estimatedProgress => _estimatedProgress;
 
   bool get isIOS => !kIsWeb && Platform.isIOS;
 
@@ -158,8 +160,8 @@ class TtsAudioPlayer {
         double startRangeProgress = start_pos / _textLength;
         double endRangeProgress =
             min((end_pos + 1) / _textLength, 1); // 1 - for the space
-        double estimatedProgress = startRangeProgress;
-        _onProgress(estimatedProgress);
+        _estimatedProgress = startRangeProgress;
+        _onProgress(_estimatedProgress);
 
         double range = endRangeProgress - startRangeProgress;
         double addParam = (range / word.length) * 3;
@@ -174,10 +176,10 @@ class TtsAudioPlayer {
         // print('_____________________________');
         _periodicProgressTimer =
             Timer.periodic(Duration(milliseconds: 200), (timer) {
-          estimatedProgress += addParam;
-          if (estimatedProgress < endRangeProgress) {
+              _estimatedProgress += addParam;
+          if (_estimatedProgress < endRangeProgress) {
             if (status == TtsState.playing) {
-              _onProgress(estimatedProgress);
+              _onProgress(_estimatedProgress);
               // print("***************");
               // print(estimatedProgress);
               // print("***************");
@@ -201,6 +203,11 @@ class TtsAudioPlayer {
 
   Future<void> resumeAudio() async {
     await flutterTts.speak(_allTextToPlay);
+  }
+
+  restartPlaying() async {
+    await stopAudio();
+    await playAudio();
   }
 
   clearPlayer() {

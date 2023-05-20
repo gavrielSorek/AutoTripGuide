@@ -59,10 +59,20 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         storyController.pause();
         storyController.next();
       };
-      Globals.globalGuideAudioPlayerHandler.onPressPrev = () {
-        Globals.globalGuideAudioPlayerHandler.stop();
+      Globals.globalGuideAudioPlayerHandler.onPressPrev = () async {
+        if (Globals.globalGuideAudioPlayerHandler.isAtBeginning) {
+          await Globals.globalGuideAudioPlayerHandler.stop();
+          storyController.previous();
+        } else {
+          Globals.globalGuideAudioPlayerHandler.restartPlaying();
+        }
+      };
+
+      Globals.globalGuideAudioPlayerHandler.onDoublePrev = () async {
+        await Globals.globalGuideAudioPlayerHandler.stop();
         storyController.previous();
       };
+
       Globals.globalGuideAudioPlayerHandler.onPause = () {
         if(Globals.globalUserMap.currentHighlightedPoi != null){
           var poi =Globals.globalUserMap.currentHighlightedPoi;
