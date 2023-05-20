@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SpeedSliderTile extends StatefulWidget {
-  static const double DEFAULT_MIN = 0.5, DEFAULT_MAX = 2;
+  static const double DEFAULT_MIN = 0.5, DEFAULT_MAX = 1.5;
   final double initialSpeed;
   final Function(double) onChanged;
   final Widget? title;
@@ -36,7 +36,7 @@ class _SpeedSliderTileState extends State<SpeedSliderTile> {
         value: _speed,
         min: widget.min,
         max: widget.max,
-        divisions: 6,
+        divisions: 10,
         onChanged: (value) {
           setState(() {
             _speed = value;
