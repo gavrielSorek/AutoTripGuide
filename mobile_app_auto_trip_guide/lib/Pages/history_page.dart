@@ -7,16 +7,10 @@ import '../Map/types.dart';
 
 class HistoryPage extends StatefulWidget {
   HistoryPage({Key? key}) : super(key: key);
-  _HistoryPageState? _historyPageState;
-
-  void visitedPoisListUpdated() {
-    _historyPageState?.visitedPoisListUpdated();
-  }
 
   @override
   _HistoryPageState createState() {
-    _historyPageState = _HistoryPageState();
-    return _historyPageState!;
+    return _HistoryPageState();
   }
 }
 

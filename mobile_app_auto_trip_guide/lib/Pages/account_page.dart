@@ -8,8 +8,8 @@ import '../Map/types.dart';
 
 class AccountPage extends StatelessWidget {
   AccountPage({Key? key}) : super(key: key);
-  String personalDetailsStr = " PERSONAL DETAILS  ";
-  String favoriteCategoriesStr = "  FAVORITE CATEGORIES";
+  final String personalDetailsStr = " PERSONAL DETAILS  ";
+  final String favoriteCategoriesStr = "  FAVORITE CATEGORIES";
 
   void loadUserDetails() async {
     if (Globals.globalUserInfoObj == null) {
