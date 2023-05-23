@@ -5,7 +5,7 @@ import '../Map/globals.dart';
 import '../Map/guid_bloc/guide_bloc.dart';
 
 class HomePage extends StatelessWidget {
-  GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
 
   HomePage({Key? key}) : super(key: key);
 

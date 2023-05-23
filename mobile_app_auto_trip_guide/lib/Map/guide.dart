@@ -125,8 +125,8 @@ class Guide {
 }
 
 class GuidDialogBox extends StatefulWidget {
-  dynamic onRefreshFunc;
-  StoriesEvents storiesEvents;
+  final dynamic onRefreshFunc;
+  final StoriesEvents storiesEvents;
 
   GuidDialogBox({required this.onRefreshFunc, required this.storiesEvents}) {}
 
@@ -372,7 +372,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
 class OptionalCategoriesSelection extends StatefulWidget {
   final ShowOptionalCategoriesState state;
   final dynamic onRefreshFunc;
-  StoriesEvents storiesEvents;
+  final StoriesEvents storiesEvents;
 
   OptionalCategoriesSelection(
       {required this.state,
