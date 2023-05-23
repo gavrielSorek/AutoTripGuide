@@ -22,15 +22,6 @@ class ScrolledText {
     bool roundedBottom = false,
     Duration? duration,
   }) {
-    double contrast = ContrastHelper.contrast([
-      backgroundColor.red,
-      backgroundColor.green,
-      backgroundColor.blue,
-    ], [
-      255,
-      255,
-      255
-    ] /** white text */);
 
     return StoryItem(
       id: id,

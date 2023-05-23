@@ -189,7 +189,6 @@ class ServerCommunication {
     }
   }
 
-  @override
   void dispose() {
     client.close();
   }

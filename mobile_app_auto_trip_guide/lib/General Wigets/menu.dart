@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:final_project/Map/speed_slider_tile.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Map/globals.dart';
@@ -108,8 +107,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             onTap: () {
               NavigationDrawer.closeDrawer(
                   NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)
-                      ?.settings
-                      ?.name]);
+                      ?.settings.name]);
               Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.pushNamed(context, '/history-screen');
             },
@@ -126,8 +124,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             onTap: () {
               NavigationDrawer.closeDrawer(
                   NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)
-                      ?.settings
-                      ?.name]);
+                      ?.settings.name]);
               Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.pushNamed(context, '/favorite-categories-screen');
             },

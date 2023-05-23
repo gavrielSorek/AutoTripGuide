@@ -6,7 +6,6 @@ import 'package:final_project/Map/map_configuration.dart';
 import 'package:final_project/Map/mapbox/user_location_marker.dart';
 import 'package:final_project/Map/mapbox/user_location_marker_car.dart';
 import 'package:final_project/Map/pois_attributes_calculator.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
@@ -202,13 +201,10 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
 
   // at new area the we snooze to the server in order to seek new pois
   static int SECONDS_BETWEEN_SNOOZES = 15;
-  // for rendering purposes
-  AppLifecycleState _lastLifecycleState = AppLifecycleState.resumed;
   // mapbox variables
   late mapbox.MapboxMap map;
   Key _mapboxUniqueKey = UniqueKey(); // for recreating the widget purposes
   late mapbox.CameraPosition _cameraPosition;
-  bool _isMoving = false;
   bool _compassEnabled = true;
   mapbox.CameraTargetBounds _cameraTargetBounds =
       mapbox.CameraTargetBounds.unbounded;
@@ -231,8 +227,6 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   bool? _doubleClickToZoomEnabled;
   bool _tiltGesturesEnabled = true;
   bool _zoomGesturesEnabled = true;
-  bool _myLocationEnabled = true;
-  bool _telemetryEnabled = true;
   Set<mapbox.Symbol> _symbolsOnMap = Set();
   late mapbox.SymbolManager _symbolManager;
   late mapbox.SymbolManager _highlightSymbolManager;
@@ -273,7 +267,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
         print(
             "Map click: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
         print("Filter $_featureQueryFilter");
-        List features = await _mapController!
+        List features = await _mapController
             .queryRenderedFeatures(point, ["landuse"], _featureQueryFilter);
         print('# features: ${features.length}');
         _clearFill();
@@ -567,9 +561,8 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   var isLight = true;
 
   void _extractMapInfo() {
-    final position = _mapController!.cameraPosition;
+    final position = _mapController.cameraPosition;
     if (position != null) _cameraPosition = position;
-    _isMoving = _mapController!.isCameraMoving;
   }
 
   void _onMapChanged() {
@@ -623,9 +616,6 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
 
     _mapController.addListener(_onMapChanged);
     _extractMapInfo();
-   await _mapController!.getTelemetryEnabled().then((isEnabled) => setState(() {
-          _telemetryEnabled = isEnabled;
-        }));
   }
 
   _onStyleLoadedCallback() async {
@@ -657,7 +647,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
 
   _clearFill() {
     if (_selectedFill != null) {
-      _mapController!.removeFill(_selectedFill!);
+      _mapController.removeFill(_selectedFill!);
       setState(() {
         _selectedFill = null;
       });
@@ -674,7 +664,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
               (ll) => ll.map((l) => LatLng(l[1], l[0])).toList().cast<LatLng>())
           .toList()
           .cast<List<LatLng>>();
-      mapbox.Fill fill = await _mapController!.addFill(mapbox.FillOptions(
+      mapbox.Fill fill = await _mapController.addFill(mapbox.FillOptions(
         geometry: geometry,
         fillColor: "#FF0000",
         fillOutlineColor: "#FF0000",

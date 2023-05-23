@@ -4,7 +4,6 @@ import 'package:final_project/Pages/favorite_categories_page.dart';
 
 import '../Map/events.dart';
 import '../Map/globals.dart';
-import '../Map/map.dart';
 import '../Map/types.dart';
 
 class AccountPage extends StatelessWidget {
@@ -60,7 +59,7 @@ class AccountPage extends StatelessWidget {
       width: MediaQuery.of(context).size.width / 0.8,
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          primary: Globals.globalColor,
+          backgroundColor: Globals.globalColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         ),
@@ -196,8 +195,6 @@ class ProfileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.primary;
-
     return Center(
       child: Stack(
         children: [

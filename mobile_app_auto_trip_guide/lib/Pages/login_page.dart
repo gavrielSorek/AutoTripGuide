@@ -1,8 +1,6 @@
-import 'package:final_project/Pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../Map/globals.dart';
-import '../Map/types.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -81,10 +79,10 @@ class LoginPage extends StatelessWidget {
         ),
         Text(
           Globals.globalController.googleAccount.value?.displayName ?? '',
-          style: Get.textTheme.headline4,
+          style: Get.textTheme.headlineMedium,
         ),
         Text(Globals.globalController.googleAccount.value?.email ?? '',
-            style: Get.textTheme.headline5),
+            style: Get.textTheme.headlineSmall),
         SizedBox(
           height: 16,
         ),

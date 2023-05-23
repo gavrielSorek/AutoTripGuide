@@ -127,8 +127,8 @@ class _ProgressButtonState extends State<ProgressButton>
 
   @override
   void dispose() {
-    _isAnimationActiveSubscription?.cancel();
-    _animationController?.dispose();
+    _isAnimationActiveSubscription.cancel();
+    _animationController.dispose();
     super.dispose();
   }
 }

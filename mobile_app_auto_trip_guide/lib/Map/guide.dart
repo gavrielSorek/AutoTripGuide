@@ -386,9 +386,6 @@ class OptionalCategoriesSelection extends StatefulWidget {
 }
 
 class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
-  static String getImageFromCategory(List<MapPoi> items) {
-    return items[0].poi.pic ?? '';
-  }
 
 List<String> getImageUrlsFromCategory(List<MapPoi> items) {
   return items
@@ -546,8 +543,6 @@ List<String> getImageUrlsFromCategory(List<MapPoi> items) {
       width: 140,
       height: 40,
     );
-    List<String> categoriesList =
-        widget.state.categoriesToPoisMap.keys.toList();
     return Dialog(
         insetPadding: const EdgeInsets.all(Constants.edgesDist),
         shape: RoundedRectangleBorder(
@@ -913,7 +908,7 @@ class GuideImageWidget extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(50)),
           child: CachedNetworkImage(
-            imageUrl: imagePath ?? "",
+            imageUrl: imagePath,
             height: 180,
             width: 220,
             fit: BoxFit.fill,

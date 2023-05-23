@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:final_project/Map/globals.dart';
-import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 class User {

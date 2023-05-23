@@ -1,5 +1,3 @@
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 
 class UniversalPanGestureRecognizer extends OneSequenceGestureRecognizer {

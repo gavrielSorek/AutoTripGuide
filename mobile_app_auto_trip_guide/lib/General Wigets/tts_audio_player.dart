@@ -15,11 +15,9 @@ class TtsAudioPlayer {
   dynamic _onProgress = null;
   dynamic _onPlay = null, _onPause = null, _onResume = null;
   String? _language;
-  String? _engine;
   double _volume = 1;
   double _pitch = 1.0;
   double _rate = 0.5;
-  bool _isCurrentLanguageInstalled = false;
   TtsState _ttsState = TtsState.stopped;
   Timer? _periodicProgressTimer;
   double _estimatedProgress = 0;

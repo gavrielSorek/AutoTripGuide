@@ -3,7 +3,6 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:final_project/Map/types.dart';
 import 'story_controller.dart';
 import 'package:flutter/material.dart';
 import 'utils.dart';
@@ -203,7 +202,6 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
 
     this._storyItemSubscription =
         widget.controller.wantedStoryItemNotifier.listen((value) {
-      bool isItemInTheList = false;
       // position of requested story item
       int index = widget.storyItems
           .indexWhere((storyItem) => storyItem?.id == value.id);
@@ -267,7 +265,6 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
     _animationController?.dispose();
     _playbackSubscription?.cancel();
     _storyItemSubscription?.cancel();
-
     super.dispose();
   }
 

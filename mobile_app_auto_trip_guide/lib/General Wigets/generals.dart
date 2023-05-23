@@ -1,13 +1,7 @@
-import 'dart:typed_data';
 import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
-
 import '../Map/globals.dart';
 
 extension HexColor on Color {
@@ -44,7 +38,7 @@ class Generals {
     String markerIconString =
         (svgString.replaceAll(originalMarkerColor, color.toHex())).replaceAll(
             'opacity="1"/>',
-            'opacity=' + '\"' + color.opacity!.toString() + '\"/>');
+            'opacity=' + '\"' + color.opacity.toString() + '\"/>');
     return loadSvgStringAsUint8List(markerIconString);
   }
 

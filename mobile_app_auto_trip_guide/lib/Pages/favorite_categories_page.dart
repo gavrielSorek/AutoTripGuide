@@ -100,7 +100,7 @@ class FavoriteCategories extends State<FavoriteCategoriesPage> {
         }
       },
       style: ElevatedButton.styleFrom(
-          primary: Globals.globalColor,
+          backgroundColor: Globals.globalColor,
           padding: EdgeInsets.symmetric(
               horizontal: MediaQuery.of(context).size.width / 2.5,
               vertical: MediaQuery.of(context).size.height / 100),

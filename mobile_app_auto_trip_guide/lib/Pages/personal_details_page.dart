@@ -146,7 +146,7 @@ ElevatedButton buildApplyButton(BuildContext context) {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     },
     style: ElevatedButton.styleFrom(
-        primary: Globals.globalColor,
+        backgroundColor: Globals.globalColor,
         padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width / 5,
             vertical: MediaQuery.of(context).size.height / 500),
@@ -234,6 +234,7 @@ class _DropDownWidgetState extends State<DropDownWidget> {
   @override
   void initState() {
     dropdownValue = widget.oldValue;
+    super.initState();
   }
 
   @override

@@ -1,11 +1,6 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:latlong2/latlong.dart';
-import 'globals.dart';
 import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 
 extension HexColor on Color {
@@ -78,7 +73,7 @@ class Poi {
   double longitude;
   String? shortDesc;
   String? language;
-  dynamic? audio;
+  dynamic audio;
   String? source;
   String? Contributor;
   String? CreatedDate;

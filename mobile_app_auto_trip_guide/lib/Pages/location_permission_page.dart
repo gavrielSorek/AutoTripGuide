@@ -80,8 +80,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             style: TextButton.styleFrom(
-              primary: Colors.grey,
-              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              foregroundColor: Colors.grey, padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),
               ),
@@ -98,8 +97,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
               Geolocator.openLocationSettings();
             },
             style: ElevatedButton.styleFrom(
-              primary: Colors.blue,
-              onPrimary: Colors.white,
+              foregroundColor: Colors.white, backgroundColor: Colors.blue,
               padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),
@@ -154,8 +152,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                     verifyPermissionsAndContinue();
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.blue,
-                    onPrimary: Colors.white,
+                    foregroundColor: Colors.white, backgroundColor: Colors.blue,
                     padding:
                         EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
                     shape: RoundedRectangleBorder(

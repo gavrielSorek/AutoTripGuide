@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:final_project/Map/globals.dart';
-import 'package:final_project/Map/map.dart';
 import 'package:final_project/Map/map_configuration.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:geolocator/geolocator.dart';

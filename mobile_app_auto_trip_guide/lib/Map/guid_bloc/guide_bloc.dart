@@ -3,9 +3,7 @@ import 'dart:collection';
 import 'package:bloc/bloc.dart';
 import 'package:final_project/Map/map.dart';
 import 'package:final_project/Map/pois_attributes_calculator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import '../../Adjusted Libs/story_view/story_controller.dart';
 import '../../Adjusted Libs/story_view/story_view.dart';
 import '../../General Wigets/generals.dart';
@@ -147,17 +145,17 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         Globals.appEvents.poiStartedPlaying(currentPoi.poi.poiName!, currentPoi.poi.Categories, currentPoi.poi.id);
         String poiIntro = PoisAttributesCalculator.getPoiIntro(currentPoi.poi);
         Globals.globalGuideAudioPlayerHandler.setTextToPlay(
-            poiIntro + " " + currentPoi!.poi.shortDesc!, 'en-US');
+            poiIntro + " " + currentPoi.poi.shortDesc!, 'en-US');
         Globals.globalGuideAudioPlayerHandler.trackTitle =
-            currentPoi!.poi.poiName;
-        Globals.globalGuideAudioPlayerHandler.picUrl = currentPoi!.poi.pic;
+            currentPoi.poi.poiName;
+        Globals.globalGuideAudioPlayerHandler.picUrl = currentPoi.poi.pic;
         Globals.globalGuideAudioPlayerHandler.play();
-        Globals.globalUserMap.highlightPoi(currentPoi!);
+        Globals.globalUserMap.highlightPoi(currentPoi);
         Globals.addGlobalVisitedPoi(VisitedPoi(
-            poiName: currentPoi!.poi.poiName,
-            id: currentPoi!.poi.id,
+            poiName: currentPoi.poi.poiName,
+            id: currentPoi.poi.id,
             time: Generals.getTime(),
-            pic: currentPoi!.poi.pic));
+            pic: currentPoi.poi.pic));
         emit(ShowStoriesState(
             currentPoi: currentPoi,
             storyView: state.storyView,

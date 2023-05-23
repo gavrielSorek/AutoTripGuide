@@ -98,8 +98,7 @@ class _HistoryPageState extends State<HistoryPage> {
                           actions: <Widget>[
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.lightBlue,
-                                onPrimary: Colors.white,
+                                foregroundColor: Colors.white, backgroundColor: Colors.lightBlue,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16.0),
                                 ),
