@@ -1,0 +1,583 @@
+***CATEGORY:  casino
+Online Casino USOrg - casino,school,point_of_interest,establishment
+Casino Parties By Show Biz Productions - casino,point_of_interest,establishment
+
+***CATEGORY:  aquarium
+Aquarium Architecture - aquarium,pet_store,general_contractor,point_of_interest,store,establishment
+Gisele Mimi - aquarium,point_of_interest,establishment
+
+***CATEGORY:  campground
+Red Ornements - campground,lodging,park,point_of_interest,establishment
+Bryant Park Winter Village - park,campground,lodging,point_of_interest,establishment
+Dayton Holdings International - campground,lodging,park,point_of_interest,establishment
+
+***CATEGORY:  bowling_alley
+Bowlero Times Square - bowling_alley,bar,restaurant,food,point_of_interest,establishment
+Frames Bowling Lounge - bowling_alley,night_club,bar,point_of_interest,establishment
+Bowlero Chelsea Piers - bowling_alley,bar,restaurant,food,point_of_interest,establishment
+Chelsea Piers - bowling_alley,gym,health,point_of_interest,establishment
+
+***CATEGORY:  cemetery
+American Mausoleums - cemetery,point_of_interest,establishment
+Grave Matters - cemetery,point_of_interest,establishment
+Third Cemetery of the Spanish- Portuguese Synagogue - cemetery,point_of_interest,establishment
+PreservUs - cemetery,point_of_interest,establishment
+pLot - cemetery,point_of_interest,establishment
+Marni Nixon - cemetery,point_of_interest,establishment
+Calvary & Allied Cemeteries - cemetery,point_of_interest,establishment
+InstaVet - At Home End of Life Care - veterinary_care,cemetery,point_of_interest,establishment
+
+***CATEGORY:  zoo
+Central Park Zoo - zoo,tourist_attraction,point_of_interest,establishment
+Central Park Zoo Security - zoo,point_of_interest,establishment
+Dawn Animal Agency - zoo,point_of_interest,establishment
+Snow leopards - zoo,point_of_interest,establishment
+Harbor Seals - zoo,point_of_interest,establishment
+A Native Meadow - zoo,park,point_of_interest,establishment
+
+***CATEGORY:  airport
+Aeromexico Reservations - tourist_attraction,travel_agency,airport,point_of_interest,establishment
+BLADE Lounge West - airport,point_of_interest,establishment
+BLADE Lounge East - airport,point_of_interest,establishment
+New York Skyports Seaplane Base - airport,point_of_interest,establishment
+A2 Global Shipping - airport,storage,moving_company,finance,point_of_interest,establishment
+BLADE Aqua Lounge - airport,point_of_interest,establishment
+NYC Perfect Transportation Inc. - tourist_attraction,airport,point_of_interest,establishment
+West 30th St Heliport - airport,point_of_interest,establishment
+Atlantic Aviation 6N5 - airport,point_of_interest,establishment
+
+***CATEGORY:  city_hall
+Wilton Associates - city_hall,local_government_office,point_of_interest,establishment
+Unova region - city_hall,local_government_office,point_of_interest,establishment
+
+***CATEGORY:  bicycle_store
+Bike Rent NYC - Central Park Scooter rentals, Bicycle Rentals & Tours, Bicycle & Scooter Sales - bicycle_store,travel_agency,point_of_interest,store,establishment
+Paragon Sports - bicycle_store,clothing_store,point_of_interest,store,establishment
+Bike Rent NYC - 117 West 58th Street, New York - bicycle_store,point_of_interest,store,establishment
+Toga Bike Shop - bicycle_store,point_of_interest,store,establishment
+Cycle Central Park - tourist_attraction,bicycle_store,point_of_interest,store,establishment
+City Bicycles NYC - bicycle_store,point_of_interest,store,establishment
+Spokesman Cycles - bicycle_store,point_of_interest,store,establishment
+Conrad's Bike Shop - bicycle_store,point_of_interest,store,establishment
+Couture Inc. - bicycle_store,point_of_interest,store,establishment
+BikeNYoga - bicycle_store,gym,health,point_of_interest,store,establishment
+Rollgood Electric Bicycle Scooter Store - bicycle_store,point_of_interest,store,establishment
+Bike Rent NYC - Columbus Circle & Midtown - bicycle_store,point_of_interest,store,establishment
+Central Park Bicycle Shop - bicycle_store,point_of_interest,store,establishment
+NYC Velo Hell's Kitchen - bicycle_store,point_of_interest,store,establishment
+Citi Bike: Central Park S & 6 Ave - bicycle_store,point_of_interest,store,establishment
+Enoch's Bike Shop - bicycle_store,point_of_interest,store,establishment
+Fancy Apple Bike & Scooter Rentals - tourist_attraction,bicycle_store,travel_agency,point_of_interest,store,establishment
+Kickstand Bicycles - bicycle_store,point_of_interest,store,establishment
+Bicycle Habitat - bicycle_store,point_of_interest,store,establishment
+Trek Bicycle Hell's Kitchen - bicycle_store,point_of_interest,store,establishment
+
+***CATEGORY:  church
+St. Patrick's Cathedral - tourist_attraction,church,place_of_worship,point_of_interest,establishment
+Times Square Church - church,place_of_worship,point_of_interest,establishment
+St. Bartholomew's Church - tourist_attraction,church,place_of_worship,point_of_interest,establishment
+St. Thomas Church - tourist_attraction,church,place_of_worship,point_of_interest,establishment
+United Spiritualists Church - church,place_of_worship,point_of_interest,establishment
+Manhattan New York Temple - church,place_of_worship,point_of_interest,establishment
+Descubriendo El Siglo/ 21 Discovering 21 Century, Inc. - book_store,church,place_of_worship,point_of_interest,store,establishment
+City Grace Church Office - church,place_of_worship,point_of_interest,establishment
+Jewish Alchlics Chemcly Dpndnt - church,place_of_worship,point_of_interest,establishment
+Calvary Baptist Church NYC - church,place_of_worship,point_of_interest,establishment
+Marble Collegiate Church - tourist_attraction,church,place_of_worship,point_of_interest,establishment
+Holy Family Roman Catholic Church - church,place_of_worship,point_of_interest,establishment
+The Church of St. Paul the Apostle - tourist_attraction,church,place_of_worship,point_of_interest,establishment
+Saint Peter's Church - church,art_gallery,place_of_worship,point_of_interest,establishment
+Alive Church NYC - church,place_of_worship,point_of_interest,establishment
+The Church of St. Francis Xavier - church,place_of_worship,point_of_interest,establishment
+Shrine and Parish Church of The Holy Innocents - tourist_attraction,church,place_of_worship,point_of_interest,establishment
+Unification Church of America - church,place_of_worship,point_of_interest,establishment
+St Mary the Virgin Church - tourist_attraction,church,place_of_worship,point_of_interest,establishment
+St. Paul's German Evangelical Lutheran Church - church,place_of_worship,point_of_interest,establishment
+
+***CATEGORY:  book_store
+American Girl Place New York - book_store,store,point_of_interest,establishment
+Barnes & Noble - book_store,cafe,food,store,point_of_interest,establishment
+Midtown Comics Times Square - book_store,store,point_of_interest,establishment
+Kinokuniya New York - book_store,store,point_of_interest,establishment
+Midtown Comics Grand Central - book_store,store,point_of_interest,establishment
+The Drama Book Shop - book_store,store,point_of_interest,establishment
+Argosy Book Store - book_store,art_gallery,home_goods_store,store,point_of_interest,establishment
+Rizzoli Bookstore - book_store,store,point_of_interest,establishment
+St Francis Book Shop - book_store,store,point_of_interest,establishment
+Descubriendo El Siglo/ 21 Discovering 21 Century, Inc. - book_store,church,place_of_worship,store,point_of_interest,establishment
+Basic Civitas - book_store,store,point_of_interest,establishment
+The New York Public Library Shop - library,book_store,store,point_of_interest,establishment
+Techbook Online Incorporated - book_store,university,electronics_store,store,point_of_interest,establishment
+The Kabbalah Centre - book_store,place_of_worship,school,store,health,point_of_interest,establishment
+Gozlan's - book_store,store,point_of_interest,establishment
+Printed Matter, Inc. - book_store,art_gallery,store,point_of_interest,establishment
+Green Book - book_store,store,point_of_interest,establishment
+Books of Wonder - book_store,home_goods_store,store,point_of_interest,establishment
+Chartwell Booksellers - book_store,store,point_of_interest,establishment
+House Beautiful Magazine - book_store,store,point_of_interest,establishment
+
+***CATEGORY:  car_rental
+Hertz Car Rental - 55th Street West - Midtown Between 6th And 7th Avenue HLE - car_rental,point_of_interest,establishment
+Hertz Car Rental - 34th Street - Midtown Between 8th And 9th Avenue HLE - car_rental,point_of_interest,establishment
+Budget Car Rental - car_rental,point_of_interest,establishment
+Hertz Car Rental - 48th Street East - Midtown Between 1st And 2nd Avenue HLE - car_rental,point_of_interest,establishment
+Enterprise Rent-A-Car - car_rental,point_of_interest,establishment
+Dollar Car Rental - car_rental,point_of_interest,establishment
+Enterprise Rent-A-Car - car_rental,point_of_interest,establishment
+Avis Car Rental - car_rental,point_of_interest,establishment
+Avis Car Rental - car_rental,point_of_interest,establishment
+Avis Car Rental - car_rental,point_of_interest,establishment
+Avis Car Rental - car_rental,point_of_interest,establishment
+Enterprise Rent-A-Car - car_rental,point_of_interest,establishment
+Alamo Rent A Car - car_rental,point_of_interest,establishment
+Excellent Lease - car_rental,car_dealer,point_of_interest,store,establishment
+Wits End Group, Inc. - car_rental,point_of_interest,establishment
+NYC Car Services - car_rental,point_of_interest,establishment
+Manhattan Rent A Car - car_rental,point_of_interest,establishment
+Supreme Clientele Travel - travel_agency,car_rental,point_of_interest,establishment
+Maven+ - car_rental,point_of_interest,establishment
+Enterprise Rent-A-Car - car_rental,point_of_interest,establishment
+
+***CATEGORY:  stadium
+Madison Square Garden - tourist_attraction,stadium,point_of_interest,establishment
+Stadium Entertainment Holdings - stadium,point_of_interest,establishment
+Events Master - stadium,night_club,point_of_interest,establishment
+salt and pepper media - stadium,electronics_store,university,health,point_of_interest,home_goods_store,store,establishment
+Kelell - stadium,point_of_interest,establishment
+
+***CATEGORY:  movie_theater
+AMC Empire 25 - movie_theater,point_of_interest,establishment
+AMC 34th Street 14 - movie_theater,point_of_interest,establishment
+AMC Lincoln Square 13 - movie_theater,point_of_interest,establishment
+Regal E-Walk - movie_theater,point_of_interest,establishment
+Film at Lincoln Center - movie_theater,point_of_interest,establishment
+The McKittrick Hotel - movie_theater,point_of_interest,establishment
+AMC Kips Bay 15 - movie_theater,point_of_interest,establishment
+Scandinavia House - tourist_attraction,art_gallery,movie_theater,point_of_interest,establishment
+Cinema 123 by Angelika - movie_theater,cafe,food,point_of_interest,establishment
+Kaufman Film Inc - movie_theater,point_of_interest,establishment
+AMC 19th St. East 6 - movie_theater,point_of_interest,establishment
+Park Avenue Armory - tourist_attraction,movie_theater,museum,point_of_interest,establishment
+Guild Enterprises - movie_theater,point_of_interest,establishment
+Warren Z Productions - movie_theater,point_of_interest,establishment
+Park Avenue Screening Room - movie_theater,point_of_interest,establishment
+Aerial Cimema Productions - movie_theater,point_of_interest,establishment
+Endemol Theatre Productions - movie_theater,point_of_interest,establishment
+Times Square Theater - movie_theater,point_of_interest,establishment
+Music Center - movie_theater,point_of_interest,establishment
+The SAG-AFTRA Foundation Robin Williams Center - movie_theater,point_of_interest,establishment
+
+***CATEGORY:  library
+New York Public Library - Stephen A. Schwarzman Building - library,point_of_interest,establishment
+The University Club of New York - library,point_of_interest,establishment
+Fulbright & Jaworski - library,point_of_interest,establishment
+United Hospital Fund-Ny Library - library,point_of_interest,establishment
+Cbs Law Department Library - library,point_of_interest,establishment
+Jack Brause Library - library,point_of_interest,establishment
+Parade Publications Inc - library,point_of_interest,establishment
+Hunter College Leon & Toby Cooperman Library - library,point_of_interest,establishment
+Tams-Witmark Music Library, Inc. - library,point_of_interest,establishment
+FIAF French Institute Alliance Française - library,art_gallery,school,point_of_interest,establishment
+The New York Public Library Shop - library,book_store,store,point_of_interest,establishment
+NYIT Library - Manhattan - library,point_of_interest,establishment
+First Department Law Library - library,point_of_interest,establishment
+Association of Jewish Libraries - library,point_of_interest,establishment
+Korea International Trade Association(KITA) - library,point_of_interest,establishment
+The New York Public Library for the Performing Arts, Dorothy and Lewis B. Cullman Center - library,point_of_interest,establishment
+Hedi Steinberg Library - library,point_of_interest,establishment
+Roosevelt House Public Policy Institute at Hunter College - library,university,point_of_interest,establishment
+Yale Club Library - library,point_of_interest,establishment
+Huguenot Society of America - library,point_of_interest,establishment
+
+***CATEGORY:  home_goods_store
+B&H Photo Video - Electronics and Camera Store - electronics_store,home_goods_store,store,point_of_interest,establishment
+Urban Outfitters - clothing_store,electronics_store,shoe_store,home_goods_store,store,point_of_interest,establishment
+The Home Depot - hardware_store,furniture_store,home_goods_store,store,point_of_interest,establishment
+The Home Depot - hardware_store,furniture_store,home_goods_store,store,point_of_interest,establishment
+Mood Fabrics - home_goods_store,store,point_of_interest,establishment
+Best Buy - electronics_store,home_goods_store,store,point_of_interest,establishment
+Party City - clothing_store,home_goods_store,store,food,point_of_interest,establishment
+Macy's - department_store,shoe_store,clothing_store,furniture_store,home_goods_store,jewelry_store,store,point_of_interest,establishment
+Bath & Body Works - clothing_store,home_goods_store,store,point_of_interest,establishment
+Bed Bath & Beyond - department_store,home_goods_store,store,point_of_interest,establishment
+Best Buy - electronics_store,home_goods_store,store,point_of_interest,establishment
+The Container Store - home_goods_store,furniture_store,store,point_of_interest,establishment
+Sterling Interiors Group Inc - furniture_store,home_goods_store,general_contractor,store,point_of_interest,establishment
+Bed Bath & Beyond - department_store,home_goods_store,store,point_of_interest,establishment
+buybuy BABY - clothing_store,furniture_store,home_goods_store,store,point_of_interest,establishment
+42nd Street Photo - electronics_store,home_goods_store,store,point_of_interest,establishment
+Anthropologie - clothing_store,furniture_store,home_goods_store,store,point_of_interest,establishment
+Adorama - electronics_store,home_goods_store,store,point_of_interest,establishment
+Bath & Body Works - clothing_store,home_goods_store,store,point_of_interest,establishment
+Sam Ash Music Stores - electronics_store,home_goods_store,store,point_of_interest,establishment
+
+***CATEGORY:  spa
+Lotte New York Palace - lodging,spa,point_of_interest,establishment
+Mandarin Oriental, New York - lodging,spa,food,point_of_interest,establishment
+Planet Fitness - gym,spa,health,point_of_interest,establishment
+Equinox West 50th Street - gym,spa,health,point_of_interest,establishment
+Equinox East 54th Street - gym,spa,health,point_of_interest,establishment
+Dyanna Spa & Waxing Center NYC - beauty_salon,hair_care,spa,health,point_of_interest,establishment
+Bumble and bumble. - beauty_salon,hair_care,spa,point_of_interest,establishment
+Lucy Peters - beauty_salon,hair_care,spa,health,point_of_interest,establishment
+Empire Beauty School - beauty_salon,hair_care,spa,point_of_interest,establishment
+Planet Fitness - gym,spa,health,point_of_interest,establishment
+Ease Medspa - beauty_salon,hair_care,spa,health,point_of_interest,establishment
+Shafer Clinic Fifth Avenue - spa,doctor,health,point_of_interest,establishment
+NYC Thai Wellness Center - spa,health,point_of_interest,establishment
+The Spa at Mandarin Oriental, New York - spa,point_of_interest,establishment
+Oasis Day Spa - beauty_salon,spa,point_of_interest,establishment
+Equinox East 44th Street - gym,spa,health,point_of_interest,establishment
+Theodore Diktaban, MD, FACS - spa,doctor,health,point_of_interest,establishment
+Wrinkle Free NYC - beauty_salon,spa,health,point_of_interest,establishment
+Ulysses Scarpidis, MD - Scarpidis Aesthetics NY Plastic Surgery - spa,doctor,health,point_of_interest,establishment
+NYC Massage and Spa - beauty_salon,spa,health,point_of_interest,establishment
+
+***CATEGORY:  movie_rental
+Academy Records & CDs - movie_rental,electronics_store,home_goods_store,point_of_interest,store,establishment
+Communitek Video Systems Inc - movie_rental,point_of_interest,establishment
+Appliances & Video Overseas - movie_rental,point_of_interest,establishment
+HQ Video - movie_rental,point_of_interest,store,establishment
+1STOP CD Duplication - movie_rental,point_of_interest,store,establishment
+BOOKOFF New York - movie_rental,electronics_store,home_goods_store,book_store,point_of_interest,store,establishment
+Jayasara Video Inc - movie_rental,point_of_interest,store,establishment
+Electronics Rental - movie_rental,point_of_interest,store,establishment
+Shadowplay Enterprises Inc. - movie_rental,electronics_store,home_goods_store,point_of_interest,store,establishment
+Interactive Video Technology - movie_rental,point_of_interest,establishment
+providence productions - movie_rental,point_of_interest,establishment
+Dataworks - movie_rental,electronics_store,home_goods_store,point_of_interest,store,establishment
+Gotham City Video - movie_rental,point_of_interest,store,establishment
+Mixed Emotions Video - movie_rental,point_of_interest,establishment
+Redbox - movie_rental,point_of_interest,store,establishment
+RYF8 - movie_rental,point_of_interest,store,establishment
+
+***CATEGORY:  university
+Fordham University Lincoln Center - university,point_of_interest,establishment
+The Juilliard School - university,school,point_of_interest,establishment
+Hunter College - university,school,point_of_interest,establishment
+Columbia University Press - university,point_of_interest,establishment
+Berkeley College New York City Campus - university,point_of_interest,establishment
+Parsons The New School for Design - school,university,point_of_interest,establishment
+The Acting Studio - New York - school,university,point_of_interest,establishment
+MedEdits Medical Admissions, LLC - university,health,point_of_interest,establishment
+Flying Magazine - university,point_of_interest,establishment
+CUNY Baccalaureate for Unique and Interdisciplinary Studies - university,point_of_interest,establishment
+House of Bonhoeffer - university,point_of_interest,establishment
+Fashion Institute of Technology - university,point_of_interest,establishment
+CUNY Graduate Center - university,food,point_of_interest,establishment
+Wood Tobe-Coburn School - university,point_of_interest,establishment
+New York Institute of Technology – New York City Campus - university,point_of_interest,establishment
+Swedish Institute - school,university,point_of_interest,establishment
+Shillington School of Graphic Design - university,point_of_interest,establishment
+Hybrid Actors' Workshop - university,point_of_interest,establishment
+LIM College - university,point_of_interest,establishment
+Baruch College - university,point_of_interest,establishment
+
+***CATEGORY:  night_club
+The Empire Hotel - night_club,bar,lodging,point_of_interest,establishment
+The Lowell Hotel - night_club,bar,lodging,restaurant,point_of_interest,food,establishment
+Jazz Standard - night_club,bar,point_of_interest,establishment
+The View Restaurant & Lounge - night_club,bar,restaurant,point_of_interest,food,establishment
+Birdland Jazz Club - night_club,bar,restaurant,point_of_interest,food,establishment
+FIG & OLIVE - restaurant,night_club,bar,point_of_interest,food,establishment
+Victor's Cafe - night_club,bar,restaurant,point_of_interest,food,establishment
+Carolines on Broadway - night_club,point_of_interest,establishment
+Flashdancers NYC - night_club,bar,point_of_interest,establishment
+The Iridium - night_club,bar,restaurant,point_of_interest,food,establishment
+Sky Room - night_club,bar,restaurant,point_of_interest,food,establishment
+The Regency Bar & Grill - night_club,bar,restaurant,point_of_interest,food,establishment
+Taj II Lounge and Event Space - night_club,bar,point_of_interest,establishment
+Harbor NYC Rooftop - night_club,restaurant,point_of_interest,food,establishment
+The Campbell - bar,night_club,point_of_interest,establishment
+Marquee New York - night_club,point_of_interest,establishment
+Frames Bowling Lounge - bowling_alley,night_club,bar,point_of_interest,establishment
+Russian Vodka Room - night_club,bar,restaurant,point_of_interest,food,establishment
+Iguana New York - night_club,bar,restaurant,point_of_interest,food,establishment
+Lea Wine Bar - night_club,bar,restaurant,point_of_interest,food,establishment
+
+***CATEGORY:  travel_agency
+Luxe Life Hotel New York - travel_agency,lodging,point_of_interest,establishment
+Club Wyndham Midtown 45 - real_estate_agency,travel_agency,lodging,point_of_interest,establishment
+Circle Line Sightseeing Cruises - tourist_attraction,travel_agency,point_of_interest,establishment
+BLS Visa Application Center - travel_agency,point_of_interest,establishment
+Scuba.com - travel_agency,school,store,point_of_interest,establishment
+Travel Document Systems - travel_agency,local_government_office,point_of_interest,establishment
+Aeromexico Reservations - tourist_attraction,travel_agency,airport,point_of_interest,establishment
+MACY 31 Self Serviced Apartments - real_estate_agency,travel_agency,point_of_interest,establishment
+Bike Rent NYC - Central Park Scooter rentals, Bicycle Rentals & Tours, Bicycle & Scooter Sales - travel_agency,bicycle_store,store,point_of_interest,establishment
+American Tours - travel_agency,point_of_interest,establishment
+Tony's New York Productions - travel_agency,electronics_store,home_goods_store,store,point_of_interest,establishment
+Off Broadway Booking - travel_agency,point_of_interest,establishment
+Aleman Groups USA - travel_agency,point_of_interest,establishment
+Champion Holidays - travel_agency,point_of_interest,establishment
+Santaly-Enterprises Inc. - travel_agency,store,point_of_interest,establishment
+Destination NYC - travel_agency,point_of_interest,establishment
+Visit America - travel_agency,point_of_interest,establishment
+German National Tourist Board - travel_agency,point_of_interest,establishment
+Glavs Travel - travel_agency,point_of_interest,establishment
+CityExperts NY - travel_agency,point_of_interest,establishment
+
+***CATEGORY:  meal_takeaway
+Shake Shack Theater District - meal_takeaway,meal_delivery,restaurant,food,point_of_interest,establishment
+Shake Shack Madison Square Park - meal_takeaway,meal_delivery,restaurant,food,point_of_interest,establishment
+Olive Garden Italian Restaurant - meal_takeaway,restaurant,food,bar,point_of_interest,establishment
+Marea - meal_takeaway,restaurant,food,bar,point_of_interest,establishment
+Havana Central Times Square - meal_takeaway,meal_delivery,restaurant,food,bar,point_of_interest,establishment
+Land of Plenty - meal_takeaway,meal_delivery,restaurant,food,point_of_interest,establishment
+Zucker's Bagels & Smoked Fish - meal_takeaway,bakery,meal_delivery,store,restaurant,food,point_of_interest,establishment
+Dos Caminos - meal_takeaway,restaurant,food,bar,point_of_interest,establishment
+Amy's Bread - bakery,meal_takeaway,store,restaurant,food,point_of_interest,establishment
+Panera Bread - cafe,meal_takeaway,bakery,store,restaurant,food,point_of_interest,establishment
+Five Guys - meal_takeaway,restaurant,food,point_of_interest,establishment
+Dunkin' - cafe,meal_takeaway,bakery,store,restaurant,food,point_of_interest,establishment
+Da Tommaso Ristorante - meal_takeaway,restaurant,food,point_of_interest,establishment
+The Red Flame - cafe,meal_takeaway,store,restaurant,food,point_of_interest,establishment
+Outback Steakhouse - meal_takeaway,restaurant,food,bar,point_of_interest,establishment
+Woorijip - meal_takeaway,restaurant,food,point_of_interest,establishment
+Hale and Hearty - meal_takeaway,meal_delivery,restaurant,food,point_of_interest,establishment
+New York Sal's Pizza - meal_takeaway,meal_delivery,restaurant,food,point_of_interest,establishment
+Topaz Thai Authentic - meal_takeaway,meal_delivery,restaurant,food,point_of_interest,establishment
+Grimaldi's - meal_takeaway,restaurant,food,bar,point_of_interest,establishment
+
+***CATEGORY:  museum
+The Museum of Modern Art - tourist_attraction,art_gallery,museum,point_of_interest,establishment
+Empire State Building - tourist_attraction,museum,point_of_interest,establishment
+Intrepid Sea, Air & Space Museum - museum,tourist_attraction,point_of_interest,establishment
+Museum of Sex - museum,tourist_attraction,bar,store,point_of_interest,establishment
+The Morgan Library & Museum - tourist_attraction,museum,point_of_interest,establishment
+The Frick Collection - museum,point_of_interest,establishment
+The Paley Center For Media NYC - museum,tourist_attraction,point_of_interest,establishment
+Rubin Museum of Art - museum,cafe,store,food,point_of_interest,establishment
+American Folk Art Museum - tourist_attraction,museum,point_of_interest,establishment
+National Museum of Mathematics - tourist_attraction,museum,point_of_interest,establishment
+Jane A. Gordon - museum,jewelry_store,store,point_of_interest,health,establishment
+107th Infantry - museum,point_of_interest,establishment
+Hunter College Art Galleries - art_gallery,museum,point_of_interest,establishment
+Park Avenue Armory - tourist_attraction,movie_theater,museum,point_of_interest,establishment
+Japan Society - tourist_attraction,museum,point_of_interest,establishment
+New York Transit Museum Gallery & Store - museum,tourist_attraction,art_gallery,store,point_of_interest,establishment
+The Museum at FIT - tourist_attraction,museum,point_of_interest,establishment
+Astro Gallery of Gems, Minerals and Fossils - museum,jewelry_store,store,point_of_interest,establishment
+Mount Vernon Hotel Museum & Garden - museum,tourist_attraction,point_of_interest,establishment
+Society of Illustrators - museum,tourist_attraction,point_of_interest,establishment
+
+***CATEGORY:  cafe
+Barnes & Noble - book_store,cafe,food,point_of_interest,store,establishment
+Pershing Square - cafe,bar,restaurant,food,point_of_interest,store,establishment
+Baked by Melissa - bakery,cafe,food,point_of_interest,store,establishment
+Krispy Kreme - bakery,cafe,restaurant,food,point_of_interest,store,establishment
+Mrs. Fields - bakery,cafe,food,point_of_interest,store,establishment
+Panera Bread - cafe,bakery,meal_takeaway,restaurant,food,point_of_interest,store,establishment
+Dunkin' - bakery,cafe,meal_takeaway,restaurant,food,point_of_interest,store,establishment
+The Red Flame - cafe,meal_takeaway,restaurant,food,point_of_interest,store,establishment
+Gregorys Coffee - cafe,food,point_of_interest,store,establishment
+Cafe Metro - cafe,restaurant,food,point_of_interest,store,establishment
+Fairway Market Kips Bay - grocery_or_supermarket,cafe,supermarket,food,point_of_interest,store,establishment
+Rubin Museum of Art - museum,cafe,food,point_of_interest,store,establishment
+Malibu Diner - cafe,bar,restaurant,food,point_of_interest,store,establishment
+Jerusalem Cafe - cafe,restaurant,food,point_of_interest,establishment
+Brooklyn Bagel & Coffee Company - bakery,cafe,restaurant,food,point_of_interest,store,establishment
+Macchiato Espresso Bar - bakery,cafe,food,point_of_interest,store,establishment
+Starbucks - cafe,restaurant,food,point_of_interest,store,establishment
+Culture Espresso - bakery,cafe,food,point_of_interest,store,establishment
+Little Pie Company - bakery,cafe,food,point_of_interest,store,establishment
+Starbucks - cafe,restaurant,food,point_of_interest,store,establishment
+
+***CATEGORY:  art_gallery
+The Museum of Modern Art - tourist_attraction,art_gallery,museum,point_of_interest,establishment
+David Zwirner - art_gallery,tourist_attraction,point_of_interest,establishment
+Scandinavia House - tourist_attraction,art_gallery,movie_theater,point_of_interest,establishment
+The Art Students League of New York - art_gallery,point_of_interest,establishment
+Argosy Book Store - book_store,art_gallery,home_goods_store,store,point_of_interest,establishment
+The Jazz Gallery - art_gallery,point_of_interest,establishment
+Creative Art Works - art_gallery,point_of_interest,establishment
+Gagosian - art_gallery,point_of_interest,establishment
+Mika Gallery Tokyo Art Projects - art_gallery,point_of_interest,establishment
+Feuerman Studios - art_gallery,point_of_interest,establishment
+Theodore B Donson Ltd. - art_gallery,point_of_interest,establishment
+Hunter College Art Galleries - art_gallery,museum,point_of_interest,establishment
+Jason McCoy Gallery - art_gallery,point_of_interest,establishment
+Wolfert David - art_gallery,point_of_interest,establishment
+Nailya Alexander Gallery - art_gallery,point_of_interest,establishment
+Jonathan Ohara Gallery - art_gallery,point_of_interest,establishment
+Schreiber - art_gallery,point_of_interest,establishment
+FIAF French Institute Alliance Française - library,art_gallery,school,point_of_interest,establishment
+Sundaram Tagore Gallery - art_gallery,point_of_interest,establishment
+Tower 49 Gallery - art_gallery,point_of_interest,establishment
+
+***CATEGORY:  shopping_mall
+The Shops at Columbus Circle - shopping_mall,point_of_interest,establishment
+Columbus Centre LLC - shopping_mall,point_of_interest,establishment
+Sunglass Hut - shopping_mall,point_of_interest,store,establishment
+PPYPLE - shopping_mall,point_of_interest,store,establishment
+Limelight Shops - shopping_mall,point_of_interest,establishment
+One Direction World - shopping_mall,point_of_interest,establishment
+Diamond Care LLC - shopping_mall,jewelry_store,point_of_interest,store,establishment
+75 Rockefeller Plaza - shopping_mall,point_of_interest,establishment
+Saks Fifth Avenue Windows - shopping_mall,point_of_interest,establishment
+Sunglass Hut at Macy's - department_store,shopping_mall,point_of_interest,store,establishment
+Sunglass Hut at Macy's - department_store,shopping_mall,point_of_interest,store,establishment
+Royal ConneXions - shopping_mall,point_of_interest,establishment
+Cartoon Network Time Warner Inc - shopping_mall,point_of_interest,establishment
+The Atrium - shopping_mall,point_of_interest,establishment
+Hudson Yards - shopping_mall,real_estate_agency,point_of_interest,establishment
+Bijoux de Fantaisie d'Epoque - shopping_mall,point_of_interest,establishment
+старинные ювелирные изделия - shopping_mall,point_of_interest,establishment
+Sunglass Hut - shopping_mall,point_of_interest,store,establishment
+42nd Street Entertainment Center - shopping_mall,point_of_interest,establishment
+Posters de Broadway - shopping_mall,point_of_interest,establishment
+
+***CATEGORY:  bar
+The Court - A St Giles Hotel - bar,lodging,point_of_interest,establishment
+The Empire Hotel - night_club,bar,lodging,point_of_interest,establishment
+The Lowell Hotel - night_club,bar,lodging,restaurant,food,point_of_interest,establishment
+Connolly's - bar,restaurant,food,point_of_interest,establishment
+Bryant Park Grill - restaurant,bar,food,point_of_interest,establishment
+Jazz Standard - night_club,bar,point_of_interest,establishment
+The 40/40 Club - bar,point_of_interest,establishment
+YOTEL New York Times Square - bar,lodging,restaurant,food,point_of_interest,establishment
+Museum of Sex - museum,tourist_attraction,bar,store,point_of_interest,establishment
+Del Frisco's Double Eagle Steakhouse - bar,restaurant,food,point_of_interest,establishment
+Pershing Square - cafe,bar,restaurant,food,store,point_of_interest,establishment
+Red Lobster - bar,restaurant,food,point_of_interest,establishment
+Olive Garden Italian Restaurant - meal_takeaway,bar,restaurant,food,point_of_interest,establishment
+Stout NYC - bar,restaurant,food,point_of_interest,establishment
+The View Restaurant & Lounge - night_club,bar,restaurant,food,point_of_interest,establishment
+Nobu Fifty Seven - restaurant,bar,food,point_of_interest,establishment
+The Capital Grille - bar,restaurant,food,point_of_interest,establishment
+Marea - meal_takeaway,bar,restaurant,food,point_of_interest,establishment
+McGee's Pub - bar,restaurant,food,point_of_interest,establishment
+Dave & Buster's New York City (Times Square) - restaurant,bar,food,point_of_interest,establishment
+
+***CATEGORY:  lodging
+Royalton New York - lodging,point_of_interest,establishment
+New York Marriott Marquis - lodging,point_of_interest,establishment
+Millennium Hotel Broadway Times Square - lodging,point_of_interest,establishment
+Night Hotel at Times Square - lodging,point_of_interest,establishment
+The Muse New York - lodging,point_of_interest,establishment
+Room Mate Grace Hotel - lodging,point_of_interest,establishment
+Casablanca Hotel by Library Hotel Collection - lodging,point_of_interest,establishment
+AKA Times Square - lodging,point_of_interest,establishment
+The Chatwal, a Luxury Collection Hotel, New York City - lodging,point_of_interest,establishment
+Hotel 46 Times Square - lodging,point_of_interest,establishment
+Hotel Mela Times Square - lodging,point_of_interest,establishment
+Hotel St. James - lodging,point_of_interest,establishment
+The Westin New York at Times Square - lodging,point_of_interest,establishment
+Hilton New York Times Square - lodging,point_of_interest,establishment
+Crowne Plaza Times Square Manhattan, an IHG Hotel - lodging,point_of_interest,establishment
+Cassa Hotel NY 45th Street - lodging,point_of_interest,establishment
+InterContinental New York Times Square, an IHG Hotel - lodging,point_of_interest,establishment
+Econo Lodge Times Square - lodging,point_of_interest,establishment
+The Time New York - lodging,point_of_interest,establishment
+City Club Hotel - lodging,point_of_interest,establishment
+
+***CATEGORY:  painter
+Arkay Decorating - painter,point_of_interest,establishment
+Total Home Improvement Services - general_contractor,painter,home_goods_store,store,point_of_interest,establishment
+Albert Pearlman Inc - painter,point_of_interest,establishment
+Boyd Reath - painter,point_of_interest,establishment
+timothy v thevanayagam - painter,point_of_interest,establishment
+Gurri Design + Remodel - painter,general_contractor,home_goods_store,store,point_of_interest,establishment
+Riverside Painting - painter,point_of_interest,establishment
+Tache Gallery - art_gallery,painter,point_of_interest,establishment
+EverGreene Architectural Arts - painter,general_contractor,point_of_interest,establishment
+Ricks Painting & Decorating - painter,point_of_interest,establishment
+Bond Painting Co Inc - painter,point_of_interest,establishment
+Reliable Painters: Painting Company - painter,point_of_interest,establishment
+Artist Jacques Rosas - painter,point_of_interest,establishment
+JTC Painting & Decorating - painter,point_of_interest,establishment
+Eric Steding, lighting Designer, Exhibition, Display, lighting, Retail Windows, sets, art and Installations. - painter,point_of_interest,establishment
+Innovators Construction (Professional Builders, Renovations, and Remodeling) - painter,general_contractor,point_of_interest,establishment
+Colormood Painting & Design - painter,point_of_interest,establishment
+Pro Paint Squad - painter,point_of_interest,establishment
+Albert Pearlman Inc - painter,point_of_interest,establishment
+Concord Painting, Inc. - painter,point_of_interest,establishment
+
+***CATEGORY:  synagogue
+Union For Reform Judaism - synagogue,place_of_worship,point_of_interest,establishment
+Central Synagogue - tourist_attraction,synagogue,place_of_worship,point_of_interest,establishment
+Fifth Avenue Synagogue - synagogue,place_of_worship,point_of_interest,establishment
+Hudson Yards Synagogue - synagogue,place_of_worship,point_of_interest,establishment
+Stephen Wise Free Synagogue - synagogue,school,place_of_worship,point_of_interest,establishment
+Congregation Shearith Israel - synagogue,place_of_worship,point_of_interest,establishment
+Sutton Place Synagogue - synagogue,place_of_worship,point_of_interest,establishment
+Chabad of the Plaza District - synagogue,place_of_worship,point_of_interest,establishment
+Park East Synagogue - synagogue,place_of_worship,point_of_interest,establishment
+Metropolitan Synagogue - synagogue,place_of_worship,point_of_interest,establishment
+Edmond J. Safra Synagogue - synagogue,place_of_worship,point_of_interest,establishment
+Central Conference of American Rabbis - synagogue,place_of_worship,point_of_interest,establishment
+Lincoln Square Synagogue - synagogue,place_of_worship,point_of_interest,establishment
+The Chelsea Shul - synagogue,place_of_worship,point_of_interest,establishment
+Bernard Museum - museum,synagogue,place_of_worship,point_of_interest,establishment
+Congregation Habonim - synagogue,place_of_worship,point_of_interest,establishment
+Seligson David J - synagogue,place_of_worship,point_of_interest,establishment
+MSIL SHUVA ISRAEL - שובה ישראל העולמית - synagogue,place_of_worship,point_of_interest,establishment
+West End Synagogue - synagogue,place_of_worship,point_of_interest,establishment
+Millinery Center Synagogue - synagogue,place_of_worship,point_of_interest,establishment
+
+***CATEGORY:  tourist_attraction
+Chrysler Building - tourist_attraction,premise,point_of_interest,establishment
+Times Square - tourist_attraction,point_of_interest,establishment
+Radio City Music Hall - tourist_attraction,point_of_interest,establishment
+Lincoln Center for the Performing Arts - tourist_attraction,point_of_interest,establishment
+Rockefeller Center - tourist_attraction,point_of_interest,establishment
+The Museum of Modern Art - art_gallery,tourist_attraction,museum,point_of_interest,establishment
+Empire State Building - tourist_attraction,museum,point_of_interest,establishment
+Madison Square Garden - stadium,tourist_attraction,point_of_interest,establishment
+Intrepid Sea, Air & Space Museum - museum,tourist_attraction,point_of_interest,establishment
+St. Patrick's Cathedral - tourist_attraction,church,place_of_worship,point_of_interest,establishment
+Carnegie Hall - tourist_attraction,point_of_interest,establishment
+Madame Tussauds New York - tourist_attraction,point_of_interest,establishment
+Museum of Sex - museum,tourist_attraction,bar,store,point_of_interest,establishment
+Central Park Zoo - zoo,tourist_attraction,point_of_interest,establishment
+Chrysler Building - tourist_attraction,point_of_interest,establishment
+The Morgan Library & Museum - tourist_attraction,museum,point_of_interest,establishment
+Time Warner Center - tourist_attraction,point_of_interest,establishment
+Circle Line Sightseeing Cruises - tourist_attraction,travel_agency,point_of_interest,establishment
+Flatiron Building - tourist_attraction,point_of_interest,establishment
+The Tour at NBC Studios - tourist_attraction,point_of_interest,establishment
+
+***CATEGORY:  park
+Madison Square Park - park,tourist_attraction,point_of_interest,establishment
+Dag Hammarskjöld Plaza - park,tourist_attraction,point_of_interest,establishment
+Chelsea Park - park,tourist_attraction,point_of_interest,establishment
+Bottino - meal_takeaway,park,bar,restaurant,food,point_of_interest,establishment
+Franklin D. Roosevelt Four Freedoms State Park - park,tourist_attraction,point_of_interest,establishment
+TCC Group Inc - park,point_of_interest,establishment
+Jamali Floral & Garden - florist,park,home_goods_store,store,point_of_interest,establishment
+Paley Park - park,tourist_attraction,point_of_interest,establishment
+I D & Allc - park,point_of_interest,establishment
+Robert Moses Playground - tourist_attraction,park,point_of_interest,establishment
+Jemmy's Dog Run - tourist_attraction,park,point_of_interest,establishment
+St. Vartan Park - park,tourist_attraction,point_of_interest,establishment
+Tramway Plaza - tourist_attraction,park,point_of_interest,establishment
+Bryant Park - park,tourist_attraction,point_of_interest,establishment
+Hell's Kitchen Park - park,tourist_attraction,point_of_interest,establishment
+Pier 64 at Hudson River Park - park,tourist_attraction,point_of_interest,establishment
+Cherry Hill Fountain - park,natural_feature,point_of_interest,establishment
+Hyungki Park - park,point_of_interest,establishment
+Father Duffy Square - tourist_attraction,park,point_of_interest,establishment
+Parking Garage - park,parking,point_of_interest,establishment
+
+***CATEGORY:  restaurant
+Carlton Hotel - lodging,restaurant,food,point_of_interest,establishment
+The Lowell Hotel - night_club,bar,lodging,restaurant,food,point_of_interest,establishment
+Connolly's - bar,restaurant,food,point_of_interest,establishment
+Lan Sheng - restaurant,food,point_of_interest,establishment
+TAO Uptown - restaurant,food,point_of_interest,establishment
+Carmine's Italian Restaurant - Times Square - restaurant,food,point_of_interest,establishment
+Bistro New York - restaurant,food,point_of_interest,establishment
+Bryant Park Grill - restaurant,bar,food,point_of_interest,establishment
+YOTEL New York Times Square - bar,lodging,restaurant,food,point_of_interest,establishment
+Grand Central Oyster Bar - restaurant,food,point_of_interest,establishment
+Blue Fin - restaurant,food,point_of_interest,establishment
+Shake Shack Theater District - meal_delivery,meal_takeaway,restaurant,food,point_of_interest,establishment
+Ellen's Stardust Diner - restaurant,food,point_of_interest,establishment
+Del Frisco's Double Eagle Steakhouse - bar,restaurant,food,point_of_interest,establishment
+Morton's The Steakhouse - restaurant,food,point_of_interest,establishment
+Keens Steakhouse - restaurant,food,point_of_interest,establishment
+Pershing Square - cafe,bar,store,restaurant,food,point_of_interest,establishment
+Shake Shack Madison Square Park - meal_delivery,meal_takeaway,restaurant,food,point_of_interest,establishment
+burger joint - restaurant,food,point_of_interest,establishment
+Per Se - restaurant,food,point_of_interest,establishment
+

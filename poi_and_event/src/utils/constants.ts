@@ -1,0 +1,15 @@
+export const JAROWINKLER_THRESHOLD = 0.8;
+export const PORT = 3000;
+export const INTEREST_THRESHOLD = 0.5;
+export const WIKI_API_URL = "https://en.wikipedia.org/w/api.php";
+export const GPT_MAX_LENGTH = 128;
+export const INTEREST_VALUE_URL = 'http://127.0.0.1:5000/';
+export const DB_NAME = "AutoTripCopy";
+export const DB_COLLECTION_NAME = "PoisCollectionCopy";
+export const DISTANCE_THRESHOLD_NEW_POI = 50;
+export const DISTANCE_THRESHOLD_NEW_EVENT = 50;
+export const MIN_REVIEWS = 100;
+export const DAYS_EXPIRED_EVENT = 7;
+export const GEO_SIZE = 5;
+export const EVENT_COLLECTION_NAME = "EventTest";
+export const GEO_COLLECTION_NAME = "Geos";

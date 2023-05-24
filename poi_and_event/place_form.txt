@@ -1,0 +1,52 @@
+for more information: https://developers.google.com/maps/documentation/places/web-service/search-nearby#maps_http_places_nearbysearch-js
+
+
+
+geometry: An object containing information about the place's location, such as its latitude and longitude, and the viewport (the area covered by the map when the place is displayed).
+
+icon: A URL for an icon that can be displayed to represent the place.
+
+id: A unique identifier for the place.
+
+name: The name of the place.
+
+opening_hours: An object containing information about the place's opening hours, such as whether it is open now and its schedule for the current day.
+
+photos: An array of objects containing information about photos of the place. Each object may include a photo reference (a unique identifier for the photo), a URL for the photo, and information about the dimensions and copyright holder of the photo.
+
+place_id: A unique identifier for the place that can be used to retrieve additional information about the place using the Google Maps Places API.
+
+plus_code: A "plus code" that represents the place's location. A plus code is a short code that can be used to identify a place, even if it does not have a street address.
+
+price_level: An integer representing the price level of the place, on a scale of 0 (least expensive) to 4 (most expensive).
+
+rating: The rating of the place, based on user reviews. This is a decimal value on a scale of 0 to 5.
+
+reference: A unique identifier for the place that can be used to retrieve additional information about the place using the Google Maps Places API.
+
+scope: The scope of the place, indicating whether it is a global or local place.
+
+types: An array of strings representing the types of the place (e.g. "restaurant", "bar", "cafe").
+
+vicinity: A string containing a concise description of the place's location (usually an adress).
+
+
+
+"results" : [
+      {
+         "geometry" : {
+            "location" : {
+               "lat" : 37.423021,
+               "lng" : -122.083739
+            },
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.42436998029149,
+                  "lng" : -122.0823900197085
+               },
+               "southwest" : {
+                  "lat" : 37.4216720197085,
+                  "lng" : -122.0850879802915
+               }
+            }
+         },

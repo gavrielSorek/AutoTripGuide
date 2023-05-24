@@ -1,0 +1,538 @@
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: Buildings
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: Parks,Resorts
+
+ChIJb76zs1XEAhURTSKC7b_uevo טרקטורוני בית שמש 34.992227 31.76232599999999 point_of_interest,establishment [object Object] אזור תעשיה הר טוב, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,point_of_interest,store,food,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJ82Zu8vfEAhURkCNL9nCH8JY Rimon Art Furniture Showroom 34.995896 31.753906 furniture_store,home_goods_store,point_of_interest,store,establishment [object Object] HaUman Street, Bet Shemesh
+* CATEGORIES: Marketplaces,Resorts
+
+ChIJdbeJ7GDEAhURxOWP5ypX09Y Branco Weiss High School 34.9901374 31.7446283 school,point_of_interest,establishment [object Object] HaGolan Street 17, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 point_of_interest,health,store,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJb46T_GfEAhUR_gvBuKUFfV0 דפוס משכן בע"מ Mishkan Print ltd 34.98300560000001 31.7476482 point_of_interest,store,establishment [object Object] HaNasi Street 14, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 home_goods_store,point_of_interest,store,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: Marketplaces,Resorts
+
+ChIJvYB073HEAhURszAQEEzcNTQ Levine School 34.98507680000001 31.7422957 point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJ3fx8PPjEAhUR0mRkOPwQBrg גינון 34.99462469999999 31.7556396 furniture_store,home_goods_store,point_of_interest,store,establishment [object Object] Ha-Masger Street 18, Bet Shemesh
+* CATEGORIES: Marketplaces,Resorts
+
+ChIJB_f-Jn3EAhURUUPk2GwuzcA Kidma Center 34.99233940000001 31.73485629999999 point_of_interest,health,store,establishment [object Object] Nahar Hayarden Avenue 9, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,point_of_interest,store,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJf54wvWfEAhURUy5EoSusnw0 Shuvu School 34.9843929 31.7468394 point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZXUFo2_EAhURwQNToPKiemY Chalav U'Devash Pizza 34.9829991 31.73945070000001 meal_takeaway,meal_delivery,restaurant,point_of_interest,food,establishment [object Object] HaDekel Avenue 11, Bet Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJZf9gLVjEAhURMTjgViSClkk Electric city car 34.9920119 31.7550065 car_repair,point_of_interest,store,establishment [object Object] Yig'al Alon Ave 18, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: Buildings
+
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: Buildings
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: Parks,Resorts
+
+ChIJb76zs1XEAhURTSKC7b_uevo טרקטורוני בית שמש 34.992227 31.76232599999999 point_of_interest,establishment [object Object] אזור תעשיה הר טוב, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,point_of_interest,store,food,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJ82Zu8vfEAhURkCNL9nCH8JY Rimon Art Furniture Showroom 34.995896 31.753906 furniture_store,home_goods_store,point_of_interest,store,establishment [object Object] HaUman Street, Bet Shemesh
+* CATEGORIES: Marketplaces,Resorts
+
+ChIJdbeJ7GDEAhURxOWP5ypX09Y Branco Weiss High School 34.9901374 31.7446283 school,point_of_interest,establishment [object Object] HaGolan Street 17, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 health,point_of_interest,store,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJb46T_GfEAhUR_gvBuKUFfV0 דפוס משכן בע"מ Mishkan Print ltd 34.98300560000001 31.7476482 point_of_interest,store,establishment [object Object] HaNasi Street 14, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 home_goods_store,point_of_interest,store,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: Marketplaces,Resorts
+
+ChIJvYB073HEAhURszAQEEzcNTQ Levine School 34.98507680000001 31.7422957 point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJB_f-Jn3EAhURUUPk2GwuzcA Kidma Center 34.99233940000001 31.73485629999999 health,point_of_interest,store,establishment [object Object] Nahar Hayarden Avenue 9, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,point_of_interest,store,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJf54wvWfEAhURUy5EoSusnw0 Shuvu School 34.9843929 31.7468394 point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZXUFo2_EAhURwQNToPKiemY Chalav U'Devash Pizza 34.9829991 31.73945070000001 meal_takeaway,meal_delivery,restaurant,point_of_interest,food,establishment [object Object] HaDekel Avenue 11, Bet Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJZf9gLVjEAhURMTjgViSClkk Electric city car 34.9920119 31.7550065 car_repair,point_of_interest,store,establishment [object Object] Yig'al Alon Ave 18, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJHaL95TjEAhURzKxTGiHyfV0 בית הרהיט בית שמש 34.9937455 31.7561358 furniture_store,home_goods_store,point_of_interest,store,establishment [object Object] Ha-Masger Street 17, Bet Shemesh
+* CATEGORIES: Marketplaces,Resorts
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: Buildings
+
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: Buildings
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: Parks,Resorts
+
+ChIJb76zs1XEAhURTSKC7b_uevo טרקטורוני בית שמש 34.992227 31.76232599999999 point_of_interest,establishment [object Object] אזור תעשיה הר טוב, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,store,food,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJ82Zu8vfEAhURkCNL9nCH8JY Rimon Art Furniture Showroom 34.995896 31.753906 furniture_store,home_goods_store,store,point_of_interest,establishment [object Object] HaUman Street, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJdbeJ7GDEAhURxOWP5ypX09Y Branco Weiss High School 34.9901374 31.7446283 school,point_of_interest,establishment [object Object] HaGolan Street 17, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 health,store,point_of_interest,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJb46T_GfEAhUR_gvBuKUFfV0 דפוס משכן בע"מ Mishkan Print ltd 34.98300560000001 31.7476482 store,point_of_interest,establishment [object Object] HaNasi Street 14, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 home_goods_store,store,point_of_interest,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: Resorts
+
+ChIJvYB073HEAhURszAQEEzcNTQ Levine School 34.98507680000001 31.7422957 point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJB_f-Jn3EAhURUUPk2GwuzcA Kidma Center 34.99233940000001 31.73485629999999 health,store,point_of_interest,establishment [object Object] Nahar Hayarden Avenue 9, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,store,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJf54wvWfEAhURUy5EoSusnw0 Shuvu School 34.9843929 31.7468394 point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZXUFo2_EAhURwQNToPKiemY Chalav U'Devash Pizza 34.9829991 31.73945070000001 meal_delivery,meal_takeaway,restaurant,food,point_of_interest,establishment [object Object] HaDekel Avenue 11, Bet Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJZf9gLVjEAhURMTjgViSClkk Electric city car 34.9920119 31.7550065 car_repair,store,point_of_interest,establishment [object Object] Yig'al Alon Ave 18, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJHaL95TjEAhURzKxTGiHyfV0 בית הרהיט בית שמש 34.9937455 31.7561358 furniture_store,home_goods_store,store,point_of_interest,establishment [object Object] Ha-Masger Street 17, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: Buildings
+
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: Buildings
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: Parks,Resorts
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,store,food,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 store,point_of_interest,health,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 home_goods_store,store,point_of_interest,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: Resorts
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,store,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: Buildings
+
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: locality,political
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: tourist_attraction,point_of_interest,establishment
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: tourist_attraction,park,point_of_interest,establishment
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,store,food,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: bakery,store,food,point_of_interest,establishment
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 store,health,point_of_interest,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: store,health,point_of_interest,establishment
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: car_repair,point_of_interest,establishment
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 home_goods_store,store,point_of_interest,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: home_goods_store,store,point_of_interest,establishment
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,store,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: electrician,car_repair,store,point_of_interest,establishment
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: point_of_interest,establishment
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: locality,political
+
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: locality,political
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: tourist_attraction,point_of_interest,establishment
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: tourist_attraction,park,point_of_interest,establishment
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,store,food,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: bakery,store,food,point_of_interest,establishment
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 store,health,point_of_interest,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: store,health,point_of_interest,establishment
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: car_repair,point_of_interest,establishment
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 home_goods_store,store,point_of_interest,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: home_goods_store,store,point_of_interest,establishment
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,store,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: electrician,car_repair,store,point_of_interest,establishment
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: point_of_interest,establishment
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: locality,political
+
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: Buildings
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: Parks,Resorts
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,store,food,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 store,point_of_interest,health,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 home_goods_store,store,point_of_interest,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: Resorts
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,store,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: Buildings
+
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: Buildings
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: Parks,Resorts
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,food,store,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 store,point_of_interest,health,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 point_of_interest,car_repair,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 home_goods_store,store,point_of_interest,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: Resorts
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,store,point_of_interest,car_repair,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: Buildings
+
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: Buildings
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: Parks,Resorts
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,store,food,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 health,store,point_of_interest,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 home_goods_store,store,point_of_interest,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: Resorts
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,store,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: Buildings
+
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: Buildings
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: Parks,Resorts
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,store,food,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 health,store,point_of_interest,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 home_goods_store,store,point_of_interest,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: Resorts
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,store,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: Buildings
+
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: Buildings
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: Parks,Resorts
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,food,point_of_interest,store,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 point_of_interest,store,health,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 home_goods_store,point_of_interest,store,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: Resorts
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,point_of_interest,store,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: Buildings
+
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: Buildings
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: Parks,Resorts
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,food,point_of_interest,store,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 health,point_of_interest,store,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 point_of_interest,home_goods_store,store,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: Resorts
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,point_of_interest,store,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: Buildings
+
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: Buildings
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: Parks,Resorts
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,food,point_of_interest,store,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 health,point_of_interest,store,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 point_of_interest,home_goods_store,store,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: Resorts
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,point_of_interest,store,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: BuildingsChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: Buildings
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: Parks,Resorts
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,food,store,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 store,health,point_of_interest,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 home_goods_store,store,point_of_interest,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: Resorts
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,store,point_of_interest,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: Buildings
+
+ChIJ3_279V3EAhUROO_7ElUqB-A Bet Shemesh 34.988099 31.747041 locality,political [object Object] Bet Shemesh
+* CATEGORIES: Buildings
+
+ChIJPYBQfWrEAhURlP8Hwdg-OWs Tel Beit Shemesh 34.975495 31.75030299999999 tourist_attraction,point_of_interest,establishment [object Object] Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJu_eTgtjEAhURsSKEkFPTDfw Stalactite Cave Nature Reserve 35.024225 31.75581699999999 tourist_attraction,park,point_of_interest,establishment [object Object] Judean Foothills
+* CATEGORIES: Parks,Resorts
+
+ChIJ58L4F1jEAhURH0oOVsu2xCY Ne'eman Bakery 34.992761 31.75444240000001 bakery,food,point_of_interest,store,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Restaurants,Resorts
+
+ChIJ-8BvYlrEAhURPQoGXrqnbsk Big Sport 34.995043 31.7546404 health,point_of_interest,store,establishment [object Object] Ha-Tzaba Street 5, Bet Shemesh
+* CATEGORIES: Resorts
+
+ChIJZf9gLVjEAhUR_F7fosV0R3k אוטו טסט בע"מ בית שמש 34.9947507 31.7595213 car_repair,point_of_interest,establishment [object Object] פארק תעשיות שורק 13, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ78NvYlrEAhUR7AUrWvxQ8oA Ace - Bet Shemesh 34.9873046 31.7568206 home_goods_store,point_of_interest,store,establishment [object Object] מרכז ביג, שדרות יגאל אלון 1, בית שמש
+* CATEGORIES: Resorts
+
+ChIJZb5uPVjEAhURn8KZc2hMfLk מוסך הצומת ניסן מרכז לשרותי רכב 1979 בע"מ 34.9925407 31.7542674 electrician,car_repair,point_of_interest,store,establishment [object Object] Yig'al Alon Ave 24, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJa63nZlrEAhURloE5MgBV6WI Vertica CRM 34.98691720000001 31.7565094 point_of_interest,establishment undefined Yig'al Alon Ave 1, Beit Shemesh
+* CATEGORIES: Resorts
+
+ChIJ3zkYHDrEAhUR5bRx3QfU0iA Tsor'a 34.966931 31.762653 locality,political [object Object] Tsor'a
+* CATEGORIES: Buildings
+

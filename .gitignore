@@ -14,3 +14,4 @@ mobile_app_auto_trip_guide/windows/runner/*
 mobile_app_auto_trip_guide/windows/flutter/*
 mobile_app_auto_trip_guide/ios/Runner.xcworkspace/*
 mobile_app_auto_trip_guide/web/icons/*
+node_modules
