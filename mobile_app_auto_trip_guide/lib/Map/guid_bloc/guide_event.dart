@@ -31,10 +31,10 @@ class ShowFullPoiInfoEvent extends GuideEvent {
 }
 
 class SetLoadedStoriesEvent extends GuideEvent {
-  final StoryView storyView;
+  final AdjustedStoryView adjustedStoryView;
   final StoryController controller;
 
-  SetLoadedStoriesEvent({required this.storyView, required this.controller}) {}
+  SetLoadedStoriesEvent({required this.adjustedStoryView, required this.controller}) {}
 }
 
 class ShowOptionalCategoriesEvent extends GuideEvent {

@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:final_project/Map/map.dart';
 import 'package:final_project/Map/pois_attributes_calculator.dart';
 import 'package:flutter/material.dart';
+import '../../Adjusted Libs/story_view/adjusted_story_view.dart';
 import '../../Adjusted Libs/story_view/story_controller.dart';
 import '../../Adjusted Libs/story_view/story_view.dart';
 import '../../General Wigets/generals.dart';
@@ -30,11 +31,11 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       emit(LoadingMorePoisState());
     });
 
-    StoryView createStoryView(
+    AdjustedStoryView createStoryView(
         StoryController controller, StoriesEvents storiesEvents, storyItems) {
-      return StoryView(
+      return AdjustedStoryView(
         controller: controller,
-        repeat: true,
+        repeat: false,
         progressPosition: ProgressPosition.bottom,
         onStoryShow: storiesEvents.onShowStory,
         onComplete: () {
@@ -43,7 +44,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         storyItems: storyItems,
         // To disable vertical swipe gestures, ignore this parameter.
         onStoryTap: storiesEvents.onStoryTap,
-        onVerticalSwipeComplete: storiesEvents.onVerticalSwipeComplete,
+        onVerticalSwipeComplete: storiesEvents.onVerticalSwipeComplete, maxItemsPerStory: 3,
       );
     }
 
@@ -125,10 +126,10 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             duration: Duration(hours: 100))); // infinite
       });
 
-      final StoryView storyView =
+      final AdjustedStoryView storyView =
           createStoryView(controller, event.storiesEvents, storyItems);
       emit(ShowStoriesState(
-          storyView: storyView,
+          adjustedStoryView: storyView,
           controller: controller,
           lastShowOptionalCategoriesState: lastShowOptionalCategoriesState));
     });
@@ -158,7 +159,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             pic: currentPoi.poi.pic));
         emit(ShowStoriesState(
             currentPoi: currentPoi,
-            storyView: state.storyView,
+            adjustedStoryView: state.adjustedStoryView,
             controller: state.controller,
             lastShowOptionalCategoriesState:
                 state.lastShowOptionalCategoriesState));
@@ -181,14 +182,14 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         Globals.appEvents.poiCollapsed(state.currentPoi.poi.poiName ?? '', state.currentPoi.poi.Categories, state.currentPoi.poi.id);
 
         emit(ShowStoriesState(
-            storyView: event.storyView,
+            adjustedStoryView: event.adjustedStoryView,
             controller: event.controller,
             lastShowOptionalCategoriesState:
                 state.savedStoriesState.lastShowOptionalCategoriesState));
       } else if (state is ShowOptionalCategoriesState) {
         final state = this.state as ShowOptionalCategoriesState;
         emit(ShowStoriesState(
-            storyView: event.storyView,
+            adjustedStoryView: event.adjustedStoryView,
             controller: event.controller,
             lastShowOptionalCategoriesState: state));
       }
@@ -210,7 +211,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
 
         state.controller.setStoryViewToStoryItem(requestedStoryItem);
         emit(ShowStoriesState(
-            storyView: state.storyView,
+            adjustedStoryView: state.adjustedStoryView,
             controller: state.controller,
             lastShowOptionalCategoriesState:
                 state.lastShowOptionalCategoriesState));
@@ -234,11 +235,11 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
             // duration: Duration(seconds: double.infinity.toInt()))); // infinite
             duration: Duration(hours: 100)));
 
-        final StoryView storyView =
+        final AdjustedStoryView storyView =
             createStoryView(controller, event.storiesEvents!, storyItems);
 
         emit(ShowStoriesState(
-            storyView: storyView,
+            adjustedStoryView: storyView,
             controller: controller,
             lastShowOptionalCategoriesState: null));
       }
