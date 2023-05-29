@@ -234,6 +234,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   }
 
   Widget buildStoriesWidget(state) {
+    state = state as ShowStoriesState;
     final dialogBoxHeight = MediaQuery.of(context).size.height / 2.2;
     Globals.globalWidgetsSizes.dialogBoxTotalHeight = dialogBoxHeight + Constants.avatarRadius + Constants.padding;
         MediaQuery.of(context).size.height / 2.2;
@@ -274,7 +275,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                       ),
                       child: Column(
                         children: [
-                          Expanded(child: state.storyView),
+                          Expanded(child: state.adjustedStoryView),
                           Container(
                               child: GuideAudioPlayerUI(
                                   Globals.globalGuideAudioPlayerHandler),
@@ -839,8 +840,8 @@ class _FullPoiInfoState extends State<FullPoiInfo> {
                     // Down Swipe
 
                     context.read<GuideBloc>().add(SetLoadedStoriesEvent(
-                        storyView:
-                            widget.showPoiState.savedStoriesState.storyView,
+                        adjustedStoryView:
+                            widget.showPoiState.savedStoriesState.adjustedStoryView,
                         controller:
                             widget.showPoiState.savedStoriesState.controller));
                   } else if (details.delta.dy < -sensitivity) {
@@ -880,8 +881,8 @@ class _FullPoiInfoState extends State<FullPoiInfo> {
                 top: Constants.avatarRadius,
                 child: UniformButtons.getReturnDialogButton(onPressed: () {
                   context.read<GuideBloc>().add(SetLoadedStoriesEvent(
-                      storyView:
-                          widget.showPoiState.savedStoriesState.storyView,
+                      adjustedStoryView:
+                          widget.showPoiState.savedStoriesState.adjustedStoryView,
                       controller:
                           widget.showPoiState.savedStoriesState.controller));
                 }))

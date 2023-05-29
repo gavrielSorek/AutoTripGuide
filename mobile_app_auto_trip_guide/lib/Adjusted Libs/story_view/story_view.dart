@@ -187,18 +187,9 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
 
   void initializeClass() {
     widget.isInit = true;
-    // All pages after the first unshown page should have their shown value as
-    final firstPage = widget.storyItems.firstWhereOrNull((it) => !it!.shown);
-    if (firstPage == null) {
-      widget.storyItems.forEach((it2) {
-        it2!.shown = false;
-      });
-    } else {
-      final lastShownPos = widget.storyItems.indexOf(firstPage);
-      widget.storyItems.sublist(lastShownPos).forEach((it) {
-        it!.shown = false;
-      });
-    }
+    widget.storyItems.forEach((it2) {
+      it2!.shown = false;
+    });
 
     this._storyItemSubscription =
         widget.controller.wantedStoryItemNotifier.listen((value) {

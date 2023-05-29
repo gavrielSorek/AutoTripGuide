@@ -13,8 +13,6 @@ enum PlaybackState { pause, play, next, previous }
 class StoryController {
   /// Stream that broadcasts the playback state of the stories.
   final playbackNotifier = BehaviorSubject<PlaybackState>();
-  /// Stream that broadcasts the wanted duration of the current story.
-  final durationNotifier = BehaviorSubject<Duration>();
   /// Stream that broadcasts the wanted duration with beginning and end.
   final progressNotifier = BehaviorSubject<double>();
   /// Stream that broadcasts the wanted story
@@ -38,20 +36,15 @@ class StoryController {
     playbackNotifier.add(PlaybackState.previous);
   }
 
-  void setCurrentDuration(Duration duration) {
-    durationNotifier.add(duration);
-  }
-
   void setProgressValue(double value) {
     progressNotifier.add(value);
   }
   /// Remember to call dispose when the story screen is disposed to close
   /// the notifier stream.
-  void dispose() {
-    playbackNotifier.close();
-    durationNotifier.close();
-    progressNotifier.close();
-    wantedStoryItemNotifier.close();
+  Future<void> dispose() async {
+    await playbackNotifier.close();
+    await progressNotifier.close();
+    await wantedStoryItemNotifier.close();
   }
 
   void setStoryViewToStoryItem(StoryItem storyItem) {
