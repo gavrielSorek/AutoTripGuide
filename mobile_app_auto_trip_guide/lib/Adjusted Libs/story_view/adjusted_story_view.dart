@@ -65,6 +65,7 @@ class AdjustedStoryViewState extends State<AdjustedStoryView> {
   StreamSubscription<double>? _progressSubscription;
   StreamSubscription<StoryItem>? _wantedStorySubscription;
   StoryController _currentStoryViewStoryController = StoryController();
+  late List<StoryItem?> storyItemsLeftForPlaying;
 
   @override
   void initState() {
@@ -79,6 +80,10 @@ class AdjustedStoryViewState extends State<AdjustedStoryView> {
               _currentStoryViewStoryController.pause();
               break;
             case PlaybackState.next:
+              if (isComplete && widget.onComplete != null) {
+                widget.onComplete!();
+                return;
+              }
               if (currentStory?.id == widget.storyItems[(currentStoryIndex + 1) * widget.maxItemsPerStory - 1]?.id) {
                 setState(() {
                   currentStoryIndex++;
@@ -89,6 +94,13 @@ class AdjustedStoryViewState extends State<AdjustedStoryView> {
               break;
             case PlaybackState.previous:
               _currentStoryViewStoryController.previous();
+              // if(isBeginningOfStory && currentStoryIndex > 0) {
+              //   setState(() {
+              //     currentStoryIndex--;
+              //   });
+              // } else {
+              //   _currentStoryViewStoryController.previous();
+              // }
               break;
           }
         });
@@ -101,7 +113,12 @@ class AdjustedStoryViewState extends State<AdjustedStoryView> {
       _currentStoryViewStoryController.wantedStoryItemNotifier.add(value);
     });
 
+    storyItemsLeftForPlaying = widget.storyItems.toList();
   }
+
+  get isComplete => (currentStoryIndex + 1)* widget.maxItemsPerStory >= widget.storyItems.length;
+  get isBeginningOfStory => currentStory?.id == widget.storyItems[(currentStoryIndex) * widget.maxItemsPerStory]?.id;
+
 
   StoryView buildNewStoryView() {
     _currentStoryViewStoryController.dispose();
@@ -118,8 +135,7 @@ class AdjustedStoryViewState extends State<AdjustedStoryView> {
         }
       },
       onComplete: () {
-        if ((currentStoryIndex + 1)* widget.maxItemsPerStory >=
-                widget.storyItems.length &&
+        if (isComplete &&
             widget.onComplete != null) {
           widget.onComplete!();
         } else {
@@ -142,8 +158,17 @@ class AdjustedStoryViewState extends State<AdjustedStoryView> {
 
   List<StoryItem?> _getCurrentStoryItems() {
     int startIndex = currentStoryIndex * widget.maxItemsPerStory;
-    int endIndex = min(startIndex + widget.maxItemsPerStory, widget.storyItems.length);
-    return widget.storyItems.sublist(startIndex, endIndex);
+    int numOfElementsNewList = widget.storyItems.length - startIndex;
+    if (numOfElementsNewList >= storyItemsLeftForPlaying.length) { //if the requested story items already has been calculated
+      // do nothing
+    } else {
+      storyItemsLeftForPlaying = storyItemsLeftForPlaying.sublist(storyItemsLeftForPlaying.length -
+          numOfElementsNewList, storyItemsLeftForPlaying.length);
+    }
+    if (widget.sortFunc != null) {
+      storyItemsLeftForPlaying.sort(widget.sortFunc);
+    }
+    return storyItemsLeftForPlaying.sublist(0, min(storyItemsLeftForPlaying.length, widget.maxItemsPerStory));
   }
   @override
   void dispose() {

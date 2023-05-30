@@ -40,4 +40,13 @@ class PersonalizeRecommendation {
     int weightedScoreB = ((0.7 * distanceB + 0.3 * preferencesScoreB) * 1000).round();
     return weightedScoreA - weightedScoreB;
   }
+
+  // sort pois by weighted score of preferences and distance
+  static int sortMapPoisByDist(MapPoi mapPoi1, MapPoi mapPoi2) {
+    double distanceA = getDistanceInKm(mapPoi1.poi);
+    double distanceB = getDistanceInKm(mapPoi2.poi);
+    int weightedScoreA = (distanceA * 1000).round();
+    int weightedScoreB = (distanceB * 1000).round();
+    return weightedScoreA - weightedScoreB;
+  }
 }

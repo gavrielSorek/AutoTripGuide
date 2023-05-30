@@ -41,6 +41,10 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         onComplete: () {
           storiesEvents.onStoriesFinished();
         },
+        sortFunc: (StoryItem? s1, StoryItem? s2){
+          return PersonalizeRecommendation.sortMapPoisByDist(Globals.globalAllPois[s1?.id]!,
+              Globals.globalAllPois[s2?.id]!);
+        },
         storyItems: storyItems,
         // To disable vertical swipe gestures, ignore this parameter.
         onStoryTap: storiesEvents.onStoryTap,
