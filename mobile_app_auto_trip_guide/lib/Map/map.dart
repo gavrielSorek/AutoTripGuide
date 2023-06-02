@@ -5,7 +5,7 @@ import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/map_configuration.dart';
 import 'package:final_project/Map/mapbox/user_location_marker.dart';
 import 'package:final_project/Map/mapbox/user_location_marker_car.dart';
-import 'package:final_project/Map/poi_info.dart';
+import 'package:final_project/General%20Wigets/stretching_widget.dart';
 import 'package:final_project/Map/pois_attributes_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -789,7 +789,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               //Expanded(child: guideTool.storiesDialogBox)
-              StretchingWidget(),
+              StretchingWidget(expendedChild: Container(child: Text('ex'),),collapsedChild: Container(child: Text('co'),),),
             ],
           ))
         ],

@@ -12,6 +12,11 @@ class Constants {
 }
 
 class StretchingWidget extends StatefulWidget {
+  final Widget expendedChild;
+  final Widget collapsedChild;
+
+  StretchingWidget({required this.expendedChild, required this.collapsedChild});
+
   @override
   _StretchingWidgetState createState() => _StretchingWidgetState();
 }
@@ -67,12 +72,8 @@ class _StretchingWidgetState extends State<StretchingWidget> {
                   blurRadius: 20)
             ],
           ),
-          child: Center(
-            child: Text(
-              _isExpanded ? 'Expanded' : 'Not Expanded',
-              style: TextStyle(color: Colors.blue, fontSize: 20),
-            ),
-          ),
+          child: _isExpanded
+              ? widget.expendedChild : widget.collapsedChild,
         ),
       ),
     );
