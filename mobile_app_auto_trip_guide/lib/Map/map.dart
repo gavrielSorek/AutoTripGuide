@@ -21,7 +21,7 @@ import 'guide.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
 import 'package:wakelock/wakelock.dart';
-import 'guide_controls.dart';
+import 'guide_audio_player.dart';
 import 'mapbox/user_location_marker_foot.dart';
 
 double log2(num x) => log(x) / ln2;
@@ -791,7 +791,7 @@ class _UserMapState extends State<UserMap>
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               PoiGuide(
-                widgetOnPic: GuideControls(),
+                widgetOnPic: GuideAudioPlayer(audioHandler: Globals.globalGuideAudioPlayerHandler,),
                 poi: Poi(
                     id: '',
                     latitude: 38,

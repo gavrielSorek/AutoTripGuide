@@ -44,9 +44,13 @@ class BackgroundAudioHandler extends BaseAudioHandler
     _onPressNext = onPressNext;
   }
 
+  get onPressNext => _onPressNext;
+
   set onPressPrev(dynamic onPressPrev) {
     _onPressPrev = onPressPrev;
   }
+
+  get onPressPrev => _onPressPrev;
 
   set onDoublePrev(dynamic onDoublePrev) {
     _onDoublePrev = onDoublePrev;
