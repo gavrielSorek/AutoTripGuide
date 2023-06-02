@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class Constants {
@@ -15,6 +14,20 @@ class StretchingWidget extends StatefulWidget {
   final Widget expendedChild;
   final Widget collapsedChild;
 
+  static get collapsedPercentFromAvailableSpace => 0.4;
+
+  static get boxDecoration => BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(34),
+        boxShadow: [
+          BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 0.25),
+              offset: Offset(0, 0),
+              blurRadius: 20)
+        ],
+      );
+
   StretchingWidget({required this.expendedChild, required this.collapsedChild});
 
   @override
@@ -29,7 +42,8 @@ class _StretchingWidgetState extends State<StretchingWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _collapsedHeight = 0.3 * MediaQuery.of(context).size.height;
+    _collapsedHeight = StretchingWidget.collapsedPercentFromAvailableSpace *
+        MediaQuery.of(context).size.height;
     _expandedHeight = MediaQuery.of(context).size.height;
   }
 
@@ -37,6 +51,7 @@ class _StretchingWidgetState extends State<StretchingWidget> {
   Widget build(BuildContext context) {
     return Flexible(
       child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
         onVerticalDragUpdate: (DragUpdateDetails details) {
           if (details.delta.dy > 0) {
             // Swiped down
@@ -54,26 +69,8 @@ class _StretchingWidgetState extends State<StretchingWidget> {
           duration: Duration(milliseconds: 500),
           height: _isExpanded ? _expandedHeight : _collapsedHeight,
           width: MediaQuery.of(context).size.width - 30,
-          padding: const EdgeInsets.only(
-              left: Constants.padding,
-              top: Constants.avatarRadius + Constants.padding,
-              right: Constants.padding,
-              bottom: Constants.padding),
-          margin:
-          const EdgeInsets.only(top: Constants.avatarRadius),
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(34),
-            boxShadow: [
-              BoxShadow(
-                  color: Color.fromRGBO(0, 0, 0, 0.25),
-                  offset: Offset(0, 0),
-                  blurRadius: 20)
-            ],
-          ),
-          child: _isExpanded
-              ? widget.expendedChild : widget.collapsedChild,
+          decoration: StretchingWidget.boxDecoration,
+          child: _isExpanded ? widget.expendedChild : widget.collapsedChild,
         ),
       ),
     );
