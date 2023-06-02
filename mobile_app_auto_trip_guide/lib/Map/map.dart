@@ -21,6 +21,7 @@ import 'guide.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
 import 'package:wakelock/wakelock.dart';
+import 'guide_controls.dart';
 import 'mapbox/user_location_marker_foot.dart';
 
 double log2(num x) => log(x) / ln2;
@@ -70,8 +71,7 @@ class UserMap extends StatefulWidget {
   StreamController<MapPoi> highlightedPoiStreamController =
       StreamController<MapPoi>.broadcast();
   StreamController<List<Poi>> poisToAddQueue =
-    StreamController<List<Poi>>.broadcast();
-
+      StreamController<List<Poi>>.broadcast();
 
   Future<void> mapInit(context) async {
     await LocationUtils.checkAndRequestLocationPermission(context);
@@ -110,13 +110,11 @@ class UserMap extends StatefulWidget {
   }
 
   Future<void> stopAll() async {
-    if (userMapState == null)
-      return;
+    if (userMapState == null) return;
     for (UserLocationMarker element in userMapState!._userLocationMarkers) {
       await element.stop();
     }
   }
-
 
   void highlightPoi(MapPoi mapPoi) {
     currentHighlightedPoi = mapPoi;
@@ -181,10 +179,10 @@ class UserMap extends StatefulWidget {
       poisToAddQueue.add(pois);
     }
   }
-
 }
 
-class _UserMapState extends State<UserMap> with TickerProviderStateMixin, WidgetsBindingObserver {
+class _UserMapState extends State<UserMap>
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late StreamSubscription mapPoiActionSubscription;
   late StreamSubscription highlightedPoiSubscription;
   late StreamSubscription poisToAddSubscription;
@@ -203,6 +201,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
 
   // at new area the we snooze to the server in order to seek new pois
   static int SECONDS_BETWEEN_SNOOZES = 15;
+
   // mapbox variables
   late mapbox.MapboxMap map;
   Key _mapboxUniqueKey = UniqueKey(); // for recreating the widget purposes
@@ -241,7 +240,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
 
   mapbox.MapboxMap createMapboxMap(Key mapboxWidgetUniqueKey) {
     UniversalPanGestureRecognizer _panGestureRecognizer =
-    UniversalPanGestureRecognizer(
+        UniversalPanGestureRecognizer(
       onUpdate: (details) {
         _onMapDrag(details);
       },
@@ -251,7 +250,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
       key: mapboxWidgetUniqueKey,
       gestureRecognizers: Set()
         ..add(Factory<UniversalPanGestureRecognizer>(
-                () => _panGestureRecognizer)),
+            () => _panGestureRecognizer)),
       accessToken: MapConfiguration.mapboxAccessToken,
       onMapCreated: _onMapCreated,
       initialCameraPosition: _cameraPosition,
@@ -269,8 +268,8 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
         print(
             "Map click: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
         print("Filter $_featureQueryFilter");
-        List features = await _mapController
-            .queryRenderedFeatures(point, ["landuse"], _featureQueryFilter);
+        List features = await _mapController.queryRenderedFeatures(
+            point, ["landuse"], _featureQueryFilter);
         print('# features: ${features.length}');
         _clearFill();
         if (features.isEmpty && _featureQueryFilter != null) {
@@ -284,18 +283,18 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
         print(
             "Map long press: ${point.x},${point.y}   ${latLng.latitude}/${latLng.longitude}");
         math.Point convertedPoint =
-        await _mapController.toScreenLocation(latLng);
+            await _mapController.toScreenLocation(latLng);
         mapbox.LatLng convertedLatLng = await _mapController.toLatLng(point);
         print(
             "Map long press converted: ${convertedPoint.x},${convertedPoint.y}   ${convertedLatLng.latitude}/${convertedLatLng.longitude}");
         double metersPerPixel =
-        await _mapController.getMetersPerPixelAtLatitude(latLng.latitude);
+            await _mapController.getMetersPerPixelAtLatitude(latLng.latitude);
 
         print(
             "Map long press The distance measured in meters at latitude ${latLng.latitude} is $metersPerPixel m");
 
         List features =
-        await _mapController.queryRenderedFeatures(point, [], null);
+            await _mapController.queryRenderedFeatures(point, [], null);
         if (features.length > 0) {
           print(features[0]);
         }
@@ -305,8 +304,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
     );
   }
 
-  _UserMapState() : super() {
-  }
+  _UserMapState() : super() {}
 
   void updateCameraByRelativePosition(
       {CameraOption option = CameraOption.animate}) {
@@ -378,15 +376,15 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   // }
 
   // given distance in pixels and distance in meters, return the zoom such that distInPixels = distInMeters
-  Future<double> _getZoomLevel(metersPerPixel,
-      double latitude) async {
-    double zoom = log2((2 * math.pi * EARTH_RADIUS *
-        math.cos(toRadians(latitude))) / (512 * metersPerPixel));
+  Future<double> _getZoomLevel(metersPerPixel, double latitude) async {
+    double zoom = log2(
+        (2 * math.pi * EARTH_RADIUS * math.cos(toRadians(latitude))) /
+            (512 * metersPerPixel));
     return zoom;
   }
 
-  Future<double> _getZoomPointInDistFromUser(double distInPixels,
-      mapbox.LatLng point) async {
+  Future<double> _getZoomPointInDistFromUser(
+      double distInPixels, mapbox.LatLng point) async {
     double distanceInMeters = await Geolocator.distanceBetween(
       widget.userLocation.latitude, // latitude of first location
       widget.userLocation.longitude, // longitude of first location
@@ -416,10 +414,10 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
 
     poisToAddSubscription = widget.poisToAddQueue.stream.listen((pois) {
       guideTool.setPoisInQueue(pois);
-
     });
 
-    highlightedPoiSubscription = widget.highlightedPoiStreamController.stream.listen((event) async {
+    highlightedPoiSubscription =
+        widget.highlightedPoiStreamController.stream.listen((event) async {
       if (highlightedPoi != null) {
         widget.mapPoiActionStreamController.add(MapPoiAction(
             color: PoiIconColor.grey,
@@ -432,9 +430,12 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
           action: PoiAction.highlight,
           mapPoi: highlightedPoi!));
       final padding = 80;
-      final userPixelDistFromHighlightedPoi = min((MediaQuery.of(context).size
-          .height - Globals.globalWidgetsSizes.dialogBoxTotalHeight) / 2,
-          MediaQuery.of(context).size.width / 2) - padding;
+      final userPixelDistFromHighlightedPoi = min(
+              (MediaQuery.of(context).size.height -
+                      Globals.globalWidgetsSizes.dialogBoxTotalHeight) /
+                  2,
+              MediaQuery.of(context).size.width / 2) -
+          padding;
       _cameraPosition = mapbox.CameraPosition(
           target: _cameraPosition.target,
           zoom: await _getZoomPointInDistFromUser(
@@ -469,7 +470,8 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
 
   @override
   Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
-    if (state == AppLifecycleState.detached) { // if detached close the app
+    if (state == AppLifecycleState.detached) {
+      // if detached close the app
       Globals.exitApp();
     }
     // if ([AppLifecycleState.detached].contains(state)) {
@@ -508,11 +510,16 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
   Future<void> loadNewPois({Position? location = null}) async {
     Position selectedLocation = location ?? widget.userLocation;
     List<Poi> pois;
-    Globals.appEvents.scanningStarted(widget.isFirstScanning, true, selectedLocation.latitude, selectedLocation.longitude,);
+    Globals.appEvents.scanningStarted(
+      widget.isFirstScanning,
+      true,
+      selectedLocation.latitude,
+      selectedLocation.longitude,
+    );
     pois = await Globals.globalServerCommunication.getPoisByLocation(
         LocationInfo(selectedLocation.latitude, selectedLocation.longitude,
             selectedLocation.heading, selectedLocation.speed));
-   Globals.appEvents.scanningFinished(true,pois.length);
+    Globals.appEvents.scanningFinished(true, pois.length);
     widget.isFirstScanning = false;
     pois = PoisAttributesCalculator.filterPois(pois, selectedLocation);
     // add all the new poi
@@ -528,8 +535,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
             mapPoi: MapPoi(poi)));
       }
     }
-    if (mounted)
-      updateState();
+    if (mounted) updateState();
 
     // if there is new pois and guideTool waiting
     if (pois.isNotEmpty) {
@@ -643,7 +649,8 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
         'greyTransPoi', Globals.svgPoiMarkerBytes.greyTransIcon);
     await _symbolManager.addAll(_symbolsOnMap);
     if (highlightedPoi != null) {
-      await _highlightSymbolManager.add(highlightedPoi!.getSymbolFromPoi(PoiIconColor.blue));
+      await _highlightSymbolManager
+          .add(highlightedPoi!.getSymbolFromPoi(PoiIconColor.blue));
     }
   }
 
@@ -698,14 +705,14 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  child: menu.NavigationDrawer.buildNavigationDrawerButton(context),
+                  child: menu.NavigationDrawer.buildNavigationDrawerButton(
+                      context),
                 ),
                 widget.isScanning
                     ? Container(
                         color: Colors.transparent,
                         alignment: Alignment.bottomRight,
-                        margin: EdgeInsets.only(
-                            right: width / 60),
+                        margin: EdgeInsets.only(right: width / 60),
                         height: width / 10,
                         width: width / 10,
                         child: LoadingAnimationWidget.threeArchedCircle(
@@ -714,9 +721,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
                         ))
                     : Container(),
                 Container(
-                  margin: EdgeInsets.only(
-                      top: width / 20,
-                      right: width / 40),
+                  margin: EdgeInsets.only(top: width / 20, right: width / 40),
                   width: width / 10,
                   child: FloatingActionButton(
                     heroTag: null,
@@ -739,9 +744,7 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                margin: EdgeInsets.only(
-                    top: height / 90,
-                    left: width / 40),
+                margin: EdgeInsets.only(top: height / 90, left: width / 40),
                 width: width / 10,
                 child: _myLocationTrackingMode ==
                         mapbox.MyLocationTrackingMode.None
@@ -760,18 +763,16 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
                     : null,
               ),
               Container(
-                margin: EdgeInsets.only(
-                    top: height / 90,
-                    right: width / 40),
+                margin: EdgeInsets.only(top: height / 90, right: width / 40),
                 width: width / 10,
                 child: FloatingActionButton(
                   heroTag: null,
                   onPressed: () async {
-                      await _userLocationMarkers[_userStatus.index].stop();
-                      _userStatus =
-                          UserStatus.values[(_userStatus.index + 1) % 2];
-                      await _userLocationMarkers[_userStatus.index].start();
-                      updateState();
+                    await _userLocationMarkers[_userStatus.index].stop();
+                    _userStatus =
+                        UserStatus.values[(_userStatus.index + 1) % 2];
+                    await _userLocationMarkers[_userStatus.index].start();
+                    updateState();
                   },
                   child: Icon(
                     _userStatus == UserStatus.walking
@@ -789,9 +790,18 @@ class _UserMapState extends State<UserMap> with TickerProviderStateMixin, Widget
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              //Expanded(child: guideTool.storiesDialogBox)
-              PoiGuide()
-              // StretchingWidget(expendedChild: Container(child: Text('ex'),),collapsedChild: Container(child: Text('co'),),),
+              PoiGuide(
+                widgetOnPic: GuideControls(),
+                poi: Poi(
+                    id: '',
+                    latitude: 38,
+                    longitude: 38,
+                    Categories: [],
+                    shortDesc: 'HIIIIIIII',
+                    poiName: 'Title',
+                    pic:
+                        'https://www.shutterstock.com/image-photo/mountains-under-mist-morning-amazing-260nw-1725825019.jpg'),
+              )
             ],
           ))
         ],
