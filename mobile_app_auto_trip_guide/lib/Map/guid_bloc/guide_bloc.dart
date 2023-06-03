@@ -111,6 +111,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       if ((state is PoisSearchingState || state is ShowOptionalCategoriesState)) {
         this.add(ShowNextPoiInfoEvent());
       }
+      Globals.globalUserMap.setPoisScanningStatus(false);
     });
 
     on<ShowSearchingPoisAnimationEvent>((event, emit) {
