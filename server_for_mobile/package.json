@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": " npx ts-node src/server_t.ts"
+  },
   "dependencies": {
     "core-util-is": "^1.0.3",
     "cors": "^2.8.5",
