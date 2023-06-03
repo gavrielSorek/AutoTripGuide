@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../General Wigets/stretching_widget.dart';
+import '../General Wigets/uniform_widgets.dart';
 import 'globals.dart';
 
 class PoiGuide extends StatefulWidget {
@@ -91,9 +92,39 @@ class _PoiGuideState extends State<PoiGuide> {
                 boxDecoration: StretchingWidget.boxDecoration,
               ),
               Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.6),
+                        // Black color with 50% opacity
+                        shape: BoxShape
+                            .circle, // Assuming you want a circular background
+                      ),
+                      child: UniformButtons.getGuidePreferencesButton(
+                          onPressed: () {})),
+                ),
+              ),
+              Align(
                 alignment: Alignment.center,
                 child: widget.widgetOnPic,
               ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    // Black color with 50% opacity
+                    shape: BoxShape
+                        .circle, // Assuming you want a circular background
+                  ),
+                  child: Icon(
+                    Icons.arrow_drop_up,
+                    color: Colors.white,
+                  ),
+                ),
+              )
               // Large square picture
             ],
           ),
@@ -118,9 +149,39 @@ class _PoiGuideState extends State<PoiGuide> {
                 boxDecoration: StretchingWidget.boxDecoration,
               ),
               Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.6),
+                        // Black color with 50% opacity
+                        shape: BoxShape
+                            .circle, // Assuming you want a circular background
+                      ),
+                      child: UniformButtons.getGuidePreferencesButton(
+                          onPressed: () {})),
+                ),
+              ),
+              Align(
                 alignment: Alignment.center,
                 child: widget.widgetOnPic,
               ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    // Black color with 50% opacity
+                    shape: BoxShape
+                        .circle, // Assuming you want a circular background
+                  ),
+                  child: Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.white,
+                  ),
+                ),
+              )
               // Large square picture
             ],
           ),
