@@ -111,13 +111,13 @@ class TtsAudioPlayer {
     await flutterTts.setSpeechRate(_rate);
     await flutterTts.setPitch(_pitch);
 
-    // flutterTts.setStartHandler(() {
-    //   print("Playing");
-    //   _ttsState = TtsState.playing;
-    //   if (_onPlay != null) {
-    //     _onPlay();
-    //   }
-    // });
+    flutterTts.setStartHandler(() {
+      print("Playing");
+      _ttsState = TtsState.playing;
+      if (_onPlay != null) {
+        _onPlay();
+      }
+    });
 
     if (isAndroid) {
       flutterTts.setInitHandler(() {

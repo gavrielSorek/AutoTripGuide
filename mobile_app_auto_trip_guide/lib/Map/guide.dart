@@ -6,7 +6,6 @@ import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../General Wigets/Image_from_url_list.dart';
-import '../General Wigets/generals.dart';
 import '../General Wigets/progress_button.dart';
 import '../General Wigets/stretching_widget.dart';
 import '../General Wigets/uniform_widgets.dart';
@@ -29,8 +28,8 @@ class Guide {
   BuildContext context;
   GuideData guideData;
   GuideState guideState = GuideState.waiting;
-  Map<String, MapPoi> _poisToPlay = HashMap<String, MapPoi>();
-  Map<String, MapPoi> _queuedPoisToPlay = HashMap<String, MapPoi>();
+  Set<String> _alreadyInsertedPois = {};
+  List<MapPoi> _queuedPoisToPlay = [];
   late GuidDialogBox storiesDialogBox;
 
   Guide(this.context, this.guideData) {
@@ -54,19 +53,15 @@ class Guide {
   }
 
   void setPoisInQueue(List<Poi> pois) {
-    bool poisWereEmpty = _poisToPlay.isEmpty;
     for (Poi poi in pois) {
-      if (Globals.globalAllPois.containsKey(poi.id)) {
-        _queuedPoisToPlay[poi.id] = Globals.globalAllPois[poi.id]!;
+      if (Globals.globalAllPois.containsKey(poi.id) && !_alreadyInsertedPois.contains(poi.id)) {
+        _queuedPoisToPlay.add(Globals.globalAllPois[poi.id]!);
+        _alreadyInsertedPois.add(poi.id);
       }
     }
-    if (_poisToPlay.isEmpty) {
-      _poisToPlay.addAll(_queuedPoisToPlay);
-      _queuedPoisToPlay.clear();
-    }
-    if (poisWereEmpty && !_poisToPlay.isEmpty) {
-      setPoisToPlay(_poisToPlay);
-    }
+    context.read<GuideBloc>().add(AddPoisToGuideEvent(
+        poisToGuide: _queuedPoisToPlay.toList(), startGuide: true));
+    _queuedPoisToPlay.clear();
   }
 
   void setPoisToPlay(Map<String, MapPoi> mapPois) {
@@ -76,7 +71,6 @@ class Guide {
   }
 
   void clearAllPois() {
-    _poisToPlay.clear();
     _queuedPoisToPlay.clear();
   }
 }

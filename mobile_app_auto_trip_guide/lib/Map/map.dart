@@ -154,6 +154,7 @@ class UserMap extends StatefulWidget {
   }
 
   Future<void> loadNewPois({Position? location = null}) async {
+    // TODO move this function to guide
     Position selectedLocation = location ?? userLocation;
     List<Poi> pois;
     pois = await Globals.globalServerCommunication.getPoisByLocation(

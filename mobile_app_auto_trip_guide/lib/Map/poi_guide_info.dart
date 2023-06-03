@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
-
 import '../General Wigets/stretching_widget.dart';
 import '../General Wigets/uniform_widgets.dart';
 import 'globals.dart';
@@ -210,12 +209,14 @@ class PoiGuideImageWidget extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       child: ClipRRect(
         borderRadius: boxDecoration.borderRadius,
-        child: CachedNetworkImage(
-          imageUrl: imagePath,
+        child: FittedBox(
           fit: BoxFit.fill,
-          placeholder: (context, url) => CircularProgressIndicator(),
-          errorWidget: (context, url, error) =>
-              Icon(Icons.error_outlined, size: 100),
+          child: CachedNetworkImage(
+            imageUrl: imagePath,
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) =>
+                Icon(Icons.error_outlined, size: 100),
+          ),
         ),
       ),
     );

@@ -27,7 +27,7 @@ class UniformButtons {
     final String assetName = 'assets/images/settings_horizontal_lines.svg';
     return IconButton(icon: SvgPicture.asset(
         assetName,
-        color:enabled ? Color.fromRGBO(10, 132, 255, 1) : Colors.grey,
+        color:enabled ? Colors.black : Colors.grey,
         semanticsLabel: 'Label'
     ), onPressed: enabled ? onPressed : null);
   }

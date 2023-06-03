@@ -20,6 +20,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     List<MapPoi> _poisToGuide = [];
     int currentIdx = 0;
     int maxListenedIdx = 0;
+    ShowOptionalCategoriesState? _lastShowOptionalCategoriesState = null;
 
     MapPoi? getNextMapPoi() {
       if (currentIdx >= _poisToGuide.length)
@@ -118,21 +119,11 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       emit(PoisSearchingState());
     });
 
-
     on<ShowLoadingMorePoisEvent>((event, emit) {
       // start loading animation
       Globals.globalUserMap.setPoisScanningStatus(true);
       emit(LoadingMorePoisState());
     });
-
-    // on<ShowFullPoiInfoByIdxEvent>((event, emit){
-    //   if (maxListenedIdx < event.idx) {
-    //     maxListenedIdx = event.idx;
-    //   }
-    //     onGuideOnPoi(event.idx);
-    //     Globals.globalGuideAudioPlayerHandler.play();
-    //   emit(ShowPoiState(currentPoi: _poisToGuide[event.idx]));
-    // });
 
     on<ShowNextPoiInfoEvent>((event, emit){
       MapPoi? mapPoi = getNextMapPoi();
