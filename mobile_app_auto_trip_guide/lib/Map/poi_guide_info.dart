@@ -9,8 +9,8 @@ import 'globals.dart';
 class PoiGuide extends StatefulWidget {
   Poi poi;
   Widget? widgetOnPic;
-
-  PoiGuide({required this.poi, this.widgetOnPic});
+  Widget? preferencesButton;
+  PoiGuide({required this.poi, this.widgetOnPic, this.preferencesButton});
 
   @override
   _PoiGuideState createState() => _PoiGuideState();
@@ -94,15 +94,7 @@ class _PoiGuideState extends State<PoiGuide> {
                 alignment: Alignment.topRight,
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.6),
-                        // Black color with 50% opacity
-                        shape: BoxShape
-                            .circle, // Assuming you want a circular background
-                      ),
-                      child: UniformButtons.getGuidePreferencesButton(
-                          onPressed: () {})),
+                  child: widget.preferencesButton,
                 ),
               ),
               Align(
@@ -151,15 +143,7 @@ class _PoiGuideState extends State<PoiGuide> {
                 alignment: Alignment.topRight,
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
-                  child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.6),
-                        // Black color with 50% opacity
-                        shape: BoxShape
-                            .circle, // Assuming you want a circular background
-                      ),
-                      child: UniformButtons.getGuidePreferencesButton(
-                          onPressed: () {})),
+                  child: widget.preferencesButton
                 ),
               ),
               Align(

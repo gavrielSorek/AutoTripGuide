@@ -22,43 +22,12 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     int maxListenedIdx = 0;
     ShowOptionalCategoriesState? _lastShowOptionalCategoriesState = null;
 
-    MapPoi? getNextMapPoi() {
-      if (currentIdx >= _poisToGuide.length)
-        return null;
-      if (currentIdx >= maxListenedIdx) {
-        maxListenedIdx = currentIdx;
-        List<MapPoi> unGuidedPois = _poisToGuide.sublist(currentIdx, _poisToGuide.length);
-        unGuidedPois.sort(PersonalizeRecommendation.sortMapPoisByDist);
-        // Replace the original portion with the sorted sublist
-        _poisToGuide.replaceRange(currentIdx, _poisToGuide.length, unGuidedPois);
-      }
-      MapPoi nextPoi = _poisToGuide[currentIdx];
-      currentIdx++;
-      return nextPoi;
-    }
-
-    MapPoi? getPrevMapPoi() {
-      if (currentIdx - 2 < 0) // - 2 is the prev because current is the next
-        return null;
-      currentIdx--;
-      return _poisToGuide[currentIdx - 1];
-    }
-
-    void onGuideOnMapPoi(MapPoi currentMapPoi) {
-      Globals.globalGuideAudioPlayerHandler.clearPlayer();
-      Globals.appEvents.poiStartedPlaying(
-          currentMapPoi.poi.poiName!, currentMapPoi.poi.Categories, currentMapPoi.poi.id);
-      String poiIntro = PoisAttributesCalculator.getPoiIntro(currentMapPoi.poi);
-      Globals.globalGuideAudioPlayerHandler
-          .setTextToPlay(poiIntro + " " + currentMapPoi.poi.shortDesc!, 'en-US');
-      Globals.globalGuideAudioPlayerHandler.trackTitle = currentMapPoi.poi.poiName;
-      Globals.globalGuideAudioPlayerHandler.picUrl = currentMapPoi.poi.pic;
-
-
+    void initAudioSettings() {
       Globals.globalGuideAudioPlayerHandler.onPressNext = () {
-        if(Globals.globalUserMap.currentHighlightedPoi != null){
-          var poi =Globals.globalUserMap.currentHighlightedPoi;
-          Globals.appEvents.poiPlaybackSkipped(poi!.poi.poiName!, poi.poi.Categories, poi.poi.id);
+        if (Globals.globalUserMap.currentHighlightedPoi != null) {
+          var poi = Globals.globalUserMap.currentHighlightedPoi;
+          Globals.appEvents.poiPlaybackSkipped(
+              poi!.poi.poiName!, poi.poi.Categories, poi.poi.id);
         }
         Globals.globalGuideAudioPlayerHandler.stop();
         this.add(ShowNextPoiInfoEvent());
@@ -78,13 +47,13 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       };
 
       Globals.globalGuideAudioPlayerHandler.onPause = () {
-        if(Globals.globalUserMap.currentHighlightedPoi != null){
-          var poi =Globals.globalUserMap.currentHighlightedPoi;
-          Globals.appEvents.poiPlaybackPaused(poi!.poi.poiName!, poi.poi.Categories, poi.poi.id);
+        if (Globals.globalUserMap.currentHighlightedPoi != null) {
+          var poi = Globals.globalUserMap.currentHighlightedPoi;
+          Globals.appEvents.poiPlaybackPaused(
+              poi!.poi.poiName!, poi.poi.Categories, poi.poi.id);
         }
       };
-      Globals.globalGuideAudioPlayerHandler.onResume = () {
-      };
+      Globals.globalGuideAudioPlayerHandler.onResume = () {};
       Globals.globalGuideAudioPlayerHandler.onProgressChanged =
           (double progress) {
         // storyController.setProgressValue(progress);
@@ -96,7 +65,34 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           this.add(ShowNextPoiInfoEvent());
         });
       };
+    }
+    initAudioSettings();
 
+    MapPoi? getNextMapPoi() {
+      if (currentIdx >= _poisToGuide.length) return null;
+      if (currentIdx >= maxListenedIdx) {
+        maxListenedIdx = currentIdx;
+        List<MapPoi> unGuidedPois =
+            _poisToGuide.sublist(currentIdx, _poisToGuide.length);
+        unGuidedPois.sort(PersonalizeRecommendation.sortMapPoisByDist);
+        // Replace the original portion with the sorted sublist
+        _poisToGuide.replaceRange(
+            currentIdx, _poisToGuide.length, unGuidedPois);
+      }
+      MapPoi nextPoi = _poisToGuide[currentIdx];
+      currentIdx++;
+      return nextPoi;
+    }
+
+    MapPoi? getPrevMapPoi() {
+      if (currentIdx - 2 < 0) // - 2 is the prev because current is the next
+        return null;
+      currentIdx--;
+      return _poisToGuide[currentIdx - 1];
+    }
+
+
+    onGuideOnMapPoi(MapPoi currentMapPoi) {
       Globals.globalUserMap.highlightPoi(currentMapPoi);
       Globals.addGlobalVisitedPoi(VisitedPoi(
           poiName: currentMapPoi.poi.poiName,
@@ -107,14 +103,18 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
 
     on<AddPoisToGuideEvent>((event, emit) {
       _poisToGuide.addAll(event.poisToGuide);
-      // TODO ShowOptionalCategoriesState MUST pass value that obliges to load stories
-      if ((state is PoisSearchingState || state is ShowOptionalCategoriesState)) {
+      if (state is ShowOptionalCategoriesState) {
+        _lastShowOptionalCategoriesState = state as ShowOptionalCategoriesState;
+      }
+      if ((state is PoisSearchingState ||
+          (state is ShowOptionalCategoriesState && event.startGuide))) {
         this.add(ShowNextPoiInfoEvent());
       }
       Globals.globalUserMap.setPoisScanningStatus(false);
     });
 
     on<ShowSearchingPoisAnimationEvent>((event, emit) {
+      Globals.globalGuideAudioPlayerHandler.stop();
       // start loading animation
       Globals.globalUserMap.setPoisScanningStatus(true);
       emit(PoisSearchingState());
@@ -126,30 +126,27 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       emit(LoadingMorePoisState());
     });
 
-    on<ShowNextPoiInfoEvent>((event, emit){
+    on<ShowNextPoiInfoEvent>((event, emit) {
       MapPoi? mapPoi = getNextMapPoi();
       if (mapPoi != null) {
         onGuideOnMapPoi(mapPoi);
-        Globals.globalGuideAudioPlayerHandler.play();
         emit(ShowPoiState(currentPoi: mapPoi));
-      }
-      else {
+      } else {
         this.add(ShowLoadingMorePoisEvent());
       }
     });
 
-    on<ShowPrevPoiInfoEvent>((event, emit){
+    on<ShowPrevPoiInfoEvent>((event, emit) {
       MapPoi? mapPoi = getPrevMapPoi();
       if (mapPoi != null) {
         onGuideOnMapPoi(mapPoi);
-        Globals.globalGuideAudioPlayerHandler.play();
         emit(ShowPoiState(currentPoi: mapPoi));
       }
     });
 
-    on<playPoiEvent>((event, emit){
-      int index = _poisToGuide.indexWhere((mapPoi) =>
-      mapPoi.poi.id == event.mapPoi.poi.id);
+    on<playPoiEvent>((event, emit) {
+      int index = _poisToGuide
+          .indexWhere((mapPoi) => mapPoi.poi.id == event.mapPoi.poi.id);
       if (index != -1) {
         _poisToGuide.removeAt(index);
         if (index < maxListenedIdx) {
@@ -160,8 +157,22 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       currentIdx++;
       Globals.globalGuideAudioPlayerHandler.stop();
       onGuideOnMapPoi(event.mapPoi);
-      Globals.globalGuideAudioPlayerHandler.play();
       emit(ShowPoiState(currentPoi: event.mapPoi));
+    });
+
+    on<ShowLastOptionalCategories>((event, emit) {
+      if (_lastShowOptionalCategoriesState != null) {
+        Map<String, MapPoi> idToMapPoi = {};
+
+        for (MapPoi mapPoi in _poisToGuide) {
+          idToMapPoi[mapPoi.poi.id] = mapPoi;
+        }
+
+        this.add(ShowOptionalCategoriesEvent(
+            pois: idToMapPoi,
+            isCheckedCategory:
+                _lastShowOptionalCategoriesState!.isCheckedCategory));
+      }
     });
     // on<SetCurrentPoiEvent>((event, emit) {
     //   if (state is ShowStoriesState) {
@@ -297,9 +308,10 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           categoriesToMapPois[category]?.add(mapPoi);
         });
       });
-      Map<String, bool>isCheckedCategory = event.isCheckedCategory;
+      Map<String, bool> isCheckedCategory = event.isCheckedCategory;
 
-      if (isCheckedCategory.isEmpty) { // if not initialized
+      if (isCheckedCategory.isEmpty) {
+        // if not initialized
         categoriesToMapPois.keys.forEach((category) {
           isCheckedCategory[category] = false;
         });
@@ -308,7 +320,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           lastState: state is PoisSearchingState ? null : state,
           categoriesToPoisMap: categoriesToMapPois,
           isCheckedCategory: isCheckedCategory,
-          idToPoisMap: event.pois, onShowStory: (StoryItem value) {  }));
+          idToPoisMap: event.pois,
+          onShowStory: (StoryItem value) {}));
     });
 
     on<SetGuideState>((event, emit) {

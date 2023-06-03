@@ -50,6 +50,9 @@ class ShowOptionalCategoriesEvent extends GuideEvent {
   }) {}
 }
 
+class ShowLastOptionalCategories extends GuideEvent {
+}
+
 class SetGuideState extends GuideEvent {
   final GuideDialogState state;
 

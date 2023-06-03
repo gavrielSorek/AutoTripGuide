@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project/Map/poi_guide_info.dart';
+import 'package:final_project/Map/pois_attributes_calculator.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,39 +39,43 @@ class Guide {
       mapPoiClicked(Globals.globalAllPois[mapPoiId]!);
     });
 
-    storiesDialogBox = GuidDialogBox(
-        onRefreshFunc: () {
-          clearAllPois();
-          context.read<GuideBloc>().add(ShowSearchingPoisAnimationEvent());
-          Globals.globalUserMap.userMapState?.loadNewPois();
-        });
+    storiesDialogBox = GuidDialogBox(onRefreshFunc: () {
+      clearAllPois();
+      context.read<GuideBloc>().add(ShowSearchingPoisAnimationEvent());
+      Globals.globalUserMap.userMapState?.loadNewPois();
+    });
   }
 
   Future<void> mapPoiClicked(MapPoi mapPoi) async {
-    context
-        .read<GuideBloc>()
-        .add(playPoiEvent(mapPoi: mapPoi));
+    context.read<GuideBloc>().add(playPoiEvent(mapPoi: mapPoi));
   }
 
   void setPoisInQueue(List<Poi> pois) {
+    bool isFirstInQ = _alreadyInsertedPois.isEmpty;
     for (Poi poi in pois) {
-      if (Globals.globalAllPois.containsKey(poi.id) && !_alreadyInsertedPois.contains(poi.id)) {
+      if (Globals.globalAllPois.containsKey(poi.id) &&
+          !_alreadyInsertedPois.contains(poi.id)) {
         _queuedPoisToPlay.add(Globals.globalAllPois[poi.id]!);
         _alreadyInsertedPois.add(poi.id);
       }
     }
-    context.read<GuideBloc>().add(AddPoisToGuideEvent(
-        poisToGuide: _queuedPoisToPlay.toList(), startGuide: true));
+    if (_queuedPoisToPlay.isEmpty) return;
+    if (isFirstInQ) {
+      Map<String, MapPoi> idAndPoiMap = {};
+      for (MapPoi mapPoi in _queuedPoisToPlay) {
+        idAndPoiMap[mapPoi.poi.id] = mapPoi;
+      }
+      context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
+          pois: idAndPoiMap, isCheckedCategory: HashMap<String, bool>()));
+    } else {
+      context.read<GuideBloc>().add(AddPoisToGuideEvent(
+          poisToGuide: _queuedPoisToPlay.toList(), startGuide: true));
+    }
     _queuedPoisToPlay.clear();
   }
 
-  void setPoisToPlay(Map<String, MapPoi> mapPois) {
-    context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
-        pois: mapPois,
-        isCheckedCategory: HashMap<String, bool>()));
-  }
-
   void clearAllPois() {
+    _alreadyInsertedPois.clear();
     _queuedPoisToPlay.clear();
   }
 }
@@ -194,10 +199,31 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   }
 
   Widget buildPoiGuide(ShowPoiState state) {
+    // update the audio player with the relevant data of this poi
+    Globals.globalGuideAudioPlayerHandler.clearPlayer();
+    Globals.appEvents.poiStartedPlaying(state.currentPoi.poi.poiName!,
+        state.currentPoi.poi.Categories, state.currentPoi.poi.id);
+    String poiIntro = PoisAttributesCalculator.getPoiIntro(state.currentPoi.poi);
+    Globals.globalGuideAudioPlayerHandler.setTextToPlay(
+        poiIntro + " " + state.currentPoi.poi.shortDesc!, 'en-US');
+    Globals.globalGuideAudioPlayerHandler.trackTitle =
+        state.currentPoi.poi.poiName;
+    Globals.globalGuideAudioPlayerHandler.picUrl = state.currentPoi.poi.pic;
+    Globals.globalGuideAudioPlayerHandler.play();
+
     return PoiGuide(
       poi: state.currentPoi.poi,
       widgetOnPic:
           GuideAudioPlayer(audioHandler: Globals.globalGuideAudioPlayerHandler),
+      preferencesButton: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.6),
+            // Black color with 50% opacity
+            shape: BoxShape.circle, // Assuming you want a circular background
+          ),
+          child: UniformButtons.getGuidePreferencesButton(onPressed: () {
+            context.read<GuideBloc>().add(ShowLastOptionalCategories());
+          })),
     );
   }
 
@@ -231,8 +257,7 @@ class OptionalCategoriesSelection extends StatefulWidget {
   final dynamic onRefreshFunc;
 
   OptionalCategoriesSelection(
-      {required this.state,
-      required this.onRefreshFunc}) {}
+      {required this.state, required this.onRefreshFunc}) {}
 
   @override
   State<StatefulWidget> createState() {

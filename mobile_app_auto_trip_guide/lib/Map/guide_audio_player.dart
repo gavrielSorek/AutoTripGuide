@@ -47,6 +47,8 @@ class _GuideAudioPlayer extends State<GuideAudioPlayer> {
   }
 
   void updatePlayerButton() {
+    if (!mounted)
+      return;
     setState(() {
       playerIcon = icons[
           playerStatesList.indexOf(widget.audioHandler.ttsAudioPlayer.status)];
