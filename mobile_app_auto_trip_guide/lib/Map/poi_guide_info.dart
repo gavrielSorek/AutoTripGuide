@@ -9,6 +9,7 @@ import 'globals.dart';
 class PoiGuide extends StatefulWidget {
   Poi poi;
   Widget? widgetOnPic;
+
   PoiGuide({required this.poi, this.widgetOnPic});
 
   @override
@@ -80,7 +81,9 @@ class _PoiGuideState extends State<PoiGuide> {
     return Column(
       children: [
         Container(
-          height: MediaQuery.of(context).size.height * 0.5 * StretchingWidget.collapsedPercentFromAvailableSpace,
+          height: MediaQuery.of(context).size.height *
+              0.5 *
+              StretchingWidget.collapsedPercentFromAvailableSpace,
           child: Stack(
             children: [
               PoiGuideImageWidget(
@@ -173,6 +176,15 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    Globals.globalServerCommunication
+        .getPoiPreferences(widget.poi.id, Globals.globalUserInfoObj)
+        .then((value) {
+      if (mounted) {
+        setState(() {
+          poiPreference = value ?? 0;
+        });
+      }
+    });
     return Container(
       child: Row(
         children: [
