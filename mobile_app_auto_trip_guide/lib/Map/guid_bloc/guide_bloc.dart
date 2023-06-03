@@ -8,7 +8,6 @@ import '../../Adjusted Libs/story_view/story_view.dart';
 import '../../General Wigets/generals.dart';
 import '../globals.dart';
 import '../personalize_recommendation.dart';
-import '../pois_attributes_calculator.dart';
 import '../types.dart';
 
 part 'guide_event.dart';
@@ -90,7 +89,6 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       currentIdx--;
       return _poisToGuide[currentIdx - 1];
     }
-
 
     onGuideOnMapPoi(MapPoi currentMapPoi) {
       Globals.globalUserMap.highlightPoi(currentMapPoi);
@@ -174,119 +172,6 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
                 _lastShowOptionalCategoriesState!.isCheckedCategory));
       }
     });
-    // on<SetCurrentPoiEvent>((event, emit) {
-    //   if (state is ShowStoriesState) {
-    //     final state = this.state as ShowStoriesState;
-    //     Globals.globalGuideAudioPlayerHandler.clearPlayer();
-    //     state.controller.setProgressValue(0);
-    //     String poiId = event.storyItem.view.key
-    //         .toString()
-    //         .replaceAll(RegExp(r"<|>|\[|\]|'"), '');
-    //     MapPoi currentPoi = Globals.globalAllPois[poiId]!;
-    //     Globals.appEvents.poiStartedPlaying(currentPoi.poi.poiName!, currentPoi.poi.Categories, currentPoi.poi.id);
-    //     String poiIntro = PoisAttributesCalculator.getPoiIntro(currentPoi.poi);
-    //     Globals.globalGuideAudioPlayerHandler.setTextToPlay(
-    //         poiIntro + " " + currentPoi.poi.shortDesc!, 'en-US');
-    //     Globals.globalGuideAudioPlayerHandler.trackTitle =
-    //         currentPoi.poi.poiName;
-    //     Globals.globalGuideAudioPlayerHandler.picUrl = currentPoi.poi.pic;
-    //     Globals.globalGuideAudioPlayerHandler.play();
-    //     Globals.globalUserMap.highlightPoi(currentPoi);
-    //     Globals.addGlobalVisitedPoi(VisitedPoi(
-    //         poiName: currentPoi.poi.poiName,
-    //         id: currentPoi.poi.id,
-    //         time: Generals.getTime(),
-    //         pic: currentPoi.poi.pic));
-    //     emit(ShowStoriesState(
-    //         currentPoi: currentPoi,
-    //         adjustedStoryView: state.adjustedStoryView,
-    //         controller: state.controller,
-    //         lastShowOptionalCategoriesState:
-    //             state.lastShowOptionalCategoriesState));
-    //   }
-    // });
-
-    // on<ShowFullPoiInfoEvent>((event, emit) {
-    //   //emit(ShowPoiState(currentPoi: event.mapPoi));
-    // });
-
-    // on<ShowFullPoiInfoEvent>((event, emit) {
-    //   if (state is ShowStoriesState) {
-    //     Globals.globalGuideAudioPlayerHandler.pause();
-    //     final state = this.state as ShowStoriesState;
-    //     Globals.appEvents.poiExpanded(state.currentPoi!.poi.poiName ?? '', state.currentPoi!.poi.Categories, state.currentPoi!.poi.id);
-    //     emit(ShowPoiState(currentPoi: state.currentPoi!));
-    //   }
-    // });
-
-    // on<SetLoadedStoriesEvent>((event, emit) {
-    //   if (state is ShowPoiState) {
-    //     final state = this.state as ShowPoiState;
-    //     Globals.appEvents.poiCollapsed(state.currentPoi.poi.poiName ?? '', state.currentPoi.poi.Categories, state.currentPoi.poi.id);
-    //
-    //     emit(ShowStoriesState(
-    //         adjustedStoryView: event.adjustedStoryView,
-    //         controller: event.controller,
-    //         lastShowOptionalCategoriesState:
-    //             state.savedStoriesState.lastShowOptionalCategoriesState));
-    //   } else if (state is ShowOptionalCategoriesState) {
-    //     final state = this.state as ShowOptionalCategoriesState;
-    //     emit(ShowStoriesState(
-    //         adjustedStoryView: event.adjustedStoryView,
-    //         controller: event.controller,
-    //         lastShowOptionalCategoriesState: state));
-    //   }
-    // });
-
-    // on<playPoiEvent>((event, emit) {
-    //   Globals.globalGuideAudioPlayerHandler.stop();
-    //   Globals.globalUserMap.highlightPoi(event.mapPoi);
-    //   if (state is ShowStoriesState) {
-    //     final state = this.state as ShowStoriesState;
-    //     StoryItem requestedStoryItem = ScrolledText.textStory(
-    //         id: event.mapPoi.poi.id,
-    //         title: event.mapPoi.poi.poiName ?? 'No Name',
-    //         text: event.mapPoi.poi.shortDesc,
-    //         backgroundColor: Colors.white,
-    //         key: Key(event.mapPoi.poi.id),
-    //         // duration: Duration(seconds: double.infinity.toInt()))); // infinite
-    //         duration: Duration(hours: 100));
-    //
-    //     state.controller.setStoryViewToStoryItem(requestedStoryItem);
-    //     emit(ShowStoriesState(
-    //         adjustedStoryView: state.adjustedStoryView,
-    //         controller: state.controller,
-    //         lastShowOptionalCategoriesState:
-    //             state.lastShowOptionalCategoriesState));
-    //   } else if (event.storiesEvents != null) {
-    //     //create story of one story
-    //     StoryController controller = StoryController();
-    //     initAudioPlayerByController(controller);
-    //
-    //     Globals.globalUserMap.mapPoiActionStreamController.add(MapPoiAction(
-    //         color: PoiIconColor.grey,
-    //         action: PoiAction.add,
-    //         mapPoi: event.mapPoi));
-    //
-    //     final List<StoryItem> storyItems = [];
-    //     storyItems.add(ScrolledText.textStory(
-    //         id: event.mapPoi.poi.id,
-    //         title: event.mapPoi.poi.poiName ?? 'No Name',
-    //         text: event.mapPoi.poi.shortDesc,
-    //         backgroundColor: Colors.white,
-    //         key: Key(event.mapPoi.poi.id),
-    //         // duration: Duration(seconds: double.infinity.toInt()))); // infinite
-    //         duration: Duration(hours: 100)));
-    //
-    //     final AdjustedStoryView storyView =
-    //         createStoryView(controller, event.storiesEvents!, storyItems);
-    //
-    //     emit(ShowStoriesState(
-    //         adjustedStoryView: storyView,
-    //         controller: controller,
-    //         lastShowOptionalCategoriesState: null));
-    //   }
-    // });
 
     on<ShowOptionalCategoriesEvent>((event, emit) {
       // stop loading animation

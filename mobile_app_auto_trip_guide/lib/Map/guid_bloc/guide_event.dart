@@ -10,7 +10,6 @@ class ShowNextPoiInfoEvent extends GuideEvent {}
 
 class ShowPrevPoiInfoEvent extends GuideEvent {}
 
-
 class playPoiEvent extends GuideEvent {
   MapPoi mapPoi;
   playPoiEvent({required this.mapPoi}) {}
@@ -20,7 +19,6 @@ class AddPoisToGuideEvent extends GuideEvent{
   final List<MapPoi> poisToGuide;
   bool startGuide;
   AddPoisToGuideEvent({required this.poisToGuide, this.startGuide = false}) {}
-
 }
 
 class ShowFullPoiInfoEvent extends GuideEvent {
