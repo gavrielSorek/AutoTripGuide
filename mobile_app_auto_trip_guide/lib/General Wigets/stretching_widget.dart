@@ -50,27 +50,30 @@ class _StretchingWidgetState extends State<StretchingWidget> {
   @override
   Widget build(BuildContext context) {
     return Flexible(
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onVerticalDragUpdate: (DragUpdateDetails details) {
-          if (details.delta.dy > 0) {
-            // Swiped down
-            setState(() {
-              _isExpanded = false;
-            });
-          } else if (details.delta.dy < 0) {
-            // Swiped up
-            setState(() {
-              _isExpanded = true;
-            });
-          }
-        },
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: 500),
-          height: _isExpanded ? _expandedHeight : _collapsedHeight,
-          width: MediaQuery.of(context).size.width - 30,
-          decoration: StretchingWidget.boxDecoration,
-          child: _isExpanded ? widget.expendedChild : widget.collapsedChild,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: Constants.edgesDist),
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onVerticalDragUpdate: (DragUpdateDetails details) {
+            if (details.delta.dy > 0) {
+              // Swiped down
+              setState(() {
+                _isExpanded = false;
+              });
+            } else if (details.delta.dy < 0) {
+              // Swiped up
+              setState(() {
+                _isExpanded = true;
+              });
+            }
+          },
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 500),
+            height: _isExpanded ? _expandedHeight : _collapsedHeight,
+            width: MediaQuery.of(context).size.width - 30,
+            decoration: StretchingWidget.boxDecoration,
+            child: _isExpanded ? widget.expendedChild : widget.collapsedChild,
+          ),
         ),
       ),
     );
