@@ -30,7 +30,6 @@ class ShowOptionalCategoriesState extends GuideDialogState {
   final Map<String,MapPoi> idToPoisMap;
   final Map<String, bool> isCheckedCategory;
   final ValueChanged<StoryItem> onShowStory;
-  final dynamic onFinishedFunc;
 
   ShowOptionalCategoriesState({
     this.lastState,
@@ -38,6 +37,5 @@ class ShowOptionalCategoriesState extends GuideDialogState {
     required this.isCheckedCategory,
     required this.onShowStory,
     required this.idToPoisMap,
-    this.onFinishedFunc,
   }) {}
 }

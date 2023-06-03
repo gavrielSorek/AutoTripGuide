@@ -1,16 +1,12 @@
 import 'dart:collection';
 
 import 'package:bloc/bloc.dart';
-import 'package:final_project/Map/map.dart';
 import 'package:flutter/material.dart';
 import '../../Adjusted Libs/story_view/adjusted_story_view.dart';
 import '../../Adjusted Libs/story_view/story_controller.dart';
 import '../../Adjusted Libs/story_view/story_view.dart';
-import '../../Adjusted Libs/story_view/utils.dart';
 import '../../General Wigets/generals.dart';
-import '../../General Wigets/scrolled_text.dart';
 import '../globals.dart';
-import '../guide.dart';
 import '../personalize_recommendation.dart';
 import '../pois_attributes_calculator.dart';
 import '../types.dart';
@@ -21,20 +17,41 @@ part 'guide_state.dart';
 
 class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
   GuideBloc() : super(PoisSearchingState()) {
-
     List<MapPoi> _poisToGuide = [];
+    int currentIdx = 0;
+    int maxListenedIdx = 0;
 
+    MapPoi? getNextMapPoi() {
+      if (currentIdx >= _poisToGuide.length)
+        return null;
+      if (currentIdx >= maxListenedIdx) {
+        maxListenedIdx = currentIdx;
+        List<MapPoi> unGuidedPois = _poisToGuide.sublist(currentIdx, _poisToGuide.length);
+        unGuidedPois.sort(PersonalizeRecommendation.sortMapPoisByDist);
+        // Replace the original portion with the sorted sublist
+        _poisToGuide.replaceRange(currentIdx, _poisToGuide.length, unGuidedPois);
+      }
+      MapPoi nextPoi = _poisToGuide[currentIdx];
+      currentIdx++;
+      return nextPoi;
+    }
 
-    void onGuideOnPoi(int idx) {
-      Poi currentPoi = _poisToGuide[idx].poi;
+    MapPoi? getPrevMapPoi() {
+      if (currentIdx - 2 < 0) // - 2 is the prev because current is the next
+        return null;
+      currentIdx--;
+      return _poisToGuide[currentIdx - 1];
+    }
+
+    void onGuideOnMapPoi(MapPoi currentMapPoi) {
       Globals.globalGuideAudioPlayerHandler.clearPlayer();
       Globals.appEvents.poiStartedPlaying(
-          currentPoi.poiName!, currentPoi.Categories, currentPoi.id);
-      String poiIntro = PoisAttributesCalculator.getPoiIntro(currentPoi);
+          currentMapPoi.poi.poiName!, currentMapPoi.poi.Categories, currentMapPoi.poi.id);
+      String poiIntro = PoisAttributesCalculator.getPoiIntro(currentMapPoi.poi);
       Globals.globalGuideAudioPlayerHandler
-          .setTextToPlay(poiIntro + " " + currentPoi.shortDesc!, 'en-US');
-      Globals.globalGuideAudioPlayerHandler.trackTitle = currentPoi.poiName;
-      Globals.globalGuideAudioPlayerHandler.picUrl = currentPoi.pic;
+          .setTextToPlay(poiIntro + " " + currentMapPoi.poi.shortDesc!, 'en-US');
+      Globals.globalGuideAudioPlayerHandler.trackTitle = currentMapPoi.poi.poiName;
+      Globals.globalGuideAudioPlayerHandler.picUrl = currentMapPoi.poi.pic;
 
 
       Globals.globalGuideAudioPlayerHandler.onPressNext = () {
@@ -43,17 +60,12 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           Globals.appEvents.poiPlaybackSkipped(poi!.poi.poiName!, poi.poi.Categories, poi.poi.id);
         }
         Globals.globalGuideAudioPlayerHandler.stop();
-        if (_poisToGuide.length > idx + 1) {
-          this.add(ShowFullPoiInfoByIdxEvent(idx: idx + 1));
-        }
+        this.add(ShowNextPoiInfoEvent());
       };
 
       Globals.globalGuideAudioPlayerHandler.onPressPrev = () async {
         if (Globals.globalGuideAudioPlayerHandler.isAtBeginning) {
-          if (idx - 1 > 0) {
-            Globals.globalGuideAudioPlayerHandler.stop();
-            this.add(ShowFullPoiInfoByIdxEvent(idx: idx - 1));
-          }
+          this.add(ShowPrevPoiInfoEvent());
         } else {
           Globals.globalGuideAudioPlayerHandler.restartPlaying();
         }
@@ -61,9 +73,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
 
       Globals.globalGuideAudioPlayerHandler.onDoublePrev = () async {
         await Globals.globalGuideAudioPlayerHandler.stop();
-        if (idx - 1 > 0) {
-          this.add(ShowFullPoiInfoByIdxEvent(idx: idx - 1));
-        }
+        this.add(ShowPrevPoiInfoEvent());
       };
 
       Globals.globalGuideAudioPlayerHandler.onPause = () {
@@ -82,27 +92,23 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         Globals.globalGuideAudioPlayerHandler.stop();
         final int secondToWaitBetweenStories = 3;
         Future.delayed(Duration(seconds: secondToWaitBetweenStories), () {
-          if (_poisToGuide.length > idx + 1) {
-            this.add(ShowFullPoiInfoByIdxEvent(idx: idx + 1));
-          } else {
-            this.add(ShowSearchingPoisAnimationEvent());
-          }
+          this.add(ShowNextPoiInfoEvent());
         });
       };
 
-      Globals.globalUserMap.highlightPoi(_poisToGuide[idx]);
+      Globals.globalUserMap.highlightPoi(currentMapPoi);
       Globals.addGlobalVisitedPoi(VisitedPoi(
-          poiName: currentPoi.poiName,
-          id: currentPoi.id,
+          poiName: currentMapPoi.poi.poiName,
+          id: currentMapPoi.poi.id,
           time: Generals.getTime(),
-          pic: currentPoi.pic));
+          pic: currentMapPoi.poi.pic));
     }
 
     on<AddPoisToGuideEvent>((event, emit) {
       _poisToGuide.addAll(event.poisToGuide);
       // TODO ShowOptionalCategoriesState MUST pass value that obliges to load stories
-      if ((state is PoisSearchingState || state is ShowOptionalCategoriesState) && !_poisToGuide.isEmpty) {
-        this.add(ShowFullPoiInfoByIdxEvent(idx: 0));
+      if ((state is PoisSearchingState || state is ShowOptionalCategoriesState)) {
+        this.add(ShowNextPoiInfoEvent());
       }
     });
 
@@ -119,96 +125,53 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       emit(LoadingMorePoisState());
     });
 
+    // on<ShowFullPoiInfoByIdxEvent>((event, emit){
+    //   if (maxListenedIdx < event.idx) {
+    //     maxListenedIdx = event.idx;
+    //   }
+    //     onGuideOnPoi(event.idx);
+    //     Globals.globalGuideAudioPlayerHandler.play();
+    //   emit(ShowPoiState(currentPoi: _poisToGuide[event.idx]));
+    // });
 
-    void initAudioPlayerByController(StoryController storyController) {
-      Globals.globalGuideAudioPlayerHandler.onPressNext = () {
-        if(Globals.globalUserMap.currentHighlightedPoi != null){
-          var poi =Globals.globalUserMap.currentHighlightedPoi;
-          Globals.appEvents.poiPlaybackSkipped(poi!.poi.poiName!, poi.poi.Categories, poi.poi.id);
-        }
-        Globals.globalGuideAudioPlayerHandler.stop();
-        storyController.pause();
-        storyController.next();
-      };
-      Globals.globalGuideAudioPlayerHandler.onPressPrev = () async {
-        if (Globals.globalGuideAudioPlayerHandler.isAtBeginning) {
-          await Globals.globalGuideAudioPlayerHandler.stop();
-          storyController.previous();
-        } else {
-          Globals.globalGuideAudioPlayerHandler.restartPlaying();
-        }
-      };
-
-      Globals.globalGuideAudioPlayerHandler.onDoublePrev = () async {
-        await Globals.globalGuideAudioPlayerHandler.stop();
-        storyController.previous();
-      };
-
-      Globals.globalGuideAudioPlayerHandler.onPause = () {
-        if(Globals.globalUserMap.currentHighlightedPoi != null){
-          var poi =Globals.globalUserMap.currentHighlightedPoi;
-          Globals.appEvents.poiPlaybackPaused(poi!.poi.poiName!, poi.poi.Categories, poi.poi.id);
-        }
-        storyController.pause();
-      };
-      Globals.globalGuideAudioPlayerHandler.onResume = () {
-        storyController.play();
-      };
-      Globals.globalGuideAudioPlayerHandler.onProgressChanged =
-          (double progress) {
-        storyController.setProgressValue(progress);
-      };
-      Globals.globalGuideAudioPlayerHandler.onPlayerFinishedFunc = () {
-        final int secondToWaitBetweenStories = 3;
-        Future.delayed(Duration(seconds: secondToWaitBetweenStories), () {
-          storyController.next();
-        });
-      };
-    }
-
-    on<SetStoriesListEvent>((event, emit) {
-      final ShowOptionalCategoriesState lastShowOptionalCategoriesState;
-      if (state is ShowOptionalCategoriesState) {
-        lastShowOptionalCategoriesState = state as ShowOptionalCategoriesState;
-      } else {
-        return;
+    on<ShowNextPoiInfoEvent>((event, emit){
+      MapPoi? mapPoi = getNextMapPoi();
+      if (mapPoi != null) {
+        onGuideOnMapPoi(mapPoi);
+        Globals.globalGuideAudioPlayerHandler.play();
+        emit(ShowPoiState(currentPoi: mapPoi));
       }
-
-      StoryController controller = StoryController();
-      initAudioPlayerByController(controller);
-
-      List<MapPoi> poisToPlay = List.from(event.poisToPlay.values);
-      for (MapPoi poi in poisToPlay) {
-        Globals.globalUserMap.mapPoiActionStreamController.add(MapPoiAction(
-            color: PoiIconColor.grey, action: PoiAction.add, mapPoi: poi));
+      else {
+        this.add(ShowLoadingMorePoisEvent());
       }
-
-      // sorting the pois
-      poisToPlay.sort(PersonalizeRecommendation.sortMapPoisByWeightedScore);
-
-      final List<StoryItem> storyItems = [];
-      poisToPlay.forEach((mapPoi) {
-        storyItems.add(ScrolledText.textStory(
-            id: mapPoi.poi.id,
-            title: mapPoi.poi.poiName ?? 'No Name',
-            text: mapPoi.poi.shortDesc,
-            backgroundColor: Colors.white,
-            key: Key(mapPoi.poi.id),
-            // duration: Duration(seconds: double.infinity.toInt()))); // infinite
-            duration: Duration(hours: 100))); // infinite
-      });
-
-      emit(ShowStoriesState(
-          adjustedStoryView: AdjustedStoryView(maxItemsPerStory: 1, onComplete: () {  }, onVerticalSwipeComplete: (Direction? direction ) {  }, onStoryShow: (StoryItem value) {  }, progressPosition: ProgressPosition.bottom, repeat: false, controller: StoryController(), storyItems: [],),
-          controller: controller,
-          lastShowOptionalCategoriesState: lastShowOptionalCategoriesState));
     });
 
-    on<ShowFullPoiInfoByIdxEvent>((event, emit){
-      onGuideOnPoi(event.idx);
+    on<ShowPrevPoiInfoEvent>((event, emit){
+      MapPoi? mapPoi = getPrevMapPoi();
+      if (mapPoi != null) {
+        onGuideOnMapPoi(mapPoi);
+        Globals.globalGuideAudioPlayerHandler.play();
+        emit(ShowPoiState(currentPoi: mapPoi));
+      }
+    });
+
+    on<playPoiEvent>((event, emit){
+      int index = _poisToGuide.indexWhere((mapPoi) =>
+      mapPoi.poi.id == event.mapPoi.poi.id);
+      if (index != -1) {
+        _poisToGuide.removeAt(index);
+        if (index < maxListenedIdx) {
+          maxListenedIdx--;
+        }
+      }
+      _poisToGuide.insert(currentIdx, event.mapPoi);
+      currentIdx++;
+      Globals.globalGuideAudioPlayerHandler.stop();
+      onGuideOnMapPoi(event.mapPoi);
       Globals.globalGuideAudioPlayerHandler.play();
-      emit(ShowPoiState(currentPoi: _poisToGuide[event.idx]));
-    });    // on<SetCurrentPoiEvent>((event, emit) {
+      emit(ShowPoiState(currentPoi: event.mapPoi));
+    });
+    // on<SetCurrentPoiEvent>((event, emit) {
     //   if (state is ShowStoriesState) {
     //     final state = this.state as ShowStoriesState;
     //     Globals.globalGuideAudioPlayerHandler.clearPlayer();
@@ -353,8 +316,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           lastState: state is PoisSearchingState ? null : state,
           categoriesToPoisMap: categoriesToMapPois,
           isCheckedCategory: isCheckedCategory,
-          idToPoisMap: event.pois,
-          onFinishedFunc: event.storiesEvents.onStoriesFinished, onShowStory: (StoryItem value) {  }));
+          idToPoisMap: event.pois, onShowStory: (StoryItem value) {  }));
     });
 
     on<SetGuideState>((event, emit) {

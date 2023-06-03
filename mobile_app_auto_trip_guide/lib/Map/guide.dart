@@ -25,14 +25,6 @@ class Constants {
   static const double sidesMarginOfButtons = 10;
 }
 
-// To organize this code this class is separated, its events holder
-class GuideEvents {
-  BuildContext context;
-  dynamic onStoriesFinished;
-
-  GuideEvents({required this.context, required this.onStoriesFinished});
-}
-
 class Guide {
   BuildContext context;
   GuideData guideData;
@@ -40,42 +32,25 @@ class Guide {
   Map<String, MapPoi> _poisToPlay = HashMap<String, MapPoi>();
   Map<String, MapPoi> _queuedPoisToPlay = HashMap<String, MapPoi>();
   late GuidDialogBox storiesDialogBox;
-  late GuideEvents storiesEvent;
 
   Guide(this.context, this.guideData) {
     Stream stream = Globals.globalClickedPoiStream.stream;
     stream.listen((mapPoiId) {
       mapPoiClicked(Globals.globalAllPois[mapPoiId]!);
     });
-    storiesEvent = GuideEvents(
-        context: context,
-        onStoriesFinished: () {
-          if (_queuedPoisToPlay.isEmpty) return;
-          context.read<GuideBloc>().add(ShowLoadingMorePoisEvent());
-
-          Future.delayed(Duration(seconds: 3)).then((value) {
-            _poisToPlay.clear();
-            _poisToPlay.addAll(_queuedPoisToPlay);
-            _queuedPoisToPlay.clear();
-            if (!_poisToPlay.isEmpty) {
-              setPoisToPlay(_poisToPlay);
-            }
-          });
-        });
 
     storiesDialogBox = GuidDialogBox(
         onRefreshFunc: () {
           clearAllPois();
           context.read<GuideBloc>().add(ShowSearchingPoisAnimationEvent());
           Globals.globalUserMap.userMapState?.loadNewPois();
-        },
-        storiesEvents: storiesEvent);
+        });
   }
 
   Future<void> mapPoiClicked(MapPoi mapPoi) async {
     context
         .read<GuideBloc>()
-        .add(playPoiEvent(mapPoi: mapPoi, storiesEvents: storiesEvent));
+        .add(playPoiEvent(mapPoi: mapPoi));
   }
 
   void setPoisInQueue(List<Poi> pois) {
@@ -97,7 +72,6 @@ class Guide {
   void setPoisToPlay(Map<String, MapPoi> mapPois) {
     context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
         pois: mapPois,
-        storiesEvents: storiesEvent,
         isCheckedCategory: HashMap<String, bool>()));
   }
 
@@ -109,9 +83,8 @@ class Guide {
 
 class GuidDialogBox extends StatefulWidget {
   final dynamic onRefreshFunc;
-  final GuideEvents storiesEvents;
 
-  GuidDialogBox({required this.onRefreshFunc, required this.storiesEvents}) {}
+  GuidDialogBox({required this.onRefreshFunc}) {}
 
   @override
   State<StatefulWidget> createState() {
@@ -125,7 +98,8 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   @override
   void didChangeDependencies() {
     Globals.globalWidgetsSizes.poiGuideBoxTotalHeight =
-        MediaQuery.of(context).size.height * StretchingWidget.collapsedPercentFromAvailableSpace;
+        MediaQuery.of(context).size.height *
+            StretchingWidget.collapsedPercentFromAvailableSpace;
     super.didChangeDependencies();
   }
 
@@ -222,7 +196,6 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
     final showOptionalCategoriesState = state as ShowOptionalCategoriesState;
     return OptionalCategoriesSelection(
         state: showOptionalCategoriesState,
-        storiesEvents: widget.storiesEvents,
         onRefreshFunc: widget.onRefreshFunc);
   }
 
@@ -262,11 +235,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
 class OptionalCategoriesSelection extends StatefulWidget {
   final ShowOptionalCategoriesState state;
   final dynamic onRefreshFunc;
-  final GuideEvents storiesEvents;
 
   OptionalCategoriesSelection(
       {required this.state,
-      required this.storiesEvents,
       required this.onRefreshFunc}) {}
 
   @override
@@ -408,10 +379,10 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
             key: (item) => item.poi.id,
             value: (item) => item);
         if (filteredPois.length > 0) {
-          context.read<GuideBloc>().add(AddPoisToGuideEvent(poisToGuide:filteredMapPois.values.toList()));
+          context.read<GuideBloc>().add(AddPoisToGuideEvent(
+              poisToGuide: filteredMapPois.values.toList(), startGuide: true));
         }
       },
-
       onCountDownFinished: () {
         Set<MapPoi> filteredPois = Set();
         widget.state.isCheckedCategory.forEach((key, value) {

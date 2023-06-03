@@ -6,29 +6,20 @@ class ShowSearchingPoisAnimationEvent extends GuideEvent {}
 
 class ShowLoadingMorePoisEvent extends GuideEvent {}
 
-class SetStoriesListEvent extends GuideEvent {
-  Map<String, MapPoi> poisToPlay;
-  final GuideEvents storiesEvents;
+class ShowNextPoiInfoEvent extends GuideEvent {}
 
-  SetStoriesListEvent(
-      {required this.poisToPlay, required this.storiesEvents}) {}
-}
+class ShowPrevPoiInfoEvent extends GuideEvent {}
 
-class SetCurrentPoiEvent extends GuideEvent {
-  StoryItem storyItem;
-
-  SetCurrentPoiEvent({required this.storyItem}) {}
-}
 
 class playPoiEvent extends GuideEvent {
   MapPoi mapPoi;
-  GuideEvents? storiesEvents;
-  playPoiEvent({required this.mapPoi, this.storiesEvents}) {}
+  playPoiEvent({required this.mapPoi}) {}
 }
 
 class AddPoisToGuideEvent extends GuideEvent{
   final List<MapPoi> poisToGuide;
-  AddPoisToGuideEvent({required this.poisToGuide}) {}
+  bool startGuide;
+  AddPoisToGuideEvent({required this.poisToGuide, this.startGuide = false}) {}
 
 }
 
@@ -51,12 +42,10 @@ class SetLoadedStoriesEvent extends GuideEvent {
 
 class ShowOptionalCategoriesEvent extends GuideEvent {
   final Map<String, MapPoi> pois;
-  final GuideEvents storiesEvents;
   final Map<String, bool> isCheckedCategory;
 
   ShowOptionalCategoriesEvent({
     required this.pois,
-    required this.storiesEvents,
     required this.isCheckedCategory,
   }) {}
 }
