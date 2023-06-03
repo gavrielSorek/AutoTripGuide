@@ -52,6 +52,8 @@ class BackgroundAudioHandler extends BaseAudioHandler
 
   get onPressPrev => _onPressPrev;
 
+  get onDoublePrev => _onDoublePrev;
+
   set onDoublePrev(dynamic onDoublePrev) {
     _onDoublePrev = onDoublePrev;
   }
@@ -90,6 +92,12 @@ class BackgroundAudioHandler extends BaseAudioHandler
 
   set onPlay(dynamic onPlay) {
     ttsAudioPlayer.onPlay = onPlay;
+  }
+
+  get onStop => ttsAudioPlayer.onStop;
+
+  set onStop(dynamic onStop) {
+    ttsAudioPlayer.onStop = onStop;
   }
 
   get speed => ttsAudioPlayer.speed;
@@ -169,183 +177,4 @@ class BackgroundAudioHandler extends BaseAudioHandler
   void setTextToPlay(String text, String language) {
     ttsAudioPlayer.setTextToPlay(text, language);
   }
-}
-
-class GuideAudioPlayerUI extends StatefulWidget {
-  late final BackgroundAudioHandler _audioHandler;
-
-  GuideAudioPlayerUI(BackgroundAudioHandler audioHandler) {
-    _audioHandler = audioHandler;
-  }
-
-  @override
-  State<StatefulWidget> createState() {
-    return _GuideAudioPlayerUIState();
-  }
-}
-
-class _GuideAudioPlayerUIState extends State<GuideAudioPlayerUI> {
-  final playerStatesList = List.of(TtsState.values);
-  bool _isPlayerButtonDisabled = false;
-  List<Icon> icons = [
-    Icon(Icons.pause),
-    Icon(Icons.play_arrow),
-    Icon(Icons.play_arrow),
-    Icon(Icons.pause)
-  ]; //in the length of TtsState
-  Icon playerIcon = Icon(Icons.play_arrow);
-
-  @override
-  void initState() {
-    dynamic savedOnPause = widget._audioHandler.onPause;
-    widget._audioHandler.onPause = () {
-      updatePlayerButton();
-      savedOnPause != null ? savedOnPause() : null;
-    };
-
-    dynamic savedOnResume = widget._audioHandler.onResume;
-    widget._audioHandler.onResume = () {
-      updatePlayerButton();
-      savedOnResume != null ? savedOnResume() : null;
-    };
-
-    dynamic savedOnPlay = widget._audioHandler.onPlay;
-    widget._audioHandler.onPlay = () {
-      updatePlayerButton();
-      savedOnPlay != null ? savedOnPlay() : null;
-    };
-    super.initState();
-  }
-
-  void updatePlayerButton() {
-    setState(() {
-      playerIcon = icons[
-          playerStatesList.indexOf(widget._audioHandler.ttsAudioPlayer.status)];
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Material(child: _buildPlayer()),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPlayer() => Container(
-        width: double.infinity,
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Spacer(),
-          Container(
-              width: 47,
-              height: 47,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.25),
-                      offset: Offset(0, 2),
-                      blurRadius: 10)
-                ],
-                color: Color(0xff0A84FF),
-              ),
-              child: GestureDetector(
-                onDoubleTap: () {
-                  if (widget._audioHandler._onDoublePrev != null) {
-                    widget._audioHandler._onDoublePrev();
-                  }
-                },
-                child: IconButton(
-                  onPressed: () {
-                    if (widget._audioHandler._onPressPrev != null) {
-                      widget._audioHandler._onPressPrev();
-                    }
-                  },
-                  icon: SvgPicture.asset(
-                    'assets/images/double-chevron-left-svgrepo-com.svg',
-                    width: 22,
-                    height: 22,
-                    color: Colors.white,
-                  ),
-                  iconSize: 35,
-                  color: Colors.white,
-                ),
-              )),
-          Spacer(),
-          Container(
-              width: 117,
-              height: 47,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                  bottomLeft: Radius.circular(24),
-                  bottomRight: Radius.circular(24),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.25),
-                      offset: Offset(0, 2),
-                      blurRadius: 10)
-                ],
-                color: Color(0xff0A84FF),
-              ),
-              child: IconButton(
-                  color: Colors.white,
-                  onPressed: _isPlayerButtonDisabled
-                      ? null
-                      : () {
-                          if (widget._audioHandler.isStopped ||
-                              widget._audioHandler.isPaused) {
-                            setState(() {
-                              widget._audioHandler.play();
-                            });
-                          } else {
-                            setState(() {
-                              widget._audioHandler.pause();
-                            });
-                          }
-                        },
-                  icon: playerIcon,
-                  iconSize: 35)),
-          Spacer(),
-          Container(
-            width: 47,
-            height: 47,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                    color: Color.fromRGBO(0, 0, 0, 0.25),
-                    offset: Offset(0, 2),
-                    blurRadius: 10)
-              ],
-              color: Color(0xff0A84FF),
-            ),
-            child: IconButton(
-              onPressed: () {
-                if (widget._audioHandler._onPressNext != null) {
-                  widget._audioHandler._onPressNext();
-                }
-              },
-              icon: SvgPicture.asset(
-                'assets/images/double-right-chevron-svgrepo-com.svg',
-                width: 22,
-                height: 22,
-                color: Colors.white,
-              ),
-              iconSize: 35,
-              color: Colors.white,
-            ),
-          ),
-          Spacer()
-        ]),
-      );
 }

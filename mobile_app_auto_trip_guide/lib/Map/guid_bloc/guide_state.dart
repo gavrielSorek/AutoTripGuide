@@ -20,9 +20,8 @@ class ShowStoriesState extends GuideDialogState {
 }
 
 class ShowPoiState extends GuideDialogState {
-  final ShowStoriesState savedStoriesState;
   final MapPoi currentPoi;
-  ShowPoiState({required this.savedStoriesState, required this.currentPoi}) {}
+  ShowPoiState({required this.currentPoi}) {}
 }
 
 class ShowOptionalCategoriesState extends GuideDialogState {

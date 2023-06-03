@@ -432,7 +432,7 @@ class _UserMapState extends State<UserMap>
       final padding = 80;
       final userPixelDistFromHighlightedPoi = min(
               (MediaQuery.of(context).size.height -
-                      Globals.globalWidgetsSizes.dialogBoxTotalHeight) /
+                      Globals.globalWidgetsSizes.poiGuideBoxTotalHeight) /
                   2,
               MediaQuery.of(context).size.width / 2) -
           padding;
@@ -591,13 +591,13 @@ class _UserMapState extends State<UserMap>
               .locationMarkerInfo
               .latLng
               .longitude,
-          latPerPx * (Globals.globalWidgetsSizes.dialogBoxTotalHeight / 4.5),
+          latPerPx * (Globals.globalWidgetsSizes.poiGuideBoxTotalHeight / 5),
           (270 - userIconHeading));
     } else {
       return PoisAttributesCalculator.getPointAtAngle(
           widget.userLocation.latitude,
           widget.userLocation.longitude,
-          latPerPx * (Globals.globalWidgetsSizes.dialogBoxTotalHeight / 4.5),
+          latPerPx * (Globals.globalWidgetsSizes.poiGuideBoxTotalHeight / 5),
           (270 - userIconHeading));
     }
   }
@@ -790,18 +790,7 @@ class _UserMapState extends State<UserMap>
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              PoiGuide(
-                widgetOnPic: GuideAudioPlayer(audioHandler: Globals.globalGuideAudioPlayerHandler,),
-                poi: Poi(
-                    id: '',
-                    latitude: 38,
-                    longitude: 38,
-                    Categories: [],
-                    shortDesc: 'HIIIIIIII',
-                    poiName: 'Title',
-                    pic:
-                        'https://www.shutterstock.com/image-photo/mountains-under-mist-morning-amazing-260nw-1725825019.jpg'),
-              )
+              guideTool.storiesDialogBox
             ],
           ))
         ],

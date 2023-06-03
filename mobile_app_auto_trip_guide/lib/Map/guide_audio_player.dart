@@ -66,12 +66,19 @@ class _GuideAudioPlayer extends State<GuideAudioPlayer> {
           ),
           child: GestureDetector(
             onDoubleTap: () {
-              if (widget.audioHandler.onPressPrev != null) {
-                widget.audioHandler.onPressPrev();
+              // the audioHandler have no other logic then just hold onDoublePrev
+              if (widget.audioHandler.onDoublePrev != null) {
+                widget.audioHandler.onDoublePrev();
+                updatePlayerButton();
               }
             },
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                if (widget.audioHandler.onPressPrev != null) {
+                  widget.audioHandler.onPressPrev();
+                  updatePlayerButton();
+                }
+              },
               icon: SvgPicture.asset(
                 'assets/images/double-chevron-left-svgrepo-com.svg',
                 width: 22,
@@ -98,14 +105,12 @@ class _GuideAudioPlayer extends State<GuideAudioPlayer> {
                   : () {
                       if (widget.audioHandler.isStopped ||
                           widget.audioHandler.isPaused) {
-                        setState(() {
-                          widget.audioHandler.play();
-                        });
+                        widget.audioHandler.play();
+
                       } else {
-                        setState(() {
-                          widget.audioHandler.pause();
-                        });
+                        widget.audioHandler.pause();
                       }
+                      updatePlayerButton();
                     },
               icon: playerIcon,
               iconSize: 35),
@@ -120,6 +125,7 @@ class _GuideAudioPlayer extends State<GuideAudioPlayer> {
             onPressed: () {
               if (widget.audioHandler.onPressNext != null) {
                 widget.audioHandler.onPressNext();
+                updatePlayerButton();
               }
             },
             icon: SvgPicture.asset(

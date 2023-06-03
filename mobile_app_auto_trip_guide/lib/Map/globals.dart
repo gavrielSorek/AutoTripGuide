@@ -173,11 +173,11 @@ class Globals {
 class Sizes {
   double _dialogBoxTotalHeight = 0;
 
-  double get dialogBoxTotalHeight {
+  double get poiGuideBoxTotalHeight {
     return this._dialogBoxTotalHeight;
   }
 
-  void set dialogBoxTotalHeight(double dialogBoxHeight) {
+  void set poiGuideBoxTotalHeight(double dialogBoxHeight) {
     _dialogBoxTotalHeight = dialogBoxHeight;
   }
 }

@@ -13,7 +13,7 @@ class TtsAudioPlayer {
   int _textLength = 0;
   dynamic _onFinishedFunc = null;
   dynamic _onProgress = null;
-  dynamic _onPlay = null, _onPause = null, _onResume = null;
+  dynamic _onPlay = null, _onPause = null, _onResume = null, _onStop = null;
   String? _language;
   double _volume = 1;
   double _pitch = 1.0;
@@ -68,6 +68,12 @@ class TtsAudioPlayer {
     _onPlay = onPlay;
   }
 
+  get onStop => _onStop;
+  set onStop(dynamic onStop) {
+    _onStop = onStop;
+  }
+
+
   get onPause => _onPause;
   set onPause(dynamic onPause) {
     _onPause = onPause;
@@ -105,13 +111,13 @@ class TtsAudioPlayer {
     await flutterTts.setSpeechRate(_rate);
     await flutterTts.setPitch(_pitch);
 
-    flutterTts.setStartHandler(() {
-      print("Playing");
-      _ttsState = TtsState.playing;
-      if (_onPlay != null) {
-        _onPlay();
-      }
-    });
+    // flutterTts.setStartHandler(() {
+    //   print("Playing");
+    //   _ttsState = TtsState.playing;
+    //   if (_onPlay != null) {
+    //     _onPlay();
+    //   }
+    // });
 
     if (isAndroid) {
       flutterTts.setInitHandler(() {
@@ -193,13 +199,22 @@ class TtsAudioPlayer {
     });
   }
 
+  void _onPlaying() {
+      print("Playing");
+      _ttsState = TtsState.playing;
+      if (_onPlay != null) {
+        _onPlay();
+      }
+  }
   Future<void> playAudio() async {
     _periodicProgressTimer?.cancel();
+    _onPlaying();
     await flutterTts.setLanguage(_language ?? 'en-GB');
     await flutterTts.speak(_allTextToPlay);
   }
 
   Future<void> resumeAudio() async {
+    _ttsState = TtsState.playing;
     await flutterTts.speak(_allTextToPlay);
   }
 
@@ -237,9 +252,13 @@ class TtsAudioPlayer {
   Future stopAudio() async {
     await flutterTts.stop();
     _ttsState = TtsState.stopped;
+    if (_onStop != null) {
+      _onStop();
+    }
   }
 
   Future pauseAudio() async {
+    _ttsState = TtsState.paused;
     await flutterTts.pause();
   }
 }

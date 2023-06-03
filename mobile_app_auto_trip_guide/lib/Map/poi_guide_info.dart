@@ -97,7 +97,7 @@ class _PoiGuideState extends State<PoiGuide> {
         ),
         poiScrolledText,
         BottomBarWidget(
-          poi: Poi(id: 'a', latitude: 38, longitude: 38, Categories: []),
+          poi: widget.poi,
         )
       ],
     );
@@ -124,7 +124,7 @@ class _PoiGuideState extends State<PoiGuide> {
         ),
         poiScrolledText,
         BottomBarWidget(
-          poi: Poi(id: 'a', latitude: 38, longitude: 38, Categories: []),
+          poi: widget.poi,
         )
       ],
     );
