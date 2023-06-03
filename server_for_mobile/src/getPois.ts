@@ -19,7 +19,7 @@ export async function getPois(lat:number, long:number, distance:number){
     // for each place category
     for (const poi_type of poi_types) {
       await getNearbyPois(lat, long, distance, poi_type).then((pois_list) => {
-        for (let poi of pois_list) {
+        for (const poi of pois_list) {
           // if this poi is already in the set, it won't be added
           const found_poi = Array.from(pois_set).find(place => place._poiName === poi._poiName);
           if (found_poi) {
@@ -31,9 +31,9 @@ export async function getPois(lat:number, long:number, distance:number){
     }
     const new_pois_list: Poi[] = [...pois_set]
     // in this step we will fetch from chat/wiki
-    const promises = new_pois_list.map((poi : any) =>  gptPlaceInfo(poi._poiName, 128).then(desc =>{
+    const promises = new_pois_list.map((poi : Poi) =>  gptPlaceInfo(poi._poiName,poi._country, 128).then(desc =>{
       if(desc !== undefined){
-        poi._shortDesc = `[chatGPT] ${desc}`;
+        poi._shortDesc = `[chatGPT-v4] ${desc}`;
         poi._source = Sources.CHAT_GPT
       }
     }));

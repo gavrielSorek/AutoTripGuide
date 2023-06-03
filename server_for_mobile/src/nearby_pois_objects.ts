@@ -12,14 +12,14 @@ function isEnglish(result: any): boolean {
 }
 
 
-export async function getNearbyPois(latitude: number, longitude: number, radius: number, type: string = ""): Promise<Poi[]> {
+export async function getNearbyPois(latitude: number, longitude: number, radius: number, type: string): Promise<Poi[]> {
     console.log('searching POIS in google for type '  + type , latitude, longitude, radius);
     const API_KEY = process.env.GM_API_KEY; //  'AIzaSyD4sN0b5ki-gefxB_7tNIpNR5b8YQoz-sk' // process.env.GM_API_KEY;
     const response = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', {
         params: {
             location: `${latitude},${longitude}`,
             radius: radius,
-            key: API_KEY,
+            key: 'AIzaSyAO11FomILrsrAlP4XJloA0huZUtXWNvvc',
             type: type,
             language: "en"
         }
@@ -29,17 +29,13 @@ export async function getNearbyPois(latitude: number, longitude: number, radius:
     for (const place of places) {
         const poi = new Poi(place.name, place.geometry.location.lat, place.geometry.location.lng)
         poi._pic = place.photos?.length ? place.photos[0].photo_reference : ''
+        poi._googleInfo = { _avgRating: place.rating, _numReviews: place.user_ratings_total, _placeId: place.place_id}
         poi._Categories = []
-        let categories_set = new Set<string>();
-        // var not_interesting = 0
+        const categories_set = new Set<string>();
         for (let c of place.types) {
             let category = getPoiCategory(c)
-            // if (category == "-1") {not_interesting = 1}
-            // else if (category != "1" && category != "-1") { categories_set.add(category) }
             if (category != "1") { categories_set.add(category) }
         }
-        // if the poi doen't interesting, it won't be added
-        // if (not_interesting == 1) {continue;}
         poi._Categories = [...categories_set]
         poi._country = place.vicinity
         pois_list.push(poi)
