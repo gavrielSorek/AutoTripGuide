@@ -105,6 +105,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         _lastShowOptionalCategoriesState = state as ShowOptionalCategoriesState;
       }
       if ((state is PoisSearchingState ||
+          state is LoadingMorePoisState ||
           (state is ShowOptionalCategoriesState && event.startGuide))) {
         this.add(ShowNextPoiInfoEvent());
       }
@@ -147,8 +148,11 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           .indexWhere((mapPoi) => mapPoi.poi.id == event.mapPoi.poi.id);
       if (index != -1) {
         _poisToGuide.removeAt(index);
-        if (index < maxListenedIdx) {
+        if (index <= maxListenedIdx) {
           maxListenedIdx--;
+        }
+        if (index < currentIdx) {
+          currentIdx--;
         }
       }
       _poisToGuide.insert(currentIdx, event.mapPoi);
