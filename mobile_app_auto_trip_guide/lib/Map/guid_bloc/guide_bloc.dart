@@ -17,7 +17,7 @@ part 'guide_state.dart';
 class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
   GuideBloc() : super(PoisSearchingState()) {
     List<MapPoi> _poisToGuide = [];
-    int currentIdx = 0;
+    int nextIdx = 0;
     int maxListenedIdx = 0;
     ShowOptionalCategoriesState? _lastShowOptionalCategoriesState = null;
 
@@ -68,26 +68,26 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     initAudioSettings();
 
     MapPoi? getNextMapPoi() {
-      if (currentIdx >= _poisToGuide.length) return null;
-      if (currentIdx >= maxListenedIdx) {
-        maxListenedIdx = currentIdx;
+      if (nextIdx >= _poisToGuide.length) return null;
+      if (nextIdx >= maxListenedIdx) {
+        maxListenedIdx = nextIdx;
         List<MapPoi> unGuidedPois =
-            _poisToGuide.sublist(currentIdx, _poisToGuide.length);
+            _poisToGuide.sublist(nextIdx, _poisToGuide.length);
         unGuidedPois.sort(PersonalizeRecommendation.sortMapPoisByDist);
         // Replace the original portion with the sorted sublist
         _poisToGuide.replaceRange(
-            currentIdx, _poisToGuide.length, unGuidedPois);
+            nextIdx, _poisToGuide.length, unGuidedPois);
       }
-      MapPoi nextPoi = _poisToGuide[currentIdx];
-      currentIdx++;
+      MapPoi nextPoi = _poisToGuide[nextIdx];
+      nextIdx++;
       return nextPoi;
     }
 
     MapPoi? getPrevMapPoi() {
-      if (currentIdx - 2 < 0) // - 2 is the prev because current is the next
+      if (nextIdx - 2 < 0) // - 2 is the prev because current is the next
         return null;
-      currentIdx--;
-      return _poisToGuide[currentIdx - 1];
+      nextIdx--;
+      return _poisToGuide[nextIdx - 1];
     }
 
     onGuideOnMapPoi(MapPoi currentMapPoi) {
@@ -148,15 +148,15 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           .indexWhere((mapPoi) => mapPoi.poi.id == event.mapPoi.poi.id);
       if (index != -1) {
         _poisToGuide.removeAt(index);
-        if (index <= maxListenedIdx) {
+        if (index <= maxListenedIdx && nextIdx > maxListenedIdx) {
           maxListenedIdx--;
         }
-        if (index < currentIdx) {
-          currentIdx--;
+        if (index < nextIdx) {
+          nextIdx--;
         }
       }
-      _poisToGuide.insert(currentIdx, event.mapPoi);
-      currentIdx++;
+      _poisToGuide.insert(nextIdx, event.mapPoi);
+      nextIdx++;
       Globals.globalGuideAudioPlayerHandler.stop();
       onGuideOnMapPoi(event.mapPoi);
       emit(ShowPoiState(currentPoi: event.mapPoi));
