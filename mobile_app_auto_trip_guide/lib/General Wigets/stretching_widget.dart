@@ -28,13 +28,13 @@ class StretchingWidget extends StatefulWidget {
         ],
       );
 
-  StretchingWidget({required this.expendedChild, required this.collapsedChild});
+  StretchingWidget({required this.expendedChild, required this.collapsedChild, Key? key}) : super(key: key);
 
   @override
-  _StretchingWidgetState createState() => _StretchingWidgetState();
+  StretchingWidgetState createState() => StretchingWidgetState();
 }
 
-class _StretchingWidgetState extends State<StretchingWidget> {
+class StretchingWidgetState extends State<StretchingWidget> {
   late double _expandedHeight;
   late double _collapsedHeight;
   bool _isExpanded = false;
@@ -46,6 +46,19 @@ class _StretchingWidgetState extends State<StretchingWidget> {
         MediaQuery.of(context).size.height;
     _expandedHeight = MediaQuery.of(context).size.height;
   }
+
+  void stretch() {
+    setState(() {
+      _isExpanded = true;
+    });
+  }
+
+  void collapse() {
+    setState(() {
+      _isExpanded = false;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {

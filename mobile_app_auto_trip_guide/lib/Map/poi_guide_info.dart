@@ -1,15 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 import '../General Wigets/stretching_widget.dart';
-import '../General Wigets/uniform_widgets.dart';
 import 'globals.dart';
 
 class PoiGuide extends StatefulWidget {
   Poi poi;
   Widget? widgetOnPic;
   Widget? preferencesButton;
+
   PoiGuide({required this.poi, this.widgetOnPic, this.preferencesButton});
 
   @override
@@ -17,9 +18,11 @@ class PoiGuide extends StatefulWidget {
 }
 
 class _PoiGuideState extends State<PoiGuide> {
+  final GlobalKey<StretchingWidgetState> stretchingWidgetKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
-    return StretchingWidget(
+    return StretchingWidget(key: stretchingWidgetKey,
         collapsedChild: collapsedPoiInfo, expendedChild: expendedPoiInfo);
   }
 
@@ -110,9 +113,14 @@ class _PoiGuideState extends State<PoiGuide> {
                     shape: BoxShape
                         .circle, // Assuming you want a circular background
                   ),
-                  child: Icon(
-                    Icons.arrow_drop_up,
-                    color: Colors.white,
+                  child: IconButton(
+                    onPressed: () {
+                      stretchingWidgetKey.currentState!.stretch();
+                      },
+                    icon: Icon(
+                      Icons.arrow_drop_up,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               )
@@ -142,9 +150,8 @@ class _PoiGuideState extends State<PoiGuide> {
               Align(
                 alignment: Alignment.topRight,
                 child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: widget.preferencesButton
-                ),
+                    padding: const EdgeInsets.all(4.0),
+                    child: widget.preferencesButton),
               ),
               Align(
                 alignment: Alignment.center,
@@ -159,9 +166,14 @@ class _PoiGuideState extends State<PoiGuide> {
                     shape: BoxShape
                         .circle, // Assuming you want a circular background
                   ),
-                  child: Icon(
-                    Icons.arrow_drop_down,
-                    color: Colors.white,
+                  child: IconButton(
+                    onPressed: () {
+                      stretchingWidgetKey.currentState!.collapse();
+                    },
+                    icon: Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               )
