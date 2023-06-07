@@ -33,6 +33,7 @@ async function getPoisList(bounds, languageCode, onSinglePoiFound = undefined) {
             _longitude : fullPoi.point.lon, 
             _shortDesc : description,
             _language : languageCode,
+            _googleInfo: null,
             _audio : 'no audio',
             _source : fullPoi.wikipedia,
             _Contributor : "online pois finder",
@@ -42,7 +43,7 @@ async function getPoisList(bounds, languageCode, onSinglePoiFound = undefined) {
             _LastUpdatedDate : getTodayDate(),
             _country : geo.getCountry(fullPoi.point['lat'], fullPoi.point['lon']),
             _Categories : await textAnalysisTool.convertToServerCategories(fullPoi.kinds),
-            _pic : await internetServices.nameToPicUrl(fullPoi.name)
+            _pic : await internetServices.nameToPicUrl(`${fullPoi.name}, in ${fullPoi._country}`)
         }
         pois.push(poi);
         if(onSinglePoiFound) {

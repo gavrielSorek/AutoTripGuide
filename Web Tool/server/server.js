@@ -138,7 +138,10 @@ async function poiHandler(poi) {
         poi._audio = "have audio"
         await db.deleteAudio(dbClientAudio, poi._id);
         db.insertAudio(dbClientAudio, Object.values(audio), poi._poiName, poi._id);
-    } 
+    }
+    if(!poi._googleInfo) {
+        poi._googleInfo = null;
+    }
     return poi;
 }
 

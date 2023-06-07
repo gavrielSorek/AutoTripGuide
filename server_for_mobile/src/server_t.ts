@@ -84,11 +84,11 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
         if (areaData && generalServices.getNumOfDaysBetweenDates(generalServices.getTodayDate(), areaData.lastUpdated) < MAX_DAYS_USE_AREA_CACHE) {
             // do nothing - everything is updated
         } else {
+            const params = {geoHashStr: geoHashStr, lastUpdated: generalServices.getTodayDate()}
+            db.addCachedAreaInfo(dbClientSearcher, params)
             const bounds = getGeoHashBoundsByGeoStr(geoHashStr)
             updateDbWithOnlinePois(bounds, 'en');
             updateDbWithGoogleApiPois(bounds)
-            const params = {geoHashStr: geoHashStr, lastUpdated: generalServices.getTodayDate()}
-            db.addCachedAreaInfo(dbClientSearcher, params)
         }
     })
  })

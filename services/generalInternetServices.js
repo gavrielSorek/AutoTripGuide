@@ -2,9 +2,9 @@
 module.exports = { nameToPicUrl};
 var gis = require('g-i-s');
 
-async function nameToPicUrl(name) {
+async function nameToPicUrl(description) {
     var pics  = await new Promise((resolve, reject) => {
-        gis(name, logResults);
+        gis(description, logResults);
         function logResults(error, results) {
             if (error) {
                 reject(error)

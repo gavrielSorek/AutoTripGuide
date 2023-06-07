@@ -10,17 +10,18 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 
-export function gptPlaceInfo(placeName: string, length: number) {
+export function gptPlaceInfo(placeName: string,address: string, length: number) {
+  console.log('gpt request info for',placeName,address,length)
   return openai
     .createCompletion({
       model: "text-davinci-003",
-      prompt: `Tell me about ${placeName} in ${length} words or fewer.`,
-      // prompt: `answer in JSON format, the first field should be "score": a number between 0 to 1 for your confidence in your answer at the beginning of the answer. and the second "answer" is your answer. after that close the JSON response with a "}".task: Tell me about ${placeName} in ${length} words or fewer.`,
-      temperature: 0.2,
+      prompt: `I need info about ${placeName} in ${address} in ${length} words or fewer.`,
+      temperature: 1,
       max_tokens: length * 2,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 0,
+      best_of: 1,
     })
     .then((response) => {
       if (response.data.choices[0].text === "") {
