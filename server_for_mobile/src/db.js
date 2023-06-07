@@ -3,6 +3,8 @@ module.exports = {insertPoiPreference, getPoiPreference, getPoi, getAudio, findP
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
+const { logger } = require('./utils/loggerService');
+
 
 
 async function findDataByParams(client, queryObject, relevantBounds, MaxCount, searchOutsideTheBoundery) {

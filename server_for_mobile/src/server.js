@@ -253,14 +253,8 @@
 
 
 
-// async function tryModule() {
-//     var user_data = {lat : 32.1245, lng : 34.7954} 
-//     await updateDbWithOnlinePois(bounds, 'en');
-    
-// }
-
-// // if localtunnel doing problems
-// // http://localhost.run/ 
+// if localtunnel doing problems
+// http://localhost.run/ 
 
 // // write this in terminal:  ssh -R 80:localhost:5600 localhost.run
 // // OR

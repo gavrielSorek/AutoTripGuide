@@ -9,6 +9,7 @@ import { Poi } from "./types/poi";
 import { Request, Response } from 'express';
 import { getDistance } from 'geolib';
 import { Coordinate } from "./types/coordinate";
+import { logger } from './utils/loggerService';
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 
 const { MongoClient } = require('mongodb');
@@ -41,11 +42,10 @@ async function init() {
         await dbClientSearcher.connect();
         await dbClientAudio.connect();
         globaltokenAndPermission = await tokenGetter.getToken('crawler@gmail.com', '1234', serverCommunication.getServerUrl()) //get tokens and permissions for web server
-        console.log("Connected to search DB")
-        // tryModule()
+        logger.info("Connected to search DB")
         
     } catch (e) {
-        console.log('Failed to connect to mongo DB')
+        logger.info('Failed to connect to mongo DB')
         console.error(e); 
     }
 }
@@ -84,6 +84,7 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
         if (areaData && generalServices.getNumOfDaysBetweenDates(generalServices.getTodayDate(), areaData.lastUpdated) < MAX_DAYS_USE_AREA_CACHE) {
             // do nothing - everything is updated
         } else {
+            logger.info(`update db with geoHash pois: ${geoHashStr}`)
             const params = {geoHashStr: geoHashStr, lastUpdated: generalServices.getTodayDate()}
             db.addCachedAreaInfo(dbClientSearcher, params)
             const bounds = getGeoHashBoundsByGeoStr(geoHashStr)
@@ -145,7 +146,7 @@ function getGeoHashBoundsByGeoStr(geohashStr:any) {
 
 // add new user
 app.get("/addNewUser", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside get of addNewUser - server side")
+    logger.info("inside get of addNewUser - server side")
     const userData = {'name': req.query.name, 'emailAddr': req.query.emailAddr, 'gender': req.query.gender, 'languages': req.query.languages, 'age': req.query.age, 'categories': req.query.categories}
     const result = await db.addUser(dbClientSearcher, userData)
     res.status(200);
@@ -155,7 +156,7 @@ app.get("/addNewUser", async function (req:Request, res:Response) { //next requr
 
  // get categories
 app.get("/getCategories", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside get of Categories - server side")
+    logger.info("inside get of Categories - server side")
     const language = {'language': req.query.language};
     const result = await db.getCategories(dbClientSearcher, language)
     res.status(200);
@@ -165,7 +166,7 @@ app.get("/getCategories", async function (req:Request, res:Response) { //next re
 
  // get favorite categories for specific user
 app.get("/getFavorCategories", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside get of favorite Categories - server side")
+   logger.info("inside get of favorite Categories - server side")
     const emailAddr = {'emailAddr': req.query.email};
     const result = await db.getFavorCategories(dbClientSearcher, emailAddr)
     res.status(200);
@@ -175,7 +176,7 @@ app.get("/getFavorCategories", async function (req:Request, res:Response) { //ne
 
 // update favorite categories for specific user
 app.get("/updateFavorCategories", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside update of favorite Categories - server side")
+    logger.info("inside update of favorite Categories - server side")
     const userInfo = {'emailAddr': req.query.email, 'favorCategories': req.query.categories};
     const result = await db.updateFavorCategories(dbClientSearcher, userInfo)
     res.status(200);
@@ -185,7 +186,7 @@ app.get("/updateFavorCategories", async function (req:Request, res:Response) { /
 
 // get user info
 app.get("/getUserInfo", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside get of User Info - server side")
+    logger.info("inside get of User Info - server side")
     const userInfo = {'emailAddr': req.query.email};
     const result = await db.getUserInfo(dbClientSearcher, userInfo)
     res.status(200);
@@ -195,7 +196,7 @@ app.get("/getUserInfo", async function (req:Request, res:Response) { //next requ
 
  // update favorite categories for specific user
 app.get("/updateUserInfo", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside update of user info - server side")
+    logger.info("inside update of user info - server side")
     const userInfo = {'emailAddr': req.query.email, 'name': req.query.name, 'gender': req.query.gender, 'languages': req.query.languages, 'age': req.query.age};
     const result = await db.updateUserInfo(dbClientSearcher, userInfo)
     res.status(200);
@@ -205,7 +206,7 @@ app.get("/updateUserInfo", async function (req:Request, res:Response) { //next r
 
  // insert Poi To the history pois of specific user
 app.get("/insertPoiToHistory", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside insert poi to history - server side")
+    logger.info("inside insert poi to history - server side")
     const poiInfo = {'id': req.query.id, 'poiName': req.query.poiName, 'emailAddr': req.query.emailAddr, 'time': req.query.time, 'pic': req.query.pic};
     const result = await db.insertPoiToHistory(dbClientSearcher, poiInfo)
     res.status(200);
@@ -215,7 +216,7 @@ app.get("/insertPoiToHistory", async function (req:Request, res:Response) { //ne
 
  // get the history pois of specific user
 app.get("/getPoisHistory", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside get pois history - server side")
+    logger.info("inside get pois history - server side")
     const result = await db.getPoisHistory(dbClientSearcher, req.query.email)
     res.status(200);
     res.json(result);
@@ -223,7 +224,7 @@ app.get("/getPoisHistory", async function (req:Request, res:Response) { //next r
  })
 
  app.get("/getPoiById", async function (req:Request, res:Response) {
-    console.log("inside get poi - server side")
+    logger.info("inside get poi - server side")
     const poiId = req.query.poiId;
     const poiInfo = await db.getPoi(dbClientSearcher, poiId);
     if (poiInfo) {
@@ -257,20 +258,13 @@ app.get("/getUserPoiPreference",async function (req:Request, res:Response) { //n
 
  app.listen(port, async ()=>{
     await init()
-    console.log(`Server is runing on port ${port}`)
+    logger.info(`Server is runing on port ${port}`)
 })
 
 
 //__________________________________________________________________________//
 //debug
 
-
-
-// async function tryModule() {
-//     var user_data = {lat : 32.1245, lng : 34.7954} 
-//     await updateDbWithOnlinePois(bounds, 'en');
-    
-// }
 
 // if localtunnel doing problems
 // http://localhost.run/ 

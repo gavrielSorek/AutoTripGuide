@@ -5,6 +5,7 @@ var textAnalysisTool = require("../../services/textAnalysisTool");
 var internetServices = require("../../services/generalInternetServices");
 module.exports = { getPoisList};
 const maxPois = 200;
+const { logger } = require('./utils/loggerService');
 
 // http://api.opentripmap.com/0.1/en/places/bbox?lon_min=38.364285&lat_min=59.855685&lon_max=38.372809&lat_max=59.859052&kinds=churches&format=geojson&apikey=5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e
 // http://api.opentripmap.com/0.1/en/places/xid/Q372040?apikey=5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e
@@ -13,6 +14,7 @@ const maxPois = 200;
 const apiKey = '5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e'
 
 async function getPoisList(bounds, languageCode, onSinglePoiFound = undefined) {
+    logger.info('searching for pois in open trip map', bounds);
     var lightPois = (await getlightPois(bounds, languageCode)).data;
 
     var pois = []
@@ -50,7 +52,7 @@ async function getPoisList(bounds, languageCode, onSinglePoiFound = undefined) {
             onSinglePoiFound(poi);
         }
     }
-    console.log(`Found ${pois.length.toString()} new pois!!!!!!!`)
+    logger.info(`total found ${pois.length.toString()} from open trip map`)
     return pois;
 }
 
@@ -90,11 +92,3 @@ function getBounds(){
     relevantBounds['northEast'] = {lat : user_data.lat + epsilon, lng : user_data.lng + epsilon}
     return relevantBounds;
 }
-
-
-async function tryModule() {
-    var data = await getPoisList(getBounds(), 'en');
-    for (var i=0; i<data.length; i++)
-        console.log(i + ". " + JSON.stringify(data[i]));
-}
-//tryModule();

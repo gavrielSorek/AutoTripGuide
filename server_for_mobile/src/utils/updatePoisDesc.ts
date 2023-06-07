@@ -12,7 +12,6 @@ async function init() {
         dotenv.config()
         await dbClientSearcher.connect();
         console.log("Connected to search DB")
-        // tryModule()
         
     } catch (e) {
         console.log('Failed to connect to mongo DB')

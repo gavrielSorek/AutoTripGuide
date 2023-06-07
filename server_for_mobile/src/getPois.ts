@@ -2,6 +2,7 @@ import { gptPlaceInfo } from "./chat-gpt/gpt-api";
 import { fetchGoogleMapsPhotoUrl, getNearbyPois } from "./nearby_pois_objects";
 import { Poi } from "./types/poi";
 import { Sources } from "./types/sources";
+import { logger } from "./utils/loggerService";
 
 
 const poi_types = ['airport', 'art_gallery', 'church', 'synagogue', 'casino', 'park', 'stadium', 'city_hall', 'zoo', 'museum', 'tourist_attraction', 'movie_theater']
@@ -14,7 +15,7 @@ const distance = 1200;
 
 
 export async function getPois(lat:number, long:number, distance:number){
-    console.log('searching POIS in google', lat, long, distance);
+    logger.info('searching POIS in google', lat, long, distance);
     const pois_set = new Set<Poi>();
     // for each place category
     for (const poi_type of poi_types) {
@@ -43,7 +44,7 @@ export async function getPois(lat:number, long:number, distance:number){
       poi._pic = pic_url;
     } }));
     await Promise.all([...promises,...p2])
-    console.log('total after gpt add desc: ' +new_pois_list.length)
+    logger.info('total after gpt add description: ' +new_pois_list.length)
      return new_pois_list;
 } 
 

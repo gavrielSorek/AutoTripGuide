@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv'
 import axios from 'axios';
 import { Poi } from './types/poi';
 import { getPoiCategory } from './utils/switch_categories';
+import { logger } from './utils/loggerService';
 // dotenv.config()
 // additioal place types from: https://developers.google.com/maps/documentation/javascript/supported_types
 
@@ -13,7 +14,7 @@ function isEnglish(result: any): boolean {
 
 
 export async function getNearbyPois(latitude: number, longitude: number, radius: number, type: string): Promise<Poi[]> {
-    console.log('searching POIS in google for type '  + type , latitude, longitude, radius);
+    logger.info('searching POIS in google for type '  + type , latitude, longitude, radius);
     const API_KEY = process.env.GM_API_KEY; //  'AIzaSyD4sN0b5ki-gefxB_7tNIpNR5b8YQoz-sk' // process.env.GM_API_KEY;
     const response = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', {
         params: {
@@ -40,7 +41,7 @@ export async function getNearbyPois(latitude: number, longitude: number, radius:
         poi._country = place.vicinity
         pois_list.push(poi)
     }
-    console.log('find total:' + pois_list.length)
+    logger.info('find total:' + pois_list.length)
     return pois_list;
 }
 
@@ -61,7 +62,7 @@ export async function fetchGoogleMapsPhotoUrl(photoReference: string,poiName:str
     }
       
     ).catch(error => {
-        console.log('status 400 error for fetching photo for: ', poiName)
+        logger.error('status 400 error for fetching photo for: ', photoReference)
         return ''
     });
   }
