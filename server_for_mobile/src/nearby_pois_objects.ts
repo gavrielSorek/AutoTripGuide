@@ -44,7 +44,7 @@ export async function getNearbyPois(latitude: number, longitude: number, radius:
     return pois_list;
 }
 
-export async function fetchGoogleMapsPhotoUrl(photoReference: string, apiKey = process.env.GM_API_KEY,maxwidth = 150): Promise<string> {
+export async function fetchGoogleMapsPhotoUrl(photoReference: string,poiName:string, apiKey = process.env.GM_API_KEY,maxwidth = 150): Promise<string> {
     return axios.get(`https://maps.googleapis.com/maps/api/place/photo`, {
       params: {
         photo_reference: photoReference,
@@ -61,7 +61,7 @@ export async function fetchGoogleMapsPhotoUrl(photoReference: string, apiKey = p
     }
       
     ).catch(error => {
-        console.log('status 400 error for fetching photo for: ', photoReference)
+        console.log('status 400 error for fetching photo for: ', poiName)
         return ''
     });
   }
