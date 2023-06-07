@@ -2,7 +2,7 @@ var XMLHttpRequest = require('xhr2');
 module.exports = { convertArrayToServerCategories, convertToServerCategories, splitMulti, translate, detectLanguage, translateIfNotInTargetLanguage};
 
 const serverCommunication = require("./serverCommunication");
-const serverUrl = serverCommunication.getServerUrl;
+const serverUrl = serverCommunication.getServerUrl();
 
 var globalServerCategories = undefined;
 
@@ -70,7 +70,7 @@ async function convertToServerCategories(categoriesToConvert) {
     categoriesToConvert = categoriesToConvert.toLowerCase();
     var filterServerCategories = []
     globalServerCategories.forEach(element => {
-        category = element.toLowerCase();
+        const category = element.toLowerCase();
         if(categoriesToConvert.includes(category)) {
             filterServerCategories.push(element);
         } else if(category.indexOf(' ') >= 0) { //the category name include more than one word

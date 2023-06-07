@@ -38,7 +38,7 @@ export async function getPois(lat:number, long:number, distance:number){
       }
     }));
 
-   const p2 = new_pois_list.map(poi => fetchGoogleMapsPhotoUrl(poi._pic).then(pic_url => {
+   const p2 = new_pois_list.map(poi => fetchGoogleMapsPhotoUrl(poi._pic,poi._poiName).then(pic_url => {
     if(pic_url !== undefined){
       poi._pic = pic_url;
     } }));

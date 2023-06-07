@@ -22,7 +22,7 @@ async function findDataByParams(client, queryObject, relevantBounds, MaxCount, s
     }
     if (results.length != 0) {
         console.log(`found a poi in the collection with the param '${queryObject}'`);
-        console.log(results);
+        //console.log(results);
         return results
     } else {
         console.log(`No poi found with the param '${queryObject}'`);

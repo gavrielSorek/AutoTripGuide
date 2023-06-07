@@ -11,10 +11,11 @@ const openai = new OpenAIApi(configuration);
 
 
 export function gptPlaceInfo(placeName: string,address: string, length: number) {
+  console.log('gpt request info for',placeName,address,length)
   return openai
     .createCompletion({
       model: "text-davinci-003",
-      prompt: `I need info about ${placeName} in ${address}`,
+      prompt: `I need info about ${placeName} in ${address} in ${length} words or fewer.`,
       temperature: 1,
       max_tokens: length * 2,
       top_p: 1,
