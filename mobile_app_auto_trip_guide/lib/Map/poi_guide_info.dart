@@ -93,7 +93,7 @@ class _PoiGuideState extends State<PoiGuide> {
                 children: [
                   Positioned(
                     bottom: 25, // change this value to adjust text position
-                    left: 0,
+                    left: 15,
                     right: 0,
                     child: Text(
                       widget.poi.poiName ?? '',
