@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
 import '../General Wigets/stretching_widget.dart';
 import 'globals.dart';
@@ -91,7 +90,6 @@ class _PoiGuideState extends State<PoiGuide> {
             children: [
               PoiGuideImageWidget(
                 imagePath: widget.poi.pic ?? '',
-                boxDecoration: StretchingWidget.boxDecoration,
               ),
               Align(
                 alignment: Alignment.topRight,
@@ -145,7 +143,6 @@ class _PoiGuideState extends State<PoiGuide> {
             children: [
               PoiGuideImageWidget(
                 imagePath: widget.poi.pic ?? '',
-                boxDecoration: StretchingWidget.boxDecoration,
               ),
               Align(
                 alignment: Alignment.topRight,
@@ -192,10 +189,16 @@ class _PoiGuideState extends State<PoiGuide> {
 
 class PoiGuideImageWidget extends StatelessWidget {
   final String imagePath;
-  final BoxDecoration boxDecoration;
+
+  get borderRadius => BorderRadius.only(
+    topLeft: Radius.circular(34),
+    topRight: Radius.circular(34),
+    bottomLeft: Radius.zero,
+    bottomRight: Radius.zero,
+  );
 
   const PoiGuideImageWidget(
-      {Key? key, required this.imagePath, required this.boxDecoration})
+      {Key? key, required this.imagePath})
       : super(key: key);
 
   @override
@@ -204,7 +207,7 @@ class PoiGuideImageWidget extends StatelessWidget {
       duration: Duration(milliseconds: 400),
       width: MediaQuery.of(context).size.width,
       child: ClipRRect(
-        borderRadius: boxDecoration.borderRadius,
+        borderRadius: borderRadius,
         child: FittedBox(
           fit: BoxFit.fill,
           child: CachedNetworkImage(
