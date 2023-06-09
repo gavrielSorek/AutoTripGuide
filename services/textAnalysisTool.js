@@ -103,7 +103,12 @@ const franc = require('franc');
 const convert3To1 = require('iso-639-3-to-1')
 
 async function translate(stringToTranslate, langToTranslate) {
-    return (await translatte(stringToTranslate, {to: langToTranslate})).text;
+    try {
+        return (await translatte(stringToTranslate, {to: langToTranslate})).text;
+    }
+    catch (err) {
+        return stringToTranslate
+    }
 }  
 
 async function detectLanguage(text) {

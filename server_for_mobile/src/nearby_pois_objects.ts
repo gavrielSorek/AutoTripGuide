@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Poi } from './types/poi';
 import { getPoiCategory } from './utils/switch_categories';
 import { logger } from './utils/loggerService';
+import { Sources } from './types/sources';
 // dotenv.config()
 // additioal place types from: https://developers.google.com/maps/documentation/javascript/supported_types
 
@@ -13,8 +14,8 @@ function isEnglish(result: any): boolean {
 }
 
 
-export async function getNearbyPois(latitude: number, longitude: number, radius: number, type: string): Promise<Poi[]> {
-    logger.info('searching POIS in google for type '  + type , latitude, longitude, radius);
+export async function getNearbyPois(latitude: number, longitude: number, radius: number, type: string,geoHash:string): Promise<Poi[]> {
+    logger.info(`searching POIS in google for type '${type}' in geoHash '${geoHash}'`);
     const API_KEY = process.env.GM_API_KEY; //  'AIzaSyD4sN0b5ki-gefxB_7tNIpNR5b8YQoz-sk' // process.env.GM_API_KEY;
     const response = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', {
         params: {
@@ -30,7 +31,7 @@ export async function getNearbyPois(latitude: number, longitude: number, radius:
     for (const place of places) {
         const poi = new Poi(place.name, place.geometry.location.lat, place.geometry.location.lng)
         poi._pic = place.photos?.length ? place.photos[0].photo_reference : ''
-        poi._googleInfo = { _avgRating: place.rating, _numReviews: place.user_ratings_total, _placeId: place.place_id}
+        poi._vendorInfo = {_source: Sources.Google, _avgRating: place.rating, _numReviews: place.user_ratings_total, _placeId: place.place_id}
         poi._Categories = []
         const categories_set = new Set<string>();
         for (let c of place.types) {
@@ -41,7 +42,7 @@ export async function getNearbyPois(latitude: number, longitude: number, radius:
         poi._country = place.vicinity
         pois_list.push(poi)
     }
-    logger.info('find total:' + pois_list.length)
+    logger.info(`Found from google search for type '${type}': ${pois_list.length} in geoHash '${geoHash}'`)
     return pois_list;
 }
 
@@ -62,7 +63,7 @@ export async function fetchGoogleMapsPhotoUrl(photoReference: string,poiName:str
     }
       
     ).catch(error => {
-        logger.error('status 400 error for fetching photo for: ', photoReference)
+        logger.error(`status 400 error for fetching photo for poi: ${poiName}`)
         return ''
     });
   }

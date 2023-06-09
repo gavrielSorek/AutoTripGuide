@@ -1,3 +1,5 @@
+import { Sources } from "./sources";
+
 var today = new Date();
 var dd = String(today.getDate()).padStart(2, '0');
 var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -5,10 +7,16 @@ var yyyy = today.getFullYear();
 
 var date = dd + '/' + mm + '/' + yyyy;
 
-export interface googleInfo {
-  _avgRating: number,
-  _numReviews: number,
+export interface vendorInfo {
+  _source: Sources,
   _placeId: string,
+  // for google
+  _avgRating?: number,
+  _numReviews?: number,
+  _rating?: string,
+  // for open trip
+  _url?: string,
+  _wikiPlaceId?: string,
 }
 export class Poi {
   constructor(
@@ -18,7 +26,7 @@ export class Poi {
     public _longitude: number = 0,
     public _shortDesc: string = "",
     public _language: string = "en",
-    public _googleInfo: googleInfo| null = null,
+    public _vendorInfo: vendorInfo| null = null,
     public _audio: string = "",
     public _source: string = "",
     public _Contributor: string = "crawler",
@@ -45,6 +53,6 @@ export class Poi {
       this._country = _country;
       this._Categories = _Categories;
       this._pic = _pic;
-      this._googleInfo = _googleInfo;
+      this._vendorInfo = _vendorInfo;
   }
 }

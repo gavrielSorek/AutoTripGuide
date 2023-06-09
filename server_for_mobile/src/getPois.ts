@@ -14,12 +14,12 @@ const distance = 1200;
 
 
 
-export async function getPois(lat:number, long:number, distance:number){
-    logger.info('searching POIS in google', lat, long, distance);
+export async function getPois(lat:number, long:number, distance:number,geoHash:string){
+    logger.info(`searching POIS in google for geoHash '${geoHash}'`);
     const pois_set = new Set<Poi>();
     // for each place category
     for (const poi_type of poi_types) {
-      await getNearbyPois(lat, long, distance, poi_type).then((pois_list) => {
+      await getNearbyPois(lat, long, distance, poi_type,geoHash).then((pois_list) => {
         for (const poi of pois_list) {
           // if this poi is already in the set, it won't be added
           const found_poi = Array.from(pois_set).find(place => place._poiName === poi._poiName);
@@ -44,7 +44,7 @@ export async function getPois(lat:number, long:number, distance:number){
       poi._pic = pic_url;
     } }));
     await Promise.all([...promises,...p2])
-    logger.info('total after gpt add description: ' +new_pois_list.length)
+    logger.info(`**** Final new pois from google for geoHash '${geoHash}': ${new_pois_list.length}`)
      return new_pois_list;
 } 
 

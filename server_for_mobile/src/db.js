@@ -1,5 +1,4 @@
 module.exports = {insertPoiPreference, getPoiPreference, getPoi, getAudio, findPois, addUser, getCategories, getAudioStream, getAudioLength, addCachedAreaInfo, getCachedAreaInfo ,getFavorCategories, updateFavorCategories, getUserInfo, updateUserInfo, insertPoiToHistory, getPoisHistory};
-// var ObjectID = require('bson').ObjectID;
 var mongoose = require('mongoose');
 const { MongoClient } = require('mongodb');
 const mongodb = require('mongodb');
@@ -7,7 +6,7 @@ const { logger } = require('./utils/loggerService');
 
 
 
-async function findDataByParams(client, queryObject, relevantBounds, MaxCount, searchOutsideTheBoundery) {
+async function findDataByParams(client, queryObject, relevantBounds, MaxCount, searchOutsideTheBoundery,geoHash) {
     var latBT = relevantBounds.southWest.lat; //latitude bigger than
     var latST = relevantBounds.northEast.lat; //latitude smaller than
     var lngBT = relevantBounds.southWest.lng; //longtitude bigger than
@@ -23,18 +22,17 @@ async function findDataByParams(client, queryObject, relevantBounds, MaxCount, s
         results = await res.toArray();
     }
     if (results.length != 0) {
-        console.log(`found a poi in the collection with the param '${queryObject}'`);
-        //console.log(results);
+        logger.info(`Found ${results.length} pois in the db for the geoHash '${geoHash}'`);
         return results
     } else {
-        console.log(`No poi found with the param '${queryObject}'`);
+        logger.info(`No pois found in the db for the geoHash '${geoHash}'`);
     }
 }
 
 // The function find a pois 
-async function findPois(client, poiParams , relevantBounds, MaxCount, searchOutsideTheBoundery) {
+async function findPois(client, poiParams , relevantBounds, MaxCount, searchOutsideTheBoundery,geoHash) {
     var queryObject = poiParams
-    return findDataByParams(client, queryObject, relevantBounds, MaxCount, searchOutsideTheBoundery)
+    return findDataByParams(client, queryObject, relevantBounds, MaxCount, searchOutsideTheBoundery,geoHash)
 }
 
 // The function returns audio promise
@@ -78,10 +76,10 @@ async function checkInfo(client, userInfo) {
     var resEmailAddrLen = resEmailAddrArr.length;
 
      if(!resEmailAddrLen) {    //user with the given name or email is not exist
-         console.log(`not found a user with the details: '${emailAddrVal}'`);
+        logger.info(`not found a user with the details: '${emailAddrVal}'`);
          return 0;
      } else {    //user with the given email is xist
-        console.log(`Found a user with the email: '${emailAddrVal}'`);
+        logger.info(`Found a user with the email: '${emailAddrVal}'`);
         return 1;
      }
 }
@@ -91,7 +89,7 @@ async function addUser(client, newUserInfo) {
     const checkCode = await checkInfo(client, newUserInfo);
     if(checkCode == 0) {    //the user's info not exist in the db
         const res = await client.db("auto_trip_guide_db").collection("mobileUsers").insertOne(newUserInfo);
-        console.log(`new user created with the following id: ${res.insertedId}`);
+        logger.info(`new user created with the following id: ${res.insertedId}`);
     }
     return checkCode;
 }
@@ -102,8 +100,7 @@ async function getCategories(client, lang) {
     var res = await client.db("auto_trip_guide_db").collection("Categories").find({language: categoryLang});
     var resArr = await res.toArray();
     if (resArr.length > 0) {
-        //console.log(resArr[0].categories);
-        console.log("found categories for the reuired language")
+        logger.info(`Found categories for the reuired language: '${categoryLang}'`);
         return resArr[0].categories;
     } else {
         return {};
@@ -126,8 +123,7 @@ async function getFavorCategories(client, email) {
     var res = await client.db("auto_trip_guide_db").collection("mobileUsers").find({emailAddr: emailAddress});
     var resArr = await res.toArray();
     if (resArr.length > 0) {
-        //console.log(resArr[0].categories);
-        console.log("found favorite categories for the reuired user")
+        logger.info(`Found favorite categories for the reuired user: '${emailAddress}'`);
         return resArr[0].categories;
     } else {
         return [];
@@ -154,14 +150,14 @@ async function getUserInfo(client, userInfo) {
     var resArr = await res.toArray();
     const userInfoMap = new Map();
     if (resArr.length > 0) {
-        console.log("found user info for the reuired email")
+        logger.info(`found user info for the reuired email: '${emailAddress}'`);
         userInfoMap.set('name', resArr[0].name);
         userInfoMap.set('gender', resArr[0].gender);
         userInfoMap.set('languages', resArr[0].languages);
         userInfoMap.set('age', resArr[0].age);
     }
     const userInfoMapJson = Object.fromEntries(userInfoMap);
-    console.log(userInfoMapJson);
+    logger.info(`userInfoMapJson: '${userInfoMapJson}'`);
     return userInfoMapJson;
 }
 
@@ -171,7 +167,7 @@ async function updateUserInfo(client, userInfo) {
     const res = await client.db("auto_trip_guide_db").collection("mobileUsers").updateOne({emailAddr: emailAddress}, { $set: {
         name: userInfo.name, gender: userInfo.gender, languages: userInfo.languages, age: userInfo.age
     }});
-    console.log("after updateUserInfo in the server side");
+    logger.info(`Update user info for user: '${emailAddress}'`);
     return 1;
 }
 
@@ -191,17 +187,15 @@ async function insertPoiToHistory(client, poiInfo) {
 
     const res = await client.db("auto_trip_guide_db").collection("mobileUsers").updateOne({emailAddr: poiInfo.emailAddr}, { $push: { poisHistory: 
         {poiId: poiInfo.id, poiName: poiInfo.poiName, time: poiInfo.time, pic: poiInfo.pic}}});
-        console.log("after insertPoiToHistory in the server side");
+        logger.info(`Update user info for user: '${poiInfo.emailAddr}'`);
     return res;
 }
 
 // The function return the favorite categories of specific user from the db
 async function getPoisHistory(client, email) {
-    console.log("inside getPoisHistory - db side")
     var res = await client.db("auto_trip_guide_db").collection("mobileUsers").find({emailAddr: email});
     var resArr = await res.toArray();
     if (resArr.length > 0) {
-        console.log("found pois history for the reuired user")
         return resArr[0].poisHistory;
     } else {
         return [];
@@ -213,9 +207,10 @@ async function getCachedAreaInfo(client, parameters) {
     var res = await client.db("auto_trip_guide_db").collection("cachedAreas").find({geoHashStr: parameters.geoHashStr});
     var resArr = await res.toArray();
     if (resArr.length > 0) {
-        console.log("found erea")
+        logger.info(`Found cached area for the reuired geoHashStr: '${parameters.geoHashStr}'`);
         return resArr[0];
     } else {
+        logger.info(`No cached area found for the reuired geoHashStr: '${parameters.geoHashStr}'`);
         return null;
     }
 }

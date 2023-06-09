@@ -34,7 +34,7 @@ async function run() {
 
 
     const poi_types = ['airport', 'art_gallery', 'church', 'synagogue', 'casino', 'park', 'stadium', 'city_hall', 'zoo', 'museum', 'tourist_attraction', 'movie_theater']
-    const t = await getNearbyPois(32.174384, 34.840811,30,'')
+    const t = await getNearbyPois(32.174384, 34.840811,30,'','')
     serverCommunication.sendPoisToServer([t[0] ], globaltokenAndPermission)
     console.log(t[0])
 }
