@@ -69,7 +69,7 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
     var pois:Poi[] = []
     for (let i = 0; i < boundsArr.length; i++ ) {
         const tempPoisArr = await db.findPois(dbClientSearcher, searchParams, boundsArr[i], MAX_POIS_FOR_USER, false,geoHashArr[i]);
-        pois = pois.concat(tempPoisArr);
+        pois = pois.concat(tempPoisArr as any[]);
     }
     const filterdPois = pois.filter(poi => poi?._shortDesc.split(' ').length > 10)
 
