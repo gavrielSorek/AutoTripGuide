@@ -21,8 +21,10 @@ class _PoiGuideState extends State<PoiGuide> {
 
   @override
   Widget build(BuildContext context) {
-    return StretchingWidget(key: stretchingWidgetKey,
-        collapsedChild: collapsedPoiInfo, expendedChild: expendedPoiInfo);
+    return StretchingWidget(
+        key: stretchingWidgetKey,
+        collapsedChild: collapsedPoiInfo,
+        expendedChild: expendedPoiInfo);
   }
 
   get poiScrolledText {
@@ -37,29 +39,6 @@ class _PoiGuideState extends State<PoiGuide> {
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(children: [
-              Padding(
-                padding: EdgeInsets.only(left: 0, right: 0),
-                child: Row(
-                  children: [
-                    Flexible(
-                      child: Container(
-                        child: Text(
-                          widget.poi.poiName ?? '',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: 'Inter',
-                              fontSize: 22,
-                              letterSpacing: 0.3499999940395355,
-                              fontWeight: FontWeight.normal,
-                              height: 1.2727272727272727),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               Text(
                 widget.poi.shortDesc ?? '',
                 style: TextStyle(
@@ -79,6 +58,94 @@ class _PoiGuideState extends State<PoiGuide> {
     );
   }
 
+  Widget getTopPart(bool isExpanded) {
+    return Stack(
+      children: [
+        PoiGuideImageWidget(
+          imagePath: widget.poi.pic ?? '',
+        ),
+        Align(
+          alignment: Alignment.topRight,
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: widget.preferencesButton,
+          ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black,
+              gradient: LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+                  Colors.black.withOpacity(0.5),
+                  Colors.black.withOpacity(0),
+                ],
+              ),
+              shape: BoxShape.rectangle,
+            ),
+            child: Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.3 * 0.4,
+              child: Stack(
+                children: [
+                  Positioned(
+                    bottom: 25, // change this value to adjust text position
+                    left: 0,
+                    right: 0,
+                    child: Text(
+                      widget.poi.poiName ?? '',
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Inter',
+                          fontSize: 20,
+                          letterSpacing: 0.3499999940395355,
+                          fontWeight: FontWeight.normal,
+                          height: 1),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  Positioned(
+                    bottom: -10, // keeps the IconButton at the bottom
+                    left: 0,
+                    right: 0,
+                    child: IconButton(
+                      onPressed: () {
+                        if (isExpanded)
+                          stretchingWidgetKey.currentState!.collapse();
+                        else
+                          stretchingWidgetKey.currentState!.stretch();
+                      },
+                      icon: isExpanded
+                          ? Icon(
+                        Icons.arrow_drop_down,
+                        size: 30,
+                        color: Colors.white,
+                      )
+                          : Icon(
+                        Icons.arrow_drop_up,
+                        size: 30,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: widget.widgetOnPic,
+        ),
+      ],
+    );
+  }
+
+
   get collapsedPoiInfo {
     return Column(
       children: [
@@ -86,45 +153,7 @@ class _PoiGuideState extends State<PoiGuide> {
           height: MediaQuery.of(context).size.height *
               0.5 *
               StretchingWidget.collapsedPercentFromAvailableSpace,
-          child: Stack(
-            children: [
-              PoiGuideImageWidget(
-                imagePath: widget.poi.pic ?? '',
-              ),
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: widget.preferencesButton,
-                ),
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: widget.widgetOnPic,
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.4),
-                    // Black color with 50% opacity
-                    shape: BoxShape
-                        .circle, // Assuming you want a circular background
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      stretchingWidgetKey.currentState!.stretch();
-                      },
-                    icon: Icon(
-                      Icons.arrow_drop_up,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              )
-              // Large square picture
-            ],
-          ),
+          child: getTopPart(false),
         ),
         poiScrolledText,
         BottomBarWidget(
@@ -139,49 +168,12 @@ class _PoiGuideState extends State<PoiGuide> {
       children: [
         Container(
           height: MediaQuery.of(context).size.height * 0.3,
-          child: Stack(
-            children: [
-              PoiGuideImageWidget(
-                imagePath: widget.poi.pic ?? '',
-              ),
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: widget.preferencesButton),
-              ),
-              Align(
-                alignment: Alignment.center,
-                child: widget.widgetOnPic,
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.4),
-                    // Black color with 50% opacity
-                    shape: BoxShape
-                        .circle, // Assuming you want a circular background
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      stretchingWidgetKey.currentState!.collapse();
-                    },
-                    icon: Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              )
-              // Large square picture
-            ],
-          ),
+          child: getTopPart(true),
         ),
         poiScrolledText,
         BottomBarWidget(
           poi: widget.poi,
-        )
+        ),
       ],
     );
   }
@@ -191,14 +183,13 @@ class PoiGuideImageWidget extends StatelessWidget {
   final String imagePath;
 
   get borderRadius => BorderRadius.only(
-    topLeft: Radius.circular(34),
-    topRight: Radius.circular(34),
-    bottomLeft: Radius.zero,
-    bottomRight: Radius.zero,
-  );
+        topLeft: Radius.circular(34),
+        topRight: Radius.circular(34),
+        bottomLeft: Radius.zero,
+        bottomRight: Radius.zero,
+      );
 
-  const PoiGuideImageWidget(
-      {Key? key, required this.imagePath})
+  const PoiGuideImageWidget({Key? key, required this.imagePath})
       : super(key: key);
 
   @override
