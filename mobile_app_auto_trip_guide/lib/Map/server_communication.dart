@@ -28,14 +28,6 @@ class ServerCommunication {
     return Uri.http(url, path, info);
   }
 
-  String getAudioStreamUrl(Poi poi) {
-    return 'http://' +
-        serverUrl +
-        '/getAudioStream' +
-        '?poiId=' +
-        poi.id.toString();
-  }
-
   Future<List<Poi>> getPoisByLocation(LocationInfo? locationInfo) async {
     Uri newUri =
         addLocationInfoToUrl(serverUrl, '/searchNearbyPois', locationInfo!);

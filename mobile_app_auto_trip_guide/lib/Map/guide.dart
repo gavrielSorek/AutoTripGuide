@@ -254,7 +254,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
   List<String> getImageUrlsFromCategory(List<MapPoi> items) {
     return items
         .map((item) => item.poi.pic ?? '')
-        .where((url) => !url.contains('no-photography-allowed'))
+        .where((url) => (url != ''))
         .toList();
   }
 

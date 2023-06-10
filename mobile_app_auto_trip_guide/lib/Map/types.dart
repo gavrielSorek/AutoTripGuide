@@ -108,7 +108,7 @@ class Poi {
       String picUrl = (json['_pic'] ?? '?') as String;
       if (picUrl == 'no pic') {
         picUrl =
-        "https://image.shutterstock.com/image-photo/no-photography-allowed-on-white-260nw-139998481.jpg";
+        "";
       }
       String poiName = json['_poiName'] as String;
       String capitalizedPoiName = poiName.capitalizeTotalString();
