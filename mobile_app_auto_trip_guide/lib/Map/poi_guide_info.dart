@@ -145,6 +145,13 @@ class _PoiGuideState extends State<PoiGuide> {
     );
   }
 
+  get bottomPart {
+    return BottomBarWidget(
+      poi: widget.poi,
+      edgeInsets: EdgeInsets.only(bottom: 27, left: 27, right: 27),
+    );
+  }
+
 
   get collapsedPoiInfo {
     return Column(
@@ -156,9 +163,7 @@ class _PoiGuideState extends State<PoiGuide> {
           child: getTopPart(false),
         ),
         poiScrolledText,
-        BottomBarWidget(
-          poi: widget.poi,
-        )
+        bottomPart
       ],
     );
   }
@@ -171,9 +176,7 @@ class _PoiGuideState extends State<PoiGuide> {
           child: getTopPart(true),
         ),
         poiScrolledText,
-        BottomBarWidget(
-          poi: widget.poi,
-        ),
+        bottomPart,
       ],
     );
   }
@@ -215,15 +218,16 @@ class PoiGuideImageWidget extends StatelessWidget {
 
 class BottomBarWidget extends StatefulWidget {
   final Poi poi;
-
-  BottomBarWidget({required this.poi});
+  EdgeInsetsGeometry? edgeInsets;
+  static final double buttonSize = 47;
+  BottomBarWidget({required this.poi, this.edgeInsets});
 
   @override
   _BottomBarWidgetState createState() => _BottomBarWidgetState();
 }
 
 class _BottomBarWidgetState extends State<BottomBarWidget> {
-  double bottomIconSize = 20;
+  double bottomIconSize = 26;
   int poiPreference = 0;
 
   @override
@@ -237,95 +241,108 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
         });
       }
     });
-    return Container(
+    return Padding(
+      padding: widget.edgeInsets ?? EdgeInsets.all(0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              RawMaterialButton(
+          Container(
+            height: BottomBarWidget.buttonSize,
+            width: BottomBarWidget.buttonSize,
+            child: RawMaterialButton(
+              onPressed: () {
+                Globals.globalAppLauncher.launchWaze(
+                  widget.poi.latitude,
+                  widget.poi.longitude,
+                );
+              },
+              elevation: 2.0,
+              fillColor: Colors.blue,
+              child: Icon(
+                Icons.directions,
+                size: bottomIconSize,
+              ),
+              shape: CircleBorder(),
+            ),
+          ),
+          Container(
+            height: BottomBarWidget.buttonSize,
+            width: BottomBarWidget.buttonSize,
+            child: Opacity(
+              opacity: poiPreference == -1 ? 1.0 : 0.5,
+              child: RawMaterialButton(
                 onPressed: () {
-                  Globals.globalAppLauncher.launchWaze(
-                    widget.poi.latitude,
-                    widget.poi.longitude,
-                  );
-                },
-                elevation: 2.0,
-                fillColor: Colors.blue,
-                child: Icon(
-                  Icons.directions,
-                  size: bottomIconSize,
-                ),
-                shape: CircleBorder(),
-              ),
-              Opacity(
-                opacity: poiPreference == -1 ? 1.0 : 0.5,
-                child: RawMaterialButton(
-                  onPressed: () {
-                    Globals.appEvents.poiNavigationStarted(
-                      widget.poi.poiName ?? '',
-                      widget.poi.Categories,
-                      widget.poi.id,
-                    );
-                    poiPreference = -1;
-                    Globals.globalServerCommunication.insertPoiPreferences(
-                      widget.poi.id,
-                      Globals.globalUserInfoObj,
-                      poiPreference,
-                    );
-                    setState(() {});
-                  },
-                  elevation: 2.0,
-                  fillColor: Colors.red,
-                  child: Icon(
-                    Icons.thumb_down,
-                    size: bottomIconSize,
-                  ),
-                  shape: CircleBorder(),
-                ),
-              ),
-              Opacity(
-                opacity: poiPreference == 1 ? 1.0 : 0.5,
-                child: RawMaterialButton(
-                  onPressed: () {
-                    poiPreference = 1;
-                    Globals.globalServerCommunication.insertPoiPreferences(
-                      widget.poi.id,
-                      Globals.globalUserInfoObj,
-                      poiPreference,
-                    );
-                    setState(() {});
-                  },
-                  elevation: 2.0,
-                  fillColor: Colors.green,
-                  child: Icon(
-                    Icons.thumb_up,
-                    size: bottomIconSize,
-                  ),
-                  shape: CircleBorder(),
-                ),
-              ),
-              RawMaterialButton(
-                onPressed: () {
-                  Globals.appEvents.poiShared(
+                  Globals.appEvents.poiNavigationStarted(
                     widget.poi.poiName ?? '',
                     widget.poi.Categories,
                     widget.poi.id,
                   );
-                  Share.share(
-                    widget.poi.shortDesc ?? "",
-                    subject: widget.poi.poiName,
+                  poiPreference = -1;
+                  Globals.globalServerCommunication.insertPoiPreferences(
+                    widget.poi.id,
+                    Globals.globalUserInfoObj,
+                    poiPreference,
                   );
+                  setState(() {});
                 },
                 elevation: 2.0,
-                fillColor: Colors.blue,
+                fillColor: Colors.red,
                 child: Icon(
-                  Icons.share,
+                  Icons.thumb_down,
                   size: bottomIconSize,
                 ),
                 shape: CircleBorder(),
               ),
-            ],
+            ),
+          ),
+          Container(
+            height: BottomBarWidget.buttonSize,
+            width: BottomBarWidget.buttonSize,
+            child: Opacity(
+              opacity: poiPreference == 1 ? 1.0 : 0.5,
+              child: RawMaterialButton(
+                onPressed: () {
+                  poiPreference = 1;
+                  Globals.globalServerCommunication.insertPoiPreferences(
+                    widget.poi.id,
+                    Globals.globalUserInfoObj,
+                    poiPreference,
+                  );
+                  setState(() {});
+                },
+                elevation: 2.0,
+                fillColor: Colors.green,
+                child: Icon(
+                  Icons.thumb_up,
+                  size: bottomIconSize,
+                ),
+                shape: CircleBorder(),
+              ),
+            ),
+          ),
+          Container(
+            height: BottomBarWidget.buttonSize,
+            width: BottomBarWidget.buttonSize,
+            child: RawMaterialButton(
+              onPressed: () {
+                Globals.appEvents.poiShared(
+                  widget.poi.poiName ?? '',
+                  widget.poi.Categories,
+                  widget.poi.id,
+                );
+                Share.share(
+                  widget.poi.shortDesc ?? "",
+                  subject: widget.poi.poiName,
+                );
+              },
+              elevation: 2.0,
+              fillColor: Colors.blue,
+              child: Icon(
+                Icons.share,
+                size: bottomIconSize,
+              ),
+              shape: CircleBorder(),
+            ),
           ),
         ],
       ),
