@@ -93,7 +93,7 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
                 db.addCachedAreaInfo(dbClientSearcher, params)
                 const bounds = getGeoHashBoundsByGeoStr(geoHashStr as string)
                 updateDbWithOnlinePois(bounds, 'en',geoHashStr as string);
-                //  updateDbWithGoogleApiPois(bounds,geoHashStr as string)
+                updateDbWithGoogleApiPois(bounds,geoHashStr as string)
             }
         });
     })
