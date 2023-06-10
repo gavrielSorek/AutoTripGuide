@@ -92,7 +92,7 @@ class _PoiGuideState extends State<PoiGuide> {
               child: Stack(
                 children: [
                   Positioned(
-                    bottom: 25, // change this value to adjust text position
+                    bottom: 20, // change this value to adjust text position
                     left: 15,
                     right: 0,
                     child: Text(
@@ -109,7 +109,7 @@ class _PoiGuideState extends State<PoiGuide> {
                     ),
                   ),
                   Positioned(
-                    bottom: -10, // keeps the IconButton at the bottom
+                    bottom: -15, // keeps the IconButton at the bottom
                     left: 0,
                     right: 0,
                     child: IconButton(
@@ -121,12 +121,12 @@ class _PoiGuideState extends State<PoiGuide> {
                       },
                       icon: isExpanded
                           ? Icon(
-                        Icons.arrow_drop_down,
+                        Icons.keyboard_arrow_down,
                         size: 30,
                         color: Colors.white,
                       )
                           : Icon(
-                        Icons.arrow_drop_up,
+                        Icons.keyboard_arrow_up,
                         size: 30,
                         color: Colors.white,
                       ),
