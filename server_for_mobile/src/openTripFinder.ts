@@ -16,9 +16,9 @@ const apiKey = '5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e'
 export async function getPoisFromOpenTrip(bounds:any, languageCode:string, onSinglePoiFound:any = undefined) {
     logger.info('searching for pois in open trip map', bounds);
     const lightPois = (await getlightPois(bounds, languageCode)).data;
-
+    const tempPois =  lightPois.features.filter((poi:any, index:number) => lightPois.features.findIndex((p:any) => p.properties.name === poi.properties.name) === index);
     const pois:Poi[] = []
-    for(const poi of lightPois.features) {
+    for(const poi of tempPois) {
         if (poi.properties.name === '') {continue;} // filter unknown pois
         const fullPoi = (await getPoiInfo(poi.properties.xid, languageCode)).data;
         if(!fullPoi.wikipedia_extracts) { // if not contains wikipedia content
@@ -60,9 +60,9 @@ export async function getPoisFromOpenTrip(bounds:any, languageCode:string, onSin
     return pois;
 }
 
-async function getlightPois(bounds:any, language:string) {
+async function getlightPois(bounds:any, language:string,minRate = '2') {
     const apiUrl = `http://api.opentripmap.com/0.1/${language}/places/bbox`
-    const reqUrl = apiUrl + `?lon_min=${bounds['southWest'].lng}&lat_min=${bounds['southWest'].lat}&lon_max=${bounds['northEast'].lng}&lat_max=${bounds['northEast'].lat}&languege=${language}&kinds=${'interesting_places,sport,adult,amusements'}&format=geojson&apikey=${apiKey}`
+    const reqUrl = apiUrl + `?lon_min=${bounds['southWest'].lng}&lat_min=${bounds['southWest'].lat}&lon_max=${bounds['northEast'].lng}&lat_max=${bounds['northEast'].lat}&languege=${language}&kinds=${'interesting_places,sport,adult,amusements'}&format=geojson&apikey=${apiKey}&rate=${minRate}`
     return axios.get(reqUrl)    
 }
 
