@@ -18,7 +18,7 @@ class StretchingWidget extends StatefulWidget {
 
   static get boxDecoration => BoxDecoration(
         shape: BoxShape.rectangle,
-        color: Colors.white,
+        color: Colors.white.withOpacity(0.83),
         borderRadius: BorderRadius.circular(34),
         boxShadow: [
           BoxShadow(
