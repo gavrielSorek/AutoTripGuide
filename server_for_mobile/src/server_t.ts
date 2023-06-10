@@ -15,6 +15,8 @@ import { MongoClient } from 'mongodb';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import AsyncLock from 'async-lock';
+import { log } from 'console';
 const app = express()
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(bodyParser.json({limit: '50mb'}));
@@ -24,9 +26,9 @@ app.use(bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 extended: false}));
 const MAX_POIS_FOR_USER = 100
-const MAX_DAYS_USE_AREA_CACHE = 30
-
+const MAX_DAYS_USE_AREA_CACHE = 100
 const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const lock = new AsyncLock();
 
 const dbClientSearcher = new MongoClient(uri);
 const dbClientAudio = new MongoClient(uri);
@@ -57,7 +59,7 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
     const userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language}
     const searchParams = {}
     addUserDataTosearchParams(searchParams, userData)
-
+    logger.info(`Search pois for user: lat: ${userData.lat}, lng: ${userData.lng}`)
     const geoHashStrings = getGeoHashBoundsStrings(userData, geoHashPrecitionLevel);
     const boundsArr:GeoBounds[] = [];
     let geoHashArr:any[] = []
@@ -79,24 +81,28 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
     
     // update the db with new pois if needed
     geoHashStrings.forEach(async (geoHashStr)=>{
-        const areaData = await db.getCachedAreaInfo(dbClientSearcher, {geoHashStr: geoHashStr})
-        //if the online searcher didn't search on this location
-        if (areaData && generalServices.getNumOfDaysBetweenDates(generalServices.getTodayDate(), areaData.lastUpdated) < MAX_DAYS_USE_AREA_CACHE) {
-            // do nothing - everything is updated
-        } else {
-            logger.info(`Update db with geoHash pois: '${geoHashStr}'`)
-            const params = {geoHashStr: geoHashStr, lastUpdated: generalServices.getTodayDate()}
-            db.addCachedAreaInfo(dbClientSearcher, params)
-            const bounds = getGeoHashBoundsByGeoStr(geoHashStr as string)
-            updateDbWithOnlinePois(bounds, 'en');
-            updateDbWithGoogleApiPois(bounds,geoHashStr as string)
-        }
+        // Acquire lock for this geohash
+        lock.acquire(geoHashStr, async function() {
+            const areaData = await db.getCachedAreaInfo(dbClientSearcher, {geoHashStr: geoHashStr})
+             //if the online searcher didn't search on this location
+            if (areaData && generalServices.getNumOfDaysBetweenDates(generalServices.getTodayDate(), areaData.lastUpdated) < MAX_DAYS_USE_AREA_CACHE) {
+                // do nothing - everything is updated
+            } else {
+                logger.info(`Update db with geoHash pois: '${geoHashStr}'`)
+                const params = {geoHashStr: geoHashStr, lastUpdated: generalServices.getTodayDate()}
+                db.addCachedAreaInfo(dbClientSearcher, params)
+                const bounds = getGeoHashBoundsByGeoStr(geoHashStr as string)
+                updateDbWithOnlinePois(bounds, 'en',geoHashStr as string);
+                //  updateDbWithGoogleApiPois(bounds,geoHashStr as string)
+            }
+        });
     })
  })
 
- async function updateDbWithOnlinePois(bounds: any, language: string) {
+ async function updateDbWithOnlinePois(bounds: any, language: string,geoHash:string) {
     // async call for faster rsults
-    await getPoisFromOpenTrip(bounds, language,(poi: Poi)=>{
+    await getPoisFromOpenTrip(bounds, language,geoHash,(poi: Poi)=>{
+        logger.info(`Add poi to db from openTripMAP: '${poi._poiName}' to geoHash: '${geoHash}'`)
         serverCommunication.sendPoisToServer([poi], globaltokenAndPermission)
     }); 
  }
@@ -118,15 +124,15 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
  }
 
 // return same as getGeoHashBoundsString but if there is a close geohash returns it too
-function getGeoHashBoundsStrings(user_data:any, geoHashPrecition = 5){ 
+function getGeoHashBoundsStrings(user_data:any, geoHashPrecition = 5):string[]{ 
     const mainSpecificGeoHash = getGeoHashBoundsString(user_data, geoHashPrecition + 1)
     const neighborsOfSpecific = geohash.neighbors(mainSpecificGeoHash)
-    const geoHashSet = new Set();
+    const geoHashSet = new Set<string>();
     for (let i = 0; i < neighborsOfSpecific.length; i ++) {
         const geoHashGeneral = neighborsOfSpecific[i].slice(0, geoHashPrecition);
         geoHashSet.add(geoHashGeneral);
     }
-    return geoHashSet;
+    return Array.from(geoHashSet);
 }
 
 // geoHashPrecition = 5 is the default (4.89km × 4.89km)
@@ -207,7 +213,7 @@ app.get("/updateUserInfo", async function (req:Request, res:Response) { //next r
 
  // insert Poi To the history pois of specific user
 app.get("/insertPoiToHistory", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    logger.info(`Add poi to history ${req.query.poiName}, email: ${req.query.emailAddr}`)
+    logger.info(`Add poi to history '${req.query.poiName}', email: ${req.query.emailAddr}`)
     const poiInfo = {'id': req.query.id, 'poiName': req.query.poiName, 'emailAddr': req.query.emailAddr, 'time': req.query.time, 'pic': req.query.pic};
     const result = await db.insertPoiToHistory(dbClientSearcher, poiInfo)
     res.status(200);

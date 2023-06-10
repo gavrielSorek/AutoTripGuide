@@ -13,8 +13,8 @@ import { Sources } from './types/sources';
 
 const apiKey = '5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e'
 
-export async function getPoisFromOpenTrip(bounds:any, languageCode:string, onSinglePoiFound:any = undefined) {
-    logger.info('searching for pois in open trip map', bounds);
+export async function getPoisFromOpenTrip(bounds:any, languageCode:string,geoHashStr: string, onSinglePoiFound:any = undefined) {
+    logger.info('searching for pois in open trip map for geoHash ' + geoHashStr);
     const lightPois = (await getlightPois(bounds, languageCode)).data;
     const tempPois =  lightPois.features.filter((poi:any, index:number) => lightPois.features.findIndex((p:any) => p.properties.name === poi.properties.name) === index);
     const pois:Poi[] = []
@@ -51,12 +51,12 @@ export async function getPoisFromOpenTrip(bounds:any, languageCode:string, onSin
         }
         pois.push(newPoi);
         if(onSinglePoiFound) {
-            onSinglePoiFound(poi);
+            onSinglePoiFound(newPoi);
         }
     }
 
 
-    logger.info(`total found ${pois.length.toString()} from open trip map`)
+    logger.info(`total found ${pois.length.toString()} from open trip map for geoHash ${geoHashStr}`)
     return pois;
 }
 

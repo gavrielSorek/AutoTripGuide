@@ -219,8 +219,9 @@ export async function addCachedAreaInfo(client:MongoClient, parameters:any) {
             lastUpdated: parameters.lastUpdated
         }});
     } else {
-        let data = {geoHashStr: parameters.geoHashStr, lastUpdated: parameters.lastUpdated} 
+        const data = {geoHashStr: parameters.geoHashStr, lastUpdated: parameters.lastUpdated} 
         res = await client.db("auto_trip_guide_db").collection("cachedAreas").insertOne(data);
+        logger.info(`new cached area created for geoHash ${parameters.geoHashStr} with the following id: ${res.insertedId}`);
     }
     return res
 }
