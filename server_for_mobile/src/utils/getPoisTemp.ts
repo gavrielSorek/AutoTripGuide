@@ -1,4 +1,4 @@
-import { getNearbyPois } from "../nearby_pois_objects";
+import { getNearbyPois } from "../googleFinder";
 const serverCommunication = require("../../../services/serverCommunication");
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
 var tokenGetter = require("../../../services/serverTokenGetter");

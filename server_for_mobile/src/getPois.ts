@@ -1,5 +1,5 @@
 import { gptPlaceInfo } from "./chat-gpt/gpt-api";
-import { fetchGoogleMapsPhotoUrl, getNearbyPois } from "./nearby_pois_objects";
+import { fetchGoogleMapsPhotoUrl, getNearbyPois } from "./googleFinder";
 import { Poi } from "./types/poi";
 import { Sources } from "./types/sources";
 import { logger } from "./utils/loggerService";

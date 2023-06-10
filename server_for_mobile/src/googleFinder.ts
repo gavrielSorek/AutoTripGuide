@@ -1,4 +1,3 @@
-import * as dotenv from 'dotenv'
 import axios from 'axios';
 import { Poi } from './types/poi';
 import { getPoiCategory } from './utils/switch_categories';
