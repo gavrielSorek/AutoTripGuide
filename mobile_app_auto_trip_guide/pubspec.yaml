@@ -47,7 +47,7 @@ dependencies:
   story_view: 0.14.0
   flutter_bloc: ^8.0.1
   equatable: ^2.0.3
-  async: 2.11.0
+  async: 
   introduction_screen: ^3.1.4
   cupertino_icons: ^1.0.2
   google_sign_in: ^6.0.2

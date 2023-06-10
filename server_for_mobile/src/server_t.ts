@@ -1,33 +1,34 @@
-const db = require("./db");
-const generalServices = require('../../services/generalServices')
-const onlinePoisFinder = require("./onlinePoisFinder");
-const serverCommunication = require("../../services/serverCommunication");
-var tokenGetter = require("../../services/serverTokenGetter");
-var geohash = require('ngeohash');
+import * as db from './db';
+import * as generalServices from '../../services/generalServices';
+import {getPoisFromOpenTrip} from './openTripFinder'
+import * as serverCommunication from "../../services/serverCommunication";
+import * as tokenGetter from "../../services/serverTokenGetter";
+import * as geohash from 'ngeohash';
 import { getPois } from "./getPois";
 import { Poi } from "./types/poi";
 import { Request, Response } from 'express';
 import { getDistance } from 'geolib';
-import { Coordinate } from "./types/coordinate";
+import { Coordinate, GeoBounds } from "./types/coordinate";
+import { logger } from './utils/loggerService';
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
-
-const { MongoClient } = require('mongodb');
-
-const express = require('express')
-const bodyParser = require('body-parser');
+import { MongoClient } from 'mongodb';
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import AsyncLock from 'async-lock';
+import { log } from 'console';
 const app = express()
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(bodyParser.json({limit: '50mb'}));
-const cors = require('cors');
 app.use(cors())
 const port = 5600
 app.use(bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 extended: false}));
 const MAX_POIS_FOR_USER = 100
-const MAX_DAYS_USE_AREA_CACHE = 30
-
+const MAX_DAYS_USE_AREA_CACHE = 100
 const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const lock = new AsyncLock();
 
 const dbClientSearcher = new MongoClient(uri);
 const dbClientAudio = new MongoClient(uri);
@@ -41,11 +42,10 @@ async function init() {
         await dbClientSearcher.connect();
         await dbClientAudio.connect();
         globaltokenAndPermission = await tokenGetter.getToken('crawler@gmail.com', '1234', serverCommunication.getServerUrl()) //get tokens and permissions for web server
-        console.log("Connected to search DB")
-        // tryModule()
+        logger.info("Connected to search DB")
         
     } catch (e) {
-        console.log('Failed to connect to mongo DB')
+        logger.info('Failed to connect to mongo DB')
         console.error(e); 
     }
 }
@@ -59,17 +59,19 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
     const userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language}
     const searchParams = {}
     addUserDataTosearchParams(searchParams, userData)
-
-    var geoHashStrings = getGeoHashBoundsStrings(userData, geoHashPrecitionLevel);
-    var boundsArr:any = [];
+    logger.info(`Search pois for user: lat: ${userData.lat}, lng: ${userData.lng}`)
+    const geoHashStrings = getGeoHashBoundsStrings(userData, geoHashPrecitionLevel);
+    const boundsArr:GeoBounds[] = [];
+    let geoHashArr:any[] = []
     // add all the bounds
     geoHashStrings.forEach((geoHashStr)=>{
-        boundsArr.push(getGeoHashBoundsByGeoStr(geoHashStr))
+        boundsArr.push(getGeoHashBoundsByGeoStr(geoHashStr as string))
+        geoHashArr.push(geoHashStr)
     });
     var pois:Poi[] = []
     for (let i = 0; i < boundsArr.length; i++ ) {
-        let tempPoisArr = await db.findPois(dbClientSearcher, searchParams, boundsArr[i], MAX_POIS_FOR_USER, false);
-        pois = pois.concat(tempPoisArr);
+        const tempPoisArr = await db.findPois(dbClientSearcher, searchParams, boundsArr[i], MAX_POIS_FOR_USER, false,geoHashArr[i]);
+        pois = pois.concat(tempPoisArr as any[]);
     }
     const filterdPois = pois.filter(poi => poi?._shortDesc.split(' ').length > 10)
 
@@ -79,34 +81,39 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
     
     // update the db with new pois if needed
     geoHashStrings.forEach(async (geoHashStr)=>{
-        let areaData = await db.getCachedAreaInfo(dbClientSearcher, {geoHashStr: geoHashStr})
-        //if the online searcher didn't search on this location
-        if (areaData && generalServices.getNumOfDaysBetweenDates(generalServices.getTodayDate(), areaData.lastUpdated) < MAX_DAYS_USE_AREA_CACHE) {
-            // do nothing - everything is updated
-        } else {
-            const params = {geoHashStr: geoHashStr, lastUpdated: generalServices.getTodayDate()}
-            db.addCachedAreaInfo(dbClientSearcher, params)
-            const bounds = getGeoHashBoundsByGeoStr(geoHashStr)
-            updateDbWithOnlinePois(bounds, 'en');
-            updateDbWithGoogleApiPois(bounds)
-        }
+        // Acquire lock for this geohash
+        lock.acquire(geoHashStr, async function() {
+            const areaData = await db.getCachedAreaInfo(dbClientSearcher, {geoHashStr: geoHashStr})
+             //if the online searcher didn't search on this location
+            if (areaData && generalServices.getNumOfDaysBetweenDates(generalServices.getTodayDate(), areaData.lastUpdated) < MAX_DAYS_USE_AREA_CACHE) {
+                // do nothing - everything is updated
+            } else {
+                logger.info(`Update db with geoHash pois: '${geoHashStr}'`)
+                const params = {geoHashStr: geoHashStr, lastUpdated: generalServices.getTodayDate()}
+                db.addCachedAreaInfo(dbClientSearcher, params)
+                const bounds = getGeoHashBoundsByGeoStr(geoHashStr as string)
+                updateDbWithOnlinePois(bounds, 'en',geoHashStr as string);
+                updateDbWithGoogleApiPois(bounds,geoHashStr as string)
+            }
+        });
     })
  })
 
- async function updateDbWithOnlinePois(bounds: any, language: string) {
+ async function updateDbWithOnlinePois(bounds: any, language: string,geoHash:string) {
     // async call for faster rsults
-    await onlinePoisFinder.getPoisList(bounds, language,(poi: Poi)=>{
+    await getPoisFromOpenTrip(bounds, language,geoHash,(poi: Poi)=>{
+        logger.info(`Add poi to db from openTripMAP: '${poi._poiName}' to geoHash: '${geoHash}'`)
         serverCommunication.sendPoisToServer([poi], globaltokenAndPermission)
     }); 
  }
 
- async function updateDbWithGoogleApiPois(bounds:any){
+ async function updateDbWithGoogleApiPois(bounds:any,geoHash:string) {
     const southWest :Coordinate = bounds['southWest'];
     const northEast :Coordinate = bounds['northEast'];
     const lat = (southWest.lat + northEast.lat) /2;
     const lng = (southWest.lng + northEast.lng) /2;
     const distance = getDistance({ latitude: lat, longitude: lng },    { latitude: northEast.lat, longitude: northEast.lng })
-    const pois = await getPois(lat, lng, distance)
+    const pois = await getPois(lat, lng, distance,geoHash)
     serverCommunication.sendPoisToServer(pois, globaltokenAndPermission)
  }
  
@@ -117,35 +124,36 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
  }
 
 // return same as getGeoHashBoundsString but if there is a close geohash returns it too
-function getGeoHashBoundsStrings(user_data:any, geoHashPrecition = 5){ 
-    var mainSpecificGeoHash = getGeoHashBoundsString(user_data, geoHashPrecition + 1)
-    var neighborsOfSpecific = geohash.neighbors(mainSpecificGeoHash)
-    let geoHashSet = new Set();
+function getGeoHashBoundsStrings(user_data:any, geoHashPrecition = 5):string[]{ 
+    const mainSpecificGeoHash = getGeoHashBoundsString(user_data, geoHashPrecition + 1)
+    const neighborsOfSpecific = geohash.neighbors(mainSpecificGeoHash)
+    const geoHashSet = new Set<string>();
     for (let i = 0; i < neighborsOfSpecific.length; i ++) {
-        let geoHashGeneral = neighborsOfSpecific[i].slice(0, geoHashPrecition);
+        const geoHashGeneral = neighborsOfSpecific[i].slice(0, geoHashPrecition);
         geoHashSet.add(geoHashGeneral);
     }
-    return geoHashSet;
+    return Array.from(geoHashSet);
 }
 
 // geoHashPrecition = 5 is the default (4.89km × 4.89km)
 function getGeoHashBoundsString(user_data:any, geoHashPrecition = 5){ 
-    var bounds= geohash.encode(user_data.lat, user_data.lng, geoHashPrecition)
+    const bounds= geohash.encode(user_data.lat, user_data.lng, geoHashPrecition)
     return bounds;
 }
 
-function getGeoHashBoundsByGeoStr(geohashStr:any) {
-    var geoBounds = geohash.decode_bbox(geohashStr);
-    let relevantBounds:any = {}
-    relevantBounds['southWest'] = {lat : geoBounds[0], lng : geoBounds[1]}
-    relevantBounds['northEast'] = {lat : geoBounds[2], lng : geoBounds[3]}
-    return relevantBounds;
+function getGeoHashBoundsByGeoStr(geohashStr:string) {
+    const geoBounds = geohash.decode_bbox(geohashStr);
+    const bounds: GeoBounds = {
+        southWest: { lat: geoBounds[0], lng: geoBounds[1] },
+        northEast: { lat: geoBounds[2], lng: geoBounds[3] }
+      };
+    return bounds;
 }
 
 
 // add new user
 app.get("/addNewUser", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside get of addNewUser - server side")
+    logger.info(`Add new user email: ${req.query.emailAddr}`);
     const userData = {'name': req.query.name, 'emailAddr': req.query.emailAddr, 'gender': req.query.gender, 'languages': req.query.languages, 'age': req.query.age, 'categories': req.query.categories}
     const result = await db.addUser(dbClientSearcher, userData)
     res.status(200);
@@ -155,7 +163,7 @@ app.get("/addNewUser", async function (req:Request, res:Response) { //next requr
 
  // get categories
 app.get("/getCategories", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside get of Categories - server side")
+    logger.info(`Get categories for language: ${req.query.language}`)
     const language = {'language': req.query.language};
     const result = await db.getCategories(dbClientSearcher, language)
     res.status(200);
@@ -165,7 +173,7 @@ app.get("/getCategories", async function (req:Request, res:Response) { //next re
 
  // get favorite categories for specific user
 app.get("/getFavorCategories", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside get of favorite Categories - server side")
+    logger.info(`Get favorite categories for email: ${req.query.email}`)
     const emailAddr = {'emailAddr': req.query.email};
     const result = await db.getFavorCategories(dbClientSearcher, emailAddr)
     res.status(200);
@@ -175,7 +183,7 @@ app.get("/getFavorCategories", async function (req:Request, res:Response) { //ne
 
 // update favorite categories for specific user
 app.get("/updateFavorCategories", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside update of favorite Categories - server side")
+    logger.info(`Update favorite categories for email: ${req.query.email}`)
     const userInfo = {'emailAddr': req.query.email, 'favorCategories': req.query.categories};
     const result = await db.updateFavorCategories(dbClientSearcher, userInfo)
     res.status(200);
@@ -185,7 +193,7 @@ app.get("/updateFavorCategories", async function (req:Request, res:Response) { /
 
 // get user info
 app.get("/getUserInfo", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside get of User Info - server side")
+    logger.info(`Get user info for email: ${req.query.email}`)
     const userInfo = {'emailAddr': req.query.email};
     const result = await db.getUserInfo(dbClientSearcher, userInfo)
     res.status(200);
@@ -195,7 +203,7 @@ app.get("/getUserInfo", async function (req:Request, res:Response) { //next requ
 
  // update favorite categories for specific user
 app.get("/updateUserInfo", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside update of user info - server side")
+    logger.info(`Update user info email: ${req.query.emailAddr}`)
     const userInfo = {'emailAddr': req.query.email, 'name': req.query.name, 'gender': req.query.gender, 'languages': req.query.languages, 'age': req.query.age};
     const result = await db.updateUserInfo(dbClientSearcher, userInfo)
     res.status(200);
@@ -205,7 +213,7 @@ app.get("/updateUserInfo", async function (req:Request, res:Response) { //next r
 
  // insert Poi To the history pois of specific user
 app.get("/insertPoiToHistory", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside insert poi to history - server side")
+    logger.info(`Add poi to history '${req.query.poiName}', email: ${req.query.emailAddr}`)
     const poiInfo = {'id': req.query.id, 'poiName': req.query.poiName, 'emailAddr': req.query.emailAddr, 'time': req.query.time, 'pic': req.query.pic};
     const result = await db.insertPoiToHistory(dbClientSearcher, poiInfo)
     res.status(200);
@@ -215,7 +223,7 @@ app.get("/insertPoiToHistory", async function (req:Request, res:Response) { //ne
 
  // get the history pois of specific user
 app.get("/getPoisHistory", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    console.log("inside get pois history - server side")
+    logger.info(`Get history pois for email: ${req.query.email}`)    
     const result = await db.getPoisHistory(dbClientSearcher, req.query.email)
     res.status(200);
     res.json(result);
@@ -223,7 +231,7 @@ app.get("/getPoisHistory", async function (req:Request, res:Response) { //next r
  })
 
  app.get("/getPoiById", async function (req:Request, res:Response) {
-    console.log("inside get poi - server side")
+    logger.info(`Get poi by id: ${req.query.poiId}`)
     const poiId = req.query.poiId;
     const poiInfo = await db.getPoi(dbClientSearcher, poiId);
     if (poiInfo) {
@@ -257,20 +265,13 @@ app.get("/getUserPoiPreference",async function (req:Request, res:Response) { //n
 
  app.listen(port, async ()=>{
     await init()
-    console.log(`Server is runing on port ${port}`)
+    logger.info(`Server is runing on port ${port}`)
 })
 
 
 //__________________________________________________________________________//
 //debug
 
-
-
-// async function tryModule() {
-//     var user_data = {lat : 32.1245, lng : 34.7954} 
-//     await updateDbWithOnlinePois(bounds, 'en');
-    
-// }
 
 // if localtunnel doing problems
 // http://localhost.run/ 
