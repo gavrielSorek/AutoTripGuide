@@ -41,7 +41,6 @@ class Guide {
     storiesDialogBox = GuidDialogBox(onRefreshFunc: () {
       clearAllPois();
       context.read<GuideBloc>().add(ShowSearchingPoisAnimationEvent());
-      Globals.globalUserMap.userMapState?.loadNewPois();
     });
   }
 
