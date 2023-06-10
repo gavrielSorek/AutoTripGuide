@@ -102,36 +102,22 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   }
 
   Widget buildDialogContainedWidgets(List<Widget> widgetList) {
-    return Dialog(
-        insetPadding: const EdgeInsets.all(Constants.edgesDist),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(Constants.padding),
-        ),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        child: Column(
-          children: [
-            Spacer(),
-            Stack(children: <Widget>[
-              Container(
-                alignment: Alignment.topLeft,
-                height: 239,
-                width: MediaQuery.of(context).size.width - 30,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(34),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Color.fromRGBO(0, 0, 0, 0.25),
-                        offset: Offset(0, 0),
-                        blurRadius: 20)
-                  ],
-                  color: Color.fromRGBO(255, 255, 255, 0.75),
-                ),
-                child: Column(children: widgetList),
-              ),
-            ]),
-          ],
-        ));
+    return Container(
+      alignment: Alignment.topLeft,
+      height: 239,
+      width: MediaQuery.of(context).size.width - 30,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(34),
+        boxShadow: [
+          BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 0.25),
+              offset: Offset(0, 0),
+              blurRadius: 20)
+        ],
+        color: Color.fromRGBO(255, 255, 255, 0.75),
+      ),
+      child: Column(children: widgetList),
+    );
   }
 
   Widget buildLoadingNewPoisWidget() {
@@ -231,15 +217,15 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
     return BlocBuilder<GuideBloc, GuideDialogState>(
       builder: (BuildContext context, state) {
         if (state is PoisSearchingState) {
-          return Expanded(child: buildSearchingWidget());
+          return buildSearchingWidget();
         } else if (state is ShowPoiState) {
           return buildPoiGuide(state);
         } else if (state is ShowOptionalCategoriesState) {
           return Expanded(child: buildOptionalCategoriesSelectionWidget(state));
         } else if (state is LoadingMorePoisState) {
-          return Expanded(child: buildLoadingNewPoisWidget());
+          return buildLoadingNewPoisWidget();
         } else {
-          return Expanded(child: buildSearchingWidget());
+          return buildSearchingWidget();
         }
       },
     );
