@@ -81,12 +81,7 @@ class _GuideAudioPlayer extends State<GuideAudioPlayer> {
                   updatePlayerButton();
                 }
               },
-              icon: SvgPicture.asset(
-                'assets/images/double-chevron-left-svgrepo-com.svg',
-                width: 22,
-                height: 22,
-                color: Colors.white,
-              ),
+              icon: Icon(Icons.skip_previous),
               iconSize: 35,
               color: Colors.white,
             ),
@@ -130,12 +125,7 @@ class _GuideAudioPlayer extends State<GuideAudioPlayer> {
                 updatePlayerButton();
               }
             },
-            icon: SvgPicture.asset(
-              'assets/images/double-right-chevron-svgrepo-com.svg',
-              width: 22,
-              height: 22,
-              color: Colors.white,
-            ),
+            icon: Icon(Icons.skip_next),
             iconSize: 35,
             color: Colors.white,
           ),
