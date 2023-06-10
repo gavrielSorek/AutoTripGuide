@@ -197,13 +197,13 @@ class PoiGuideImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 400),
+    return Container(
       width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height, // give it a fixed height
       child: ClipRRect(
         borderRadius: borderRadius,
         child: FittedBox(
-          fit: BoxFit.fill,
+          fit: BoxFit.cover,
           child: CachedNetworkImage(
             imageUrl: imagePath,
             placeholder: (context, url) => CircularProgressIndicator(),
