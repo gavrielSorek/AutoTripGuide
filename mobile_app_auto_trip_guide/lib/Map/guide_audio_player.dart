@@ -62,7 +62,7 @@ class _GuideAudioPlayer extends State<GuideAudioPlayer> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withOpacity(0.3),
             // Black color with 50% opacity
             shape: BoxShape.circle, // Assuming you want a circular background
           ),
@@ -91,7 +91,7 @@ class _GuideAudioPlayer extends State<GuideAudioPlayer> {
           width: 60,
           height: 60,
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withOpacity(0.3),
             // Black color with 50% opacity
             shape: BoxShape.circle, // Assuming you want a circular background
           ),
@@ -114,7 +114,7 @@ class _GuideAudioPlayer extends State<GuideAudioPlayer> {
         ),
         Container(
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withOpacity(0.3),
             // Black color with 50% opacity
             shape: BoxShape.circle, // Assuming you want a circular background
           ),
