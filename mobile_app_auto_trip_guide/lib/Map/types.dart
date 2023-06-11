@@ -73,6 +73,7 @@ class Poi {
   double longitude;
   String? shortDesc;
   String? language;
+  VendorInfo? vendorInfo;
   dynamic audio;
   String? source;
   String? Contributor;
@@ -92,6 +93,7 @@ class Poi {
       required this.longitude,
       this.shortDesc,
       this.language,
+      this.vendorInfo,
       this.audio,
       this.source,
       this.Contributor,
@@ -107,8 +109,7 @@ class Poi {
     try {
       String picUrl = (json['_pic'] ?? '?') as String;
       if (picUrl == 'no pic') {
-        picUrl =
-        "";
+        picUrl = "";
       }
       String poiName = json['_poiName'] as String;
       String capitalizedPoiName = poiName.capitalizeTotalString();
@@ -121,6 +122,7 @@ class Poi {
           shortDesc: (json['_shortDesc'] ?? "?") as String,
           language: (json['_language'] ?? "?") as String,
           audio: (json['_audio'] ?? "?"),
+          vendorInfo: VendorInfo(json['_vendorInfo']),
           source: (json['_source'] ?? "?") as String,
           Contributor: (json['_Contributor'] ?? "?") as String,
           CreatedDate: (json['_CreatedDate'] ?? "?") as String,
@@ -130,10 +132,14 @@ class Poi {
           country: (json['_country'] ?? "?") as String,
           pic: picUrl,
           Categories:
-          ((json['_Categories'] ?? []) as List<dynamic>).cast<String>());
+              ((json['_Categories'] ?? []) as List<dynamic>).cast<String>());
     } catch (e) {
       print("Error processing poi: $e");
-      return Poi(id: 'Dummy', latitude: 1000, longitude: 1000, Categories: []); // not existed poi
+      return Poi(
+          id: 'Dummy',
+          latitude: 1000,
+          longitude: 1000,
+          Categories: []); // not existed poi
     }
   }
 }
@@ -152,12 +158,16 @@ class MapPoi {
   mapbox.Symbol getSymbolFromPoi(PoiIconColor color) {
     List<String> colors = ['greyPoi', 'bluePoi', 'greyTransPoi'];
     String iconImage = colors[color.index];
-    return mapbox.Symbol(poi.id, mapbox.SymbolOptions(
-      geometry: mapbox.LatLng(poi.latitude, poi.longitude),
-        iconImage: iconImage, // this is the icon you want to use
-      iconSize: 0.12,
-        textField: poi.poiName, textSize: 10, textOpacity: 0.4)
-    );
+    return mapbox.Symbol(
+        poi.id,
+        mapbox.SymbolOptions(
+            geometry: mapbox.LatLng(poi.latitude, poi.longitude),
+            iconImage: iconImage,
+            // this is the icon you want to use
+            iconSize: 0.12,
+            textField: poi.poiName,
+            textSize: 10,
+            textOpacity: 0.4));
   }
 
   Poi poi;
@@ -189,5 +199,18 @@ class GuideData {
     int oppositeStatusIdx = 1 - status.index;
     status = statusValues[oppositeStatusIdx];
     guideIcon = guideIcons[oppositeStatusIdx];
+  }
+}
+
+class VendorInfo {
+  Map<String, dynamic> data = {};
+
+  VendorInfo(Map<String, dynamic>? data) {
+    if(data != null)
+      this.data = data;
+  }
+
+  dynamic getProperty(String key) {
+    return data[key];
   }
 }
