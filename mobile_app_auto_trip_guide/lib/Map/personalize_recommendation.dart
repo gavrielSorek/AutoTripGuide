@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:final_project/Map/globals.dart';
 import 'package:final_project/Map/types.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 
 class PersonalizeRecommendation {
@@ -20,6 +21,10 @@ class PersonalizeRecommendation {
     double dist = calculateDistance(userLocation.latitude,
         userLocation.longitude, poi.latitude, poi.longitude);
     return dist;
+  }
+
+  static double getDistanceInMeters(Poi poi) {
+    return getDistanceInKm(poi) * 1000;
   }
 
   // get score of poi according to user's preferences
@@ -46,34 +51,75 @@ class PersonalizeRecommendation {
 
   // sort pois by weighted score of preferences and distance
   static int sortMapPoisByDist(MapPoi mapPoi1, MapPoi mapPoi2) {
-    double distanceA = getDistanceInKm(mapPoi1.poi);
-    double distanceB = getDistanceInKm(mapPoi2.poi);
-    int weightedScoreA = (distanceA * 1000).round();
-    int weightedScoreB = (distanceB * 1000).round();
-    return weightedScoreA - weightedScoreB;
+    double distanceA = normalizeDistance(getDistanceInMeters(mapPoi1.poi));
+    double distanceB = normalizeDistance(getDistanceInMeters(mapPoi2.poi));
+    return distanceB.round() - distanceA.round();
   }
 
-  // sort pois by weighted score of preferences and distance
+  static double normalizeDistance(double distanceInMeters) {
+    const double maxDistance =
+        10000; // maximum distance considered (change as needed)
+    return 1 - min(distanceInMeters, maxDistance) / maxDistance;
+  }
+
   static int sortMapPoisByCombinedScore(MapPoi mapPoi1, MapPoi mapPoi2) {
-    return getVendorScore(mapPoi1);
+    final double vendorScoreWeight = 0.3;
+    final double distanceWeight = 1 - vendorScoreWeight;
+
+    double vendorScorePoi1 = getVendorScore(mapPoi1.poi);
+    double distInMetersPoi1 = getDistanceInMeters(mapPoi1.poi);
+    double vendorScorePoi2 = getVendorScore(mapPoi2.poi);
+    double distInMetersPoi2 = getDistanceInMeters(mapPoi2.poi);
+
+    // normalize distances
+    double normalizedDistancePoi1 = normalizeDistance(distInMetersPoi1);
+    double normalizedDistancePoi2 = normalizeDistance(distInMetersPoi2);
+
+    // calculate combined scores
+    double combinedScorePoi1 =
+        distanceWeight * normalizedDistancePoi1 + vendorScoreWeight * vendorScorePoi1;
+    double combinedScorePoi2 =
+        distanceWeight * normalizedDistancePoi2 + vendorScoreWeight * vendorScorePoi2;
+
+    return (combinedScorePoi2 * 100).round() -
+        (combinedScorePoi1 * 100).round(); // for descending sort
   }
 
-  static int getGoogleVendorScore(VendorInfo vendorInfo) {
+  static const maxGoogleReviewers = 1000;
+  static const double maxAvgRating = 5;
+  static const double epsilon = 1e-10;
+
+  static double getGoogleVendorScore(VendorInfo vendorInfo) {
+    dynamic avgRating = 0;
+    int numOfReviewers = 0;
+    if (vendorInfo.getProperty('_avgRating') != null) {
+      avgRating = vendorInfo.getProperty('_avgRating');
+    }
+    if (vendorInfo.getProperty('_numReviews') != null) {
+      numOfReviewers = vendorInfo.getProperty('_numReviews');
+    }
+    return ((avgRating / maxAvgRating) +
+        (numOfReviewers / min(maxGoogleReviewers, numOfReviewers + epsilon)) / 2);
+  }
+
+  static const Map<String, double> ratingStrToScoreOpenTripMap = {
+    "3h": 5,
+    "3": 4,
+    "2h": 3,
+    "2": 2
+  };
+
+  static double getOpenTripMapVendorScore(VendorInfo vendorInfo) {
+    String? ratingStr = vendorInfo.getProperty('_rating');
+    if (ratingStrToScoreOpenTripMap[ratingStr] != null) {
+      return ratingStrToScoreOpenTripMap[ratingStr]! / 10;
+    }
     return 0;
   }
 
-  static int getOpenTripMapVendorScore(VendorInfo vendorInfo) {
-    switch (vendorInfo.getProperty('_rating')) {
-      case "3h":
-        return 10;
-      default:
-        return 0;
-    }
-  }
-
-  static int getVendorScore(MapPoi mapPoi) {
-    if (mapPoi.poi.vendorInfo == null) return 0;
-    VendorInfo vendorInfo = mapPoi.poi.vendorInfo!;
+  static double getVendorScore(Poi poi) {
+    if (poi.vendorInfo == null) return 0;
+    VendorInfo vendorInfo = poi.vendorInfo!;
     switch (vendorInfo.getProperty('_source')) {
       case 'google':
         return getGoogleVendorScore(vendorInfo);
