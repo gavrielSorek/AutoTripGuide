@@ -63,7 +63,7 @@ class PersonalizeRecommendation {
   }
 
   static int sortMapPoisByCombinedScore(MapPoi mapPoi1, MapPoi mapPoi2) {
-    final double vendorScoreWeight = 0.3;
+    final double vendorScoreWeight = 0.4;
     final double distanceWeight = 1 - vendorScoreWeight;
 
     double vendorScorePoi1 = getVendorScore(mapPoi1.poi);
@@ -103,16 +103,18 @@ class PersonalizeRecommendation {
   }
 
   static const Map<String, double> ratingStrToScoreOpenTripMap = {
-    "3h": 5,
-    "3": 4,
-    "2h": 3,
-    "2": 2
+    "3h": 3,
+    "3": 3,
+    "2h": 2,
+    "2": 2,
+    "1h": 1,
+    "1": 1
   };
-
+  static const maxOpenTripMapRating = 3;
   static double getOpenTripMapVendorScore(VendorInfo vendorInfo) {
     String? ratingStr = vendorInfo.getProperty('_rating');
     if (ratingStrToScoreOpenTripMap[ratingStr] != null) {
-      return ratingStrToScoreOpenTripMap[ratingStr]! / 10;
+      return ratingStrToScoreOpenTripMap[ratingStr]! / maxOpenTripMapRating;
     }
     return 0;
   }
