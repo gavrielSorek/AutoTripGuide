@@ -40,6 +40,7 @@ class Guide {
 
     storiesDialogBox = GuidDialogBox(onRefreshFunc: () {
       clearAllPois();
+      context.read<GuideBloc>().add(ClearAllPois());
       context.read<GuideBloc>().add(ShowSearchingPoisAnimationEvent());
     });
   }

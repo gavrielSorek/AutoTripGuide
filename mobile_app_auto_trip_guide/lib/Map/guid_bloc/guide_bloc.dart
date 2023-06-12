@@ -18,7 +18,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
   GuideBloc() : super(PoisSearchingState()) {
     List<MapPoi> _poisToGuide = [];
     int nextIdx = 0;
-    int maxListenedIdx = 0;
+    int minUnheardIdx = 0;
     ShowOptionalCategoriesState? _lastShowOptionalCategoriesState = null;
 
     void initAudioSettings() {
@@ -69,8 +69,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
 
     MapPoi? getNextMapPoi() {
       if (nextIdx >= _poisToGuide.length) return null;
-      if (nextIdx >= maxListenedIdx) {
-        maxListenedIdx = nextIdx;
+      if (nextIdx >= minUnheardIdx) {
+        minUnheardIdx = nextIdx;
         List<MapPoi> unGuidedPois =
             _poisToGuide.sublist(nextIdx, _poisToGuide.length);
         unGuidedPois.sort(PersonalizeRecommendation.sortMapPoisByCombinedScore);
@@ -148,8 +148,8 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           .indexWhere((mapPoi) => mapPoi.poi.id == event.mapPoi.poi.id);
       if (index != -1) {
         _poisToGuide.removeAt(index);
-        if (index <= maxListenedIdx && nextIdx > maxListenedIdx) {
-          maxListenedIdx--;
+        if (index <= minUnheardIdx && nextIdx > minUnheardIdx) {
+          minUnheardIdx--;
         }
         if (index < nextIdx) {
           nextIdx--;
@@ -180,6 +180,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     on<ShowOptionalCategoriesEvent>((event, emit) {
       // stop loading animation
       Globals.globalUserMap.setPoisScanningStatus(false);
+      this.add(ClearAllPois());
 
       Globals.globalGuideAudioPlayerHandler.stop();
       List<MapPoi> mapPoisList = event.pois.values.toList();
@@ -216,5 +217,16 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     on<SetGuideState>((event, emit) {
       emit(event.state);
     });
+
+    on<ClearUnheardPois>((event, emit) {
+      _poisToGuide = _poisToGuide.sublist(0, minUnheardIdx);
+    });
+
+    on<ClearAllPois>((event, emit) {
+      _poisToGuide = [];
+      minUnheardIdx = 0;
+      nextIdx = 0;
+    });
   }
+  
 }

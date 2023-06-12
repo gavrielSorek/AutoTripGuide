@@ -10,6 +10,11 @@ class ShowNextPoiInfoEvent extends GuideEvent {}
 
 class ShowPrevPoiInfoEvent extends GuideEvent {}
 
+class ClearUnheardPois extends GuideEvent {}
+
+class ClearAllPois extends GuideEvent {}
+
+
 class playPoiEvent extends GuideEvent {
   MapPoi mapPoi;
   playPoiEvent({required this.mapPoi}) {}
