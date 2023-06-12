@@ -1,5 +1,6 @@
 import { Configuration, OpenAIApi } from "openai";
 import * as dotenv from 'dotenv' // see https://github.com/motdotla/dotenv#how-do-i-use-dotenv-with-import
+import { logger } from "../utils/loggerService";
 dotenv.config()
 
 
@@ -25,13 +26,14 @@ export function gptPlaceInfo(placeName: string,address: string, length: number) 
     })
     .then((response) => {
       if (response.data.choices[0].text === "") {
-        console.log("No answer found");
+        logger.error("No answer found for " + placeName);
         return undefined;
       }
       return response.data.choices[0].text?.replace(/^\s+/, "");;
     })
     .catch((error) => {
-      console.log(error)
+      logger.error("error in gptPlaceInfo for " + placeName );
+      logger.error(error);
       return "error";
     });
 }
