@@ -104,12 +104,12 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       if (state is ShowOptionalCategoriesState) {
         _lastShowOptionalCategoriesState = state as ShowOptionalCategoriesState;
       }
-      if ((state is PoisSearchingState ||
-          state is LoadingMorePoisState ||
-          (state is ShowOptionalCategoriesState && event.startGuide))) {
+      if (state is ShowOptionalCategoriesState && event.startGuide) {
         this.add(ShowNextPoiInfoEvent());
+      } else if (state is PoisSearchingState || state is LoadingMorePoisState) {
+        this.add(ShowNextPoiInfoEvent());
+        Globals.globalUserMap.setPoisScanningStatus(false);
       }
-      Globals.globalUserMap.setPoisScanningStatus(false);
     });
 
     on<ShowSearchingPoisAnimationEvent>((event, emit) {
