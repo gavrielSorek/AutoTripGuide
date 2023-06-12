@@ -366,40 +366,34 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
   }
 
   @override
+  initState() {
+    super.initState();
+    handleSelectedCategoryClicked('All');
+  }
+
+  void onStartGuideButtonPressed() {
+    Set<MapPoi> filteredPois = Set();
+    widget.state.isCheckedCategory.forEach((key, value) {
+      if (value) {
+        filteredPois.addAll(widget.state.categoriesToPoisMap[key] ?? []);
+      }
+    });
+    Map<String, MapPoi> filteredMapPois = Map.fromIterable(
+        filteredPois.toList(),
+        key: (item) => item.poi.id,
+        value: (item) => item);
+    if (filteredPois.length > 0) {
+      context.read<GuideBloc>().add(AddPoisToGuideEvent(
+          poisToGuide: filteredMapPois.values.toList(), startGuide: true));
+    }
+  }
+  @override
   Widget build(BuildContext context) {
     ProgressButton playButton = ProgressButton(
       color: Colors.blue,
       fillDuration: Duration(seconds: 10),
-      onPressed: () {
-        Set<MapPoi> filteredPois = Set();
-        widget.state.isCheckedCategory.forEach((key, value) {
-          if (value) {
-            filteredPois.addAll(widget.state.categoriesToPoisMap[key] ?? []);
-          }
-        });
-        Map<String, MapPoi> filteredMapPois = Map.fromIterable(
-            filteredPois.toList(),
-            key: (item) => item.poi.id,
-            value: (item) => item);
-        if (filteredPois.length > 0) {
-          context.read<GuideBloc>().add(AddPoisToGuideEvent(
-              poisToGuide: filteredMapPois.values.toList(), startGuide: true));
-        }
-      },
-      onCountDownFinished: () {
-        Set<MapPoi> filteredPois = Set();
-        widget.state.isCheckedCategory.forEach((key, value) {
-          filteredPois.addAll(widget.state.categoriesToPoisMap[key] ?? []);
-        });
-        Map<String, MapPoi> filteredMapPois = Map.fromIterable(
-            filteredPois.toList(),
-            key: (item) => item.poi.id,
-            value: (item) => item);
-        if (filteredPois.length > 0) {
-          context.read<GuideBloc>().add(AddPoisToGuideEvent(
-              poisToGuide: filteredMapPois.values.toList()));
-        }
-      },
+      onPressed: onStartGuideButtonPressed,
+      onCountDownFinished: onStartGuideButtonPressed,
       content: "Start Playing",
       width: 140,
       height: 40,
