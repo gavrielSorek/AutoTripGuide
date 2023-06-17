@@ -24,7 +24,16 @@ class _PoiGuideState extends State<PoiGuide> {
     return StretchingWidget(
         key: stretchingWidgetKey,
         collapsedChild: collapsedPoiInfo,
-        expendedChild: expendedPoiInfo);
+        expendedChild: expendedPoiInfo,
+      onStretch: () {
+          Globals.appEvents.poiExpanded(widget.poi.poiName ?? 'Unknown',
+              widget.poi.Categories, widget.poi.id);
+      },
+      onCollapse: () {
+        Globals.appEvents.poiCollapsed(widget.poi.poiName ?? 'Unknown',
+            widget.poi.Categories, widget.poi.id);
+      },
+    );
   }
 
   get poiScrolledText {

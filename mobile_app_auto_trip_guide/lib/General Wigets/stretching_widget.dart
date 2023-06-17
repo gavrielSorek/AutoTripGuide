@@ -13,6 +13,7 @@ class Constants {
 class StretchingWidget extends StatefulWidget {
   final Widget expendedChild;
   final Widget collapsedChild;
+  dynamic onStretch, onCollapse;
 
   static get collapsedPercentFromAvailableSpace => 0.4;
 
@@ -28,7 +29,13 @@ class StretchingWidget extends StatefulWidget {
         ],
       );
 
-  StretchingWidget({required this.expendedChild, required this.collapsedChild, Key? key}) : super(key: key);
+  StretchingWidget(
+      {required this.expendedChild,
+      required this.collapsedChild,
+      this.onStretch,
+      this.onCollapse,
+      Key? key})
+      : super(key: key);
 
   @override
   StretchingWidgetState createState() => StretchingWidgetState();
@@ -37,6 +44,7 @@ class StretchingWidget extends StatefulWidget {
 class StretchingWidgetState extends State<StretchingWidget> {
   late double _expandedHeight;
   late double _collapsedHeight;
+  bool isSwipeInProgress = false;
   bool _isExpanded = false;
 
   @override
@@ -51,14 +59,19 @@ class StretchingWidgetState extends State<StretchingWidget> {
     setState(() {
       _isExpanded = true;
     });
+    if (widget.onStretch != null) {
+      widget.onStretch();
+    }
   }
 
   void collapse() {
     setState(() {
       _isExpanded = false;
     });
+    if (widget.onCollapse != null) {
+      widget.onCollapse();
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -68,15 +81,18 @@ class StretchingWidgetState extends State<StretchingWidget> {
         child: GestureDetector(
           behavior: HitTestBehavior.translucent,
           onVerticalDragUpdate: (DragUpdateDetails details) {
-            if (details.delta.dy > 0) {
-              // Swiped down
-              setState(() {
-                _isExpanded = false;
-              });
-            } else if (details.delta.dy < 0) {
-              // Swiped up
-              setState(() {
-                _isExpanded = true;
+            if (!isSwipeInProgress) {
+              isSwipeInProgress = true;
+              if (details.delta.dy > 0) {
+                // Swiped down
+                collapse();
+              } else if (details.delta.dy < 0) {
+                // Swiped up
+                stretch();
+              }
+              // Reset the flag after a short delay to allow the next swipe
+              Future.delayed(const Duration(milliseconds: 500), () {
+                isSwipeInProgress = false;
               });
             }
           },
