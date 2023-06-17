@@ -6,6 +6,7 @@ const maxPois = 200;
 import { logger } from './utils/loggerService';
 import { Poi, blacklistStrings } from './types/poi';
 import { Sources } from './types/sources';
+import { wikiGetImageUrl } from './utils/wiki';
 
 // http://api.opentripmap.com/0.1/en/places/bbox?lon_min=38.364285&lat_min=59.855685&lon_max=38.372809&lat_max=59.859052&kinds=churches&format=geojson&apikey=5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e
 // http://api.opentripmap.com/0.1/en/places/xid/Q372040?apikey=5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e
@@ -29,6 +30,7 @@ export async function getPoisFromOpenTrip(bounds:any, languageCode:string,geoHas
         if(isBlacklisted){
             continue;
         }
+        const pic = fullPoi.preview ? fullPoi.preview.source : await wikiGetImageUrl(fullPoi.wikipedia);
         const newPoi:Poi = {
             _poiName : fullPoi.name , 
             _latitude : fullPoi.point.lat, 
@@ -51,7 +53,7 @@ export async function getPoisFromOpenTrip(bounds:any, languageCode:string,geoHas
             _LastUpdatedDate : getTodayDate(),
             _country : geo.getCountry(fullPoi.point['lat'], fullPoi.point['lon']),
             _Categories : await textAnalysisTool.convertToServerCategories(fullPoi.kinds),
-            _pic : fullPoi.preview ? fullPoi.preview.source : ''
+            _pic : pic
         }
         pois.push(newPoi);
         if(onSinglePoiFound) {
