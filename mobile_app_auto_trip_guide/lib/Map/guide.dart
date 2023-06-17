@@ -463,7 +463,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                       fontWeight: FontWeight.w400,
                       fontSize: 16,
                       letterSpacing: 0,
-                      color: Color(0xff6C6F70),
+                      color: Colors.black87,
                       height: 1.5,
                     ),
                   ),

@@ -42,7 +42,7 @@ class _PoiGuideState extends State<PoiGuide> {
               Text(
                 widget.poi.shortDesc ?? '',
                 style: TextStyle(
-                    color: Color(0xff6C6F70),
+                    color: Colors.black87,
                     fontFamily: 'Inter',
                     fontSize: 16,
                     letterSpacing: 0,
