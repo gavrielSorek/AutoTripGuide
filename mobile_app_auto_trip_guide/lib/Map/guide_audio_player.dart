@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-
 import '../General Wigets/tts_audio_player.dart';
 import 'background_audio_player.dart';
 

@@ -34,6 +34,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
 
       Globals.globalGuideAudioPlayerHandler.onPressPrev = () async {
         if (Globals.globalGuideAudioPlayerHandler.isAtBeginning) {
+          await Globals.globalGuideAudioPlayerHandler.stop();
           this.add(ShowPrevPoiInfoEvent());
         } else {
           Globals.globalGuideAudioPlayerHandler.restartPlaying();
