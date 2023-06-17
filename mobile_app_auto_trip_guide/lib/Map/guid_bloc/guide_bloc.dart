@@ -60,6 +60,10 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       };
       Globals.globalGuideAudioPlayerHandler.onPlayerFinishedFunc = () {
         Globals.globalGuideAudioPlayerHandler.stop();
+        if (nextIdx > 0) {
+          Poi poi = _poisToGuide[nextIdx - 1].poi;
+          Globals.appEvents.poiFinishedPlaying(poi.poiName ?? "Unknown", poi.Categories, poi.id);
+        }
         final int secondToWaitBetweenStories = 3;
         Future.delayed(Duration(seconds: secondToWaitBetweenStories), () {
           this.add(ShowNextPoiInfoEvent());
