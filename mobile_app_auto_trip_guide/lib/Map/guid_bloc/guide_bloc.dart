@@ -78,7 +78,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         minUnheardIdx = nextIdx;
         List<MapPoi> unGuidedPois =
             _poisToGuide.sublist(nextIdx, _poisToGuide.length);
-        unGuidedPois.sort(PersonalizeRecommendation.sortMapPoisByCombinedScore);
+        unGuidedPois.sort(PersonalizeRecommendation.sortMapPoisByDist);
         // Replace the original portion with the sorted sublist
         _poisToGuide.replaceRange(
             nextIdx, _poisToGuide.length, unGuidedPois);
