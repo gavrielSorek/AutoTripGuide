@@ -51,9 +51,9 @@ class PersonalizeRecommendation {
 
   // sort pois by weighted score of preferences and distance
   static int sortMapPoisByDist(MapPoi mapPoi1, MapPoi mapPoi2) {
-    double distanceA = normalizeDistance(getDistanceInMeters(mapPoi1.poi));
-    double distanceB = normalizeDistance(getDistanceInMeters(mapPoi2.poi));
-    return distanceB.round() - distanceA.round();
+    double distanceA = getDistanceInMeters(mapPoi1.poi);
+    double distanceB = getDistanceInMeters(mapPoi2.poi);
+    return distanceA.round()- distanceB.round();
   }
 
   static double normalizeDistance(double distanceInMeters) {
