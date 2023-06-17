@@ -34,7 +34,7 @@ export async function getPois(lat:number, long:number, distance:number,geoHash:s
     // in this step we will fetch from chat/wiki
     const promises = new_pois_list.map((poi : Poi) =>  gptPlaceInfo(poi._poiName,poi._country, 128).then(desc =>{
       if(desc !== undefined){
-        poi._shortDesc = `[chatGPT-v4] ${desc}`;
+        poi._shortDesc = `${desc} [powered by chatGPT]`;
         poi._source = Sources.CHAT_GPT
       }
     }));
