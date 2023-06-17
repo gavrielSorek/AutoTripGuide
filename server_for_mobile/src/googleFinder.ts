@@ -30,7 +30,7 @@ export async function getNearbyPois(latitude: number, longitude: number, radius:
     for (const place of places) {
         const poi = new Poi(place.name, place.geometry.location.lat, place.geometry.location.lng)
         poi._pic = place.photos?.length ? place.photos[0].photo_reference : ''
-        poi._vendorInfo = {_source: Sources.Google, _avgRating: place.rating, _numReviews: place.user_ratings_total, _placeId: place.place_id,_plus_code: place.plus_code.compound_code }
+        poi._vendorInfo = {_source: Sources.Google, _avgRating: place.rating, _numReviews: place.user_ratings_total, _placeId: place.place_id,_plus_code: place?.plus_code?.compound_code ?? ''}
         poi._Contributor = Sources.Google;
         poi._Categories = []
         const categories_set = new Set<string>();

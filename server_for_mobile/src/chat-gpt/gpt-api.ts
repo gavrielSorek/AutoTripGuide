@@ -12,7 +12,7 @@ const openai = new OpenAIApi(configuration);
 
 
 export function gptPlaceInfo(placeName: string,address: string, length: number) {
-  console.log('gpt request info for',placeName,address,length)
+  logger.info(`GPT request for ${placeName} in ${address}`)
   return openai
     .createCompletion({
       model: "text-davinci-003",
