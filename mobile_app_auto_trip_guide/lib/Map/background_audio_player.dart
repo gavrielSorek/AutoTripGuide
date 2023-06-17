@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import '../General Wigets/tts_audio_player.dart';
 import 'package:audio_service/audio_service.dart';
 
