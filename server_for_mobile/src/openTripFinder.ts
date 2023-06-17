@@ -4,7 +4,7 @@ import * as textAnalysisTool from "../../services/textAnalysisTool";
 import * as internetServices from "../../services/generalInternetServices";
 const maxPois = 200;
 import { logger } from './utils/loggerService';
-import { Poi } from './types/poi';
+import { Poi, blacklistStrings } from './types/poi';
 import { Sources } from './types/sources';
 
 // http://api.opentripmap.com/0.1/en/places/bbox?lon_min=38.364285&lat_min=59.855685&lon_max=38.372809&lat_max=59.859052&kinds=churches&format=geojson&apikey=5ae2e3f221c38a28845f05b6f5cf0b17ddcf46b0d9cfb7d66fc2628e
@@ -25,6 +25,10 @@ export async function getPoisFromOpenTrip(bounds:any, languageCode:string,geoHas
             continue;
         }
         const description = await textAnalysisTool.translateIfNotInTargetLanguage(fullPoi.wikipedia_extracts.text, languageCode);
+        const isBlacklisted = blacklistStrings.every((str) => description.toLowerCase().includes(str.toLowerCase()));
+        if(isBlacklisted){
+            continue;
+        }
         const newPoi:Poi = {
             _poiName : fullPoi.name , 
             _latitude : fullPoi.point.lat, 

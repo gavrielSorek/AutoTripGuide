@@ -6,6 +6,7 @@ var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
 var yyyy = today.getFullYear();
 
 var date = dd + '/' + mm + '/' + yyyy;
+export const blacklistStrings: string[] = ['depopulated','palestinian'];
 
 export interface vendorInfo {
   _source: Sources,
@@ -14,6 +15,7 @@ export interface vendorInfo {
   _avgRating?: number,
   _numReviews?: number,
   _rating?: string,
+  _plus_code?: string,
   // for open trip
   _url?: string,
   _wikiPlaceId?: string,
