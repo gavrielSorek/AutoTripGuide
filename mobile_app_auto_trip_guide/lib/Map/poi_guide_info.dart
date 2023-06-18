@@ -22,12 +22,12 @@ class _PoiGuideState extends State<PoiGuide> {
   @override
   Widget build(BuildContext context) {
     return StretchingWidget(
-        key: stretchingWidgetKey,
-        collapsedChild: collapsedPoiInfo,
-        expendedChild: expendedPoiInfo,
+      key: stretchingWidgetKey,
+      collapsedChild: collapsedPoiInfo,
+      expendedChild: expendedPoiInfo,
       onStretch: () {
-          Globals.appEvents.poiExpanded(widget.poi.poiName ?? 'Unknown',
-              widget.poi.Categories, widget.poi.id);
+        Globals.appEvents.poiExpanded(widget.poi.poiName ?? 'Unknown',
+            widget.poi.Categories, widget.poi.id);
       },
       onCollapse: () {
         Globals.appEvents.poiCollapsed(widget.poi.poiName ?? 'Unknown',
@@ -130,15 +130,15 @@ class _PoiGuideState extends State<PoiGuide> {
                       },
                       icon: isExpanded
                           ? Icon(
-                        Icons.keyboard_arrow_down,
-                        size: 30,
-                        color: Colors.white,
-                      )
+                              Icons.keyboard_arrow_down,
+                              size: 30,
+                              color: Colors.white,
+                            )
                           : Icon(
-                        Icons.keyboard_arrow_up,
-                        size: 30,
-                        color: Colors.white,
-                      ),
+                              Icons.keyboard_arrow_up,
+                              size: 30,
+                              color: Colors.white,
+                            ),
                     ),
                   ),
                 ],
@@ -160,7 +160,6 @@ class _PoiGuideState extends State<PoiGuide> {
       edgeInsets: EdgeInsets.only(bottom: 27, left: 27, right: 27),
     );
   }
-
 
   get collapsedPoiInfo {
     return Column(
@@ -216,8 +215,10 @@ class PoiGuideImageWidget extends StatelessWidget {
           child: CachedNetworkImage(
             imageUrl: imagePath,
             placeholder: (context, url) => CircularProgressIndicator(),
-            errorWidget: (context, url, error) =>
-                Icon(Icons.error_outlined, size: 100),
+            errorWidget: (context, url, error) => Image.asset(
+              'assets/images/auto_trip_guide_logo.png',
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),
@@ -229,6 +230,7 @@ class BottomBarWidget extends StatefulWidget {
   final Poi poi;
   EdgeInsetsGeometry? edgeInsets;
   static final double buttonSize = 47;
+
   BottomBarWidget({required this.poi, this.edgeInsets});
 
   @override
