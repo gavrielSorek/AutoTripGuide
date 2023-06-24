@@ -158,7 +158,7 @@ class _PoiGuideState extends State<PoiGuide> {
   get bottomPart {
     return BottomBarWidget(
       poi: widget.poi,
-      edgeInsets: EdgeInsets.only(bottom: 37, left: 27, right: 27, top: 30),
+      edgeInsets: EdgeInsets.only(bottom: 37, left: 27, right: 27, top: 28),
     );
   }
 
