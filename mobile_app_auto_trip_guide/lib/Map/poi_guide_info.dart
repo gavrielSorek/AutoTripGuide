@@ -40,9 +40,10 @@ class _PoiGuideState extends State<PoiGuide> {
     return Expanded(
       child: Container(
           child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: 16,
+        padding: EdgeInsets.only(
+          left: 24,
+          right: 24,
+          top: 16,
         ),
         child: Center(
           child: SingleChildScrollView(
@@ -157,7 +158,7 @@ class _PoiGuideState extends State<PoiGuide> {
   get bottomPart {
     return BottomBarWidget(
       poi: widget.poi,
-      edgeInsets: EdgeInsets.only(bottom: 37, left: 27, right: 27),
+      edgeInsets: EdgeInsets.only(bottom: 37, left: 27, right: 27, top: 30),
     );
   }
 
