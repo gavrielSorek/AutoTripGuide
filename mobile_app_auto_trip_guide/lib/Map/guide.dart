@@ -14,7 +14,6 @@ import 'guid_bloc/guide_bloc.dart';
 import 'globals.dart';
 import 'guide_audio_player.dart';
 
-
 extension StringExtension on String {
   String removeParenthesesAndBrackets() {
     return this.replaceAll(RegExp(r'(\(.*?\)|\[.*?\])'), '');
@@ -401,6 +400,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
           poisToGuide: filteredMapPois.values.toList(), startGuide: true));
     }
   }
+
   @override
   Widget build(BuildContext context) {
     ProgressButton playButton = ProgressButton(
@@ -413,7 +413,10 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
       height: 40,
     );
     return Dialog(
-        insetPadding: const EdgeInsets.all(Constants.edgesDist),
+        insetPadding: const EdgeInsets.only(
+            left: Constants.edgesDist,
+            right: Constants.edgesDist,
+            bottom: Constants.edgesDist),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Constants.padding),
         ),
@@ -439,7 +442,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                     padding: EdgeInsets.only(top: 16),
                     child: Align(
                         child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         UniformButtons.getReturnDialogButton(
                             onPressed: () {
@@ -460,6 +463,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                             height: 28 / 22,
                           ),
                         ),
+                        Spacer(),
                         UniformButtons.getReloadDialogButton(onPressed: () {
                           widget.onRefreshFunc();
                         })

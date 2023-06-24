@@ -764,7 +764,7 @@ class UserMapState extends State<UserMap>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                margin: EdgeInsets.only(left: width / 40, bottom: 50),
+                margin: EdgeInsets.only(left: width / 40, bottom: 30),
                 width: width / 10,
                 child: _myLocationTrackingMode ==
                         mapbox.MyLocationTrackingMode.None
