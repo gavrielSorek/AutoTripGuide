@@ -200,9 +200,13 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
     Globals.globalGuideAudioPlayerHandler.clearPlayer();
     Globals.appEvents.poiStartedPlaying(state.currentPoi.poi.poiName!,
         state.currentPoi.poi.Categories, state.currentPoi.poi.id);
-    String poiIntro = PoisAttributesCalculator.getPoiIntro(state.currentPoi.poi);
+    String poiIntro =
+        PoisAttributesCalculator.getPoiIntro(state.currentPoi.poi);
     Globals.globalGuideAudioPlayerHandler.setTextToPlay(
-        poiIntro + " " + state.currentPoi.poi.shortDesc!.removeParenthesesAndBrackets(), 'en-US');
+        poiIntro +
+            " " +
+            state.currentPoi.poi.shortDesc!.removeParenthesesAndBrackets(),
+        'en-US');
     Globals.globalGuideAudioPlayerHandler.trackTitle =
         state.currentPoi.poi.poiName;
     Globals.globalGuideAudioPlayerHandler.picUrl = state.currentPoi.poi.pic;
@@ -296,6 +300,8 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                   bottom: 0,
                   child: Container(
                       decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        // same borderRadius as ClipRRect
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -491,7 +497,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                       playButton.setAnimationActivityStatus(false);
                     },
                     child: Padding(
-                        padding: EdgeInsets.only(left: 11, right: 11),
+                        padding: EdgeInsets.only(left: 20, right: 20),
                         child: GridView.count(
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 0,
@@ -503,7 +509,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                   ),
                 ),
                 Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 36),
                     child: playButton),
               ],
             )));
