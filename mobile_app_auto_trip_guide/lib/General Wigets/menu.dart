@@ -113,23 +113,23 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               Navigator.pushNamed(context, '/history-screen');
             },
           ),
-          ListTile(
-            tileColor:
-            ModalRoute.of(context)?.settings.name == '/favorite-categories-screen'
-                ? chosenTileColor
-                : null,
-            leading: Icon(
-              Icons.settings,
-            ),
-            title: const Text('Preferences'),
-            onTap: () {
-              NavigationDrawer.closeDrawer(
-                  NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)
-                      ?.settings.name]);
-              Navigator.of(context).popUntil((route) => route.isFirst);
-              Navigator.pushNamed(context, '/favorite-categories-screen');
-            },
-          ),
+          // ListTile(
+          //   tileColor:
+          //   ModalRoute.of(context)?.settings.name == '/favorite-categories-screen'
+          //       ? chosenTileColor
+          //       : null,
+          //   leading: Icon(
+          //     Icons.settings,
+          //   ),
+          //   title: const Text('Preferences'),
+          //   onTap: () {
+          //     NavigationDrawer.closeDrawer(
+          //         NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)
+          //             ?.settings.name]);
+          //     Navigator.of(context).popUntil((route) => route.isFirst);
+          //     Navigator.pushNamed(context, '/favorite-categories-screen');
+          //   },
+          // ),
           ListTile(
             leading: Icon(
               Icons.map_outlined,
