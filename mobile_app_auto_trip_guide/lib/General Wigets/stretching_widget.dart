@@ -5,7 +5,7 @@ class Constants {
 
   static const double padding = 2;
   static const double avatarRadius = 60;
-  static const double edgesDist = 10;
+  static const double edgesDist = 17;
   static const double sidesMarginOfPic = 42;
   static const double sidesMarginOfButtons = 10;
 }
@@ -15,7 +15,7 @@ class StretchingWidget extends StatefulWidget {
   final Widget collapsedChild;
   dynamic onStretch, onCollapse;
 
-  static get collapsedPercentFromAvailableSpace => 0.4;
+  static get collapsedPercentFromAvailableSpace => 0.5;
 
   static get boxDecoration => BoxDecoration(
         shape: BoxShape.rectangle,

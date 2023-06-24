@@ -26,7 +26,7 @@ class Constants {
 
   static const double padding = 2;
   static const double avatarRadius = 60;
-  static const double edgesDist = 10;
+  static const double edgesDist = 17;
   static const double sidesMarginOfPic = 42;
   static const double sidesMarginOfButtons = 10;
 }
@@ -128,59 +128,65 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   }
 
   Widget buildLoadingNewPoisWidget() {
-    return buildDialogContainedWidgets([
-      Padding(
-          padding: EdgeInsets.only(left: 11, top: 16),
-          child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Loading more POIs...",
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 22,
-                  letterSpacing: 0.35,
-                  color: Colors.black,
-                  height: 28 / 22,
-                ),
-              ))),
-    ]);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 17),
+      child: buildDialogContainedWidgets([
+        Padding(
+            padding: EdgeInsets.only(left: 11, top: 16),
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Loading more POIs...",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 22,
+                    letterSpacing: 0.35,
+                    color: Colors.black,
+                    height: 28 / 22,
+                  ),
+                ))),
+      ]),
+    );
   }
 
   Widget buildSearchingWidget() {
-    return buildDialogContainedWidgets([
-      Padding(
-          padding: EdgeInsets.only(left: 11, top: 16),
-          child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Scanning...",
-                style: TextStyle(
-                  fontFamily: 'Inter',
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 22,
-                  letterSpacing: 0.35,
-                  color: Colors.black,
-                  height: 28 / 22,
-                ),
-              ))),
-      Padding(
-          padding: EdgeInsets.only(left: 11, right: 11, top: 16),
-          child: Text(
-            "Auto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.w400,
-              fontSize: 16,
-              letterSpacing: 0,
-              color: Color(0xff6C6F70),
-              height: 1.5,
-            ),
-          )),
-    ]);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 17),
+      child: buildDialogContainedWidgets([
+        Padding(
+            padding: EdgeInsets.only(left: 11, top: 16),
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Scanning...",
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 22,
+                    letterSpacing: 0.35,
+                    color: Colors.black,
+                    height: 28 / 22,
+                  ),
+                ))),
+        Padding(
+            padding: EdgeInsets.only(left: 11, right: 11, top: 16),
+            child: Text(
+              "Auto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w400,
+                fontSize: 16,
+                letterSpacing: 0,
+                color: Color(0xff6C6F70),
+                height: 1.5,
+              ),
+            )),
+      ]),
+    );
   }
 
   Widget buildOptionalCategoriesSelectionWidget(state) {
