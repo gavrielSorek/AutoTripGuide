@@ -17,7 +17,8 @@ import 'map.dart';
 
 class Globals {
   static Sizes globalWidgetsSizes = Sizes();
-  static UserMap globalUserMap = UserMap();
+  static final GlobalKey<UserMapState> globalUserMapKey = GlobalKey();
+  static UserMap globalUserMap = UserMap(key: globalUserMapKey,);
   static ServerCommunication globalServerCommunication = ServerCommunication();
   static Map<String, MapPoi> globalAllPois = HashMap<String, MapPoi>();
   static List<String> globalUnhandledKeys = [];

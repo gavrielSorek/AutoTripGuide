@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:final_project/Map/map.dart';
 import 'package:final_project/Map/speed_slider_tile.dart';
 import 'package:flutter/material.dart';
 
@@ -128,6 +129,42 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.pushNamed(context, '/favorite-categories-screen');
             },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.map_outlined,
+            ),
+            title: const Text('Map Style'),
+            trailing: InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Container(
+                      child: Wrap(
+                        children: UserMap.STYLE_NAME_TO_STYLE.keys.toList().map((String style) {
+                          return ListTile(
+                            title: Text(style),
+                            tileColor: style == Globals.globalUserMapKey.currentState?.currentStyle ? Colors.blue[100] : null,  // Check if current style
+                            onTap: () {
+                              Globals.globalUserMapKey.currentState?.currentStyle = style;
+                              Navigator.of(context).pop();
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: CircleAvatar(
+                backgroundColor: Colors.grey[300], // Choose your desired color
+                child: Icon(
+                  Icons.arrow_drop_down,
+                  size: 30.0,  // Increase the size as needed
+                ),
+              ),
+            ),
           ),
           Divider(),
           ListTile(

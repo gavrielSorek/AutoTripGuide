@@ -62,9 +62,23 @@ class UserMap extends StatefulWidget {
   double userHeading = 0; // the correct heading
   MapPoi? currentHighlightedPoi = null;
   bool isFirstScanning = true;
+
   // the last known location of the user in the old area - for new pois purposes
   late Position lastAreaUserLocation;
   static double DISTANCE_BETWEEN_AREAS = 1000; //1000 meters
+
+  static Map<String, String> STYLE_NAME_TO_STYLE = {
+    "Streets": mapbox.MapboxStyles.MAPBOX_STREETS,
+    "Outdoors": mapbox.MapboxStyles.OUTDOORS,
+    "Light": mapbox.MapboxStyles.LIGHT,
+    "Dark": mapbox.MapboxStyles.DARK,
+    "Satellite": mapbox.MapboxStyles.SATELLITE,
+    "Satellite Streets": mapbox.MapboxStyles.SATELLITE_STREETS,
+    "Traffic Day": mapbox.MapboxStyles.TRAFFIC_DAY,
+    "Traffic Night": mapbox.MapboxStyles.TRAFFIC_NIGHT,
+    "Custom": "assets/style.json"
+  };
+
   List userChangeLocationFuncs = [];
   StreamController<MapPoiAction> mapPoiActionStreamController =
       StreamController<MapPoiAction>.broadcast();
@@ -141,11 +155,11 @@ class UserMap extends StatefulWidget {
     print("hello from ctor");
   }
 
-  _UserMapState? userMapState;
+  UserMapState? userMapState;
 
   @override
   State<StatefulWidget> createState() {
-    userMapState = _UserMapState();
+    userMapState = UserMapState();
     return userMapState!;
   }
 
@@ -182,7 +196,7 @@ class UserMap extends StatefulWidget {
   }
 }
 
-class _UserMapState extends State<UserMap>
+class UserMapState extends State<UserMap>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   late StreamSubscription mapPoiActionSubscription;
   late StreamSubscription highlightedPoiSubscription;
@@ -212,17 +226,7 @@ class _UserMapState extends State<UserMap>
       mapbox.CameraTargetBounds.unbounded;
   mapbox.MinMaxZoomPreference _minMaxZoomPreference =
       mapbox.MinMaxZoomPreference(1, 16);
-  List<String> _styleStrings = [
-    mapbox.MapboxStyles.MAPBOX_STREETS,
-    mapbox.MapboxStyles.OUTDOORS,
-    mapbox.MapboxStyles.LIGHT,
-    mapbox.MapboxStyles.DARK,
-    mapbox.MapboxStyles.SATELLITE,
-    mapbox.MapboxStyles.SATELLITE_STREETS,
-    mapbox.MapboxStyles.TRAFFIC_DAY,
-    mapbox.MapboxStyles.TRAFFIC_NIGHT,
-    "assets/style.json"
-  ];
+  String _currentStyleName = "Streets";
   int _styleStringIndex = 0;
   bool _rotateGesturesEnabled = true;
   bool _scrollGesturesEnabled = true;
@@ -258,7 +262,7 @@ class _UserMapState extends State<UserMap>
       compassEnabled: _compassEnabled,
       cameraTargetBounds: _cameraTargetBounds,
       minMaxZoomPreference: _minMaxZoomPreference,
-      styleString: _styleStrings[_styleStringIndex],
+      styleString: UserMap.STYLE_NAME_TO_STYLE[_currentStyleName]!,
       rotateGesturesEnabled: _rotateGesturesEnabled,
       scrollGesturesEnabled: _scrollGesturesEnabled,
       tiltGesturesEnabled: _tiltGesturesEnabled,
@@ -305,7 +309,19 @@ class _UserMapState extends State<UserMap>
     );
   }
 
-  _UserMapState() : super() {}
+  UserMapState() : super() {}
+
+  // Getter
+  String get currentStyle => _currentStyleName;
+
+  // Setter
+  set currentStyle(String styleName) {
+    if (UserMap.STYLE_NAME_TO_STYLE.containsKey(styleName)) {
+      setState(() {
+        _currentStyleName = styleName;
+      });
+    }
+  }
 
   void updateCameraByRelativePosition(
       {CameraOption option = CameraOption.animate}) {
@@ -701,7 +717,7 @@ class _UserMapState extends State<UserMap>
       Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 60),
+            margin: EdgeInsets.only(top: 44),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -722,18 +738,21 @@ class _UserMapState extends State<UserMap>
                         ))
                     : Container(),
                 Container(
-                  margin: EdgeInsets.only(top: width / 20, right: width / 40),
+                  margin: EdgeInsets.only(top: height / 90, right: width / 40),
                   width: width / 10,
                   child: FloatingActionButton(
                     heroTag: null,
-                    onPressed: () {
-                      _symbolManager.dispose();
-                      _styleStringIndex =
-                          (_styleStringIndex + 1) % _styleStrings.length;
+                    onPressed: () async {
+                      await _userLocationMarkers[_userStatus.index].stop();
+                      _userStatus =
+                          UserStatus.values[(_userStatus.index + 1) % 2];
+                      await _userLocationMarkers[_userStatus.index].start();
                       updateState();
                     },
-                    child: const Icon(
-                      Icons.map_outlined,
+                    child: Icon(
+                      _userStatus == UserStatus.walking
+                          ? Icons.directions_walk
+                          : Icons.drive_eta_sharp,
                       color: Colors.white,
                     ),
                   ),
@@ -763,26 +782,6 @@ class _UserMapState extends State<UserMap>
                       )
                     : null,
               ),
-              Container(
-                margin: EdgeInsets.only(top: height / 90, right: width / 40),
-                width: width / 10,
-                child: FloatingActionButton(
-                  heroTag: null,
-                  onPressed: () async {
-                    await _userLocationMarkers[_userStatus.index].stop();
-                    _userStatus =
-                        UserStatus.values[(_userStatus.index + 1) % 2];
-                    await _userLocationMarkers[_userStatus.index].start();
-                    updateState();
-                  },
-                  child: Icon(
-                    _userStatus == UserStatus.walking
-                        ? Icons.directions_walk
-                        : Icons.drive_eta_sharp,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
             ],
           ),
           Expanded(
@@ -790,9 +789,7 @@ class _UserMapState extends State<UserMap>
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              guideTool.storiesDialogBox
-            ],
+            children: [guideTool.storiesDialogBox],
           ))
         ],
       ),
