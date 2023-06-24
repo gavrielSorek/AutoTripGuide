@@ -295,7 +295,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                 ),
               ),
               Positioned(
-                  left: 3,
+                  left: 0,
                   right: 0,
                   bottom: 0,
                   child: Container(
@@ -315,23 +315,26 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                         children: [
                           Expanded(
                               flex: 2,
-                              child: Text(
-                                categoriesList[index] +
-                                    " (" +
-                                    widget
-                                        .state
-                                        .categoriesToPoisMap[
-                                            categoriesList[index]]!
-                                        .length
-                                        .toString() +
-                                    ")",
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontStyle: FontStyle.normal,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                  letterSpacing: 0,
-                                  color: Colors.white,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 3),
+                                child: Text(
+                                  categoriesList[index] +
+                                      " (" +
+                                      widget
+                                          .state
+                                          .categoriesToPoisMap[
+                                              categoriesList[index]]!
+                                          .length
+                                          .toString() +
+                                      ")",
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15,
+                                    letterSpacing: 0,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               )),
                           Expanded(
