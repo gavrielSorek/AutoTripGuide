@@ -413,6 +413,9 @@ class UserMapState extends State<UserMap>
         distanceInMeters / distInPixels, widget.userLocation.latitude);
   }
 
+  void reloadPois() {
+    guideTool.reloadPois();
+  }
   @override
   void initState() {
     widget.userChangeLocationFuncs.add(onLocationChanged);

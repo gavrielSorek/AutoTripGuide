@@ -130,6 +130,17 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
           //     Navigator.pushNamed(context, '/favorite-categories-screen');
           //   },
           // ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.refresh),
+            title: const Text("Reload POI's"),
+            onTap: () {
+              Globals.globalUserMapKey.currentState?.reloadPois();
+              NavigationDrawer.closeDrawer(
+                  NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)
+                      ?.settings.name]);
+            },
+          ),
           ListTile(
             leading: Icon(
               Icons.map_outlined,
@@ -166,7 +177,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               ),
             ),
           ),
-          Divider(),
           ListTile(
             leading: Icon(
               Icons.exit_to_app,

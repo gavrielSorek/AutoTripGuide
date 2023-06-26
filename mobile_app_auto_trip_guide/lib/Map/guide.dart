@@ -44,11 +44,13 @@ class Guide {
       mapPoiClicked(Globals.globalAllPois[mapPoiId]!);
     });
 
-    storiesDialogBox = GuidDialogBox(onRefreshFunc: () {
-      clearAllPois();
-      context.read<GuideBloc>().add(ClearAllPois());
-      context.read<GuideBloc>().add(ShowSearchingPoisAnimationEvent());
-    });
+    storiesDialogBox = GuidDialogBox();
+  }
+
+  void reloadPois() {
+    clearAllPois();
+    context.read<GuideBloc>().add(ClearAllPois());
+    context.read<GuideBloc>().add(ShowSearchingPoisAnimationEvent());
   }
 
   Future<void> mapPoiClicked(MapPoi mapPoi) async {
@@ -86,9 +88,7 @@ class Guide {
 }
 
 class GuidDialogBox extends StatefulWidget {
-  final dynamic onRefreshFunc;
-
-  GuidDialogBox({required this.onRefreshFunc}) {}
+  GuidDialogBox() {}
 
   @override
   State<StatefulWidget> createState() {
@@ -191,8 +191,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   Widget buildOptionalCategoriesSelectionWidget(state) {
     final showOptionalCategoriesState = state as ShowOptionalCategoriesState;
     return OptionalCategoriesSelection(
-        state: showOptionalCategoriesState,
-        onRefreshFunc: widget.onRefreshFunc);
+        state: showOptionalCategoriesState);
   }
 
   Widget buildPoiGuide(ShowPoiState state) {
@@ -255,10 +254,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
 
 class OptionalCategoriesSelection extends StatefulWidget {
   final ShowOptionalCategoriesState state;
-  final dynamic onRefreshFunc;
 
   OptionalCategoriesSelection(
-      {required this.state, required this.onRefreshFunc}) {}
+      {required this.state}) {}
 
   @override
   State<StatefulWidget> createState() {
@@ -473,9 +471,6 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                           ),
                         ),
                         Spacer(),
-                        UniformButtons.getReloadDialogButton(onPressed: () {
-                          widget.onRefreshFunc();
-                        })
                       ],
                     ))),
                 Padding(
@@ -506,7 +501,8 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                           mainAxisSpacing: 0,
                           childAspectRatio: (1.45),
                           crossAxisCount: 2,
-                          padding: EdgeInsets.only(bottom: 20),  // add bottom padding to push grid items up
+                          padding: EdgeInsets.only(bottom: 20),
+                          // add bottom padding to push grid items up
                           children:
                               buildGridView(widget.state.categoriesToPoisMap),
                         )),
