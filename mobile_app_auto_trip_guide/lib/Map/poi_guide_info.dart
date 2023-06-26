@@ -39,16 +39,16 @@ class _PoiGuideState extends State<PoiGuide> {
   get poiScrolledText {
     return Expanded(
       child: Container(
-          child: Container(
         padding: EdgeInsets.only(
           left: 24,
           right: 24,
           top: 16,
         ),
-        child: Center(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(children: [
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Text(
                 widget.poi.shortDesc ?? '',
                 style: TextStyle(
@@ -60,11 +60,11 @@ class _PoiGuideState extends State<PoiGuide> {
                     height: 1.5),
                 textAlign: TextAlign.left,
               )
-            ]),
+            ],
           ),
         ),
         //color: backgroundColor,
-      )),
+      ),
     );
   }
 
