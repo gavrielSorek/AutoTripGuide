@@ -611,13 +611,13 @@ class UserMapState extends State<UserMap>
               .locationMarkerInfo
               .latLng
               .longitude,
-          latPerPx * (Globals.globalWidgetsSizes.poiGuideBoxTotalHeight / 4.5),
+          latPerPx * (Globals.globalWidgetsSizes.poiGuideBoxTotalHeight / 5),
           (270 - userIconHeading));
     } else {
       return PoisAttributesCalculator.getPointAtAngle(
           widget.userLocation.latitude,
           widget.userLocation.longitude,
-          latPerPx * (Globals.globalWidgetsSizes.poiGuideBoxTotalHeight / 4.5),
+          latPerPx * (Globals.globalWidgetsSizes.poiGuideBoxTotalHeight / 5),
           (270 - userIconHeading));
     }
   }
