@@ -500,12 +500,13 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                       playButton.setAnimationActivityStatus(false);
                     },
                     child: Padding(
-                        padding: EdgeInsets.only(left: 20, right: 20),
+                        padding: EdgeInsets.only(left: 20, right: 20, top: 16),
                         child: GridView.count(
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 0,
                           childAspectRatio: (1.45),
                           crossAxisCount: 2,
+                          padding: EdgeInsets.only(bottom: 20),  // add bottom padding to push grid items up
                           children:
                               buildGridView(widget.state.categoriesToPoisMap),
                         )),
