@@ -392,7 +392,7 @@ class UserMapState extends State<UserMap>
   //   return metersPerPixel;
   // }
   double metersPerPixel(double latitude, double zoom) {
-    const double earthCircumference = 40075016.686;  // In meters
+    const double earthCircumference = 40075016.686; // In meters
     double latitudeRad = latitude * (math.pi / 180);
 
     return earthCircumference * math.cos(latitudeRad) / math.pow(2, zoom + 8);
@@ -422,6 +422,7 @@ class UserMapState extends State<UserMap>
   void reloadPois() {
     guideTool.reloadPois();
   }
+
   @override
   void initState() {
     widget.userChangeLocationFuncs.add(onLocationChanged);
@@ -611,23 +612,23 @@ class UserMapState extends State<UserMap>
     double dist = meterPerPixel * padding;
     mapbox.LatLng userPosition;
     if (!_userLocationMarkers.isEmpty) {
-      userPosition = mapbox.LatLng(_userLocationMarkers[_userStatus.index]
-          .locationMarkerInfo
-          .latLng
-          .latitude,
+      userPosition = mapbox.LatLng(
+          _userLocationMarkers[_userStatus.index]
+              .locationMarkerInfo
+              .latLng
+              .latitude,
           _userLocationMarkers[_userStatus.index]
               .locationMarkerInfo
               .latLng
               .longitude);
     } else {
-      userPosition = mapbox.LatLng(widget.userLocation.latitude, widget.userLocation.longitude);
+      userPosition = mapbox.LatLng(
+          widget.userLocation.latitude, widget.userLocation.longitude);
     }
 
-    mapbox.LatLng newPos = PoisAttributesCalculator.
-    calculateNewPosition(userPosition,
-        dist, 180 + userIconHeading);
+    mapbox.LatLng newPos = PoisAttributesCalculator.calculateNewPosition(
+        userPosition, dist, 180 + userIconHeading);
     return newPos;
-
   }
 
   Future<void> _onMapCreated(mapbox.MapboxMapController controller) async {
