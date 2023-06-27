@@ -16,6 +16,7 @@ import 'apps_launcher.dart';
 import 'map.dart';
 
 class Globals {
+  static double globalScreenHeight = 0;
   static Sizes globalWidgetsSizes = Sizes();
   static final GlobalKey<UserMapState> globalUserMapKey = GlobalKey();
   static UserMap globalUserMap = UserMap(key: globalUserMapKey,);

@@ -14,7 +14,7 @@ class StretchingWidget extends StatefulWidget {
   final Widget expendedChild;
   final Widget collapsedChild;
   dynamic onStretch, onCollapse;
-
+  dynamic onCollapsedHeightChanged = null;
   static get collapsedPercentFromAvailableSpace => 0.5;
 
   static get boxDecoration => BoxDecoration(
@@ -33,7 +33,7 @@ class StretchingWidget extends StatefulWidget {
       {required this.expendedChild,
       required this.collapsedChild,
       this.onStretch,
-      this.onCollapse,
+      this.onCollapse, this.onCollapsedHeightChanged,
       Key? key})
       : super(key: key);
 
@@ -50,9 +50,19 @@ class StretchingWidgetState extends State<StretchingWidget> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    double screenHeight = MediaQuery.of(context).size.height;
+    double statusBarHeight = MediaQuery.of(context).padding.top;
+    double bottomInsets = MediaQuery.of(context).padding.bottom;
+    // This is the height of the usable screen area
+    double availableHeight = screenHeight - statusBarHeight - bottomInsets - Constants.edgesDist;
+
     _collapsedHeight = StretchingWidget.collapsedPercentFromAvailableSpace *
-        MediaQuery.of(context).size.height;
-    _expandedHeight = MediaQuery.of(context).size.height;
+        availableHeight;
+    _expandedHeight = availableHeight;
+    if (widget.onCollapsedHeightChanged != null) {
+      widget.onCollapsedHeightChanged(_collapsedHeight);
+    }
   }
 
   void stretch() {

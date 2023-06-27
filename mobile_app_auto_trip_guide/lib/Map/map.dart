@@ -391,6 +391,12 @@ class UserMapState extends State<UserMap>
   //       (TILE_SIZE * math.pow(2, constrainedZoom))) / 2;
   //   return metersPerPixel;
   // }
+  double metersPerPixel(double latitude, double zoom) {
+    const double earthCircumference = 40075016.686;  // In meters
+    double latitudeRad = latitude * (math.pi / 180);
+
+    return earthCircumference * math.cos(latitudeRad) / math.pow(2, zoom + 8);
+  }
 
   // given distance in pixels and distance in meters, return the zoom such that distInPixels = distInMeters
   Future<double> _getZoomLevel(metersPerPixel, double latitude) async {
@@ -600,26 +606,29 @@ class UserMapState extends State<UserMap>
   }
 
   mapbox.LatLng _getRelativeCenterLatLng(double zoom) {
-    double latPerPx = 360 / math.pow(2, zoom) / 256;
+    double meterPerPixel = metersPerPixel(widget.userLocation.latitude, zoom);
+    double padding = ( Globals.globalScreenHeight -
+        Globals.globalWidgetsSizes.poiGuideBoxTotalHeight) / 4 - 10;
+    double dist = meterPerPixel * padding;
+    mapbox.LatLng userPosition;
     if (!_userLocationMarkers.isEmpty) {
-      return PoisAttributesCalculator.getPointAtAngle(
+      userPosition = mapbox.LatLng(_userLocationMarkers[_userStatus.index]
+          .locationMarkerInfo
+          .latLng
+          .latitude,
           _userLocationMarkers[_userStatus.index]
               .locationMarkerInfo
               .latLng
-              .latitude,
-          _userLocationMarkers[_userStatus.index]
-              .locationMarkerInfo
-              .latLng
-              .longitude,
-          latPerPx * (Globals.globalWidgetsSizes.poiGuideBoxTotalHeight / 5),
-          (270 - userIconHeading));
+              .longitude);
     } else {
-      return PoisAttributesCalculator.getPointAtAngle(
-          widget.userLocation.latitude,
-          widget.userLocation.longitude,
-          latPerPx * (Globals.globalWidgetsSizes.poiGuideBoxTotalHeight / 5),
-          (270 - userIconHeading));
+      userPosition = mapbox.LatLng(widget.userLocation.latitude, widget.userLocation.longitude);
     }
+
+    mapbox.LatLng newPos = PoisAttributesCalculator.
+    calculateNewPosition(userPosition,
+        dist, 180 + userIconHeading);
+    return newPos;
+
   }
 
   Future<void> _onMapCreated(mapbox.MapboxMapController controller) async {

@@ -99,14 +99,6 @@ class GuidDialogBox extends StatefulWidget {
 class _GuidDialogBoxState extends State<GuidDialogBox> {
   _GuidDialogBoxState() {}
 
-  @override
-  void didChangeDependencies() {
-    Globals.globalWidgetsSizes.poiGuideBoxTotalHeight =
-        MediaQuery.of(context).size.height *
-            StretchingWidget.collapsedPercentFromAvailableSpace;
-    super.didChangeDependencies();
-  }
-
   Widget buildDialogContainedWidgets(List<Widget> widgetList) {
     return Container(
       alignment: Alignment.topLeft,

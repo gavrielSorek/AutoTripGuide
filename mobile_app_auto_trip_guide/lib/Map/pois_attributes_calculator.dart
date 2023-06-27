@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 
 import '../General Wigets/generals.dart';
 import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
+import 'dart:math' as Math;
 
 class PoisAttributesCalculator {
   static Map<int, String> USER_RELATIVE_DIRECTIONS = {
@@ -94,20 +95,6 @@ class PoisAttributesCalculator {
     return poisCpy;
   }
 
-  // Define a function that takes in the x and y coordinates of a point,
-// a radius, and an angle in degrees, and returns the x and y coordinates
-// of the point at that angle and distance.
-  static mapbox.LatLng getPointAtAngle(
-      double lat, double lng, double radius, double angleDegrees) {
-    // Convert the angle from degrees to radians.
-    double angleRadians = angleDegrees * pi / 180.0;
-
-    double pointLng = lng + radius * cos(angleRadians);
-    double pointLat = lat + radius * sin(angleRadians);
-    // Return the coordinates as a list.
-    return mapbox.LatLng(pointLat, pointLng);
-  }
-
   static String getPoiIntro(Poi poi) {
     int distInMeters = Geolocator.distanceBetween(Globals.globalUserMap.userLocation.latitude,
         Globals.globalUserMap.userLocation.longitude, poi.latitude, poi.longitude).toInt();
@@ -122,5 +109,28 @@ class PoisAttributesCalculator {
         poiName +
         ".";
     return intro;
+  }
+
+  static const earthRadius = 6371000.0; // Earth's radius in meters
+
+  // calculate the new position that it's distanceInMeters from the original & angle is bearingInDegrees
+  static mapbox.LatLng calculateNewPosition(mapbox.LatLng original,
+      double distanceInMeters, double bearingInDegrees) {
+    double distanceInRadians = distanceInMeters / earthRadius;
+    double bearingInRadians = bearingInDegrees * (Math.pi / 180);
+    double originalLatInRadians = original.latitude * (Math.pi / 180);
+    double originalLngInRadians = original.longitude * (Math.pi / 180);
+
+    double newLatInRadians = Math.asin(Math.sin(originalLatInRadians) * Math.cos(distanceInRadians) +
+        Math.cos(originalLatInRadians) * Math.sin(distanceInRadians) * Math.cos(bearingInRadians));
+
+    double newLngInRadians = originalLngInRadians + Math.atan2(
+        Math.sin(bearingInRadians) * Math.sin(distanceInRadians) * Math.cos(originalLatInRadians),
+        Math.cos(distanceInRadians) - Math.sin(originalLatInRadians) * Math.sin(newLatInRadians));
+
+    double newLat = newLatInRadians * (180 / Math.pi);
+    double newLng = newLngInRadians * (180 / Math.pi);
+
+    return mapbox.LatLng(newLat, newLng);
   }
 }

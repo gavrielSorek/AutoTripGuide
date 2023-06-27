@@ -37,6 +37,8 @@ class _AppInitializationPageState extends State<AppInitializationPage> {
 
   @override
   Widget build(BuildContext context) {
+    Globals.globalScreenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: Container(
         color: Colors.blue,

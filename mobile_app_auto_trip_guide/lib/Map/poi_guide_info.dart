@@ -33,6 +33,9 @@ class _PoiGuideState extends State<PoiGuide> {
         Globals.appEvents.poiCollapsed(widget.poi.poiName ?? 'Unknown',
             widget.poi.Categories, widget.poi.id);
       },
+      onCollapsedHeightChanged: (double height) {
+        Globals.globalWidgetsSizes.poiGuideBoxTotalHeight = height;
+      },
     );
   }
 
