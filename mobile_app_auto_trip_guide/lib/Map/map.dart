@@ -607,8 +607,7 @@ class UserMapState extends State<UserMap>
 
   mapbox.LatLng _getRelativeCenterLatLng(double zoom) {
     double meterPerPixel = metersPerPixel(widget.userLocation.latitude, zoom);
-    double padding = ( Globals.globalScreenHeight -
-        Globals.globalWidgetsSizes.poiGuideBoxTotalHeight) / 4 - 10;
+    double padding = Globals.globalWidgetsSizes.poiGuideBoxTotalHeight / 4;
     double dist = meterPerPixel * padding;
     mapbox.LatLng userPosition;
     if (!_userLocationMarkers.isEmpty) {
