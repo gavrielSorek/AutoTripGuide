@@ -595,17 +595,6 @@ class UserMapState extends State<UserMap>
   late mapbox.MapboxMapController _mapController;
   var isLight = true;
 
-  void _extractMapInfo() {
-    final position = _mapController.cameraPosition;
-    if (position != null) _cameraPosition = position;
-  }
-
-  void _onMapChanged() {
-    setState(() {
-      _extractMapInfo();
-    });
-  }
-
   mapbox.LatLng _getRelativeCenterLatLng(double zoom) {
     double meterPerPixel = metersPerPixel(widget.userLocation.latitude, zoom);
     double padding = Globals.globalWidgetsSizes.poiGuideBoxTotalHeight / 4;
@@ -650,9 +639,6 @@ class UserMapState extends State<UserMap>
         updateCameraByRelativePosition(option: CameraOption.move);
       }
     }));
-
-    _mapController.addListener(_onMapChanged);
-    _extractMapInfo();
   }
 
   _onStyleLoadedCallback() async {
@@ -783,6 +769,8 @@ class UserMapState extends State<UserMap>
                     ? FloatingActionButton(
                         heroTag: null,
                         onPressed: () {
+                          final position = _mapController.cameraPosition;
+                          if (position != null) _cameraPosition = position;
                           _myLocationTrackingMode =
                               mapbox.MyLocationTrackingMode.Tracking;
                           updateCameraByRelativePosition();
