@@ -170,15 +170,16 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     on<ShowLastOptionalCategories>((event, emit) {
       if (_lastShowOptionalCategoriesState != null) {
         Map<String, MapPoi> idToMapPoi = {};
-
+        // add all the old pois
+        idToMapPoi.addAll(_lastShowOptionalCategoriesState!.idToPoisMap);
+        // add the new pois
         for (MapPoi mapPoi in _poisToGuide) {
           idToMapPoi[mapPoi.poi.id] = mapPoi;
         }
 
         this.add(ShowOptionalCategoriesEvent(
             pois: idToMapPoi,
-            isCheckedCategory:
-                _lastShowOptionalCategoriesState!.isCheckedCategory));
+            isCheckedCategory: _lastShowOptionalCategoriesState!.isCheckedCategory));
       }
     });
 
