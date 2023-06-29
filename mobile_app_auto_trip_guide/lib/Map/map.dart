@@ -774,6 +774,7 @@ class UserMapState extends State<UserMap>
                           _myLocationTrackingMode =
                               mapbox.MyLocationTrackingMode.Tracking;
                           updateCameraByRelativePosition();
+                          updateState();
                         },
                         child: const Icon(
                           Icons.my_location,
