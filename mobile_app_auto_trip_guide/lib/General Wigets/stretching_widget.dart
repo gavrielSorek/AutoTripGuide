@@ -15,7 +15,7 @@ class StretchingWidget extends StatefulWidget {
   final Widget collapsedChild;
   dynamic onStretch, onCollapse;
   dynamic onCollapsedHeightChanged = null;
-  static get collapsedPercentFromAvailableSpace => 0.5;
+  static get collapsedPercentFromAvailableSpace => 0.57;
 
   static get boxDecoration => BoxDecoration(
         shape: BoxShape.rectangle,
