@@ -23,14 +23,18 @@ class _AppInitializationPageState extends State<AppInitializationPage> {
   }
 
   void nextPage() {
+    final bool? isIntroDone = Globals.globalPrefs?.getBool('introDone');
     String initialRoute;
-    if (Globals.globalController.isUserSignIn) {
+
+    if(isIntroDone == null ) {
+      Globals.appEvents.introStarted();
+      initialRoute = '/onboard-screen';
+    } else if(Globals.globalController.isUserSignIn){
       initialRoute = '/HomePage';
     } else {
-      final bool? isIntroDone = Globals.globalPrefs?.getBool('introDone');
-      isIntroDone != null ? '' : Globals.appEvents.introStarted();
-      initialRoute = isIntroDone != null ? '/login-screen' : '/onboard-screen';
+      initialRoute = '/login-screen';
     }
+
     Navigator.pop(context);
     Navigator.pushNamed(context, initialRoute);
   }
