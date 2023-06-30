@@ -127,7 +127,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Loading more POIs...",
+                  "Discovering nearby places...\n\n Get ready!",
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontStyle: FontStyle.normal,
@@ -165,7 +165,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         Padding(
             padding: EdgeInsets.only(left: 11, right: 11, top: 16),
             child: Text(
-              "Auto Trip is searching for interesting places near you. \n you can adjust the search by selecting your interests in the preferences screen.",
+              "Auto Trip is searching for interesting places near you. \n",
               style: TextStyle(
                 fontFamily: 'Inter',
                 fontStyle: FontStyle.normal,
