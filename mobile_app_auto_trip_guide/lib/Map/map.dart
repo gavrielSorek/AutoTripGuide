@@ -7,6 +7,7 @@ import 'package:final_project/Map/mapbox/user_location_marker.dart';
 import 'package:final_project/Map/mapbox/user_location_marker_car.dart';
 import 'package:final_project/General%20Wigets/stretching_widget.dart';
 import 'package:final_project/Map/poi_guide_info.dart';
+import 'package:activity_recognition_flutter/activity_recognition_flutter.dart' as activityRec;
 import 'package:final_project/Map/pois_attributes_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -242,6 +243,7 @@ class UserMapState extends State<UserMap>
       mapbox.MyLocationTrackingMode.Tracking;
   List<Object>? _featureQueryFilter;
   mapbox.Fill? _selectedFill;
+  late Stream<activityRec.ActivityEvent> _activityStream;
 
   mapbox.MapboxMap createMapboxMap(Key mapboxWidgetUniqueKey) {
     UniversalPanGestureRecognizer _panGestureRecognizer =
@@ -471,6 +473,15 @@ class UserMapState extends State<UserMap>
                   highlightedPoi!.poi.longitude)));
       updateCameraByRelativePosition();
     });
+    _activityStream = activityRec.ActivityRecognition().activityStream();
+    _activityStream.listen((activityRec.ActivityEvent event) {
+      if (event.type == activityRec.ActivityType.IN_VEHICLE) {
+        print('User is in a vehicle');
+      } else {
+        print('User is not in a vehicle');
+      }
+    });
+
     super.initState();
     Wakelock.enable();
     WidgetsBinding.instance.addObserver(this);
