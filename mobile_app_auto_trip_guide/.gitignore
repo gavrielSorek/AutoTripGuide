@@ -80,6 +80,5 @@ app.*.symbols
 !**/Info.plist
 
 # dangerous data -- need to be deleted from git later
-!**/release.keystore 
 !**/google-services.json
-!**/key.properties
+!android/key.properties
