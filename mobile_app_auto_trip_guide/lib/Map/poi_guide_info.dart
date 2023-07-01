@@ -170,7 +170,7 @@ class _PoiGuideState extends State<PoiGuide> {
       children: [
         Container(
           height: MediaQuery.of(context).size.height *
-              0.5 *
+              0.46 *
               StretchingWidget.collapsedPercentFromAvailableSpace,
           child: getTopPart(false),
         ),
