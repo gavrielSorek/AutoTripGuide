@@ -44,6 +44,10 @@ app.*.symbols
 **/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
+android/app/build/
+android/app/src/debug/
+android/app/src/main/kotlin/
+android/app/src/profile/
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
@@ -71,6 +75,17 @@ app.*.symbols
 **/ios/Flutter/flutter_export_environment.sh
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
+ios/Runner.xcodeproj/
+ios/Runner.xcworkspace/
+ios/Runner/AppDelegate.swift
+ios/Runner/Assets.xcassets/
+ios/Runner/Base.lproj/
+ios/Runner/Runner-Bridging-Header.h
+ios/Runner/RunnerDebug.entitlements
+
+# Flutter/Dart/Pub related
+.flutter-plugins-dependencies
+pubspec.lock
 
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
