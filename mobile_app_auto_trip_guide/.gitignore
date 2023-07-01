@@ -87,6 +87,9 @@ ios/Runner/RunnerDebug.entitlements
 .flutter-plugins-dependencies
 pubspec.lock
 
+# Windows related
+windows/*
+
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !**/android/app/src/main/res/**
