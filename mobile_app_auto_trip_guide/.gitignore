@@ -74,8 +74,12 @@ app.*.symbols
 
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
-!**/google-services.json
 !**/android/app/src/main/res/**
 !**/AndroidManifest.xml
 !**/GoogleService-Info.plist
 !**/Info.plist
+
+# dangerous data -- need to be deleted from git later
+!**/release.keystore 
+!**/google-services.json
+!**/key.properties
