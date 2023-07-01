@@ -216,6 +216,8 @@ class UserMapState extends State<UserMap>
 
   // at new area the we snooze to the server in order to seek new pois
   static int SECONDS_BETWEEN_SNOOZES = 15;
+  static double MAX_ZOOM = 16;
+  static double MIN_ZOOM = 1;
 
   // mapbox variables
   late mapbox.MapboxMap map;
@@ -225,7 +227,7 @@ class UserMapState extends State<UserMap>
   mapbox.CameraTargetBounds _cameraTargetBounds =
       mapbox.CameraTargetBounds.unbounded;
   mapbox.MinMaxZoomPreference _minMaxZoomPreference =
-      mapbox.MinMaxZoomPreference(1, 16);
+      mapbox.MinMaxZoomPreference(MIN_ZOOM, MAX_ZOOM);
   String _currentStyleName = "Streets";
   int _styleStringIndex = 0;
   bool _rotateGesturesEnabled = true;
@@ -465,10 +467,10 @@ class UserMapState extends State<UserMap>
           padding;
       _cameraPosition = mapbox.CameraPosition(
           target: _cameraPosition.target,
-          zoom: await _getZoomPointInDistFromUser(
+          zoom: min(MAX_ZOOM,await _getZoomPointInDistFromUser(
               userPixelDistFromHighlightedPoi,
               mapbox.LatLng(highlightedPoi!.poi.latitude,
-                  highlightedPoi!.poi.longitude)));
+                  highlightedPoi!.poi.longitude))));
       updateCameraByRelativePosition();
     });
     super.initState();
