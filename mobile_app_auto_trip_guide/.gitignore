@@ -77,3 +77,5 @@ app.*.symbols
 !**/google-services.json
 !**/android/app/src/main/res/**
 !**/AndroidManifest.xml
+!**/GoogleService-Info.plist
+!**/Info.plist
