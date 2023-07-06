@@ -6,3 +6,4 @@
 /server_for_mobile/combined.log
 /server_for_mobile/src/combined.log
 /server_for_mobile/errors.log
+/node_modules
