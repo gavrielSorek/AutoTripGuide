@@ -14,36 +14,42 @@ function isEnglish(result: any): boolean {
 
 
 export async function getNearbyPois(latitude: number, longitude: number, radius: number, type: string,geoHash:string): Promise<Poi[]> {
-    logger.info(`searching POIS in google for type '${type}' in geoHash '${geoHash}'`);
-    const API_KEY = process.env.GM_API_KEY; //  'AIzaSyD4sN0b5ki-gefxB_7tNIpNR5b8YQoz-sk' // process.env.GM_API_KEY;
-    const response = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', {
-        params: {
-            location: `${latitude},${longitude}`,
-            radius: radius,
-            key: 'AIzaSyAO11FomILrsrAlP4XJloA0huZUtXWNvvc',
-            type: type,
-            language: "en"
+    try {
+
+        logger.info(`searching POIS in google for type '${type}' in geoHash '${geoHash}'`);
+        const API_KEY = process.env.GM_API_KEY; //  'AIzaSyD4sN0b5ki-gefxB_7tNIpNR5b8YQoz-sk' // process.env.GM_API_KEY;
+        const response = await axios.get('https://maps.googleapis.com/maps/api/place/nearbysearch/json', {
+            params: {
+                location: `${latitude},${longitude}`,
+                radius: radius,
+                key: 'AIzaSyAO11FomILrsrAlP4XJloA0huZUtXWNvvc',
+                type: type,
+                language: "en"
+            }
+        });
+        const places = response.data.results.filter(isEnglish)
+        var pois_list: Poi[] = [];
+        for (const place of places) {
+            const poi = new Poi(place.name, place.geometry.location.lat, place.geometry.location.lng)
+            poi._pic = place.photos?.length ? place.photos[0].photo_reference : ''
+            poi._vendorInfo = {_source: Sources.Google, _avgRating: place.rating, _numReviews: place.user_ratings_total, _placeId: place.place_id,_plus_code: place?.plus_code?.compound_code ?? ''}
+            poi._Contributor = Sources.Google;
+            poi._Categories = []
+            const categories_set = new Set<string>();
+            for (let c of place.types) {
+                let category = getPoiCategory(c)
+                if (category != "1") { categories_set.add(category) }
+            }
+            poi._Categories = [...categories_set]
+            poi._country = place.vicinity
+            pois_list.push(poi)
         }
-    });
-    const places = response.data.results.filter(isEnglish)
-    var pois_list: Poi[] = [];
-    for (const place of places) {
-        const poi = new Poi(place.name, place.geometry.location.lat, place.geometry.location.lng)
-        poi._pic = place.photos?.length ? place.photos[0].photo_reference : ''
-        poi._vendorInfo = {_source: Sources.Google, _avgRating: place.rating, _numReviews: place.user_ratings_total, _placeId: place.place_id,_plus_code: place?.plus_code?.compound_code ?? ''}
-        poi._Contributor = Sources.Google;
-        poi._Categories = []
-        const categories_set = new Set<string>();
-        for (let c of place.types) {
-            let category = getPoiCategory(c)
-            if (category != "1") { categories_set.add(category) }
-        }
-        poi._Categories = [...categories_set]
-        poi._country = place.vicinity
-        pois_list.push(poi)
+        logger.info(`Found from google search for type '${type}': ${pois_list.length} in geoHash '${geoHash}'`)
+        return pois_list;
+    } catch (error) {
+        logger.error(`error in getNearbyPois for gehoHash ${geoHash}: ${error}`);
+        return [];
     }
-    logger.info(`Found from google search for type '${type}': ${pois_list.length} in geoHash '${geoHash}'`)
-    return pois_list;
 }
 
 export async function fetchGoogleMapsPhotoUrl(photoReference: string,poiName:string, apiKey = process.env.GM_API_KEY,maxwidth = 150): Promise<string> {

@@ -32,8 +32,7 @@ export function gptPlaceInfo(placeName: string,address: string, length: number) 
       return response.data.choices[0].text?.replace(/^\s+/, "");;
     })
     .catch((error) => {
-      logger.error("error in gptPlaceInfo for " + placeName );
-      logger.error(error);
+      logger.error("Error in GPT for " + placeName + ": " + error);
       return "error";
     });
 }

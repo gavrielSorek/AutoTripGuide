@@ -5,6 +5,11 @@ export const logger = createLogger({
   transports: [
     new transports.File({ filename: 'combined.log' }),
     new transports.Console()
+      ],
+  exceptionHandlers: [
+    new transports.File({ filename: 'combined.log' }),
+    new transports.File({ filename: 'errors.log' }),
+    new transports.Console(),
   ],
   format: format.combine(
     format.colorize(),

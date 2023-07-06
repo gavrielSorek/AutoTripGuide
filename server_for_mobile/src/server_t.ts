@@ -17,6 +17,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import AsyncLock from 'async-lock';
 import { log } from 'console';
+import { sendPoisToServer } from './utils/sendPois';
 const app = express()
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(bodyParser.json({limit: '50mb'}));
@@ -102,19 +103,23 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
  async function updateDbWithOnlinePois(bounds: any, language: string,geoHash:string) {
     // async call for faster rsults
     await getPoisFromOpenTrip(bounds, language,geoHash,(poi: Poi)=>{
-        logger.info(`Add poi to db from openTripMAP: '${poi._poiName}' to geoHash: '${geoHash}'`)
-        serverCommunication.sendPoisToServer([poi], globaltokenAndPermission)
+        logger.info(`Found new poi from openTripMAP: '${poi._poiName}' to geoHash: '${geoHash}'`)
+        sendPoisToServer(dbClientSearcher,[poi])
     }); 
  }
 
  async function updateDbWithGoogleApiPois(bounds:any,geoHash:string) {
-    const southWest :Coordinate = bounds['southWest'];
-    const northEast :Coordinate = bounds['northEast'];
-    const lat = (southWest.lat + northEast.lat) /2;
-    const lng = (southWest.lng + northEast.lng) /2;
-    const distance = getDistance({ latitude: lat, longitude: lng },    { latitude: northEast.lat, longitude: northEast.lng })
-    const pois = await getPois(lat, lng, distance,geoHash)
-    serverCommunication.sendPoisToServer(pois, globaltokenAndPermission)
+    try{
+        const southWest :Coordinate = bounds['southWest'];
+        const northEast :Coordinate = bounds['northEast'];
+        const lat = (southWest.lat + northEast.lat) /2;
+        const lng = (southWest.lng + northEast.lng) /2;
+        const distance = getDistance({ latitude: lat, longitude: lng },    { latitude: northEast.lat, longitude: northEast.lng })
+        const pois = await getPois(lat, lng, distance,geoHash)
+        sendPoisToServer(dbClientSearcher,pois)
+    } catch (e) {
+        logger.error(`Error in google api for geoHash ${geoHash}: ${e}`);
+    }
  }
  
  function addUserDataTosearchParams(searchParams:any, userData:any){
