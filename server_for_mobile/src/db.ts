@@ -3,16 +3,19 @@ import { MongoClient } from 'mongodb';
 import mongodb from 'mongodb';
 import { logger } from './utils/loggerService';
 import { GeoBounds } from './types/coordinate';
+import { Poi } from './types/poi';
 
 
 
-async function findDataByParams(client:MongoClient, queryObject:any, relevantBounds:GeoBounds, MaxCount:number, searchOutsideTheBoundery:boolean,geoHash:any) {
-    const latBT = relevantBounds.southWest.lat; //latitude bigger than
-    const latST = relevantBounds.northEast.lat; //latitude smaller than
-    const lngBT = relevantBounds.southWest.lng; //longtitude bigger than
-    const lngST = relevantBounds.northEast.lng; //longtitude smaller than
-    queryObject['_latitude'] = {$gt: latBT, $lt: latST};
-    queryObject['_longitude'] = {$gt: lngBT, $lt: lngST};
+async function findDataByParams(client:MongoClient, queryObject:any, relevantBounds:GeoBounds| null, MaxCount:number, searchOutsideTheBoundery:boolean,geoHash:any) {
+    if(relevantBounds) {
+        const latBT = relevantBounds.southWest.lat; //latitude bigger than
+        const latST = relevantBounds.northEast.lat; //latitude smaller than
+        const lngBT = relevantBounds.southWest.lng; //longtitude bigger than
+        const lngST = relevantBounds.northEast.lng; //longtitude smaller than
+        queryObject['_latitude'] = {$gt: latBT, $lt: latST};
+        queryObject['_longitude'] = {$gt: lngBT, $lt: lngST};
+    }
     let res = await client.db("auto_trip_guide_db").collection("poisCollection").find(queryObject).limit(MaxCount);
     let results = await res.toArray();
     if (results.length == 0 && searchOutsideTheBoundery) { //if can search outside the bounderies and didm't find pois in the boundery
@@ -22,18 +25,35 @@ async function findDataByParams(client:MongoClient, queryObject:any, relevantBou
         results = await res.toArray();
     }
     if (results.length != 0) {
-        logger.info(`Found ${results.length} pois in the db for the geoHash '${geoHash}'`);
+        if(geoHash != 'internal search') {
+            logger.info(`Found ${results.length} pois in the db for the geoHash '${geoHash}'`);
+        }
         return results
     } else {
-        logger.info(`No pois found in the db for the geoHash '${geoHash}'`);
+        if(geoHash != 'internal search') {
+         logger.info(`No pois found in the db for the geoHash '${geoHash}'`);
+        }
     }
 }
 
 // The function find a pois 
-export async function findPois(client:MongoClient, poiParams:any , relevantBounds:GeoBounds, MaxCount:number, searchOutsideTheBoundery:boolean,geoHash:string) {
+export async function findPois(client:MongoClient, poiParams:any , relevantBounds:GeoBounds|null, MaxCount:number, searchOutsideTheBoundery:boolean,geoHash:string) {
     return findDataByParams(client, poiParams, relevantBounds, MaxCount, searchOutsideTheBoundery,geoHash)
 }
 
+export async function insertPois(client:MongoClient, newPois:Poi[]) {
+    try {
+        const res = await client.db("auto_trip_guide_db").collection("poisCollection").insertMany(newPois as any[]);
+        let num_of_object = 0
+        for (const id in res.insertedIds) {
+            num_of_object += 1
+            //add mor logic
+        }
+        logger.info(`[Poi-db] ${num_of_object} new pois was created`);
+    } catch (e) {
+        logger.error(`Error in insertPois: ${e}`);
+    }
+}
 // The function returns audio promise
 async function getAudio(dbClient:MongoClient, audioId:string) {
     const db = await dbClient.db("auto_trip_guide_db");

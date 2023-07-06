@@ -6,7 +6,7 @@ var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
 var yyyy = today.getFullYear();
 
 var date = dd + '/' + mm + '/' + yyyy;
-export const blacklistStrings: string[] = ['depopulated','palestinian'];
+// export const blacklistStrings: string[] = ['depopulated','palestinian'];
 
 export interface vendorInfo {
   _source: Sources,
@@ -38,8 +38,9 @@ export class Poi {
     public _LastUpdatedDate: string = date,
     public _country: string = "",
     public _Categories: string[] = [],
+    public _id: string| undefined = "",
     public _pic: any = "") {
-      // this._id = _id;
+      //this._id = _id;
       this._poiName = _poiName;
       this._latitude = _latitude;
       this._longitude = _longitude;

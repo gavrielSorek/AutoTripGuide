@@ -7,7 +7,8 @@ import 'globals.dart';
 
 class ServerCommunication {
   //String serverUrl = "autotripguidemobile.loca.lt";
-  String serverUrl = "212.80.207.83:5600";
+  //String serverUrl = "192.168.1.180:5600";
+   String serverUrl = "212.80.207.83:5600";
 
   var client = RetryClient(http.Client());
 
