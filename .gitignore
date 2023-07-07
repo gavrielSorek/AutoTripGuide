@@ -1,9 +1,21 @@
 # ignore ALL .env files
 *.env
-*/node_modules/*
+
+# ignore ALL node_modules directories
+**/node_modules/
+
+# ignore .idea directory at the root
 /.idea/
-*.dart_tool/
+
+# ignore ALL .dart_tool directories
+**/*.dart_tool/
+
+# ignore specific log files
 /server_for_mobile/combined.log
 /server_for_mobile/src/combined.log
 /server_for_mobile/errors.log
-/node_modules
+
+# ignore specific js file
+/server_for_mobile/src/dist/db.js
+
+**/dist/*

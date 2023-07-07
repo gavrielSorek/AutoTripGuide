@@ -1,5 +1,7 @@
 import { MongoClient, Db, Collection } from 'mongodb';
 import * as geohash from 'ngeohash';
+import { findPois } from '../../server_for_mobile/src/db';
+
 // Define interfaces for coordinates and bounds
 interface Coordinates {
     lat: number;
@@ -86,19 +88,53 @@ class AutoTripGuideDB {
     }
     
 }
+// usage example
+// async function main() {
+//     const db = new AutoTripGuideDB("mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+//      'auto_trip_guide_db', 'cachedAreas');
+//     await db.connect();
+//     console.log(await db.findGeoHash('sv8y9'));
+//     const allGeohashes = await db.getAllGeohash();
 
-async function main() {
-    const db = new AutoTripGuideDB("mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-     'auto_trip_guide_db', 'cachedAreas');
+//     console.log(allGeohashes);
+
+//     // await db.deleteGeoHash('sv8y9');
+
+//     await db.disconnect();
+// }
+
+async function loopEndDelete() {
+    const mongoUrl = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    const db = new AutoTripGuideDB(mongoUrl, 'auto_trip_guide_db', 'poisCollection');
+
+    // Connect to the database
     await db.connect();
-    console.log(await db.findGeoHash('sv8y9'));
+
+    // Get all geohashes
     const allGeohashes = await db.getAllGeohash();
 
-    console.log(allGeohashes);
+    // Connect to MongoDB using MongoClient
+    const client = new MongoClient(mongoUrl);
+    await client.connect();
 
-    // await db.deleteGeoHash('sv8y9');
+    // Loop through all geohashes
+    for (const geohash of allGeohashes) {
+        // Define an empty query object
+        const queryObject = {};
 
-    await db.disconnect();
+        // Get the geohash bounds
+        const relevantBounds: GeoBounds = getGeoHashBoundsByGeoStr(geohash);
+
+        //db.findPois(dbClientSearcher, searchParams, boundsArr[i], MAX_POIS_FOR_USER, false, geoHashArr[i]);
+        // Find data by params
+        const results = await findPois(client, queryObject, relevantBounds, 1, false, geohash);
+
+        // If no POIs found for this geohash, delete it
+        const THRESHOLD_SIZE_TO_DELETE = 0;
+        if (!results || results.length === THRESHOLD_SIZE_TO_DELETE) {
+            await db.deleteGeoHash(geohash);
+        }
+    }
 }
 
-main();
+loopEndDelete();
