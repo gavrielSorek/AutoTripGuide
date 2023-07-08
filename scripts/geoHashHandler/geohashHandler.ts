@@ -1,17 +1,8 @@
 import { MongoClient, Db, Collection } from 'mongodb';
 import * as geohash from 'ngeohash';
 import { findPois } from '../../server_for_mobile/src/db';
+import { GeoBounds } from '../../server_for_mobile/src/types/coordinate';
 
-// Define interfaces for coordinates and bounds
-interface Coordinates {
-    lat: number;
-    lng: number;
-}
-
-interface GeoBounds {
-    southWest: Coordinates;
-    northEast: Coordinates;
-}
 
 // Function to get geohash bounds by geohash string
 function getGeoHashBoundsByGeoStr(geohashStr: string): GeoBounds {
@@ -123,7 +114,7 @@ async function loopEndDelete() {
         const queryObject = {};
 
         // Get the geohash bounds
-        const relevantBounds: GeoBounds = getGeoHashBoundsByGeoStr(geohash);
+        const relevantBounds = getGeoHashBoundsByGeoStr(geohash);
 
         //db.findPois(dbClientSearcher, searchParams, boundsArr[i], MAX_POIS_FOR_USER, false, geoHashArr[i]);
         // Find data by params

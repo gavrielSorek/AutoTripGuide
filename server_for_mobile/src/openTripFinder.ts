@@ -67,7 +67,7 @@ export async function getPoisFromOpenTrip(bounds:any, languageCode:string,geoHas
         }
     
     
-        logger.info(`total found ${pois.length.toString()} from open trip map for geoHash ${geoHashStr}`)
+        logger.info(`*** Total found ${pois.length.toString()} from open trip map for geoHash ${geoHashStr}`)
         return pois;
     } catch (e) {
         logger.error(`Error in open trip map for geoHash ${geoHashStr}: ${e}`);

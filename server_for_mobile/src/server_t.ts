@@ -218,7 +218,7 @@ app.get("/updateUserInfo", async function (req:Request, res:Response) { //next r
 
  // insert Poi To the history pois of specific user
 app.get("/insertPoiToHistory", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    logger.info(`Add poi to history '${req.query.poiName}', email: ${req.query.emailAddr}`)
+    logger.info(`Add poi to history '${req.query.poiName?.toString().toLowerCase()}', email: ${req.query.emailAddr}`)
     const poiInfo = {'id': req.query.id, 'poiName': req.query.poiName, 'emailAddr': req.query.emailAddr, 'time': req.query.time, 'pic': req.query.pic};
     const result = await db.insertPoiToHistory(dbClientSearcher, poiInfo)
     res.status(200);

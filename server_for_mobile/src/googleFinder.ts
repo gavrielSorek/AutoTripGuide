@@ -56,7 +56,7 @@ export async function fetchGoogleMapsPhotoUrl(photoReference: string,poiName:str
     return axios.get(`https://maps.googleapis.com/maps/api/place/photo`, {
       params: {
         photo_reference: photoReference,
-        key: apiKey,
+        key: 'AIzaSyAO11FomILrsrAlP4XJloA0huZUtXWNvvc',
         maxwidth: maxwidth
       },
     }).then(response => {
