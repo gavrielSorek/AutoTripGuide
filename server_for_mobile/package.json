@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": " npx ts-node src/server_t.ts"
+    "start": " npx ts-node src/server_t.ts",
+    "handle_geohash": " npx ts-node server_handling_scripts/geohashHandler.ts"
   },
   "dependencies": {
     "async-lock": "^1.4.0",
