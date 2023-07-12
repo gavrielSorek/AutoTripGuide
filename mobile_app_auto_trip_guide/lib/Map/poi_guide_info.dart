@@ -245,6 +245,94 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
   double bottomIconSize = 26;
   int poiPreference = 0;
 
+  get navigationButton {
+    return RawMaterialButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(20.0),
+                ),
+              ),
+              title: Text(
+                'Choose app to open with:',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Globals.globalAppLauncher.launchWaze(
+                        widget.poi.latitude,
+                        widget.poi.longitude,
+                      );
+                      Navigator.pop(context);
+                    },
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.navigation,
+                          color: Colors.blue,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'Waze',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Globals.globalAppLauncher.launchGoogleMaps(
+                        widget.poi.latitude,
+                        widget.poi.longitude,
+                      );
+                      Navigator.pop(context);
+                    },
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.map,
+                          color: Colors.blue,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'Google Maps',
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+      elevation: 2.0,
+      fillColor: Colors.blue,
+      child: Icon(
+        Icons.directions,
+        size: bottomIconSize,
+      ),
+      shape: CircleBorder(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Globals.globalServerCommunication
@@ -264,21 +352,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
           Container(
             height: BottomBarWidget.buttonSize,
             width: BottomBarWidget.buttonSize,
-            child: RawMaterialButton(
-              onPressed: () {
-                Globals.globalAppLauncher.launchWaze(
-                  widget.poi.latitude,
-                  widget.poi.longitude,
-                );
-              },
-              elevation: 2.0,
-              fillColor: Colors.blue,
-              child: Icon(
-                Icons.directions,
-                size: bottomIconSize,
-              ),
-              shape: CircleBorder(),
-            ),
+            child: navigationButton,
           ),
           Container(
             height: BottomBarWidget.buttonSize,
