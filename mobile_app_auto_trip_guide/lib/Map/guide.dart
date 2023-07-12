@@ -334,7 +334,7 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                                       width: 1.8, color: Colors.white),
                                   value: widget.state.isCheckedCategory[
                                           categoriesList[index]] ??
-                                      false,
+                                      true,
                                   onChanged: (value) {
                                     handleSelectedCategoryClicked(
                                         categoriesList[index]);
