@@ -10,6 +10,7 @@ import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 import 'dart:math' as Math;
 
 class PoisAttributesCalculator {
+  static const double MAX_DIST = 2000; //2000 meter
   static Map<int, String> USER_RELATIVE_DIRECTIONS = {
     0: 'ahead of you',
     4: 'behind you',
@@ -71,12 +72,26 @@ class PoisAttributesCalculator {
   }
 
   static List<Poi> filterPoisByDistance(List<Poi> pois, Position position) {
-    const double maxDist = 2000; //2000 meters
     pois.removeWhere((poi) =>
         getDistBetweenPoints(poi.latitude, poi.longitude, position.latitude,
             position.longitude) >
-        maxDist);
+            MAX_DIST);
     return pois;
+  }
+
+  Future<bool> isPoiNearUser(Poi poi) async {
+    Position userLocation = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
+    return getDistBetweenPoints(poi.latitude, poi.longitude, userLocation.latitude,
+        userLocation.longitude) < MAX_DIST;
+  }
+
+  static List<MapPoi> filterMapPoisByDistance(List<MapPoi> mapPois, Position position) {
+    mapPois.removeWhere((mapPoi) =>
+    getDistBetweenPoints(mapPoi.poi.latitude, mapPoi.poi.longitude, position.latitude,
+        position.longitude) >
+        MAX_DIST);
+    return mapPois;
   }
 
   static List<Poi> filterHistoricalPois(List<Poi> pois) {

@@ -8,6 +8,7 @@ import '../../Adjusted Libs/story_view/story_view.dart';
 import '../../General Wigets/generals.dart';
 import '../globals.dart';
 import '../personalize_recommendation.dart';
+import '../pois_attributes_calculator.dart';
 import '../types.dart';
 
 part 'guide_event.dart';
@@ -78,6 +79,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         minUnheardIdx = nextIdx;
         List<MapPoi> unGuidedPois =
             _poisToGuide.sublist(nextIdx, _poisToGuide.length);
+        unGuidedPois = PoisAttributesCalculator.filterMapPoisByDistance(unGuidedPois, Globals.globalUserMap.userLocation);
         unGuidedPois.sort(PersonalizeRecommendation.sortMapPoisByDist);
         // Replace the original portion with the sorted sublist
         _poisToGuide.replaceRange(
