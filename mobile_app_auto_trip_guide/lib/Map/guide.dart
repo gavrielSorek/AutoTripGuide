@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../General Wigets/Image_from_url_list.dart';
 import '../General Wigets/progress_button.dart';
-import '../General Wigets/stretching_widget.dart';
 import '../General Wigets/uniform_widgets.dart';
 import 'guid_bloc/guide_bloc.dart';
 import 'globals.dart';
@@ -380,7 +379,6 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
   @override
   initState() {
     super.initState();
-    handleSelectedCategoryClicked('All');
   }
 
   void onStartGuideButtonPressed() {

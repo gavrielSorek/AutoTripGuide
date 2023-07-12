@@ -211,7 +211,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       if (isCheckedCategory.isEmpty) {
         // if not initialized
         categoriesToMapPois.keys.forEach((category) {
-          isCheckedCategory[category] = false;
+          isCheckedCategory[category] = true;
         });
       }
       emit(ShowOptionalCategoriesState(
