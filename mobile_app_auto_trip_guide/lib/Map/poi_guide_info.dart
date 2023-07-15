@@ -220,7 +220,7 @@ class PoiGuideImageWidget extends StatelessWidget {
             imageUrl: imagePath,
             placeholder: (context, url) => CircularProgressIndicator(),
             errorWidget: (context, url, error) => Image.asset(
-              'assets/images/auto_trip_guide_logo.png',
+              'assets/images/logo.png',
               fit: BoxFit.cover,
             ),
           ),
