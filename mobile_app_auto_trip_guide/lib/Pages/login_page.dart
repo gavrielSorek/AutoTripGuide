@@ -33,14 +33,37 @@ class LoginPage extends StatelessWidget {
                     const SizedBox(
                       width: 10,
                     ),
-                    Image.asset(
-                      'assets/images/logo.png',
-                      width: MediaQuery.of(context).size.width / 1.1,
-                      height: MediaQuery.of(context).size.height / 4,
-                      //fit: BoxFit.cover,
-                    )
+                    Stack(
+                      children: <Widget>[
+                        Container(
+                          width: MediaQuery.of(context).size.width / 1.1,
+                          height: MediaQuery.of(context).size.height / 4,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: FractionalOffset.topCenter,
+                                end: FractionalOffset.bottomCenter,
+                                colors: [
+                                  Colors.white.withOpacity(0.1),
+                                  Colors.white.withOpacity(0.1),
+                                ],
+                                stops: [
+                                  0.5,
+                                  1.0
+                                ]
+                            ),
+                          ),
+                        ),
+                        Image.asset(
+                          'assets/images/logo.png',
+                          width: MediaQuery.of(context).size.width / 1.1,
+                          height: MediaQuery.of(context).size.height / 4,
+                          //fit: BoxFit.cover,
+                        ),
+                      ],
+                    ),
                   ],
                 ),
+
                 SizedBox(height: MediaQuery.of(context).size.height / 2),
                 FloatingActionButton.extended(
                   onPressed: () async {
