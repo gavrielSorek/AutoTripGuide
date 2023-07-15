@@ -82,10 +82,18 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
         ),
         PageViewModel(
           title: "",
-          body: "Turn every travel you make into a memorable experience.",
+          body: "Or while driving...",
           image: Container(
               margin: EdgeInsets.only(top: 100),
               child: _buildImage('intro3.png')),
+          decoration: pageDecoration,
+        ),
+        PageViewModel(
+          title: "",
+          body: "Turn every travel you make into a memorable experience.",
+          image: Container(
+              margin: EdgeInsets.only(top: 100),
+              child: _buildImage('intro4.png')),
           decoration: pageDecoration,
         )
       ],
