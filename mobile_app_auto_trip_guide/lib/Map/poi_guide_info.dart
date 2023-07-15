@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:final_project/Map/types.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:share_plus/share_plus.dart';
 import '../General Wigets/stretching_widget.dart';
 import 'globals.dart';
@@ -277,9 +278,10 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                     },
                     child: Row(
                       children: <Widget>[
-                        Icon(
-                          Icons.navigation,
-                          color: Colors.blue,
+                        SvgPicture.asset(
+                          'assets/images/navigation_logos/waze-icon.svg',
+                          width: 24, // You can adjust the size as needed
+                          height: 24, // You can adjust the size as needed
                         ),
                         SizedBox(width: 10),
                         Text(
@@ -302,9 +304,10 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                     },
                     child: Row(
                       children: <Widget>[
-                        Icon(
-                          Icons.map,
-                          color: Colors.blue,
+                        SvgPicture.asset(
+                          'assets/images/navigation_logos/google-maps-2020-icon.svg',
+                          width: 24, // You can adjust the size as needed
+                          height: 24, // You can adjust the size as needed
                         ),
                         SizedBox(width: 10),
                         Text(
