@@ -422,9 +422,10 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                   widget.poi.Categories,
                   widget.poi.id,
                 );
+                String appName = 'JournAi';
                 Share.share(
-                  widget.poi.shortDesc ?? "",
-                  subject: widget.poi.poiName,
+                  '${widget.poi.shortDesc ?? ""}\n\nShared via $appName.',
+                  subject: '${widget.poi.poiName} - Shared via $appName',
                 );
               },
               elevation: 2.0,
