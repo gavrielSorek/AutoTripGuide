@@ -82,6 +82,8 @@ ios/Runner/Assets.xcassets/
 ios/Runner/Base.lproj/
 ios/Runner/Runner-Bridging-Header.h
 ios/Runner/RunnerDebug.entitlements
+ios/Runner/GeneratedPluginRegistrant.h
+ios/Runner/GeneratedPluginRegistrant.m
 
 # Flutter/Dart/Pub related
 .flutter-plugins-dependencies
@@ -89,6 +91,12 @@ pubspec.lock
 
 # Windows related
 windows/*
+
+# Linux related
+linux/*
+
+# Macos related
+macos/*
 
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
