@@ -104,6 +104,7 @@ macos/*
 !**/AndroidManifest.xml
 !**/GoogleService-Info.plist
 !**/Info.plist
+!**/build.gradle
 
 # dangerous data -- need to be deleted from git later
 !**/google-services.json
