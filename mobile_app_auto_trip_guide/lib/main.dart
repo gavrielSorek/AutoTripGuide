@@ -29,19 +29,19 @@ Future<void> main() async {
   );
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
-    runApp(const AutoGuideApp());
+    runApp(const JournAi());
   });
 }
 
-class AutoGuideApp extends StatelessWidget {
-  const AutoGuideApp({Key? key}) : super(key: key);
+class JournAi extends StatelessWidget {
+  const JournAi({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     AppInitializationPage initializationPage = AppInitializationPage();
 
     return MaterialApp(
-      title: 'Auto Trip Guide',
+      title: 'JournAi',
       theme: ThemeData(
         primarySwatch: generateMaterialColor(Globals.globalColor),
         fontFamily: 'Roboto',
