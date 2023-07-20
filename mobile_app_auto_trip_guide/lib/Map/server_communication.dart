@@ -6,12 +6,10 @@ import 'package:http/retry.dart';
 import 'globals.dart';
 
 class ServerCommunication {
-  //String serverUrl = "192.168.1.180:5600";
-   String serverUrl = "212.80.207.83:5600";
+  String serverUrl = "getjourn.ai:5600";
 
   var client = RetryClient(http.Client());
 
-  // var client = http.Client();
   static Uri addLocationInfoToUrl(
       String url, String path, LocationInfo locationInfo) {
     final queryParameters = {
@@ -20,12 +18,12 @@ class ServerCommunication {
       'heading': locationInfo.heading.toString(),
       'speed': locationInfo.speed.toString()
     };
-    final uri = Uri.http(url, path, queryParameters);
+    final uri = Uri.https(url, path, queryParameters);
     return uri;
   }
 
   static Uri addInfoToUrl(String url, String path, Map<String, String> info) {
-    return Uri.http(url, path, info);
+    return Uri.https(url, path, info);
   }
 
   Future<List<Poi>> getPoisByLocation(LocationInfo? locationInfo) async {
@@ -52,7 +50,7 @@ class ServerCommunication {
 
   Future<Poi?> getPoiById(String poiId) async {
     Map<String, String> params = {'poiId': poiId};
-    Uri newUri = Uri.http(serverUrl, '/getPoiById', params);
+    Uri newUri = Uri.https(serverUrl, '/getPoiById', params);
 
     try {
       var response = await client.get(newUri);
@@ -76,7 +74,7 @@ class ServerCommunication {
       'emailAddr': userInfo.emailAddr!,
       'poiId': poiId,
     };
-    Uri newUri = Uri.http(serverUrl, '/getUserPoiPreference', params);
+    Uri newUri = Uri.https(serverUrl, '/getUserPoiPreference', params);
 
     try {
       var response = await client.get(newUri);
@@ -104,7 +102,7 @@ class ServerCommunication {
       'preference': preference.toString()
     };
 
-    Uri newUri = Uri.http(serverUrl, '/insertUserPoiPreference', params);
+    Uri newUri = Uri.https(serverUrl, '/insertUserPoiPreference', params);
 
     try {
       var response = await client.post(newUri);
@@ -122,7 +120,7 @@ class ServerCommunication {
     final queryParameters = {
       'poiId': poiId,
     };
-    final uri = Uri.http(url, path, queryParameters);
+    final uri = Uri.https(url, path, queryParameters);
     return uri;
   }
 
@@ -158,7 +156,7 @@ class ServerCommunication {
       'age': userInfo.age.toString(),
       'categories': userInfo.categories.toString()
     };
-    final uri = Uri.http(url, path, queryParameters);
+    final uri = Uri.https(url, path, queryParameters);
     return uri;
   }
 
@@ -187,7 +185,7 @@ class ServerCommunication {
 
   static Uri addLangToUrl(String url, String path, String language) {
     final queryParameters = {'language': language.toString()};
-    final uri = Uri.http(url, path, queryParameters);
+    final uri = Uri.https(url, path, queryParameters);
     return uri;
   }
 
@@ -253,7 +251,7 @@ class ServerCommunication {
       'email': emailAddr.toString(),
       'categories': Globals.globalFavoriteCategories
     };
-    final uri = Uri.http(url, path, queryParameters);
+    final uri = Uri.https(url, path, queryParameters);
     return uri;
   }
 
@@ -306,7 +304,7 @@ class ServerCommunication {
       'languages': userInfo?.languages.toString(),
       'age': userInfo?.age.toString()
     };
-    final uri = Uri.http(url, path, queryParameters);
+    final uri = Uri.https(url, path, queryParameters);
     return uri;
   }
 
@@ -336,7 +334,7 @@ class ServerCommunication {
       'pic': visitedPoi.pic.toString(),
       'emailAddr': Globals.globalEmail
     };
-    final uri = Uri.http(url, path, queryParameters);
+    final uri = Uri.https(url, path, queryParameters);
     return uri;
   }
 
