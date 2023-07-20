@@ -23,7 +23,7 @@ class _ImageFromUrlListState extends State<ImageFromUrlList> {
   int currentIndex = 0;
 
   final Map<String, String> categoryToAssetName = {
-    'default': 'assets/images/logo.png',
+    'default': 'assets/images/categories/Default.jpg',
     'Buildings': 'assets/images/categories/Buildings.jpg',
     'Parks': 'assets/images/categories/Park.jpg',
     'Museums':  'assets/images/categories/Museumes.jpg',
