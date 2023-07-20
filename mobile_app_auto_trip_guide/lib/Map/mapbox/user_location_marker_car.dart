@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:final_project/Map/mapbox/driving_direction.dart';
-import 'package:final_project/Map/mapbox/user_location_marker.dart';
+import 'package:journ_ai/Map/mapbox/driving_direction.dart';
+import 'package:journ_ai/Map/mapbox/user_location_marker.dart';
 import 'package:flutter/animation.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 

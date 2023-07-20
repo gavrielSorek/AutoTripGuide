@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:final_project/Adjusted Libs/story_view/story_view.dart';
+import 'package:journ_ai/Adjusted Libs/story_view/story_view.dart';
 
 class ScrolledText {
   /// Short hand to create text-only page.

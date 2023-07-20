@@ -1,6 +1,6 @@
-import 'package:final_project/Pages/personal_details_page.dart';
+import 'package:journ_ai/Pages/personal_details_page.dart';
 import 'package:flutter/material.dart';
-import 'package:final_project/Pages/favorite_categories_page.dart';
+import 'package:journ_ai/Pages/favorite_categories_page.dart';
 
 import '../Map/events.dart';
 import '../Map/globals.dart';

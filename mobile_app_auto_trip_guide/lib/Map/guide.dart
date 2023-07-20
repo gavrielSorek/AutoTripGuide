@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:final_project/Map/poi_guide_info.dart';
-import 'package:final_project/Map/pois_attributes_calculator.dart';
-import 'package:final_project/Map/types.dart';
+import 'package:journ_ai/Map/poi_guide_info.dart';
+import 'package:journ_ai/Map/pois_attributes_calculator.dart';
+import 'package:journ_ai/Map/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../General Wigets/Image_from_url_list.dart';
@@ -164,7 +164,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         Padding(
             padding: EdgeInsets.only(left: 11, right: 11, top: 16),
             child: Text(
-              "Auto Trip is searching for interesting places near you. \n",
+              "JournAi is searching for interesting places near you. \n",
               style: TextStyle(
                 fontFamily: 'Inter',
                 fontStyle: FontStyle.normal,

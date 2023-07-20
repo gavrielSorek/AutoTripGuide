@@ -1,10 +1,10 @@
 import 'dart:io';
-import 'package:final_project/Map/background_audio_player.dart';
-import 'package:final_project/Pages/history_page.dart';
-import 'package:final_project/Pages/home_page.dart';
-import 'package:final_project/Pages/app_loading_page.dart';
-import 'package:final_project/Pages/location_permission_page.dart';
-import 'package:final_project/Pages/personal_details_page.dart';
+import 'package:journ_ai/Map/background_audio_player.dart';
+import 'package:journ_ai/Pages/history_page.dart';
+import 'package:journ_ai/Pages/home_page.dart';
+import 'package:journ_ai/Pages/app_loading_page.dart';
+import 'package:journ_ai/Pages/location_permission_page.dart';
+import 'package:journ_ai/Pages/personal_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'Map/globals.dart';

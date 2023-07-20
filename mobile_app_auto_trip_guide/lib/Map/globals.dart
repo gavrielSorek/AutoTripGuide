@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
-import 'package:final_project/Map/types.dart';
-import 'package:final_project/Map/server_communication.dart';
-import 'package:final_project/Utils/appEvents.dart';
+import 'package:journ_ai/Map/types.dart';
+import 'package:journ_ai/Map/server_communication.dart';
+import 'package:journ_ai/Utils/appEvents.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

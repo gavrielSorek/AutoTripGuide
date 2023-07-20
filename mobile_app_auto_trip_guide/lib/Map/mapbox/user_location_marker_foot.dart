@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:final_project/Map/mapbox/user_location_marker.dart';
+import 'package:journ_ai/Map/mapbox/user_location_marker.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';

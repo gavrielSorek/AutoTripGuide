@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:final_project/Map/globals.dart';
+import 'package:journ_ai/Map/globals.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 class User {

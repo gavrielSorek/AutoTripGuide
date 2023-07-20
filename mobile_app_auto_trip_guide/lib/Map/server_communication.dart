@@ -1,12 +1,11 @@
 import 'dart:convert';
-import 'package:final_project/Map/types.dart';
+import 'package:journ_ai/Map/types.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
 
 import 'globals.dart';
 
 class ServerCommunication {
-  //String serverUrl = "autotripguidemobile.loca.lt";
   //String serverUrl = "192.168.1.180:5600";
    String serverUrl = "212.80.207.83:5600";
 
