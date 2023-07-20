@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:journ_ai/Map/server_communication.dart';
+import 'package:journ_ai/Pages/upgrade_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../Map/globals.dart';
+import '../Utils/app_info.dart';
 
 class AppInitializationPage extends StatefulWidget {
   const AppInitializationPage({Key? key}) : super(key: key);
@@ -18,6 +21,14 @@ class _AppInitializationPageState extends State<AppInitializationPage> {
   }
 
   Future<void> initApp() async {
+    UpdateStatus upgradeStatus = await AppInfo.getUpdateStatus();
+    if (upgradeStatus != UpdateStatus.notRequired) {
+      // Show the upgrading screen
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => UpgradePage(upgradeStatus)),
+      );
+    }
     await Globals.init(context);
     nextPage();
   }

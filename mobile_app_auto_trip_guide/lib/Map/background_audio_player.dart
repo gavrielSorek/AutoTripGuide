@@ -1,4 +1,4 @@
-import '../General Wigets/tts_audio_player.dart';
+import '../General/tts_audio_player.dart';
 import 'package:audio_service/audio_service.dart';
 
 class BackgroundAudioHandler extends BaseAudioHandler

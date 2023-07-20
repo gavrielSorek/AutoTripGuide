@@ -1,4 +1,4 @@
-import 'package:journ_ai/General%20Wigets/menu.dart' as menu;
+import 'package:journ_ai/General/menu.dart' as menu;
 import 'package:flutter/material.dart';
 import '../Map/globals.dart';
 

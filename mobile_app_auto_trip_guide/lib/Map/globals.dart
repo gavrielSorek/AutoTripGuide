@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../General Wigets/generals.dart';
+import '../General/generals.dart';
 import 'background_audio_player.dart';
 import '../Pages/login_controller.dart';
 import 'apps_launcher.dart';

@@ -7,7 +7,7 @@ import 'globals.dart';
 
 class ServerCommunication {
   //String serverUrl = "192.168.1.180:5600";
-   String serverUrl = "212.80.207.83:5600";
+   static String serverUrl = "212.80.207.83:5600";
 
   var client = RetryClient(http.Client());
 
@@ -49,6 +49,20 @@ class ServerCommunication {
       // client.close();
     }
   }
+
+   static Future<int> checkForUpdates(String currentVersion) async {
+     final response = await http.post(
+       Uri.parse(serverUrl + '/check-for-updates'),
+       body: {'currentVersion': currentVersion},
+     );
+
+     if (response.statusCode == 200) {
+       final responseData = jsonDecode(response.body);
+       return responseData['upgradeStatus'];
+     } else {
+       throw Exception('Failed to check for updates');
+     }
+   }
 
   Future<Poi?> getPoiById(String poiId) async {
     Map<String, String> params = {'poiId': poiId};
