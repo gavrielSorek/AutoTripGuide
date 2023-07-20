@@ -118,14 +118,6 @@ flutter:
     - family: Roboto
       fonts:
         - asset: assets/fonts/Roboto-Regular.ttf
-        - asset: assets/audio/north_direction.wav
-        - asset: assets/audio/south_direction.wav
-        - asset: assets/audio/east_direction.wav
-        - asset: assets/audio/west_direction.wav
-        - asset: assets/audio/northeast_direction.wav
-        - asset: assets/audio/northwest_direction.wav
-        - asset: assets/audio/southeast_direction.wav
-        - asset: assets/audio/southwest_direction.wav
     - family: Inter
       fonts:
         - asset: assets/fonts/Inter-Black.ttf
