@@ -284,7 +284,22 @@ export async function insertPoiPreference(client:MongoClient, email:any, poiId:a
 }
   
 
+export async function getAppVersionInfo(client: MongoClient) {
+    // Assuming "appVersionInfo" is the collection where you store version info
+    const res = await client.db("auto_trip_guide_db").collection("mobileAppData").findOne({_type: "versionData"});
 
+    if (res) {
+        // The collection has a document with the version info, return it
+        return {
+            currentVersion: res._currentVersion,
+            minCompatibleVersion: res._minCompatibleVersion,
+        };
+    } else {
+        // print in red
+        console.log('\x1b[31m', `Can't find app version data`, '\x1b[0m');
 
+        throw new Error("Can't find app version data");
+    }
+}
 
 

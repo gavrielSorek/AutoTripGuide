@@ -21,16 +21,20 @@ class _AppInitializationPageState extends State<AppInitializationPage> {
   }
 
   Future<void> initApp() async {
-    UpdateStatus upgradeStatus = await AppInfo.getUpdateStatus();
-    if (upgradeStatus != UpdateStatus.notRequired) {
-      // Show the upgrading screen
-      await Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => UpgradePage(upgradeStatus)),
-      );
-    }
-    await Globals.init(context);
-    nextPage();
+    try {
+      UpdateStatus upgradeStatus = await AppInfo.getUpdateStatus();
+      if (upgradeStatus != UpdateStatus.notRequired) {
+        // Show the upgrading screen
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => UpgradePage(upgradeStatus)),
+        );
+      }
+      await Globals.init(context);
+      nextPage();
+    } catch (error) {
+
+    };
   }
 
   void nextPage() {

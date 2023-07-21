@@ -6,7 +6,7 @@ import 'package:http/retry.dart';
 import 'globals.dart';
 
 class ServerCommunication {
-  static String serverUrl = "getjourn.ai:5600";
+  String serverUrl = "getjourn.ai:5600";
   //String serverUrl = "192.168.1.105:5600";
 
   var client = RetryClient(http.Client());
@@ -15,11 +15,14 @@ class ServerCommunication {
     return Uri.https(url, path, info);
   }
 
-  static Future<int> checkForUpdates(String currentVersion) async {
-    final response = await http.post(
-      Uri.parse(serverUrl + '/check-for-updates'),
-      body: {'currentVersion': currentVersion},
-    );
+  Future<int> checkForUpdates(String currentVersion) async {
+    final queryParameters = {
+      'currentVersion': currentVersion
+    };
+
+    final newUri = addInfoToUrl(serverUrl, '/checkForUpdates', queryParameters);
+
+    final response = await client.get(newUri);
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
