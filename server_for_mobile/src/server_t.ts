@@ -38,16 +38,6 @@ var globaltokenAndPermission:any = undefined;
 const geoHashPrecitionLevel = 5;
 
 
-const options: https.ServerOptions = {
-  key: fs.readFileSync('/home/ssl/certs/private.key.txt'),
-  cert: fs.readFileSync('/home/ssl/certs/getjourn_ai.crt'),
-  ca: [
-    fs.readFileSync('/home/ssl/certs/ca-certificates.crt'),
-    fs.readFileSync('/home/ssl/certs/getjourn_ai.ca-bundle')
-  ]
-};
-
-
 //init
 async function init() {
     try {
@@ -281,15 +271,30 @@ app.get("/getUserPoiPreference",async function (req:Request, res:Response) { //n
     res.end();
 })
 
-async function startServer() {
-  await init();
+async function startServerWithoutHttpsForDebugOnly() {
+    await init()
+    app.listen(port, async ()=>{
+        logger.info(`Server is runing on port ${port}`)
+    })
+}
 
+async function startServerWithHttps() {
+  await init();
+  const options: https.ServerOptions = {
+    key: fs.readFileSync('/home/ssl/certs/private.key.txt'),
+    cert: fs.readFileSync('/home/ssl/certs/getjourn_ai.crt'),
+    ca: [
+      fs.readFileSync('/home/ssl/certs/ca-certificates.crt'),
+      fs.readFileSync('/home/ssl/certs/getjourn_ai.ca-bundle')
+    ]
+  };
+  
   https.createServer(options, app).listen(port, () => {
     logger.info('Server is running on port: ' + port);
   });
 }
 
-startServer();
+startServerWithHttps();
 
 
 //__________________________________________________________________________//

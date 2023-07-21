@@ -6,31 +6,38 @@ import 'package:http/retry.dart';
 import 'globals.dart';
 
 class ServerCommunication {
-  //String serverUrl = "192.168.1.180:5600";
-   static String serverUrl = "212.80.207.83:5600";
+  static String serverUrl = "getjourn.ai:5600";
+  //String serverUrl = "192.168.1.105:5600";
 
   var client = RetryClient(http.Client());
 
-  // var client = http.Client();
-  static Uri addLocationInfoToUrl(
-      String url, String path, LocationInfo locationInfo) {
+  static Uri addInfoToUrl(String url, String path, Map<String, dynamic> info) {
+    return Uri.https(url, path, info);
+  }
+
+  static Future<int> checkForUpdates(String currentVersion) async {
+    final response = await http.post(
+      Uri.parse(serverUrl + '/check-for-updates'),
+      body: {'currentVersion': currentVersion},
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      return responseData['upgradeStatus'];
+    } else {
+      throw Exception('Failed to check for updates');
+    }
+  }
+
+  Future<List<Poi>> getPoisByLocation(LocationInfo locationInfo) async {
     final queryParameters = {
       'lat': locationInfo.lat.toString(),
       'lng': locationInfo.lng.toString(),
       'heading': locationInfo.heading.toString(),
       'speed': locationInfo.speed.toString()
     };
-    final uri = Uri.http(url, path, queryParameters);
-    return uri;
-  }
 
-  static Uri addInfoToUrl(String url, String path, Map<String, String> info) {
-    return Uri.http(url, path, info);
-  }
-
-  Future<List<Poi>> getPoisByLocation(LocationInfo? locationInfo) async {
-    Uri newUri =
-        addLocationInfoToUrl(serverUrl, '/searchNearbyPois', locationInfo!);
+    final newUri = addInfoToUrl(serverUrl, '/searchNearbyPois', queryParameters);
 
     try {
       var response = await client.get(newUri);
@@ -50,23 +57,9 @@ class ServerCommunication {
     }
   }
 
-   static Future<int> checkForUpdates(String currentVersion) async {
-     final response = await http.post(
-       Uri.parse(serverUrl + '/check-for-updates'),
-       body: {'currentVersion': currentVersion},
-     );
-
-     if (response.statusCode == 200) {
-       final responseData = jsonDecode(response.body);
-       return responseData['upgradeStatus'];
-     } else {
-       throw Exception('Failed to check for updates');
-     }
-   }
-
   Future<Poi?> getPoiById(String poiId) async {
     Map<String, String> params = {'poiId': poiId};
-    Uri newUri = Uri.http(serverUrl, '/getPoiById', params);
+    Uri newUri = addInfoToUrl(serverUrl, '/getPoiById', params);
 
     try {
       var response = await client.get(newUri);
@@ -90,7 +83,7 @@ class ServerCommunication {
       'emailAddr': userInfo.emailAddr!,
       'poiId': poiId,
     };
-    Uri newUri = Uri.http(serverUrl, '/getUserPoiPreference', params);
+    Uri newUri = addInfoToUrl(serverUrl, '/getUserPoiPreference', params);
 
     try {
       var response = await client.get(newUri);
@@ -118,7 +111,7 @@ class ServerCommunication {
       'preference': preference.toString()
     };
 
-    Uri newUri = Uri.http(serverUrl, '/insertUserPoiPreference', params);
+    Uri newUri = addInfoToUrl(serverUrl, '/insertUserPoiPreference', params);
 
     try {
       var response = await client.post(newUri);
@@ -136,7 +129,7 @@ class ServerCommunication {
     final queryParameters = {
       'poiId': poiId,
     };
-    final uri = Uri.http(url, path, queryParameters);
+    final uri = addInfoToUrl(url, path, queryParameters);
     return uri;
   }
 
@@ -155,7 +148,6 @@ class ServerCommunication {
         // then throw an exception.
         print('failed to load audio');
         return Audio.fromJson(jsonDecode('{"type":"Buffer","data":[]}'));
-
         // throw Exception('Failed to load audio');
       }
     } finally {
@@ -163,7 +155,7 @@ class ServerCommunication {
     }
   }
 
-  static Uri addUserInfoToUrl(String url, String path, UserInfo userInfo) {
+  void addNewUser(UserInfo userInfo) async {
     final queryParameters = {
       'name': userInfo.name.toString(),
       'emailAddr': userInfo.emailAddr.toString(),
@@ -172,12 +164,7 @@ class ServerCommunication {
       'age': userInfo.age.toString(),
       'categories': userInfo.categories.toString()
     };
-    final uri = Uri.http(url, path, queryParameters);
-    return uri;
-  }
-
-  void addNewUser(UserInfo? userInfo) async {
-    Uri newUri = addUserInfoToUrl(serverUrl, '/addNewUser', userInfo!);
+    Uri newUri = addInfoToUrl(serverUrl, '/addNewUser', queryParameters);
     try {
       var response = await client.get(newUri);
       if (response.statusCode == 200 && response.contentLength! > 0) {
@@ -201,7 +188,7 @@ class ServerCommunication {
 
   static Uri addLangToUrl(String url, String path, String language) {
     final queryParameters = {'language': language.toString()};
-    final uri = Uri.http(url, path, queryParameters);
+    final uri = addInfoToUrl(url, path, queryParameters);
     return uri;
   }
 
@@ -267,7 +254,7 @@ class ServerCommunication {
       'email': emailAddr.toString(),
       'categories': Globals.globalFavoriteCategories
     };
-    final uri = Uri.http(url, path, queryParameters);
+    final uri = addInfoToUrl(url, path, queryParameters);
     return uri;
   }
 
@@ -320,7 +307,7 @@ class ServerCommunication {
       'languages': userInfo?.languages.toString(),
       'age': userInfo?.age.toString()
     };
-    final uri = Uri.http(url, path, queryParameters);
+    final uri = addInfoToUrl(url, path, queryParameters);
     return uri;
   }
 
@@ -350,7 +337,7 @@ class ServerCommunication {
       'pic': visitedPoi.pic.toString(),
       'emailAddr': Globals.globalEmail
     };
-    final uri = Uri.http(url, path, queryParameters);
+    final uri = addInfoToUrl(url, path, queryParameters);
     return uri;
   }
 
