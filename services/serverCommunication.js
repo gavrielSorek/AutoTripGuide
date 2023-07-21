@@ -5,7 +5,7 @@ var XMLHttpRequest = require('xhr2');
 module.exports = { sendPoisToServer, getServerUrl };
 
 // const serverUrl = 'https://autotripguide.loca.lt/';
-const serverUrl = 'http://212.80.207.83:5500';
+const serverUrl = 'https://getjourn.ai:5500';
 
 //const serverUrl = 'http://localhost:5500';
 // The function send the poi info request to the server
