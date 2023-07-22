@@ -12,9 +12,23 @@ class BufferedStream<T> {
     }
   }
 
+  void broadcast(T value) {
+    if (_streamController == null || _streamController?.isClosed == true) {
+      print("StreamController is not available");
+      return;
+    }
+
+    if (!_streamController!.hasListener) {
+      print("No listeners available");
+      return;
+    }
+
+    _streamController!.add(value);
+  }
+
   Stream<T> get stream {
     if (_streamController == null) {
-      _streamController = StreamController<T>(
+      _streamController = StreamController<T>.broadcast(
         onListen: () {
           _buffer.forEach((element) => _streamController?.add(element));
           _buffer.clear();
@@ -28,7 +42,9 @@ class BufferedStream<T> {
     return _streamController!.stream;
   }
 
-  void dispose() {
+  void clear() {
     _streamController?.close();
+    _streamController = null;
+    _buffer.clear();
   }
 }

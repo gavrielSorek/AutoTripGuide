@@ -35,7 +35,7 @@ class Globals {
   static final globalController = Get.put(LoginController());
   static late BackgroundAudioHandler globalGuideAudioPlayerHandler; // the initialization is in the main
   static var globalColor = Color.fromRGBO(51, 153, 255, 0.8);
-  static BufferedStream<String> globalsFromDeepLinksBuffer = BufferedStream<String>(); // saves pois id deep links
+  static BufferedStream<String> globalsIdsFromDeepLinksBuffer = BufferedStream<String>(); // saves pois id deep links
   static StreamController<VisitedPoi> globalVisitedPoiStream =
       StreamController<VisitedPoi>.broadcast();
   static StreamController<String> globalClickedPoiStream =
@@ -130,6 +130,7 @@ class Globals {
     globalUnhandledKeys.clear();
     mainMapPoi = null;
     globalUserInfoObj = null;
+    globalsIdsFromDeepLinksBuffer.clear();
   }
 
   static stopAll() async {

@@ -61,11 +61,11 @@ class _JournAiState extends State<JournAi> {
       if (initialLink != null) {
         String? id = Uri.parse(initialLink).deepLinkId;
         if (id != null) {
-          Globals.globalsFromDeepLinksBuffer.add(id);
+          Globals.globalsIdsFromDeepLinksBuffer.add(id);
         }
       }
     } catch (e) {
-      // Handle exception
+      debugPrint(e.toString());
     }
     if (initialLink != null) {
       print(initialLink);
@@ -76,7 +76,7 @@ class _JournAiState extends State<JournAi> {
       if (link != null) {
         String? id = Uri.parse(link).deepLinkId;
         if (id != null) {
-          Globals.globalsFromDeepLinksBuffer.add(id);
+          Globals.globalsIdsFromDeepLinksBuffer.add(id);
         }
       }
     });

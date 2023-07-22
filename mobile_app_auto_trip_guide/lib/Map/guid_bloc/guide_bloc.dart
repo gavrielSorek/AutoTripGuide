@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:bloc/bloc.dart';
@@ -170,19 +171,19 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     });
 
     on<ShowLastOptionalCategories>((event, emit) {
+      Map<String, MapPoi> idToMapPoi = {};
+      // add all the old pois
       if (_lastShowOptionalCategoriesState != null) {
-        Map<String, MapPoi> idToMapPoi = {};
-        // add all the old pois
         idToMapPoi.addAll(_lastShowOptionalCategoriesState!.idToPoisMap);
-        // add the new pois
-        for (MapPoi mapPoi in _poisToGuide) {
-          idToMapPoi[mapPoi.poi.id] = mapPoi;
-        }
-
-        this.add(ShowOptionalCategoriesEvent(
-            pois: idToMapPoi,
-            isCheckedCategory: _lastShowOptionalCategoriesState!.isCheckedCategory));
       }
+      // add the new pois
+      for (MapPoi mapPoi in _poisToGuide) {
+        idToMapPoi[mapPoi.poi.id] = mapPoi;
+      }
+
+      this.add(ShowOptionalCategoriesEvent(
+          pois: idToMapPoi,
+          isCheckedCategory: _lastShowOptionalCategoriesState?.isCheckedCategory ?? HashMap<String, bool>()));
     });
 
     on<ShowOptionalCategoriesEvent>((event, emit) {
