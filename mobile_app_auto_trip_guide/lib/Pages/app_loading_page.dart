@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:journ_ai/Map/server_communication.dart';
+import 'package:journ_ai/Pages/upgrade_page.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../Map/globals.dart';
+import '../Utils/app_info.dart';
+import 'critical_error_page.dart';
+import 'internet_connection_page.dart';
 
 class AppInitializationPage extends StatefulWidget {
   const AppInitializationPage({Key? key}) : super(key: key);
@@ -18,8 +23,26 @@ class _AppInitializationPageState extends State<AppInitializationPage> {
   }
 
   Future<void> initApp() async {
-    await Globals.init(context);
-    nextPage();
+    await InternetUtils.checkAndRequestInternetConnection(context); //must verify internet connectivity before all
+    try {
+      UpdateStatus upgradeStatus = await AppInfo.getUpdateStatus();
+      // if update exists
+      if (upgradeStatus != UpdateStatus.notRequired) {
+        // Show the upgrading screen
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => UpgradePage(upgradeStatus)),
+        );
+      }
+      await Globals.init(context);
+      nextPage();
+    } catch (error) {
+      debugPrint(error.toString());
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => CriticalErrorPage()),
+      );
+    };
   }
 
   void nextPage() {

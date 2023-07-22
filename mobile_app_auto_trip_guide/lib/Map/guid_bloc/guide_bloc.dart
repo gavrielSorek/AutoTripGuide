@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../Adjusted Libs/story_view/adjusted_story_view.dart';
 import '../../Adjusted Libs/story_view/story_controller.dart';
 import '../../Adjusted Libs/story_view/story_view.dart';
-import '../../General Wigets/generals.dart';
+import '../../General/generals.dart';
 import '../globals.dart';
 import '../personalize_recommendation.dart';
 import '../pois_attributes_calculator.dart';

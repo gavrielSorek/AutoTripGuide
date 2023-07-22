@@ -70,45 +70,59 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
         title: Text(
           'Enable Location',
           style: TextStyle(fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
         ),
         content: Text(
           'Please enable location to use this app.',
           style: TextStyle(fontSize: 18),
+          textAlign: TextAlign.center,
         ),
         actionsPadding: EdgeInsets.symmetric(horizontal: 8.0),
         actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.grey, padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.grey,
+                    padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
               ),
-            ),
-            child: Text(
-              'Cancel',
-              style: TextStyle(fontSize: 18),
-            ),
-          ),
-          SizedBox(width: 8.0),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Geolocator.openLocationSettings();
-            },
-            style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white, backgroundColor: Colors.blue,
-              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
+              SizedBox(width: 8.0),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Geolocator.openLocationSettings();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blue,
+                    padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                  ),
+                  child: Text(
+                    'Settings',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
-            ),
-            child: Text(
-              'Settings',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
+            ],
+          )
         ],
+        buttonPadding: EdgeInsets.zero,
       ),
     );
   }
@@ -133,11 +147,13 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 20),
                 Text(
                   'Our app uses your location to provide you with personalized recommendations and a better overall experience.',
                   style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 20),
                 Image.asset('assets/images/logo.png'),
@@ -145,6 +161,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                 Text(
                   'We take your privacy seriously and will only use your location data for the purposes stated in our privacy policy.',
                   style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 40),
                 ElevatedButton(

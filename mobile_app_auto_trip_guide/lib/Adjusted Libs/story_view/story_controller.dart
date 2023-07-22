@@ -1,6 +1,6 @@
 
 
-import 'package:final_project/Adjusted%20Libs/story_view/story_view.dart';
+import 'package:journ_ai/Adjusted%20Libs/story_view/story_view.dart';
 import 'package:rxdart/rxdart.dart';
 
 enum PlaybackState { pause, play, next, previous }

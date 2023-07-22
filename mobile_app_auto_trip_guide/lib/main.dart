@@ -1,14 +1,12 @@
-import 'dart:async';
 import 'dart:io';
-import 'package:final_project/Map/background_audio_player.dart';
-import 'package:final_project/Pages/history_page.dart';
-import 'package:final_project/Pages/home_page.dart';
-import 'package:final_project/Pages/app_loading_page.dart';
-import 'package:final_project/Pages/location_permission_page.dart';
-import 'package:final_project/Pages/personal_details_page.dart';
+import 'package:journ_ai/Map/background_audio_player.dart';
+import 'package:journ_ai/Pages/history_page.dart';
+import 'package:journ_ai/Pages/home_page.dart';
+import 'package:journ_ai/Pages/app_loading_page.dart';
+import 'package:journ_ai/Pages/location_permission_page.dart';
+import 'package:journ_ai/Pages/personal_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:uni_links/uni_links.dart';
 import 'Map/globals.dart';
 import 'Map/onboarding.dart';
 import 'Pages/favorite_categories_page.dart';
@@ -35,7 +33,7 @@ Future<void> main() async {
   });
 }
 
-class AutoGuideApp extends StatefulWidget {
+class AutoGuideApp extends StatelessWidget {
   const AutoGuideApp({Key? key}) : super(key: key);
 
   @override
@@ -80,13 +78,14 @@ class _AutoGuideAppState extends State<AutoGuideApp> {
     AppInitializationPage initializationPage = AppInitializationPage();
 
     return MaterialApp(
-      title: 'Auto Trip Guide',
+      title: 'JournAi',
       theme: ThemeData(
         primarySwatch: generateMaterialColor(Globals.globalColor),
         fontFamily: 'Roboto',
       ),
       initialRoute: '/init-screen',
       routes: {
+        // When navigating to the "/" route, build the FirstScreen widget.
         '/login-screen': (context) => LoginPage(),
         '/HomePage': (context) => HomePage(),
         '/history-screen': (context) => HistoryPage(),
@@ -96,6 +95,7 @@ class _AutoGuideAppState extends State<AutoGuideApp> {
         '/init-screen': (context) => initializationPage,
         '/location-disabled-screen': (context) => LocationPermissionPage()
       },
+      // routes: {'/': (BuildContext ctx) => HomePage()}
     );
   }
 }

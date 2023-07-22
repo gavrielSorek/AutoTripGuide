@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'package:final_project/Map/globals.dart';
-import 'package:final_project/Map/types.dart';
+import 'package:journ_ai/Map/globals.dart';
+import 'package:journ_ai/Map/types.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 

@@ -1,7 +1,7 @@
 import 'dart:collection';
 
-import 'package:final_project/Map/map.dart';
-import 'package:final_project/Map/speed_slider_tile.dart';
+import 'package:journ_ai/Map/map.dart';
+import 'package:journ_ai/Map/speed_slider_tile.dart';
 import 'package:flutter/material.dart';
 
 import '../Map/globals.dart';

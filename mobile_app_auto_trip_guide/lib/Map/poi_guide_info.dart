@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:final_project/Map/types.dart';
+import 'package:journ_ai/Map/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:share_plus/share_plus.dart';
-import '../General Wigets/stretching_widget.dart';
+import '../General/stretching_widget.dart';
 import 'globals.dart';
 
 class PoiGuide extends StatefulWidget {
@@ -221,7 +221,7 @@ class PoiGuideImageWidget extends StatelessWidget {
             imageUrl: imagePath,
             placeholder: (context, url) => CircularProgressIndicator(),
             errorWidget: (context, url, error) => Image.asset(
-              'assets/images/logo.png',
+              'assets/images/categories/Default.jpg',
               fit: BoxFit.cover,
             ),
           ),
@@ -331,6 +331,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
       child: Icon(
         Icons.directions,
         size: bottomIconSize,
+        color: Colors.white,
       ),
       shape: CircleBorder(),
     );
@@ -382,6 +383,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                 child: Icon(
                   Icons.thumb_down,
                   size: bottomIconSize,
+                  color: Colors.white,
                 ),
                 shape: CircleBorder(),
               ),
@@ -407,6 +409,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                 child: Icon(
                   Icons.thumb_up,
                   size: bottomIconSize,
+                  color: Colors.white,
                 ),
                 shape: CircleBorder(),
               ),
@@ -433,6 +436,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
               child: Icon(
                 Icons.share,
                 size: bottomIconSize,
+                color: Colors.white,
               ),
               shape: CircleBorder(),
             ),

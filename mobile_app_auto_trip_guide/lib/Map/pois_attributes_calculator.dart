@@ -1,11 +1,11 @@
 import 'dart:math';
 
-import 'package:final_project/Map/globals.dart';
-import 'package:final_project/Map/map_configuration.dart';
-import 'package:final_project/Map/types.dart';
+import 'package:journ_ai/Map/globals.dart';
+import 'package:journ_ai/Map/map_configuration.dart';
+import 'package:journ_ai/Map/types.dart';
 import 'package:geolocator/geolocator.dart';
 
-import '../General Wigets/generals.dart';
+import '../General/generals.dart';
 import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 import 'dart:math' as Math;
 

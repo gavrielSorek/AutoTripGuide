@@ -1,4 +1,5 @@
-const fs = require('fs')
+const https = require('https');
+const fs = require('fs');
 const permissions = require('./permissions')
 const path = require('path');
 const db = require("../db/db");
@@ -543,12 +544,6 @@ app.post('/changePermission', async function(req, res) {
     }); 
 });
 
-// Start your server on a specified port
-app.listen(port, async ()=>{
-    await init()
-    console.log(`Server is runing on port ${port}`)
-})
-
 function getDefaultBounds(){
     var relevantBounds = {}
     relevantBounds['southWest'] = {lat : 31.31610138349565, lng : 35.35400390625001}
@@ -566,3 +561,30 @@ app.post('/getCategories', async function(req, res) {
     res.end();
 });
 
+async function startServerWithoutHttpsForDebugOnly() {
+    await init();
+    app.listen(port, async () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  }
+  
+async function startServerWithHttps() {
+    await init();
+    const options = {
+        key: fs.readFileSync('/home/ssl/certs/private.key.txt'),
+        cert: fs.readFileSync('/home/ssl/certs/getjourn_ai.crt'),
+        ca: [
+            fs.readFileSync('/home/ssl/certs/ca-certificates.crt'),
+            fs.readFileSync('/home/ssl/certs/getjourn_ai.ca-bundle')
+        ]
+    };
+
+    https.createServer(options, app).listen(port, () => {
+        console.log(`Server is running on port ${port} with HTTPS enabled`);
+    });
+}
+
+startServerWithHttps().catch(err => {
+    console.error(err);
+    process.exit(1);
+});

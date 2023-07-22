@@ -1,4 +1,6 @@
 import * as db from './db';
+import * as https from 'https';
+import * as fs from 'fs';
 import * as generalServices from '../../services/generalServices';
 import {getPoisFromOpenTrip} from './openTripFinder'
 import * as serverCommunication from "../../services/serverCommunication";
@@ -17,7 +19,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import AsyncLock from 'async-lock';
 import { log } from 'console';
-import { sendPoisToServer } from './utils/sendPois';
+import compareVersions from 'compare-versions';
 const app = express()
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(bodyParser.json({limit: '50mb'}));
@@ -35,6 +37,7 @@ const dbClientSearcher = new MongoClient(uri);
 const dbClientAudio = new MongoClient(uri);
 var globaltokenAndPermission:any = undefined;
 const geoHashPrecitionLevel = 5;
+
 
 //init
 async function init() {
@@ -103,20 +106,21 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
  async function updateDbWithOnlinePois(bounds: any, language: string,geoHash:string) {
     // async call for faster rsults
     await getPoisFromOpenTrip(bounds, language,geoHash,(poi: Poi)=>{
-        logger.info(`Found new poi from openTripMAP: '${poi._poiName}' to geoHash: '${geoHash}'`)
-        sendPoisToServer(dbClientSearcher,[poi])
+        logger.info(`Add poi to db from openTripMAP: '${poi._poiName}' to geoHash: '${geoHash}'`)
+        serverCommunication.sendPoisToServer([poi], globaltokenAndPermission)
     }); 
  }
 
  async function updateDbWithGoogleApiPois(bounds:any,geoHash:string) {
     try{
+
         const southWest :Coordinate = bounds['southWest'];
         const northEast :Coordinate = bounds['northEast'];
         const lat = (southWest.lat + northEast.lat) /2;
         const lng = (southWest.lng + northEast.lng) /2;
         const distance = getDistance({ latitude: lat, longitude: lng },    { latitude: northEast.lat, longitude: northEast.lng })
         const pois = await getPois(lat, lng, distance,geoHash)
-        sendPoisToServer(dbClientSearcher,pois)
+        serverCommunication.sendPoisToServer(pois, globaltokenAndPermission)
     } catch (e) {
         logger.error(`Error in google api for geoHash ${geoHash}: ${e}`);
     }
@@ -218,7 +222,7 @@ app.get("/updateUserInfo", async function (req:Request, res:Response) { //next r
 
  // insert Poi To the history pois of specific user
 app.get("/insertPoiToHistory", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    logger.info(`Add poi to history '${req.query.poiName?.toString().toLowerCase()}', email: ${req.query.emailAddr}`)
+    logger.info(`Add poi to history '${req.query.poiName}', email: ${req.query.emailAddr}`)
     const poiInfo = {'id': req.query.id, 'poiName': req.query.poiName, 'emailAddr': req.query.emailAddr, 'time': req.query.time, 'pic': req.query.pic};
     const result = await db.insertPoiToHistory(dbClientSearcher, poiInfo)
     res.status(200);
@@ -268,10 +272,62 @@ app.get("/getUserPoiPreference",async function (req:Request, res:Response) { //n
     res.end();
 })
 
- app.listen(port, async ()=>{
+app.get("/checkForUpdates", async (req: Request, res: Response) => {
+    const clientVersion = req.query.currentVersion;
+    if (typeof clientVersion !== 'string') {
+        res.status(400).send("Bad Request: currentVersion is required and must be a string");
+        return;
+    }
+
+    try {
+        const versionData = await db.getAppVersionInfo(dbClientSearcher); // Update dbClientSearcher with your MongoDB client object
+        const serverVersion = versionData.currentVersion;
+        const minCompatibleVersion = versionData.minCompatibleVersion;
+
+        let upgradeStatus: number;
+
+        if (clientVersion === serverVersion) {
+            // if the versions are same, no update is required
+            upgradeStatus = 0;
+        } else if (compareVersions.compare(clientVersion, minCompatibleVersion, '>=')) {
+            // if the client version is greater than or equal to min compatible version, no update is required
+            upgradeStatus = 1;
+        } else {
+            // if the client version is less than min compatible version, update is required
+            upgradeStatus = 2;
+        }
+
+        res.status(200).json({ 'upgradeStatus': upgradeStatus });
+    } catch (err) {
+        console.log("Can't find app version data")
+        res.status(500).send("Internal Server Error");
+    }
+});
+
+async function startServerWithoutHttpsForDebugOnly() {
     await init()
-    logger.info(`Server is runing on port ${port}`)
-})
+    app.listen(port, async ()=>{
+        logger.info(`Server is runing on port ${port}`)
+    })
+}
+
+async function startServerWithHttps() {
+  await init();
+  const options: https.ServerOptions = {
+    key: fs.readFileSync('/home/ssl/certs/private.key.txt'),
+    cert: fs.readFileSync('/home/ssl/certs/getjourn_ai.crt'),
+    ca: [
+      fs.readFileSync('/home/ssl/certs/ca-certificates.crt'),
+      fs.readFileSync('/home/ssl/certs/getjourn_ai.ca-bundle')
+    ]
+  };
+  
+  https.createServer(options, app).listen(port, () => {
+    logger.info('Server is running on port: ' + port);
+  });
+}
+
+startServerWithoutHttpsForDebugOnly();
 
 
 //__________________________________________________________________________//

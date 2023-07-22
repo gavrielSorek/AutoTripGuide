@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:final_project/Adjusted%20Libs/story_view/story_controller.dart';
+import 'package:journ_ai/Adjusted%20Libs/story_view/story_controller.dart';
 import 'package:flutter/material.dart';
 import 'story_view.dart';
 import 'utils.dart';
