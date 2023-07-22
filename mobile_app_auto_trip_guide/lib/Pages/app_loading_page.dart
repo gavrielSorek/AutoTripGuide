@@ -5,6 +5,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../Map/globals.dart';
 import '../Utils/app_info.dart';
+import 'critical_error_page.dart';
 
 class AppInitializationPage extends StatefulWidget {
   const AppInitializationPage({Key? key}) : super(key: key);
@@ -23,7 +24,7 @@ class _AppInitializationPageState extends State<AppInitializationPage> {
   Future<void> initApp() async {
     try {
       UpdateStatus upgradeStatus = await AppInfo.getUpdateStatus();
-      if (upgradeStatus != UpdateStatus.notRequired) {
+      if (upgradeStatus != UpdateStatus.notRequired) { // if update exists
         // Show the upgrading screen
         await Navigator.push(
           context,
@@ -33,7 +34,11 @@ class _AppInitializationPageState extends State<AppInitializationPage> {
       await Globals.init(context);
       nextPage();
     } catch (error) {
-
+      debugPrint(error.toString());
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => CriticalErrorPage()),
+      );
     };
   }
 

@@ -33,9 +33,8 @@ class _UpgradePageState extends State<UpgradePage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false, // disable back button
-      child: Container(
-        color: Colors.white,
-        child: Column(
+      child: Scaffold(
+        body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // First column with BoxDecoration and image
@@ -70,7 +69,7 @@ class _UpgradePageState extends State<UpgradePage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 20.0),
+              padding: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0, bottom: 10),
               child: Container(
                 child: Text(
                   descText,
@@ -84,10 +83,10 @@ class _UpgradePageState extends State<UpgradePage> {
             ),
             // Adding buttons
             Padding(
-                padding: EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0, bottom: 10),
+                padding: EdgeInsets.only(top: 60.0, left: 30.0, right: 30.0, bottom: 10),
                 child: ElevatedButton(
                     onPressed: () async {
-                      final Uri androidUrl = Uri.parse('https://play.google.com/store/apps/details?id=<your_package_name>');
+                      final Uri androidUrl = Uri.parse('https://play.google.com/store/apps/details?id=<your_package_name>'); //TODO change to our app url
                       final Uri iosUrl = Uri.parse('https://apps.apple.com/us/app/apple-store/<your_app_id>');
 
                       if (Theme.of(context).platform == TargetPlatform.android) {
@@ -95,14 +94,14 @@ class _UpgradePageState extends State<UpgradePage> {
                         if (await canLaunchUrl(androidUrl)) {
                           await launchUrl(androidUrl);
                         } else {
-                          throw 'Could not launch $androidUrl';
+                          debugPrint('Could not launch $androidUrl');
                         }
                       } else if (Theme.of(context).platform == TargetPlatform.iOS) {
                         // iOS-specific code
                         if (await canLaunchUrl(iosUrl)) {
                           await launchUrl(iosUrl);
                         } else {
-                          throw 'Could not launch $iosUrl';
+                          debugPrint('Could not launch $androidUrl');
                         }
                       }
                     },
