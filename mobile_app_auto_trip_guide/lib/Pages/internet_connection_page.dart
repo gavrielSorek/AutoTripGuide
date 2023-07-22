@@ -99,11 +99,13 @@ class _InternetConnectionPageState extends State<InternetConnectionPage> {
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 20),
                 Text(
                   'Our app requires internet connectivity to provide you with personalized recommendations and a better overall experience.',
                   style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 20),
                 Image.asset('assets/images/logo.png'),
@@ -111,6 +113,7 @@ class _InternetConnectionPageState extends State<InternetConnectionPage> {
                 Text(
                   'We take your privacy seriously and will only use your data for the purposes stated in our privacy policy.',
                   style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 40),
                 ElevatedButton(

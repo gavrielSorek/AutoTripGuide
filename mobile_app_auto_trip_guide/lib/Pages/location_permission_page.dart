@@ -147,11 +147,13 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 20),
                 Text(
                   'Our app uses your location to provide you with personalized recommendations and a better overall experience.',
                   style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 20),
                 Image.asset('assets/images/logo.png'),
@@ -159,6 +161,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                 Text(
                   'We take your privacy seriously and will only use your location data for the purposes stated in our privacy policy.',
                   style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 40),
                 ElevatedButton(
