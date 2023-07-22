@@ -33,8 +33,9 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.505998861423-mihg5teej0n9ba48d7t5qbe1l7rotb0k</string>
-			</array>
+                <string>com.googleusercontent.apps.505998861423-mihg5teej0n9ba48d7t5qbe1l7rotb0k</string>
+                <string>journai</string>  <!-- Your app's custom scheme for deep linking -->
+            </array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>

@@ -272,6 +272,19 @@ app.get("/getUserPoiPreference",async function (req:Request, res:Response) { //n
     res.end();
 })
 
+app.get('/openApp', async (req: Request, res: Response) => {
+    const id = req.query.id;
+    res.send(`
+        <html>
+        <body>
+        <script>
+        window.location = 'journai://poi?id=${id}';
+        </script>
+        </body>
+        </html>
+    `);
+});
+
 app.get("/checkForUpdates", async (req: Request, res: Response) => {
     const clientVersion = req.query.currentVersion;
     if (typeof clientVersion !== 'string') {
@@ -327,7 +340,7 @@ async function startServerWithHttps() {
   });
 }
 
-startServerWithoutHttpsForDebugOnly();
+startServerWithHttps();
 
 
 //__________________________________________________________________________//

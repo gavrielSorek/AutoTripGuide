@@ -427,7 +427,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                 );
                 String appName = 'JournAi';
                 Share.share(
-                  '${widget.poi.shortDesc ?? ""}\n\nShared via $appName.',
+                  '${widget.poi.shortDesc ?? ""}\n\nShared via $appName. Check it out here: https://getjourn.ai:5600/openApp?id=${widget.poi.id}',
                   subject: '${widget.poi.poiName} - Shared via $appName',
                 );
               },
