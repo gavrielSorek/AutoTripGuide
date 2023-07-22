@@ -272,6 +272,32 @@ app.get("/getUserPoiPreference",async function (req:Request, res:Response) { //n
     res.end();
 })
 
+app.get('/openApp', async (req: Request, res: Response) => {
+    const id = req.query.id;
+    res.send(`
+        <html>
+        <body>
+        <script>
+            // try to open your app
+            window.location = 'journai://poi?id=${id}';
+
+            // set a timeout to redirect the user to the app store
+            // if the app is not installed and doesn't capture the intent
+            setTimeout(function() {
+                // This would be the link to your app in the app store
+                // Make sure to replace these links with the actual links to your app
+                if(/Android/i.test(navigator.userAgent)) {
+                    window.location = 'https://play.google.com/store/apps/details?id=<your_app_id>';
+                } else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    window.location = 'https://apps.apple.com/app/id<your_app_id>';
+                }
+            }, 500);
+        </script>
+        </body>
+        </html>
+    `);
+});
+
 app.get("/checkForUpdates", async (req: Request, res: Response) => {
     const clientVersion = req.query.currentVersion;
     if (typeof clientVersion !== 'string') {
@@ -327,7 +353,7 @@ async function startServerWithHttps() {
   });
 }
 
-startServerWithoutHttpsForDebugOnly();
+startServerWithHttps();
 
 
 //__________________________________________________________________________//

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:journ_ai/Map/background_audio_player.dart';
 import 'package:journ_ai/Pages/history_page.dart';
@@ -13,7 +14,16 @@ import 'Pages/favorite_categories_page.dart';
 import 'Pages/login_page.dart';
 import 'dart:math';
 import 'package:audio_service/audio_service.dart';
+import 'package:uni_links/uni_links.dart';
 
+extension DeepLinkParsing on Uri {
+  String? get deepLinkId {
+    if (this.host == 'poi' && this.pathSegments.isEmpty) {
+      return this.queryParameters['id'];
+    }
+    return null;
+  }
+}
 // start logic
 Future<void> main() async {
   HttpOverrides.global = MyHttpOverrides();
@@ -33,8 +43,56 @@ Future<void> main() async {
   });
 }
 
-class JournAi extends StatelessWidget {
+class JournAi extends StatefulWidget {
   const JournAi({Key? key}) : super(key: key);
+
+  @override
+  _JournAiState createState() => _JournAiState();
+}
+
+class _JournAiState extends State<JournAi> {
+  late StreamSubscription _sub;
+
+  void initUniLinks() async {
+    // Get the initial link
+    String? initialLink;
+    try {
+      initialLink = await getInitialLink();
+      if (initialLink != null) {
+        String? id = Uri.parse(initialLink).deepLinkId;
+        if (id != null) {
+          Globals.globalsIdsFromDeepLinksBuffer.add(id);
+        }
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    if (initialLink != null) {
+      print(initialLink);
+    }
+
+    // Listen for new links
+    _sub = linkStream.listen((String? link) {
+      if (link != null) {
+        String? id = Uri.parse(link).deepLinkId;
+        if (id != null) {
+          Globals.globalsIdsFromDeepLinksBuffer.add(id);
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    if (_sub != null) _sub.cancel();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initUniLinks();
+  }
 
   @override
   Widget build(BuildContext context) {

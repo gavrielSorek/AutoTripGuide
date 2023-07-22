@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../General/generals.dart';
+import '../Utils/BufferedStream.dart';
 import 'background_audio_player.dart';
 import '../Pages/login_controller.dart';
 import 'apps_launcher.dart';
@@ -34,6 +35,7 @@ class Globals {
   static final globalController = Get.put(LoginController());
   static late BackgroundAudioHandler globalGuideAudioPlayerHandler; // the initialization is in the main
   static var globalColor = Color.fromRGBO(51, 153, 255, 0.8);
+  static BufferedStream<String> globalsIdsFromDeepLinksBuffer = BufferedStream<String>(); // saves pois id deep links
   static StreamController<VisitedPoi> globalVisitedPoiStream =
       StreamController<VisitedPoi>.broadcast();
   static StreamController<String> globalClickedPoiStream =
@@ -109,6 +111,7 @@ class Globals {
     svgPoiMarkerBytes.blueIcon = (await Generals.poiIconSvgStringToUint8List(Colors.blue))!;
     svgPoiMarkerBytes.greyTransIcon = (await Generals.poiIconSvgStringToUint8List(Colors.grey.withOpacity(0.40)))!;
 
+
     await globalGuideAudioPlayerHandler.initAudioPlayer();
     await globalController.init();
     if (globalController.isUserSignIn) {
@@ -127,6 +130,7 @@ class Globals {
     globalUnhandledKeys.clear();
     mainMapPoi = null;
     globalUserInfoObj = null;
+    globalsIdsFromDeepLinksBuffer.clear();
   }
 
   static stopAll() async {

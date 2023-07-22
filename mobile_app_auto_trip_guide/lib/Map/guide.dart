@@ -39,10 +39,19 @@ class Guide {
 
   Guide(this.context, this.guideData) {
     Stream stream = Globals.globalClickedPoiStream.stream;
+    Stream deepLinkPoisIdStream = Globals.globalsIdsFromDeepLinksBuffer.stream;
     stream.listen((mapPoiId) {
       mapPoiClicked(Globals.globalAllPois[mapPoiId]!);
     });
 
+    deepLinkPoisIdStream.listen((mapPoiId) async{
+      Poi? poi = await Globals.globalServerCommunication.getPoiById(mapPoiId);
+      if (poi != null)
+        {
+          _alreadyInsertedPois.add(poi.id); // cause not to show the filter screen after/ in the middle
+          context.read<GuideBloc>().add(playPoiEvent(mapPoi: MapPoi(poi)));
+        }
+    });
     storiesDialogBox = GuidDialogBox();
   }
 

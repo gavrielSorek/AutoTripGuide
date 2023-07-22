@@ -19,18 +19,26 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize"
             tools:ignore="Instantiatable">
-            <!-- Specifies an Android theme to apply to this Activity as soon as
-                 the Android process has started. This theme is visible to the user
-                 while the Flutter UI initializes. After that, this theme continues
-                 to determine the Window background behind the Flutter UI. -->
+
             <meta-data
                 android:name="io.flutter.embedding.android.NormalTheme"
                 android:resource="@style/NormalTheme"
                 />
+
+            <!-- This filter is for launching the app -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
+            <!-- This filter is for deep linking -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="journai" android:host="poi" />
+            </intent-filter>
+
         </activity>
         <!-- ADD THIS "SERVICE" element -->
         <service android:name="com.ryanheise.audioservice.AudioService"
