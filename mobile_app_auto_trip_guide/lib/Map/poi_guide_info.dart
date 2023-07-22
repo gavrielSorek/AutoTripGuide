@@ -331,6 +331,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
       child: Icon(
         Icons.directions,
         size: bottomIconSize,
+        color: Colors.white,
       ),
       shape: CircleBorder(),
     );
@@ -382,6 +383,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                 child: Icon(
                   Icons.thumb_down,
                   size: bottomIconSize,
+                  color: Colors.white,
                 ),
                 shape: CircleBorder(),
               ),
@@ -407,6 +409,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                 child: Icon(
                   Icons.thumb_up,
                   size: bottomIconSize,
+                  color: Colors.white,
                 ),
                 shape: CircleBorder(),
               ),
@@ -433,6 +436,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
               child: Icon(
                 Icons.share,
                 size: bottomIconSize,
+                color: Colors.white,
               ),
               shape: CircleBorder(),
             ),
