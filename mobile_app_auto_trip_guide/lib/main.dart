@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:journ_ai/Map/background_audio_player.dart';
 import 'package:journ_ai/Pages/history_page.dart';
@@ -7,6 +8,7 @@ import 'package:journ_ai/Pages/location_permission_page.dart';
 import 'package:journ_ai/Pages/personal_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:uni_links/uni_links.dart';
 import 'Map/globals.dart';
 import 'Map/onboarding.dart';
 import 'Pages/favorite_categories_page.dart';
@@ -29,18 +31,18 @@ Future<void> main() async {
   );
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
-    runApp(const AutoGuideApp());
+    runApp(const JournAi());
   });
 }
 
-class AutoGuideApp extends StatelessWidget {
-  const AutoGuideApp({Key? key}) : super(key: key);
+class JournAi extends StatefulWidget {
+  const JournAi({Key? key}) : super(key: key);
 
   @override
   _AutoGuideAppState createState() => _AutoGuideAppState();
 }
 
-class _AutoGuideAppState extends State<AutoGuideApp> {
+class _AutoGuideAppState extends State<JournAi> {
   late StreamSubscription _sub;
 
   @override
@@ -55,7 +57,8 @@ class _AutoGuideAppState extends State<AutoGuideApp> {
     try {
       initialLink = await getInitialLink();
     } catch (e) {
-      // Handle exception
+      debugPrint("error getting initial link");
+      return;
     }
     if (initialLink != null) {
       print(initialLink);
