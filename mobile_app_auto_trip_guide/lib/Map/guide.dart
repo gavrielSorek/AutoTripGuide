@@ -271,77 +271,80 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
           key: Key(categoriesList[index]),
           onTap: () => {handleSelectedCategoryClicked(categoriesList[index])},
           child: Center(
-            child: Stack(children: [
-              ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                child: ImageFromUrlList(
-                  imageUrlList: getImageUrlsFromCategory(
-                      widget.state.categoriesToPoisMap[categoriesList[index]]!),
-                  height: 100,
-                  width: 200,
-                  fit: BoxFit.cover,
-                  category: categoriesList[index],
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Stack(children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                  child: ImageFromUrlList(
+                    imageUrlList: getImageUrlsFromCategory(
+                        widget.state.categoriesToPoisMap[categoriesList[index]]!),
+                    height: 100,
+                    width: 200,
+                    fit: BoxFit.cover,
+                    category: categoriesList[index],
+                  ),
                 ),
-              ),
-              Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        // same borderRadius as ClipRRect
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Color.fromRGBO(0, 0, 0, 0),
-                            Color.fromRGBO(0, 0, 0, 0.75),
-                          ],
+                Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          // same borderRadius as ClipRRect
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Color.fromRGBO(0, 0, 0, 0),
+                              Color.fromRGBO(0, 0, 0, 0.75),
+                            ],
+                          ),
                         ),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                              flex: 2,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 3),
-                                child: Text(
-                                  categoriesList[index] +
-                                      " (" +
-                                      widget
-                                          .state
-                                          .categoriesToPoisMap[
-                                              categoriesList[index]]!
-                                          .length
-                                          .toString() +
-                                      ")",
-                                  style: TextStyle(
-                                    fontFamily: 'Inter',
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15,
-                                    letterSpacing: 0,
-                                    color: Colors.white,
+                        child: Row(
+                          children: [
+                            Expanded(
+                                flex: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 3),
+                                  child: Text(
+                                    categoriesList[index] +
+                                        " (" +
+                                        widget
+                                            .state
+                                            .categoriesToPoisMap[
+                                                categoriesList[index]]!
+                                            .length
+                                            .toString() +
+                                        ")",
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontStyle: FontStyle.normal,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
+                                      letterSpacing: 0,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ),
-                              )),
-                          Expanded(
-                              child: Checkbox(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  side: BorderSide(
-                                      width: 1.8, color: Colors.white),
-                                  value: widget.state.isCheckedCategory[
-                                          categoriesList[index]] ??
-                                      true,
-                                  onChanged: (value) {
-                                    handleSelectedCategoryClicked(
-                                        categoriesList[index]);
-                                  })),
-                        ],
-                      )))
-            ]),
+                                )),
+                            Expanded(
+                                child: Checkbox(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10)),
+                                    side: BorderSide(
+                                        width: 1.8, color: Colors.white),
+                                    value: widget.state.isCheckedCategory[
+                                            categoriesList[index]] ??
+                                        true,
+                                    onChanged: (value) {
+                                      handleSelectedCategoryClicked(
+                                          categoriesList[index]);
+                                    })),
+                          ],
+                        )))
+              ]),
+            ),
           ));
     });
     generatedList.sort((a, b) => a.key.toString().compareTo(b.key.toString()));
@@ -485,9 +488,9 @@ class _OptionalCategoriesSelection extends State<OptionalCategoriesSelection> {
                       playButton.setAnimationActivityStatus(false);
                     },
                     child: Padding(
-                        padding: EdgeInsets.only(left: 20, right: 20, top: 16),
+                        padding: EdgeInsets.only(left: 0, right: 0, top: 0),
                         child: GridView.count(
-                          crossAxisSpacing: 10,
+                          crossAxisSpacing: 0,
                           mainAxisSpacing: 0,
                           childAspectRatio: (1.45),
                           crossAxisCount: 2,
