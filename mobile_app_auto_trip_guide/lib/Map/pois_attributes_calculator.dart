@@ -5,7 +5,7 @@ import 'package:journ_ai/Map/map_configuration.dart';
 import 'package:journ_ai/Map/types.dart';
 import 'package:geolocator/geolocator.dart';
 
-import '../General Wigets/generals.dart';
+import '../General/generals.dart';
 import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 import 'dart:math' as Math;
 

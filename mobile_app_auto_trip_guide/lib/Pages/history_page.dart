@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import '../General Wigets/Menu.dart' as menu;
+import '../General/Menu.dart' as menu;
 import '../Map/globals.dart';
 import '../Map/types.dart';
 

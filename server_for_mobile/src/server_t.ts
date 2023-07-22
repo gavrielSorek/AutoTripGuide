@@ -19,6 +19,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import AsyncLock from 'async-lock';
 import { log } from 'console';
+import compareVersions from 'compare-versions';
 const app = express()
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(bodyParser.json({limit: '50mb'}));
@@ -271,6 +272,38 @@ app.get("/getUserPoiPreference",async function (req:Request, res:Response) { //n
     res.end();
 })
 
+app.get("/checkForUpdates", async (req: Request, res: Response) => {
+    const clientVersion = req.query.currentVersion;
+    if (typeof clientVersion !== 'string') {
+        res.status(400).send("Bad Request: currentVersion is required and must be a string");
+        return;
+    }
+
+    try {
+        const versionData = await db.getAppVersionInfo(dbClientSearcher); // Update dbClientSearcher with your MongoDB client object
+        const serverVersion = versionData.currentVersion;
+        const minCompatibleVersion = versionData.minCompatibleVersion;
+
+        let upgradeStatus: number;
+
+        if (clientVersion === serverVersion) {
+            // if the versions are same, no update is required
+            upgradeStatus = 0;
+        } else if (compareVersions.compare(clientVersion, minCompatibleVersion, '>=')) {
+            // if the client version is greater than or equal to min compatible version, no update is required
+            upgradeStatus = 1;
+        } else {
+            // if the client version is less than min compatible version, update is required
+            upgradeStatus = 2;
+        }
+
+        res.status(200).json({ 'upgradeStatus': upgradeStatus });
+    } catch (err) {
+        console.log("Can't find app version data")
+        res.status(500).send("Internal Server Error");
+    }
+});
+
 async function startServerWithoutHttpsForDebugOnly() {
     await init()
     app.listen(port, async ()=>{
@@ -294,7 +327,7 @@ async function startServerWithHttps() {
   });
 }
 
-startServerWithHttps();
+startServerWithoutHttpsForDebugOnly();
 
 
 //__________________________________________________________________________//

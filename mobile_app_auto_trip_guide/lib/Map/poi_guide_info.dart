@@ -3,7 +3,7 @@ import 'package:journ_ai/Map/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:share_plus/share_plus.dart';
-import '../General Wigets/stretching_widget.dart';
+import '../General/stretching_widget.dart';
 import 'globals.dart';
 
 class PoiGuide extends StatefulWidget {

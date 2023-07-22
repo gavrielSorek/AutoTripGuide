@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../General Wigets/menu.dart' as menu;
+import '../General/menu.dart' as menu;
 import '../Map/globals.dart';
 import '../Map/guid_bloc/guide_bloc.dart';
 

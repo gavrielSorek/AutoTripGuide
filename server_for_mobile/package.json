@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "async-lock": "^1.4.0",
+    "compare-versions": "^6.0.0",
     "core-util-is": "^1.0.3",
     "cors": "^2.8.5",
     "country-reverse-geocoding": "^0.2.2",

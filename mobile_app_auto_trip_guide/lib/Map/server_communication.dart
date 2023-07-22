@@ -15,6 +15,23 @@ class ServerCommunication {
     return Uri.https(url, path, info);
   }
 
+  Future<int> checkForUpdates(String currentVersion) async {
+    final queryParameters = {
+      'currentVersion': currentVersion
+    };
+
+    final newUri = addInfoToUrl(serverUrl, '/checkForUpdates', queryParameters);
+
+    final response = await client.get(newUri);
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      return responseData['upgradeStatus'];
+    } else {
+      throw Exception('Failed to check for updates');
+    }
+  }
+
   Future<List<Poi>> getPoisByLocation(LocationInfo locationInfo) async {
     final queryParameters = {
       'lat': locationInfo.lat.toString(),
