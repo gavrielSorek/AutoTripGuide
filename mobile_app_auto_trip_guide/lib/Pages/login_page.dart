@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../Map/globals.dart';
+// import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
+  static const double PADDING_BETWEEN_BUTTONS = 15;
+
 
   @override
   Widget build(BuildContext context) {
@@ -57,14 +60,14 @@ class LoginPage extends StatelessWidget {
                           'assets/images/logo.png',
                           width: MediaQuery.of(context).size.width / 1.1,
                           height: MediaQuery.of(context).size.height / 4,
-                          //fit: BoxFit.cover,
+                           //fit: BoxFit.cover,
                         ),
                       ],
                     ),
                   ],
                 ),
 
-                SizedBox(height: MediaQuery.of(context).size.height / 2),
+                SizedBox(height: MediaQuery.of(context).size.height / 2.7),
                 FloatingActionButton.extended(
                   onPressed: () async {
                     Globals.appEvents.signIn('google');
@@ -84,6 +87,32 @@ class LoginPage extends StatelessWidget {
                   backgroundColor: Colors.white70,
                   foregroundColor: Colors.black,
                 ),
+
+              // SizedBox(height: PADDING_BETWEEN_BUTTONS),
+              // FloatingActionButton.extended(
+              //   onPressed: () async {
+              //     try{
+              //     final credential = await SignInWithApple.getAppleIDCredential(
+              //       scopes: [
+              //         AppleIDAuthorizationScopes.email,
+              //         AppleIDAuthorizationScopes.fullName,
+              //       ],
+              //     );
+              //     print(credential);
+              //     } catch(e){
+              //       print(e);
+              //     }
+              //     // Use the credential to sign in to your backend service
+              //   },
+              //   icon: Image.asset(
+              //     "assets/images/apple_logo_black.png", // Change this to the path of your Apple logo asset
+              //     width: MediaQuery.of(context).size.width / 12,
+              //     height: MediaQuery.of(context).size.height / 12,
+              //   ),
+              //   label: const Text('Sign in with Apple'),
+              //   backgroundColor: Colors.white70,
+              //   foregroundColor: Colors.black,
+              //   ),
               ],
             )),
       ),

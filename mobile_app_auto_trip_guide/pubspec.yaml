@@ -51,7 +51,7 @@ dependencies:
   async: 
   introduction_screen: ^3.1.4
   cupertino_icons: ^1.0.2
-  google_sign_in: ^6.0.2
+  sign_in_with_apple: ^4.3.0
   get: ^4.6.1
   cached_network_image: ^3.2.3
   loading_animation_widget: ^1.2.0+3
