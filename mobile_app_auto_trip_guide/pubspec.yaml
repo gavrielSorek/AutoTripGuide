@@ -65,6 +65,7 @@ dependencies:
   flutter_plugin_android_lifecycle: ^2.0.15
   shimmer: ^3.0.0
   package_info_plus: ^3.1.2
+  connectivity_plus: ^4.0.1
   #dev_dependencies:
   flutter_test:
     sdk: flutter

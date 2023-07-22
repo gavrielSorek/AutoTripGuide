@@ -6,6 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import '../Map/globals.dart';
 import '../Utils/app_info.dart';
 import 'critical_error_page.dart';
+import 'internet_connection_page.dart';
 
 class AppInitializationPage extends StatefulWidget {
   const AppInitializationPage({Key? key}) : super(key: key);
@@ -22,9 +23,11 @@ class _AppInitializationPageState extends State<AppInitializationPage> {
   }
 
   Future<void> initApp() async {
+    await InternetUtils.checkAndRequestInternetConnection(context); //must verify internet connectivity before all
     try {
       UpdateStatus upgradeStatus = await AppInfo.getUpdateStatus();
-      if (upgradeStatus != UpdateStatus.notRequired) { // if update exists
+      // if update exists
+      if (upgradeStatus != UpdateStatus.notRequired) {
         // Show the upgrading screen
         await Navigator.push(
           context,
