@@ -278,7 +278,20 @@ app.get('/openApp', async (req: Request, res: Response) => {
         <html>
         <body>
         <script>
-        window.location = 'journai://poi?id=${id}';
+            // try to open your app
+            window.location = 'journai://poi?id=${id}';
+
+            // set a timeout to redirect the user to the app store
+            // if the app is not installed and doesn't capture the intent
+            setTimeout(function() {
+                // This would be the link to your app in the app store
+                // Make sure to replace these links with the actual links to your app
+                if(/Android/i.test(navigator.userAgent)) {
+                    window.location = 'https://play.google.com/store/apps/details?id=<your_app_id>';
+                } else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    window.location = 'https://apps.apple.com/app/id<your_app_id>';
+                }
+            }, 500);
         </script>
         </body>
         </html>
