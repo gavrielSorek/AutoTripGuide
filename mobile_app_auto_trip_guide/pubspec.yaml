@@ -51,6 +51,8 @@ dependencies:
   async: 
   introduction_screen: ^3.1.4
   cupertino_icons: ^1.0.2
+  google_sign_in: ^6.0.2
+  google_sign_in_ios: ^5.6.2
   sign_in_with_apple: ^4.3.0
   get: ^4.6.1
   cached_network_image: ^3.2.3
@@ -66,7 +68,7 @@ dependencies:
   flutter_plugin_android_lifecycle: ^2.0.15
   shimmer: ^3.0.0
   package_info_plus: ^3.1.2
-  connectivity_plus: ^4.0.1
+  connectivity_plus: ^3.0.0
   #dev_dependencies:
   flutter_test:
     sdk: flutter
