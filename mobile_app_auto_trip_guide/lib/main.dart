@@ -16,6 +16,8 @@ import 'dart:math';
 import 'package:audio_service/audio_service.dart';
 import 'package:uni_links/uni_links.dart';
 
+import 'Pages/terms_and_conditions_page.dart';
+
 extension DeepLinkParsing on Uri {
   String? get deepLinkId {
     if (this.host == 'poi' && this.pathSegments.isEmpty) {
@@ -114,7 +116,8 @@ class _JournAiState extends State<JournAi> {
         '/personal-details-screen': (context) => PersonalDetailsPage(),
         '/onboard-screen': (context) => OnBoardingPage(),
         '/init-screen': (context) => initializationPage,
-        '/location-disabled-screen': (context) => LocationPermissionPage()
+        '/location-disabled-screen': (context) => LocationPermissionPage(),
+        '/terms-and-conditions-screen': (context) => TermsAndConditionsPage()
       },
       // routes: {'/': (BuildContext ctx) => HomePage()}
     );

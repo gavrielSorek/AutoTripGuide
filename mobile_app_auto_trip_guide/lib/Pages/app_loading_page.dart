@@ -46,7 +46,7 @@ class _AppInitializationPageState extends State<AppInitializationPage> {
   }
 
   void nextPage() {
-    final bool? isIntroDone = Globals.globalPrefs?.getBool('introDone');
+    final bool? isIntroDone = Globals.globalPrefs?.getBool('introDoneAndTermsAndConditionsAgreed');
     String initialRoute;
 
     if(isIntroDone == null ) {

@@ -15,11 +15,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
   Future<void> _onIntroEnd(context) async {
     Globals.appEvents.introCompleted();
     Navigator.of(context).pushNamedAndRemoveUntil(
-        '/login-screen', (Route<dynamic> route) => false);
-    // Obtain shared preferences.
-    final prefs = await SharedPreferences.getInstance();
-    // Save that the intro has done
-    await prefs.setBool('introDone', true);
+        '/terms-and-conditions-screen', (Route<dynamic> route) => false);
   }
   void _onIntroSkip(context) {
     Globals.appEvents.introSkipped();
