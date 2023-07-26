@@ -20,6 +20,8 @@ import cors from 'cors';
 import AsyncLock from 'async-lock';
 import { log } from 'console';
 import compareVersions from 'compare-versions';
+import { sendPoisToServer } from './utils/sendPois';
+
 const app = express()
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(bodyParser.json({limit: '50mb'}));
@@ -106,8 +108,8 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
  async function updateDbWithOnlinePois(bounds: any, language: string,geoHash:string) {
     // async call for faster rsults
     await getPoisFromOpenTrip(bounds, language,geoHash,(poi: Poi)=>{
-        logger.info(`Add poi to db from openTripMAP: '${poi._poiName}' to geoHash: '${geoHash}'`)
-        serverCommunication.sendPoisToServer([poi], globaltokenAndPermission)
+        logger.info(`Found new poi from openTripMAP: '${poi._poiName}' to geoHash: '${geoHash}'`)
+        sendPoisToServer(dbClientSearcher,[poi])
     }); 
  }
 
@@ -120,7 +122,7 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
         const lng = (southWest.lng + northEast.lng) /2;
         const distance = getDistance({ latitude: lat, longitude: lng },    { latitude: northEast.lat, longitude: northEast.lng })
         const pois = await getPois(lat, lng, distance,geoHash)
-        serverCommunication.sendPoisToServer(pois, globaltokenAndPermission)
+        sendPoisToServer(dbClientSearcher,pois)
     } catch (e) {
         logger.error(`Error in google api for geoHash ${geoHash}: ${e}`);
     }
@@ -222,7 +224,7 @@ app.get("/updateUserInfo", async function (req:Request, res:Response) { //next r
 
  // insert Poi To the history pois of specific user
 app.get("/insertPoiToHistory", async function (req:Request, res:Response) { //next requrie (the function will not stop the program)
-    logger.info(`Add poi to history '${req.query.poiName}', email: ${req.query.emailAddr}`)
+    logger.info(`Add poi to history '${req.query.poiName?.toString().toLowerCase()}', email: ${req.query.emailAddr}`)
     const poiInfo = {'id': req.query.id, 'poiName': req.query.poiName, 'emailAddr': req.query.emailAddr, 'time': req.query.time, 'pic': req.query.pic};
     const result = await db.insertPoiToHistory(dbClientSearcher, poiInfo)
     res.status(200);
