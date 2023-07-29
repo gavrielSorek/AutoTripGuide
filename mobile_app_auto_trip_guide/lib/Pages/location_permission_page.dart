@@ -29,7 +29,6 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
   @override
   void initState() {
     super.initState();
-    verifyPermissionsAndContinue();
   }
 
   Future<void> verifyPermissionsAndContinue() async {

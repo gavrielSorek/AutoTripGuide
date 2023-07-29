@@ -26,7 +26,6 @@ class _InternetConnectionPageState extends State<InternetConnectionPage> {
   @override
   void initState() {
     super.initState();
-    verifyInternetConnectionAndContinue();
   }
 
   Future<void> verifyInternetConnectionAndContinue() async {
