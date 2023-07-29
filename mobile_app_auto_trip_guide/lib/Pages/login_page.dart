@@ -1,16 +1,28 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../Map/globals.dart';
-// import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'dart:io';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
   static const double PADDING_BETWEEN_BUTTONS = 15;
-
-
+  static const double FONT_SIZE = 17;
   @override
   Widget build(BuildContext context) {
     return buildLoginWidget(context);
+  }
+
+
+  void _launchURL(String url) async {
+    Uri uri = Uri.parse(url);
+    try {
+      await launchUrl(uri);
+    } catch(e) {
+      debugPrint(e.toString());
+    }
   }
 
   Widget buildLoginWidget(BuildContext context) {
@@ -88,31 +100,75 @@ class LoginPage extends StatelessWidget {
                   foregroundColor: Colors.black,
                 ),
 
-              // SizedBox(height: PADDING_BETWEEN_BUTTONS),
-              // FloatingActionButton.extended(
-              //   onPressed: () async {
-              //     try{
-              //     final credential = await SignInWithApple.getAppleIDCredential(
-              //       scopes: [
-              //         AppleIDAuthorizationScopes.email,
-              //         AppleIDAuthorizationScopes.fullName,
-              //       ],
-              //     );
-              //     print(credential);
-              //     } catch(e){
-              //       print(e);
-              //     }
-              //     // Use the credential to sign in to your backend service
-              //   },
-              //   icon: Image.asset(
-              //     "assets/images/apple_logo_black.png", // Change this to the path of your Apple logo asset
-              //     width: MediaQuery.of(context).size.width / 12,
-              //     height: MediaQuery.of(context).size.height / 12,
-              //   ),
-              //   label: const Text('Sign in with Apple'),
-              //   backgroundColor: Colors.white70,
-              //   foregroundColor: Colors.black,
-              //   ),
+              SizedBox(height: PADDING_BETWEEN_BUTTONS),
+                Platform.isIOS ? FloatingActionButton.extended(
+                onPressed: () async {
+                  try{
+                  final credential = await SignInWithApple.getAppleIDCredential(
+                    scopes: [
+                      AppleIDAuthorizationScopes.email,
+                      AppleIDAuthorizationScopes.fullName,
+                    ],
+                  );
+                  print(credential);
+                  } catch(e){
+                    print(e);
+                  }
+                  // Use the credential to sign in to your backend service
+                },
+                icon: Image.asset(
+                  "assets/images/apple_logo_black.png", // Change this to the path of your Apple logo asset
+                  width: MediaQuery.of(context).size.width / 12,
+                  height: MediaQuery.of(context).size.height / 12,
+                ),
+                label: const Text('Sign in with Apple'),
+                backgroundColor: Colors.white70,
+                foregroundColor: Colors.black,
+                ) : Container(),
+                SizedBox(height: PADDING_BETWEEN_BUTTONS),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "By signing in you agree to the ",
+                            style: TextStyle(color: Colors.white, fontSize: FONT_SIZE),
+                          ),
+                          TextSpan(
+                            text: "terms of use",
+                            style: TextStyle(
+                              color: Colors.white,
+                              decoration: TextDecoration.underline, fontSize: FONT_SIZE
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                _launchURL("https://www.getjournai.com/terms");
+                              },
+                          ),
+                          TextSpan(
+                            text: " and ",
+                            style: TextStyle(color: Colors.white, fontSize: FONT_SIZE),
+                          ),
+                          TextSpan(
+                            text: "privacy policy",
+                            style: TextStyle(
+                              color: Colors.white,
+                              decoration: TextDecoration.underline,
+                                fontSize: FONT_SIZE
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                _launchURL("https://www.getjournai.com/terms");
+                              },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
               ],
             )),
       ),
