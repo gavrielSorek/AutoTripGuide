@@ -126,7 +126,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
     );
   }
 
-  Widget buildLoadingNewPoisWidget() {
+  Widget buildScanningWidgetAfterPoisLoaded() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 17),
       child: buildDialogContainedWidgets([
@@ -135,7 +135,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
             child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Discovering nearby places...\n\n Get ready!",
+                  "Scanning...",
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontStyle: FontStyle.normal,
@@ -146,6 +146,35 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                     height: 28 / 22,
                   ),
                 ))),
+        Padding(
+            padding: EdgeInsets.only(left: 11, right: 11, top: 16),
+            child: Text(
+              "Keep the app running in the background as you move, and we will add new places along your way...\n",
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w400,
+                fontSize: 16,
+                letterSpacing: 0,
+                color: Color(0xff6C6F70),
+                height: 1.5,
+              ),
+            )),
+        Padding(padding: EdgeInsets.all(8),
+        child: TextButton(
+          onPressed: () {
+            context.read<GuideBloc>().add(ShowLastOptionalCategories());
+          },
+          child: Text(
+            'See Previous Places',
+            style: TextStyle(
+              color: Colors.blue, // Blue text color
+              fontSize: 20, // Adjust the font size as needed
+              fontWeight: FontWeight.bold, // Emphasized font weight
+              decoration: TextDecoration.underline, // Underline the text to indicate it's clickable
+            ),
+          ),
+        ),)
       ]),
     );
   }
@@ -233,7 +262,7 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         } else if (state is ShowOptionalCategoriesState) {
           return Expanded(child: buildOptionalCategoriesSelectionWidget(state));
         } else if (state is LoadingMorePoisState) {
-          return buildLoadingNewPoisWidget();
+          return buildScanningWidgetAfterPoisLoaded();
         } else {
           return buildSearchingWidget();
         }
