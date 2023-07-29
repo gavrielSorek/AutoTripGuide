@@ -70,7 +70,8 @@ class _UpgradePageState extends State<UpgradePage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 20.0, left: 20.0, right: 20.0, bottom: 10),
+                padding: EdgeInsets.only(
+                    top: 20.0, left: 20.0, right: 20.0, bottom: 10),
                 child: Container(
                   child: Text(
                     descText,
@@ -84,61 +85,77 @@ class _UpgradePageState extends State<UpgradePage> {
               ),
               // Adding buttons
               Padding(
-                  padding: EdgeInsets.only(top: 60.0, left: 30.0, right: 30.0, bottom: 10),
-                  child: ElevatedButton(
-                      onPressed: () async {
-                        final Uri androidUrl = Uri.parse('https://play.google.com/store/apps/details?id=<your_package_name>'); //TODO change to our app url
-                        final Uri iosUrl = Uri.parse('https://apps.apple.com/us/app/apple-store/<your_app_id>');
+                padding: EdgeInsets.only(
+                    top: 60.0, left: 30.0, right: 30.0, bottom: 10),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final Uri androidUrl = Uri.parse(
+                        'https://play.google.com/store/apps/details?id=<your_package_name>'); //TODO change to our app url
+                    final Uri iosUrl = Uri.parse(
+                        'https://apps.apple.com/us/app/apple-store/<your_app_id>');
 
-                        if (Theme.of(context).platform == TargetPlatform.android) {
-                          // Android-specific code
-                          if (await canLaunchUrl(androidUrl)) {
-                            await launchUrl(androidUrl);
-                          } else {
-                            debugPrint('Could not launch $androidUrl');
-                          }
-                        } else if (Theme.of(context).platform == TargetPlatform.iOS) {
-                          // iOS-specific code
-                          if (await canLaunchUrl(iosUrl)) {
-                            await launchUrl(iosUrl);
-                          } else {
-                            debugPrint('Could not launch $androidUrl');
-                          }
-                        }
-                      },
-                    child: Text('Upgrade'),
+                    if (Theme
+                        .of(context)
+                        .platform == TargetPlatform.android) {
+                      // Android-specific code
+                      if (await canLaunchUrl(androidUrl)) {
+                        await launchUrl(androidUrl);
+                      } else {
+                        debugPrint('Could not launch $androidUrl');
+                      }
+                    } else if (Theme
+                        .of(context)
+                        .platform == TargetPlatform.iOS) {
+                      // iOS-specific code
+                      if (await canLaunchUrl(iosUrl)) {
+                        await launchUrl(iosUrl);
+                      } else {
+                        debugPrint('Could not launch $androidUrl');
+                      }
+                    }
+                  },
+                  child: Text('Upgrade'),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.blue),
+                    minimumSize: MaterialStateProperty.all(
+                        Size(double.infinity, 60)), // Change the height here
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          10), // Change the border radius here
+                    )),
+                  ),
+                ),
+              ),
+              Padding(
+                  padding: EdgeInsets.only(
+                      top: 10.0, left: 30.0, right: 30.0, bottom: 10),
+                  child: widget.upgradeStatus !=
+                      UpdateStatus.requiredImmediately ? ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'Later',
+                      style: TextStyle(
+                        color: Color(0xFF6C6F70), // Change the text color here
+                      ),
+                    ),
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.blue),
+                      elevation: MaterialStateProperty.all(0),
+                      // Remove the elevation
+                      backgroundColor: MaterialStateProperty.all(
+                          Colors.transparent),
+                      shadowColor: MaterialStateProperty.all(
+                          Colors.transparent),
                       minimumSize: MaterialStateProperty.all(
-                          Size(double.infinity, 60)), // Change the height here
+                          Size(double.infinity, 60)),
+                      // Change the height here
                       shape: MaterialStateProperty.all(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
                             10), // Change the border radius here
                       )),
                     ),
-                  ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 10.0, left: 30.0, right: 30.0, bottom: 10),
-                child: widget.upgradeStatus != UpdateStatus.requiredImmediately ? ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    },
-                  child: Text(
-                    'Later',
-                    style: TextStyle(
-                      color: Color(0xFF6C6F70), // Change the text color here
-                    ),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                    shadowColor: MaterialStateProperty.all(Colors.transparent),
-                    minimumSize: MaterialStateProperty.all(Size(double.infinity, 60)), // Change the height here
-                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10), // Change the border radius here
-                    )),
-                  ),
-                ) : null,
+                  ) : null,
               ),
             ],
           ),
