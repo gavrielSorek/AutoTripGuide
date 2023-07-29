@@ -216,11 +216,6 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
       widgetOnPic:
           GuideAudioPlayer(audioHandler: Globals.globalGuideAudioPlayerHandler),
       preferencesButton: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.4),
-            // Black color with 50% opacity
-            shape: BoxShape.circle, // Assuming you want a circular background
-          ),
           child: UniformButtons.getGuidePreferencesButton(onPressed: () {
             context.read<GuideBloc>().add(ShowLastOptionalCategories());
           })),

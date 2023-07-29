@@ -42,7 +42,6 @@ class Globals {
       StreamController<String>.broadcast();
   static String? svgMarkerString;
   static IconsBytesHolder svgPoiMarkerBytes = IconsBytesHolder();
-  static SharedPreferences? globalPrefs;
   static late AppEvents appEvents;
   static late Mixpanel mixpanel;
 
@@ -92,13 +91,16 @@ class Globals {
     mainMapPoi = null;
   }
 
-  static init(BuildContext context) async {
-    // initialization order is very important
+  // should executed first - soon as possible
+  static preInit() async {
     mixpanel = await Mixpanel.init("cb8330c185f7677aac8efe418058e344", trackAutomaticEvents: true);
     appEvents = new AppEvents(email:'unknownUser@gmail.com');
+  }
+
+  static init(BuildContext context) async {
+    // initialization order is very important
     await appEvents.init();
     await globalUserMap.mapInit(context);
-    globalPrefs = await SharedPreferences.getInstance();
     globalAllPois.clear();
     globalUnhandledKeys.clear();
     mainMapPoi = null;

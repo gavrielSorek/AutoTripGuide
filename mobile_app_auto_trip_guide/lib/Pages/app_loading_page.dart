@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:journ_ai/Map/server_communication.dart';
 import 'package:journ_ai/Pages/upgrade_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../Map/globals.dart';
@@ -34,7 +35,13 @@ class _AppInitializationPageState extends State<AppInitializationPage> {
           MaterialPageRoute(builder: (context) => UpgradePage(upgradeStatus)),
         );
       }
-      await Globals.init(context);
+      await Globals.preInit();
+      bool? isIntroDone = (await SharedPreferences.getInstance()).getBool('introDone');
+      if (isIntroDone == null)
+        {
+          Globals.appEvents.introStarted();
+          await Navigator.pushNamed(context, '/onboard-screen');
+        }
       nextPage();
     } catch (error) {
       debugPrint(error.toString());
@@ -45,21 +52,17 @@ class _AppInitializationPageState extends State<AppInitializationPage> {
     };
   }
 
-  void nextPage() {
-    final bool? isIntroDone = Globals.globalPrefs?.getBool('introDone');
-    String initialRoute;
+  Future<void> nextPage() async {
+    await Globals.init(context);
 
-    if(isIntroDone == null ) {
-      Globals.appEvents.introStarted();
-      initialRoute = '/onboard-screen';
-    } else if(Globals.globalController.isUserSignIn){
-      initialRoute = '/HomePage';
+    String route;
+   if(Globals.globalController.isUserSignIn){
+      route = '/HomePage';
     } else {
-      initialRoute = '/login-screen';
+      route = '/login-screen';
     }
-
-    Navigator.pop(context);
-    Navigator.pushNamed(context, initialRoute);
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        route, (Route<dynamic> route) => false);
    }
 
   @override
