@@ -39,8 +39,8 @@ class CriticalErrorPage extends StatelessWidget {
                     "Oops! Technical glitch. We're on it. Please check back shortly. Thanks!",
                     textAlign: TextAlign.center, // Centers the text
                     style: TextStyle(
-                      fontSize: 22,
-                      color: Colors.black,
+                      fontSize: 18,
+                      color: Color(0xff6C6F70),
                     ),
                   ),
                 ),
@@ -50,11 +50,13 @@ class CriticalErrorPage extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 20.0, left: 30.0, right: 30.0, bottom: 10),
                 child: ElevatedButton(
                   onPressed: () => exit(0),
-                  child: Text('Close'),
+                  child: Text('Close', style: TextStyle(
+                    fontSize: 18,
+                  ),),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.blue),
                     minimumSize: MaterialStateProperty.all(
-                        Size(double.infinity, 60)), // Change the height here
+                        Size(double.infinity, 40)), // Change the height here
                     shape: MaterialStateProperty.all(RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(
                           10), // Change the border radius here

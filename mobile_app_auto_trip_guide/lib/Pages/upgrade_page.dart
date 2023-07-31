@@ -34,6 +34,7 @@ class _UpgradePageState extends State<UpgradePage> {
     return WillPopScope(
       onWillPop: () async => false, // disable back button
       child: Scaffold(
+        backgroundColor: Colors.white, // Set the background color to white
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -56,7 +57,7 @@ class _UpgradePageState extends State<UpgradePage> {
               ),
               // Second column with Text widget
               Padding(
-                padding: EdgeInsets.only(top: 20.0),
+                padding: EdgeInsets.only(top: 30.0),
                 child: Center(
                   child: Text(
                     'Upgrade Available!',
@@ -71,13 +72,13 @@ class _UpgradePageState extends State<UpgradePage> {
               ),
               Padding(
                 padding: EdgeInsets.only(
-                    top: 20.0, left: 20.0, right: 20.0, bottom: 10),
+                    top: 40.0, left: 20.0, right: 20.0, bottom: 10),
                 child: Container(
                   child: Text(
                     descText,
                     style: TextStyle(
-                      fontSize: 22,
-                      color: Colors.black,
+                      fontSize: 18,
+                      color: Color(0xff6C6F70),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -86,7 +87,7 @@ class _UpgradePageState extends State<UpgradePage> {
               // Adding buttons
               Padding(
                 padding: EdgeInsets.only(
-                    top: 60.0, left: 30.0, right: 30.0, bottom: 10),
+                    top: 40.0, left: 30.0, right: 30.0, bottom: 0),
                 child: ElevatedButton(
                   onPressed: () async {
                     final Uri androidUrl = Uri.parse(
@@ -114,11 +115,13 @@ class _UpgradePageState extends State<UpgradePage> {
                       }
                     }
                   },
-                  child: Text('Upgrade'),
+                  child: Text('Upgrade', style: TextStyle(
+                    fontSize: 18,
+                  ),),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.blue),
                     minimumSize: MaterialStateProperty.all(
-                        Size(double.infinity, 60)), // Change the height here
+                        Size(double.infinity, 40)), // Change the height here
                     shape: MaterialStateProperty.all(RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(
                           10), // Change the border radius here
@@ -137,6 +140,7 @@ class _UpgradePageState extends State<UpgradePage> {
                     child: Text(
                       'Later',
                       style: TextStyle(
+                        fontSize: 18,
                         color: Color(0xFF6C6F70), // Change the text color here
                       ),
                     ),
@@ -148,7 +152,7 @@ class _UpgradePageState extends State<UpgradePage> {
                       shadowColor: MaterialStateProperty.all(
                           Colors.transparent),
                       minimumSize: MaterialStateProperty.all(
-                          Size(double.infinity, 60)),
+                          Size(double.infinity, 40)),
                       // Change the height here
                       shape: MaterialStateProperty.all(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(
