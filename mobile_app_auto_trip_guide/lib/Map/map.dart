@@ -325,8 +325,7 @@ class UserMapState extends State<UserMap>
 
   void updateCameraByRelativePosition(
       {CameraOption option = CameraOption.animate}) {
-    print('updateCameraByRelativePosition');
-
+    //print('updateCameraByRelativePosition');
     mapbox.CameraUpdate newCameraPosition =
         mapbox.CameraUpdate.newCameraPosition(
       mapbox.CameraPosition(

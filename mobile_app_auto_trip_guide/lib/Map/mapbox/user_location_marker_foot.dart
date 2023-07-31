@@ -6,7 +6,8 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 
 class UserLocationMarkerFoot extends UserLocationMarker {
   StreamSubscription<CompassEvent>? _compassSubscription;
-  final double threshold = 7; //degrees
+  double startAnimationThreshold = 10.0; // in degrees
+  double deviationThreshold = 12.0; // in degrees
 
   UserLocationMarkerFoot(
       MapboxMapController mapController,
@@ -36,16 +37,32 @@ class UserLocationMarkerFoot extends UserLocationMarker {
     super.start();
     _compassSubscription?.cancel();
     _compassSubscription = FlutterCompass.events?.listen((CompassEvent event) {
-      // Add a threshold for the angle difference
-      if (event.heading != null && (event.heading! - locationMarkerInfo.heading).abs() > threshold) {
-        super.headingTween.begin = locationMarkerInfo.heading;
-        headingTween.end = event.heading;
-        // Reset and start the animation
-        headingAnimationController.reset();
-        headingAnimationController.forward();
+      if (event.heading != null) {
+        double difference = (event.heading! - locationMarkerInfo.heading).abs();
+
+        // Handle the case when the difference is across 360/0 boundary
+        if (difference > 180) {
+          difference = 360 - difference;
+        }
+
+        // Check if the new heading is significantly different or has noticeable deviation from the current animation
+        bool isSignificantlyDifferent = difference > startAnimationThreshold;
+        bool isNoticeableDeviation = difference > deviationThreshold && headingAnimationController.isAnimating;
+
+        // If the new heading is significantly different or the current animation has noticeable deviation, reset and start the animation
+        if (isSignificantlyDifferent || isNoticeableDeviation) {
+          super.headingTween.begin = locationMarkerInfo.heading;
+          headingTween.end = event.heading;
+          //print("begin: " + super.headingTween.begin.toString() + " " + "end: " + headingTween.end.toString() + "\n");
+
+          // Reset and start the animation
+          headingAnimationController.reset();
+          headingAnimationController.forward();
+        }
       }
     });
   }
+
 
   @override
   Future<void> stop() async {
