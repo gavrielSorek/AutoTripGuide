@@ -227,7 +227,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       categoriesToMapPois['All']?.addAll(mapPoisList);
 
       mapPoisList.forEach((mapPoi) {
-        String? mainCategory = mapPoi.poi.Categories[0];
+        String? mainCategory = mapPoi.poi.Categories.isEmpty ? null : mapPoi.poi.Categories[0];
         if (mainCategory != null) {
           if (!categoriesToMapPois.containsKey(mainCategory)) {
             categoriesToMapPois[mainCategory] = <MapPoi>[];
