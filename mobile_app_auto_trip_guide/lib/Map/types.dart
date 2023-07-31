@@ -142,6 +142,14 @@ class Poi {
           Categories: []); // not existed poi
     }
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Poi &&
+        other.id == id;
+  }
 }
 
 class Audio {
@@ -155,6 +163,16 @@ class Audio {
 }
 
 class MapPoi {
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is MapPoi &&
+        other.poi == poi;
+  }
+
+
   mapbox.Symbol getSymbolFromPoi(PoiIconColor color) {
     List<String> colors = ['greyPoi', 'bluePoi', 'greyTransPoi'];
     String iconImage = colors[color.index];

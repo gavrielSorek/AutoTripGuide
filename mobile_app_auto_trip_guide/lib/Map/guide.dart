@@ -76,12 +76,8 @@ class Guide {
     }
     if (_queuedPoisToPlay.isEmpty) return;
     if (isFirstInQ) {
-      Map<String, MapPoi> idAndPoiMap = {};
-      for (MapPoi mapPoi in _queuedPoisToPlay) {
-        idAndPoiMap[mapPoi.poi.id] = mapPoi;
-      }
       context.read<GuideBloc>().add(ShowOptionalCategoriesEvent(
-          pois: idAndPoiMap, isCheckedCategory: HashMap<String, bool>()));
+          pois: _queuedPoisToPlay.toList(), isCheckedCategory: HashMap<String, bool>()));
     } else {
       context.read<GuideBloc>().add(AddPoisToGuideEvent(
           poisToGuide: _queuedPoisToPlay.toList(), startGuide: true));

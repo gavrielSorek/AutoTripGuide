@@ -107,11 +107,36 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           pic: currentMapPoi.poi.pic));
     }
 
+    bool isCheckedCategoryExistOrNewCategoryInPoi(List<String> poisCategories, Map<String, bool> categoriesToChecked) {
+      for (String category in poisCategories) {
+        if (categoriesToChecked[category] == null || categoriesToChecked[category] == true) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    bool isMainCategoryCheckedOrNewCategoryInPoi(List<String> poisCategories, Map<String, bool> categoriesToChecked) {
+      if (poisCategories.isEmpty)
+        return true;
+      if (categoriesToChecked[poisCategories[0]] == null || categoriesToChecked[poisCategories[0]] == true)
+        return true;
+      return false;
+    }
+
     on<AddPoisToGuideEvent>((event, emit) {
-      _poisToGuide.addAll(event.poisToGuide);
       if (state is ShowOptionalCategoriesState) {
         _lastShowOptionalCategoriesState = state as ShowOptionalCategoriesState;
       }
+
+      for (MapPoi mapPoi in event.poisToGuide) {
+        _lastShowOptionalCategoriesState!.idToPoisMap[mapPoi.poi.id] = mapPoi;
+        if (isMainCategoryCheckedOrNewCategoryInPoi(mapPoi.poi.Categories, _lastShowOptionalCategoriesState!.isCheckedCategory))
+          {
+            _poisToGuide.add(mapPoi);
+          }
+      }
+
       if (state is ShowOptionalCategoriesState && event.startGuide) {
         this.add(ShowNextPoiInfoEvent());
       } else if (state is PoisSearchingState || state is LoadingMorePoisState) {
@@ -171,18 +196,18 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
     });
 
     on<ShowLastOptionalCategories>((event, emit) {
-      Map<String, MapPoi> idToMapPoi = {};
-      // add all the old pois
+      Set<MapPoi> mapPoisSet = {};
+
       if (_lastShowOptionalCategoriesState != null) {
-        idToMapPoi.addAll(_lastShowOptionalCategoriesState!.idToPoisMap);
-      }
-      // add the new pois
-      for (MapPoi mapPoi in _poisToGuide) {
-        idToMapPoi[mapPoi.poi.id] = mapPoi;
+        mapPoisSet.addAll(_lastShowOptionalCategoriesState!.idToPoisMap.values);
       }
 
+      mapPoisSet.addAll(_poisToGuide);
+
+      List<MapPoi> mapPois = mapPoisSet.toList();
+
       this.add(ShowOptionalCategoriesEvent(
-          pois: idToMapPoi,
+          pois: mapPois,
           isCheckedCategory: _lastShowOptionalCategoriesState?.isCheckedCategory ?? HashMap<String, bool>()));
     });
 
@@ -192,7 +217,9 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       this.add(ClearAllPois());
 
       Globals.globalGuideAudioPlayerHandler.stop();
-      List<MapPoi> mapPoisList = event.pois.values.toList();
+      List<MapPoi> mapPoisList = event.pois;
+      // the map will not guide on far away pois
+      mapPoisList = PoisAttributesCalculator.filterMapPoisByDistance(mapPoisList, Globals.globalUserMap.userLocation);
       Map<String, List<MapPoi>> categoriesToMapPois =
           HashMap<String, List<MapPoi>>();
       //patch to all categories
@@ -215,11 +242,17 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
           isCheckedCategory[category] = true;
         });
       }
+
+      Map<String, MapPoi> idAndPoiMap = {};
+      for (MapPoi mapPoi in mapPoisList) {
+        idAndPoiMap[mapPoi.poi.id] = mapPoi;
+      }
+
       emit(ShowOptionalCategoriesState(
           lastState: state is PoisSearchingState ? null : state,
           categoriesToPoisMap: categoriesToMapPois,
           isCheckedCategory: isCheckedCategory,
-          idToPoisMap: event.pois,
+          idToPoisMap: idAndPoiMap,
           onShowStory: (StoryItem value) {}));
     });
 
@@ -237,5 +270,6 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       nextIdx = 0;
     });
   }
+
   
 }
