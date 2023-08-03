@@ -91,10 +91,9 @@ class _UpgradePageState extends State<UpgradePage> {
                 child: ElevatedButton(
                   onPressed: () async {
                     final Uri androidUrl = Uri.parse(
-                        'https://play.google.com/store/apps/details?id=<your_package_name>'); //TODO change to our app url
+                        'https://play.google.com/store/apps/details?id=ai.getjourn.journai'); //TODO change to our app url
                     final Uri iosUrl = Uri.parse(
-                        'https://apps.apple.com/us/app/apple-store/<your_app_id>');
-
+                        'https://apps.apple.com/us/app/apple-store/349563428');
                     if (Theme
                         .of(context)
                         .platform == TargetPlatform.android) {
