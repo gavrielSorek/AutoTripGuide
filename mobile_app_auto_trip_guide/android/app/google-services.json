@@ -7,6 +7,42 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:505998861423:android:d76cc2bda52f33d7ded99a",
+        "android_client_info": {
+          "package_name": "ai.getjourn.journai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "505998861423-kvm32frhpaepccf1tkfaubo82ofsl0m6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOzDNtNhnnlZqamsNPgr8OLiU7qQSbxY8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "505998861423-h5shc9knear9gqp4bc78bhuiqjn32phr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "505998861423-m7olrou7fe9tuj6lbmibibamcb0ht3dn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ai.getjourn.journai"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:505998861423:android:0139805fda10eb1aded99a",
         "android_client_info": {
           "package_name": "com.example.final_project"
@@ -30,6 +66,14 @@
           }
         },
         {
+          "client_id": "505998861423-iho2bbcq99e6cu5vi6h3ag66hijmg8am.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.final_project",
+            "certificate_hash": "9ecd5fd069dc9f14dd1dc37d71ccf114b90dc127"
+          }
+        },
+        {
           "client_id": "505998861423-q2kqcdcg9a6h16aa3ok34k913jbbrln1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -38,7 +82,15 @@
           }
         },
         {
-          "client_id": "505998861423-h5shc9knear9gqp4bc78bhuiqjn32phr.apps.googleusercontent.com",
+          "client_id": "505998861423-vdjg0b7q1hg7r5bruj8427mgce268k0f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.final_project",
+            "certificate_hash": "1a696a02fe310548d6d402fbe16a26df62070bc9"
+          }
+        },
+        {
+          "client_id": "505998861423-kvm32frhpaepccf1tkfaubo82ofsl0m6.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -55,10 +107,10 @@
               "client_type": 3
             },
             {
-              "client_id": "505998861423-mihg5teej0n9ba48d7t5qbe1l7rotb0k.apps.googleusercontent.com",
+              "client_id": "505998861423-m7olrou7fe9tuj6lbmibibamcb0ht3dn.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.finalProject"
+                "bundle_id": "ai.getjourn.journai"
               }
             }
           ]
