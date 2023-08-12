@@ -52,7 +52,7 @@ export async function getNearbyPois(latitude: number, longitude: number, radius:
     }
 }
 
-export async function fetchGoogleMapsPhotoUrl(photoReference: string,poiName:string, apiKey = process.env.GM_API_KEY,maxwidth = 150): Promise<string> {
+export async function fetchGoogleMapsPhotoUrl(photoReference: string,poiName:string, apiKey = process.env.GM_API_KEY,maxwidth = 800): Promise<string> {
     return axios.get(`https://maps.googleapis.com/maps/api/place/photo`, {
       params: {
         photo_reference: photoReference,
