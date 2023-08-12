@@ -212,18 +212,16 @@ class PoiGuideImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height, // give it a fixed height
+      height: MediaQuery.of(context).size.height,
       child: ClipRRect(
         borderRadius: borderRadius,
-        child: FittedBox(
+        child: CachedNetworkImage(
+          imageUrl: imagePath,
           fit: BoxFit.cover,
-          child: CachedNetworkImage(
-            imageUrl: imagePath,
-            placeholder: (context, url) => CircularProgressIndicator(),
-            errorWidget: (context, url, error) => Image.asset(
-              'assets/images/categories/Default.jpg',
-              fit: BoxFit.cover,
-            ),
+          alignment: Alignment.center,  // Center the image within the container
+          placeholder: (context, url) => CircularProgressIndicator(),
+          errorWidget: (context, url, error) => Image.asset(
+            'assets/images/categories/Default.jpg',
           ),
         ),
       ),
