@@ -160,21 +160,28 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
                 height: 1.5,
               ),
             )),
-        Padding(padding: EdgeInsets.all(8),
-        child: TextButton(
-          onPressed: () {
-            context.read<GuideBloc>().add(ShowLastOptionalCategories());
-          },
-          child: Text(
-            'See Previous Places',
-            style: TextStyle(
-              color: Colors.blue, // Blue text color
-              fontSize: 20, // Adjust the font size as needed
-              fontWeight: FontWeight.bold, // Emphasized font weight
-              decoration: TextDecoration.underline, // Underline the text to indicate it's clickable
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          child: Flexible(
+            child: TextButton(
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.all(0), // Adjust if necessary
+              ),
+              onPressed: () {
+                context.read<GuideBloc>().add(ShowLastOptionalCategories());
+              },
+              child: Text(
+                'See Previous Places',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
             ),
           ),
-        ),)
+        ),
       ]),
     );
   }
