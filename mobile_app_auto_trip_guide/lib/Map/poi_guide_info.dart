@@ -222,6 +222,7 @@ class PoiGuideImageWidget extends StatelessWidget {
           placeholder: (context, url) => CircularProgressIndicator(),
           errorWidget: (context, url, error) => Image.asset(
             'assets/images/categories/Default.jpg',
+            fit: BoxFit.cover,
           ),
         ),
       ),
