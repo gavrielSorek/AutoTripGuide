@@ -107,15 +107,6 @@ class BackgroundAudioHandler extends BaseAudioHandler
     ttsAudioPlayer.restartPlaying();
   }
 
-  @override
-  Future<void> skipToNext() async {
-    _onPressNext();
-  }
-
-  @override
-  Future<void> skipToPrevious() async {
-    _onPressPrev();
-  }
 
   @override
   Future<void> play() async {
@@ -158,6 +149,18 @@ class BackgroundAudioHandler extends BaseAudioHandler
     //   processingState: AudioProcessingState.idle,
     // ));
   }
+
+  @override
+  Future<void> skipToNext() async {
+    _onPressNext();
+  }
+
+  @override
+  Future<void> skipToPrevious() async {
+    _onPressPrev();
+  }
+
+
 
   get isPlaying => ttsAudioPlayer.isPlaying;
 

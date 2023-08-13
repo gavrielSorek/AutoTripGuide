@@ -15,7 +15,11 @@ import '../types.dart';
 part 'guide_event.dart';
 
 part 'guide_state.dart';
-
+extension StringExtension on String {
+  String removeParenthesesAndBrackets() {
+    return this.replaceAll(RegExp(r'(\(.*?\)|\[.*?\])'), '');
+  }
+}
 class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
   GuideBloc() : super(PoisSearchingState()) {
     List<MapPoi> _poisToGuide = [];
@@ -124,6 +128,23 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       return false;
     }
 
+    void playPoi(Poi poi) {
+      // update the audio player with the relevant data of this poi
+      Globals.globalGuideAudioPlayerHandler.clearPlayer();
+      Globals.appEvents.poiStartedPlaying(poi.poiName!,
+          poi.Categories, poi.id);
+      String poiIntro =
+      PoisAttributesCalculator.getPoiIntro(poi);
+      Globals.globalGuideAudioPlayerHandler.setTextToPlay(
+          poiIntro +
+              " " +
+              poi.shortDesc!.removeParenthesesAndBrackets(),
+          'en-US');
+      Globals.globalGuideAudioPlayerHandler.trackTitle =
+          poi.poiName;
+      Globals.globalGuideAudioPlayerHandler.picUrl = poi.pic;
+      Globals.globalGuideAudioPlayerHandler.play();
+    }
     on<AddPoisToGuideEvent>((event, emit) {
       if (state is ShowOptionalCategoriesState) {
         _lastShowOptionalCategoriesState = state as ShowOptionalCategoriesState;
@@ -162,6 +183,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       MapPoi? mapPoi = getNextMapPoi();
       if (mapPoi != null) {
         onGuideOnMapPoi(mapPoi);
+        playPoi(mapPoi.poi);
         emit(ShowPoiState(currentPoi: mapPoi));
       } else {
         this.add(ShowLoadingMorePoisEvent());
@@ -172,6 +194,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       MapPoi? mapPoi = getPrevMapPoi();
       if (mapPoi != null) {
         onGuideOnMapPoi(mapPoi);
+        playPoi(mapPoi.poi);
         emit(ShowPoiState(currentPoi: mapPoi));
       }
     });
@@ -192,6 +215,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
       nextIdx++;
       Globals.globalGuideAudioPlayerHandler.stop();
       onGuideOnMapPoi(event.mapPoi);
+      playPoi(event.mapPoi.poi);
       emit(ShowPoiState(currentPoi: event.mapPoi));
     });
 

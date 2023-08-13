@@ -14,12 +14,6 @@ import 'guid_bloc/guide_bloc.dart';
 import 'globals.dart';
 import 'guide_audio_player.dart';
 
-extension StringExtension on String {
-  String removeParenthesesAndBrackets() {
-    return this.replaceAll(RegExp(r'(\(.*?\)|\[.*?\])'), '');
-  }
-}
-
 class Constants {
   Constants._();
 
@@ -231,22 +225,6 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
   }
 
   Widget buildPoiGuide(ShowPoiState state) {
-    // update the audio player with the relevant data of this poi
-    Globals.globalGuideAudioPlayerHandler.clearPlayer();
-    Globals.appEvents.poiStartedPlaying(state.currentPoi.poi.poiName!,
-        state.currentPoi.poi.Categories, state.currentPoi.poi.id);
-    String poiIntro =
-        PoisAttributesCalculator.getPoiIntro(state.currentPoi.poi);
-    Globals.globalGuideAudioPlayerHandler.setTextToPlay(
-        poiIntro +
-            " " +
-            state.currentPoi.poi.shortDesc!.removeParenthesesAndBrackets(),
-        'en-US');
-    Globals.globalGuideAudioPlayerHandler.trackTitle =
-        state.currentPoi.poi.poiName;
-    Globals.globalGuideAudioPlayerHandler.picUrl = state.currentPoi.poi.pic;
-    Globals.globalGuideAudioPlayerHandler.play();
-
     return PoiGuide(
       poi: state.currentPoi.poi,
       widgetOnPic:
