@@ -10,7 +10,7 @@ import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 import 'dart:math' as Math;
 
 class PoisAttributesCalculator {
-  static double _MAX_DIST = 2000; //5000 meter
+  static double _MAX_DIST = 2000; //2000 meter
   static void setMaxDist(double value) {
     _MAX_DIST = value;
   }
