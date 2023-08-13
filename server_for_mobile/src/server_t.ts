@@ -30,8 +30,8 @@ const port = 5600
 app.use(bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 extended: false}));
-const MAX_POIS_FOR_USER = 100
-const MAX_DAYS_USE_AREA_CACHE = 100
+const MAX_POIS_FOR_USER = 200
+const MAX_DAYS_USE_AREA_CACHE = 200
 const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const lock = new AsyncLock();
 
@@ -62,7 +62,10 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
  })
  // get searchPage page
  app.get("/searchNearbyPois", async function (req:any, res:Response) { //next requrie (the function will not stop the program)
-    const userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language}
+    if (!req.query.radius) {
+        req.query.radius = 2000; // default
+    }
+    const userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language, 'radius': parseFloat(req.query.radius)}
     const searchParams = {}
     addUserDataTosearchParams(searchParams, userData)
     logger.info(`Search pois for user: lat: ${userData.lat}, lng: ${userData.lng}`)
@@ -134,22 +137,39 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
      }
  }
 
-// return same as getGeoHashBoundsString but if there is a close geohash returns it too
-function getGeoHashBoundsStrings(user_data:any, geoHashPrecition = 5):string[]{ 
-    const mainSpecificGeoHash = getGeoHashBoundsString(user_data, geoHashPrecition + 1)
-    const neighborsOfSpecific = geohash.neighbors(mainSpecificGeoHash)
+ function getGeoHashBoundsStrings(user_data: any, geoHashPrecision = 5): string[] {
+    const centralGeoHash = geohash.encode(user_data.lat, user_data.lng, geoHashPrecision);
     const geoHashSet = new Set<string>();
-    for (let i = 0; i < neighborsOfSpecific.length; i ++) {
-        const geoHashGeneral = neighborsOfSpecific[i].slice(0, geoHashPrecition);
-        geoHashSet.add(geoHashGeneral);
+    const toCheck = [centralGeoHash];
+
+    while (toCheck.length > 0) {
+        const current = toCheck.pop();
+
+        if (current && !geoHashSet.has(current)) {
+            const [minLat, minLon, maxLat, maxLon] = geohash.decode_bbox(current);
+
+            // If any part of the geohash's bounding box intersects with the circle of radius `r`, we'll consider it.
+            if (doesBoxIntersectCircle(minLat, minLon, maxLat, maxLon, user_data.lat, user_data.lng, user_data.radius)) {
+                geoHashSet.add(current);
+                const neighbors = geohash.neighbors(current);
+                toCheck.push(...neighbors);
+            }
+        }
     }
+
     return Array.from(geoHashSet);
 }
 
-// geoHashPrecition = 5 is the default (4.89km × 4.89km)
-function getGeoHashBoundsString(user_data:any, geoHashPrecition = 5){ 
-    const bounds= geohash.encode(user_data.lat, user_data.lng, geoHashPrecition)
-    return bounds;
+function doesBoxIntersectCircle(minLat: number, minLon: number, maxLat: number, maxLon: number, circleLat: number, circleLon: number, radius: number): boolean {
+    // Find the closest point on the box to the center of the circle
+    const closestX = Math.max(minLon, Math.min(circleLon, maxLon));
+    const closestY = Math.max(minLat, Math.min(circleLat, maxLat));
+
+    // Calculate the distance between the center of the circle and the closest point
+    const distance = getDistance({ latitude: circleLat, longitude: circleLon }, { latitude: closestY, longitude: closestX });
+
+    // If the distance is less than the radius, they intersect
+    return distance <= radius;
 }
 
 function getGeoHashBoundsByGeoStr(geohashStr:string) {
@@ -370,5 +390,4 @@ startServerWithHttps();
 // install ngrok globaly : "npm install ngrok -g" 
 // and then : "ngrok http 5600"
 //ngrok authtoken 27ZMPFvj1rAMBK80Sxm7pjJuQGd_7TSnsVtTyy5NELsRvJ856
-
 

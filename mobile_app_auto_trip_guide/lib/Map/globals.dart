@@ -45,7 +45,6 @@ class Globals {
   static late AppEvents appEvents;
   static late Mixpanel mixpanel;
 
-
   static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {
     globalVisitedPoi = visitedPoisList;
   }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:journ_ai/Map/pois_attributes_calculator.dart';
 import 'package:journ_ai/Map/types.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/retry.dart';
@@ -37,7 +38,8 @@ class ServerCommunication {
       'lat': locationInfo.lat.toString(),
       'lng': locationInfo.lng.toString(),
       'heading': locationInfo.heading.toString(),
-      'speed': locationInfo.speed.toString()
+      'speed': locationInfo.speed.toString(),
+      'radius': PoisAttributesCalculator.getMaxDist().toString()
     };
 
     final newUri = addInfoToUrl(serverUrl, '/searchNearbyPois', queryParameters);
