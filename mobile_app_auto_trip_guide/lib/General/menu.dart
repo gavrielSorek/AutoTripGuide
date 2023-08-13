@@ -189,22 +189,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               ),
             ),
           ),
-          ListTile(
-            leading: Icon(
-              Icons.exit_to_app,
-              color: Colors.red,
-            ),
-            title: Text(
-              'Sign out',
-              style: TextStyle(color: Colors.red),
-            ),
-            onTap: () async {
-              await Globals.globalController.logout();
-              await Globals.stopAll();
-              Navigator.of(context).popUntil((route) => route.isFirst);
-              Navigator.pushReplacementNamed(context, '/init-screen');
-            },
-          ),
           SpeedSliderTile(
             initialSpeed: Globals.globalGuideAudioPlayerHandler.speed *
                 SpeedSliderTile.DEFAULT_MAX,
@@ -227,6 +211,22 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               alignment: Alignment.center,
               child: Text('Search Range:'),
             ),
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.exit_to_app,
+              color: Colors.red,
+            ),
+            title: Text(
+              'Sign out',
+              style: TextStyle(color: Colors.red),
+            ),
+            onTap: () async {
+              await Globals.globalController.logout();
+              await Globals.stopAll();
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.pushReplacementNamed(context, '/init-screen');
+            },
           ),
         ],
       ),
