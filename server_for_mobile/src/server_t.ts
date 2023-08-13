@@ -30,8 +30,8 @@ const port = 5600
 app.use(bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 extended: false}));
-const MAX_POIS_FOR_USER = 100
-const MAX_DAYS_USE_AREA_CACHE = 100
+const MAX_POIS_FOR_USER = 200
+const MAX_DAYS_USE_AREA_CACHE = 200
 const uri = "mongodb+srv://root:root@autotripguide.swdtr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 const lock = new AsyncLock();
 
@@ -62,7 +62,7 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
  })
  // get searchPage page
  app.get("/searchNearbyPois", async function (req:any, res:Response) { //next requrie (the function will not stop the program)
-    const userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language}
+    const userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language, 'radius': req.query.radius}
     const searchParams = {}
     addUserDataTosearchParams(searchParams, userData)
     logger.info(`Search pois for user: lat: ${userData.lat}, lng: ${userData.lng}`)
@@ -134,16 +134,44 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
      }
  }
 
-// return same as getGeoHashBoundsString but if there is a close geohash returns it too
-function getGeoHashBoundsStrings(user_data:any, geoHashPrecition = 5):string[]{ 
-    const mainSpecificGeoHash = getGeoHashBoundsString(user_data, geoHashPrecition + 1)
-    const neighborsOfSpecific = geohash.neighbors(mainSpecificGeoHash)
+function getGeoHashBoundsStrings(user_data: any, geoHashPrecision = 5): string[] {
+    const centralGeoHash = geohash.encode(user_data.lat, user_data.lng, geoHashPrecision);
     const geoHashSet = new Set<string>();
-    for (let i = 0; i < neighborsOfSpecific.length; i ++) {
-        const geoHashGeneral = neighborsOfSpecific[i].slice(0, geoHashPrecition);
-        geoHashSet.add(geoHashGeneral);
+    const toCheck = [centralGeoHash];
+
+    while (toCheck.length > 0) {
+        const current = toCheck.pop();
+        
+        if (current && !geoHashSet.has(current)) {  
+            const [minLat, minLon, maxLat, maxLon] = geohash.decode_bbox(current);
+
+            // Checks if any corner of the geohash is within the user_data.radius
+            if (isCornerWithinRadius(user_data.lat, user_data.lng, maxLat, maxLon, user_data.radius) || 
+                isCornerWithinRadius(user_data.lat, user_data.lng, minLat, maxLon, user_data.radius) || 
+                isCornerWithinRadius(user_data.lat, user_data.lng, maxLat, minLon, user_data.radius) || 
+                isCornerWithinRadius(user_data.lat, user_data.lng, minLat, minLon, user_data.radius)) {
+
+                geoHashSet.add(current);
+                const neighbors = geohash.neighbors(current);
+                toCheck.push(...neighbors);
+            }
+        }
     }
+    geoHashSet.add(centralGeoHash) // add main geohash if not exist
     return Array.from(geoHashSet);
+}
+
+// Utility function to determine if a corner of a geohash box is within the given radius
+function isCornerWithinRadius(user_lat: number, user_lng:number, lat: number, lon: number, radius = 2000): boolean {
+    const MAX_RADIUS = 5000
+    if (MAX_RADIUS < radius) {
+        radius = MAX_RADIUS;
+    }
+    const distance = getDistance(
+        { latitude: user_lat, longitude: user_lng }, 
+        { latitude: lat, longitude: lon }
+    );   // Assumes you have a function to calculate distance
+    return distance <= radius;
 }
 
 // geoHashPrecition = 5 is the default (4.89km × 4.89km)
@@ -355,7 +383,7 @@ async function startServerWithHttps() {
   });
 }
 
-startServerWithHttps();
+startServerWithoutHttpsForDebugOnly();
 
 
 //__________________________________________________________________________//
@@ -370,5 +398,4 @@ startServerWithHttps();
 // install ngrok globaly : "npm install ngrok -g" 
 // and then : "ngrok http 5600"
 //ngrok authtoken 27ZMPFvj1rAMBK80Sxm7pjJuQGd_7TSnsVtTyy5NELsRvJ856
-
 

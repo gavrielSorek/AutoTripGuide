@@ -1,10 +1,13 @@
 import 'dart:collection';
 
 import 'package:journ_ai/Map/map.dart';
+import 'package:journ_ai/Map/pois_attributes_calculator.dart';
 import 'package:journ_ai/Map/speed_slider_tile.dart';
 import 'package:flutter/material.dart';
 
 import '../Map/globals.dart';
+import '../Map/searching_range_slider_tile.dart';
+import 'internal_map_events.dart';
 
 class NavigationDrawer extends StatefulWidget {
   static Map<String, GlobalKey<ScaffoldState>> pageNameToScaffoldKey =
@@ -35,10 +38,11 @@ class NavigationDrawer extends StatefulWidget {
   State<StatefulWidget> createState() {
     return _NavigationDrawerState();
   }
-
 }
+
 class _NavigationDrawerState extends State<NavigationDrawer> {
   Color chosenTileColor = Colors.lightBlueAccent;
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -61,8 +65,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     decoration: BoxDecoration(shape: BoxShape.circle),
                     child: CircleAvatar(
                       backgroundColor: Colors.blue,
-                      backgroundImage: NetworkImage(Globals.globalController
-                          .googleAccount.value?.photoUrl ??
+                      backgroundImage: NetworkImage(Globals
+                              .globalController.googleAccount.value?.photoUrl ??
                           ""),
                     ),
                   ),
@@ -98,17 +102,17 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
           ),
           ListTile(
             tileColor:
-            ModalRoute.of(context)?.settings.name == '/history-screen'
-                ? chosenTileColor
-                : null,
+                ModalRoute.of(context)?.settings.name == '/history-screen'
+                    ? chosenTileColor
+                    : null,
             leading: Icon(
               Icons.history,
             ),
             title: const Text('History'),
             onTap: () {
               NavigationDrawer.closeDrawer(
-                  NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)
-                      ?.settings.name]);
+                  NavigationDrawer.pageNameToScaffoldKey[
+                      ModalRoute.of(context)?.settings.name]);
               Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.pushNamed(context, '/history-screen');
             },
@@ -137,8 +141,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             onTap: () {
               Globals.globalUserMapKey.currentState?.reloadPois();
               NavigationDrawer.closeDrawer(
-                  NavigationDrawer.pageNameToScaffoldKey[ModalRoute.of(context)
-                      ?.settings.name]);
+                  NavigationDrawer.pageNameToScaffoldKey[
+                      ModalRoute.of(context)?.settings.name]);
             },
           ),
           ListTile(
@@ -153,12 +157,20 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                   builder: (BuildContext context) {
                     return Container(
                       child: Wrap(
-                        children: UserMap.STYLE_NAME_TO_STYLE.keys.toList().map((String style) {
+                        children: UserMap.STYLE_NAME_TO_STYLE.keys
+                            .toList()
+                            .map((String style) {
                           return ListTile(
                             title: Text(style),
-                            tileColor: style == Globals.globalUserMapKey.currentState?.currentStyle ? Colors.blue[100] : null,  // Check if current style
+                            tileColor: style ==
+                                    Globals.globalUserMapKey.currentState
+                                        ?.currentStyle
+                                ? Colors.blue[100]
+                                : null,
+                            // Check if current style
                             onTap: () {
-                              Globals.globalUserMapKey.currentState?.currentStyle = style;
+                              Globals.globalUserMapKey.currentState
+                                  ?.currentStyle = style;
                               Navigator.of(context).pop();
                             },
                           );
@@ -172,7 +184,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                 backgroundColor: Colors.grey[300], // Choose your desired color
                 child: Icon(
                   Icons.arrow_drop_down,
-                  size: 30.0,  // Increase the size as needed
+                  size: 30.0, // Increase the size as needed
                 ),
               ),
             ),
@@ -197,12 +209,23 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             initialSpeed: Globals.globalGuideAudioPlayerHandler.speed *
                 SpeedSliderTile.DEFAULT_MAX,
             onChanged: (double val) {
-              Globals.globalGuideAudioPlayerHandler.setSpeed(val /
-                  SpeedSliderTile.DEFAULT_MAX);
+              Globals.globalGuideAudioPlayerHandler
+                  .setSpeed(val / SpeedSliderTile.DEFAULT_MAX);
             },
             title: Container(
               alignment: Alignment.center,
               child: Text('Audio Speed:'),
+            ),
+          ),
+          SearchingRangeSliderTile(
+            initialRange: PoisAttributesCalculator.getMaxDist(), // e.g., 2500.0
+            onChanged: (double val) {
+              PoisAttributesCalculator.setMaxDist(val);
+              InternaMapEvents.instance.reloadPoisEvent.add(null);
+            },
+            title: Container(
+              alignment: Alignment.center,
+              child: Text('Search Range:'),
             ),
           ),
         ],

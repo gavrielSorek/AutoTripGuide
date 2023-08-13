@@ -7,6 +7,7 @@ import 'package:journ_ai/Map/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../General/Image_from_url_list.dart';
+import '../General/internal_map_events.dart';
 import '../General/progress_button.dart';
 import '../General/uniform_widgets.dart';
 import 'guid_bloc/guide_bloc.dart';
@@ -53,6 +54,9 @@ class Guide {
         }
     });
     storiesDialogBox = GuidDialogBox();
+    InternaMapEvents.instance.reloadPoisEvent.stream.listen((_) {
+      reloadPois();
+    });
   }
 
   void reloadPois() {
