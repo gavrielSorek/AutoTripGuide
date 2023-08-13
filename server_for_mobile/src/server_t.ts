@@ -62,7 +62,10 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
  })
  // get searchPage page
  app.get("/searchNearbyPois", async function (req:any, res:Response) { //next requrie (the function will not stop the program)
-    const userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language, 'radius': req.query.radius}
+    const userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language, 'radius': parseFloat(req.query.radius)}
+    userData.lat = 32.805
+    userData.lng = 35.09
+
     const searchParams = {}
     addUserDataTosearchParams(searchParams, userData)
     logger.info(`Search pois for user: lat: ${userData.lat}, lng: ${userData.lng}`)
@@ -134,50 +137,39 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
      }
  }
 
-function getGeoHashBoundsStrings(user_data: any, geoHashPrecision = 5): string[] {
+ function getGeoHashBoundsStrings(user_data: any, geoHashPrecision = 5): string[] {
     const centralGeoHash = geohash.encode(user_data.lat, user_data.lng, geoHashPrecision);
     const geoHashSet = new Set<string>();
     const toCheck = [centralGeoHash];
 
     while (toCheck.length > 0) {
         const current = toCheck.pop();
-        
-        if (current && !geoHashSet.has(current)) {  
+
+        if (current && !geoHashSet.has(current)) {
             const [minLat, minLon, maxLat, maxLon] = geohash.decode_bbox(current);
 
-            // Checks if any corner of the geohash is within the user_data.radius
-            if (isCornerWithinRadius(user_data.lat, user_data.lng, maxLat, maxLon, user_data.radius) || 
-                isCornerWithinRadius(user_data.lat, user_data.lng, minLat, maxLon, user_data.radius) || 
-                isCornerWithinRadius(user_data.lat, user_data.lng, maxLat, minLon, user_data.radius) || 
-                isCornerWithinRadius(user_data.lat, user_data.lng, minLat, minLon, user_data.radius)) {
-
+            // If any part of the geohash's bounding box intersects with the circle of radius `r`, we'll consider it.
+            if (doesBoxIntersectCircle(minLat, minLon, maxLat, maxLon, user_data.lat, user_data.lng, user_data.radius)) {
                 geoHashSet.add(current);
                 const neighbors = geohash.neighbors(current);
                 toCheck.push(...neighbors);
             }
         }
     }
-    geoHashSet.add(centralGeoHash) // add main geohash if not exist
+
     return Array.from(geoHashSet);
 }
 
-// Utility function to determine if a corner of a geohash box is within the given radius
-function isCornerWithinRadius(user_lat: number, user_lng:number, lat: number, lon: number, radius = 2000): boolean {
-    const MAX_RADIUS = 5000
-    if (MAX_RADIUS < radius) {
-        radius = MAX_RADIUS;
-    }
-    const distance = getDistance(
-        { latitude: user_lat, longitude: user_lng }, 
-        { latitude: lat, longitude: lon }
-    );   // Assumes you have a function to calculate distance
-    return distance <= radius;
-}
+function doesBoxIntersectCircle(minLat: number, minLon: number, maxLat: number, maxLon: number, circleLat: number, circleLon: number, radius: number): boolean {
+    // Find the closest point on the box to the center of the circle
+    const closestX = Math.max(minLon, Math.min(circleLon, maxLon));
+    const closestY = Math.max(minLat, Math.min(circleLat, maxLat));
 
-// geoHashPrecition = 5 is the default (4.89km × 4.89km)
-function getGeoHashBoundsString(user_data:any, geoHashPrecition = 5){ 
-    const bounds= geohash.encode(user_data.lat, user_data.lng, geoHashPrecition)
-    return bounds;
+    // Calculate the distance between the center of the circle and the closest point
+    const distance = getDistance({ latitude: circleLat, longitude: circleLon }, { latitude: closestY, longitude: closestX });
+
+    // If the distance is less than the radius, they intersect
+    return distance <= radius;
 }
 
 function getGeoHashBoundsByGeoStr(geohashStr:string) {

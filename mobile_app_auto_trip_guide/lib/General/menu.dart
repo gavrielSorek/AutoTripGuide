@@ -218,7 +218,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             ),
           ),
           SearchingRangeSliderTile(
-            initialRange: PoisAttributesCalculator.getMaxDist(), // e.g., 2500.0
+            initialRange: PoisAttributesCalculator.getMaxDist(), // e.g., 2000.0
             onChanged: (double val) {
               PoisAttributesCalculator.setMaxDist(val);
               InternaMapEvents.instance.reloadPoisEvent.add(null);
