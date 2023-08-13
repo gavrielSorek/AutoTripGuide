@@ -62,10 +62,10 @@ app.get("/", async function (req:Request, res:Response) { //next requrie (the fu
  })
  // get searchPage page
  app.get("/searchNearbyPois", async function (req:any, res:Response) { //next requrie (the function will not stop the program)
+    if (!req.query.radius) {
+        req.query.radius = 2000; // default
+    }
     const userData = {'lat': parseFloat(req.query.lat), 'lng': parseFloat(req.query.lng), 'speed': parseFloat(req.query.speed), 'heading': parseFloat(req.query.heading), 'language': req.query.language, 'radius': parseFloat(req.query.radius)}
-    userData.lat = 32.805
-    userData.lng = 35.09
-
     const searchParams = {}
     addUserDataTosearchParams(searchParams, userData)
     logger.info(`Search pois for user: lat: ${userData.lat}, lng: ${userData.lng}`)
@@ -375,7 +375,7 @@ async function startServerWithHttps() {
   });
 }
 
-startServerWithoutHttpsForDebugOnly();
+startServerWithHttps();
 
 
 //__________________________________________________________________________//
