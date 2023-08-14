@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:journ_ai/Map/globals.dart';
+import 'package:journ_ai/Map/pois_attributes_calculator.dart';
 import 'package:journ_ai/Map/types.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
@@ -67,13 +68,12 @@ class PersonalizeRecommendation {
   }
 
   static double normalizeDistance(double distanceInMeters) {
-    const double maxDistance =
-        10000; // maximum distance considered (change as needed)
+    double maxDistance =
+        PoisAttributesCalculator.getMaxDist(); // maximum distance considered (change as needed)
     return 1 - min(distanceInMeters, maxDistance) / maxDistance;
   }
 
   static int sortMapPoisByCombinedScore(MapPoi mapPoi1, MapPoi mapPoi2) {
-    final double vendorScoreWeight = 1 - _DISTANCE_WEIGHT;
 
     double vendorScorePoi1 = getVendorScore(mapPoi1.poi);
     double distInMetersPoi1 = getDistanceInMeters(mapPoi1.poi);
@@ -86,12 +86,12 @@ class PersonalizeRecommendation {
 
     // calculate combined scores
     double combinedScorePoi1 =
-        _DISTANCE_WEIGHT * normalizedDistancePoi1 + vendorScoreWeight * vendorScorePoi1;
+        _DISTANCE_WEIGHT * normalizedDistancePoi1 + (1 - _DISTANCE_WEIGHT) * vendorScorePoi1;
     double combinedScorePoi2 =
-        _DISTANCE_WEIGHT * normalizedDistancePoi2 + vendorScoreWeight * vendorScorePoi2;
+        _DISTANCE_WEIGHT * normalizedDistancePoi2 + (1 - _DISTANCE_WEIGHT) * vendorScorePoi2;
 
-    return (combinedScorePoi2 * 100).round() -
-        (combinedScorePoi1 * 100).round(); // for descending sort
+    return (combinedScorePoi2 * 1000).round() -
+        (combinedScorePoi1 * 1000).round(); // for descending sort
   }
 
   static const maxGoogleReviewers = 1000;
