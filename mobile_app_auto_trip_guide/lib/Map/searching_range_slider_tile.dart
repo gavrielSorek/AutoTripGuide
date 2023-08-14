@@ -5,15 +5,17 @@ class SearchingRangeSliderTile extends StatefulWidget {
   final double initialRange;
   final ValueChanged<double> onChanged;
   final Widget title;
+  final double minVal;
+  final double maxVal;
 
-  static const double DEFAULT_MIN = 500.0;
-  static const double DEFAULT_MAX = 5000.0;
 
   SearchingRangeSliderTile({
     Key? key,
     required this.initialRange,
     required this.onChanged,
     required this.title,
+    required this.minVal,
+    required this.maxVal,
   }) : super(key: key);
 
   @override
@@ -35,8 +37,8 @@ class _SearchingRangeSliderTileState extends State<SearchingRangeSliderTile> {
       title: widget.title,
       subtitle: Slider(
         value: _currentRange,
-        min: SearchingRangeSliderTile.DEFAULT_MIN,
-        max: SearchingRangeSliderTile.DEFAULT_MAX,
+        min: widget.minVal,
+        max: widget.maxVal,
         divisions: 90, // This is the added line for 50 value jumps.
         onChanged: (double newValue) {
           setState(() {

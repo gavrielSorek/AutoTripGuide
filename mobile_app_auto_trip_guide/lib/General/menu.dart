@@ -1,11 +1,13 @@
 import 'dart:collection';
 
 import 'package:journ_ai/Map/map.dart';
+import 'package:journ_ai/Map/personalize_recommendation.dart';
 import 'package:journ_ai/Map/pois_attributes_calculator.dart';
 import 'package:journ_ai/Map/speed_slider_tile.dart';
 import 'package:flutter/material.dart';
 
 import '../Map/globals.dart';
+import '../Map/preferences_slider_tile.dart';
 import '../Map/searching_range_slider_tile.dart';
 import 'internal_map_events.dart';
 
@@ -210,8 +212,24 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             title: Container(
               alignment: Alignment.center,
               child: Text('Search Range:'),
-            ),
+            ), minVal: 100, maxVal: 5000,
           ),
+          PreferencesSliderTile(
+            initialRange: PersonalizeRecommendation.getDistWeight(),
+            onChanged: (double val) {
+              PersonalizeRecommendation.setDistWeight(val);
+              InternaMapEvents.instance.reloadPoisEvent.add(null);
+            },
+            title: Container(
+              alignment: Alignment.center,
+              child: Text('Distance Preference:'),
+            ),
+            leftSuffix: 'Good',
+            rightSuffix: 'Close',
+            minVal: 0,
+            maxVal: 1,
+          )
+          ,
           ListTile(
             leading: Icon(
               Icons.exit_to_app,

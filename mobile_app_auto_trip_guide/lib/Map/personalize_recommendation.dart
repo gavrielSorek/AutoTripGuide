@@ -5,6 +5,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 
 class PersonalizeRecommendation {
+  static double _DISTANCE_WEIGHT = 0.6;
+
+  static double getDistWeight() {
+   return  _DISTANCE_WEIGHT;
+  }
+
+  static void setDistWeight(double val) {
+    _DISTANCE_WEIGHT = val;
+  }
+
   // calculate the distance between two locations from LatLng
   static double calculateDistance(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
@@ -63,8 +73,7 @@ class PersonalizeRecommendation {
   }
 
   static int sortMapPoisByCombinedScore(MapPoi mapPoi1, MapPoi mapPoi2) {
-    final double vendorScoreWeight = 0.4;
-    final double distanceWeight = 1 - vendorScoreWeight;
+    final double vendorScoreWeight = 1 - _DISTANCE_WEIGHT;
 
     double vendorScorePoi1 = getVendorScore(mapPoi1.poi);
     double distInMetersPoi1 = getDistanceInMeters(mapPoi1.poi);
@@ -77,9 +86,9 @@ class PersonalizeRecommendation {
 
     // calculate combined scores
     double combinedScorePoi1 =
-        distanceWeight * normalizedDistancePoi1 + vendorScoreWeight * vendorScorePoi1;
+        _DISTANCE_WEIGHT * normalizedDistancePoi1 + vendorScoreWeight * vendorScorePoi1;
     double combinedScorePoi2 =
-        distanceWeight * normalizedDistancePoi2 + vendorScoreWeight * vendorScorePoi2;
+        _DISTANCE_WEIGHT * normalizedDistancePoi2 + vendorScoreWeight * vendorScorePoi2;
 
     return (combinedScorePoi2 * 100).round() -
         (combinedScorePoi1 * 100).round(); // for descending sort

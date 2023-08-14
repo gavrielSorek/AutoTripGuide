@@ -85,7 +85,7 @@ class GuideBloc extends Bloc<GuideEvent, GuideDialogState> {
         List<MapPoi> unGuidedPois =
             _poisToGuide.sublist(nextIdx, _poisToGuide.length);
         unGuidedPois = PoisAttributesCalculator.filterMapPoisByDistance(unGuidedPois, Globals.globalUserMap.userLocation);
-        unGuidedPois.sort(PersonalizeRecommendation.sortMapPoisByDist);
+        unGuidedPois.sort(PersonalizeRecommendation.sortMapPoisByCombinedScore);
         // Replace the original portion with the sorted sublist
         _poisToGuide.replaceRange(
             nextIdx, _poisToGuide.length, unGuidedPois);
