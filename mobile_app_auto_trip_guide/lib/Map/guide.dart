@@ -116,7 +116,9 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
         ],
         color: Color.fromRGBO(255, 255, 255, 0.75),
       ),
-      child: Column(children: widgetList),
+      child: SingleChildScrollView(
+        child: Column(children: widgetList),
+      ),
     );
   }
 
@@ -156,22 +158,20 @@ class _GuidDialogBoxState extends State<GuidDialogBox> {
             )),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-          child: Flexible(
-            child: TextButton(
-              style: TextButton.styleFrom(
-                padding: EdgeInsets.all(0), // Adjust if necessary
-              ),
-              onPressed: () {
-                context.read<GuideBloc>().add(ShowLastOptionalCategories());
-              },
-              child: Text(
-                'See Previous Places',
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                ),
+          child: TextButton(
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.all(0), // Adjust if necessary
+            ),
+            onPressed: () {
+              context.read<GuideBloc>().add(ShowLastOptionalCategories());
+            },
+            child: Text(
+              'See Previous Places',
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline,
               ),
             ),
           ),
