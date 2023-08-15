@@ -204,7 +204,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             ),
           ),
           SearchingRangeSliderTile(
-            initialRange: PoisAttributesCalculator.getMaxDist(), // e.g., 2000.0
+            initialRange: PoisAttributesCalculator.getMaxDist(),
+            // e.g., 2000.0
             onChanged: (double val) {
               PoisAttributesCalculator.setMaxDist(val);
               InternaMapEvents.instance.reloadPoisEvent.add(null);
@@ -212,7 +213,9 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             title: Container(
               alignment: Alignment.center,
               child: Text('Search Range:'),
-            ), minVal: 100, maxVal: 5000,
+            ),
+            minVal: 100,
+            maxVal: 5000,
           ),
           PreferencesSliderTile(
             initialRange: PersonalizeRecommendation.getDistWeight(),
@@ -222,14 +225,13 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
             },
             title: Container(
               alignment: Alignment.center,
-              child: Text('Distance Preference:'),
+              child: Text('Quality or Proximity?'),
             ),
-            leftSuffix: 'Good',
+            leftSuffix: 'Rated',
             rightSuffix: 'Close',
             minVal: 0,
             maxVal: 1,
-          )
-          ,
+          ),
           ListTile(
             leading: Icon(
               Icons.exit_to_app,
