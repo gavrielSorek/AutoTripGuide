@@ -161,7 +161,7 @@ class LoginPage extends StatelessWidget {
                             ),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                _launchURL("https://www.getjournai.com/app");
+                                _launchURL("https://www.getjournai.com/privacy");
                               },
                           ),
                         ],
