@@ -130,7 +130,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return false; // the user wont be able to pop this page, only the application
+        return false;
       },
       child: Scaffold(
         body: SingleChildScrollView(
@@ -150,7 +150,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  'Our app uses your location to provide you with personalized recommendations and a better overall experience.',
+                  'Our app uses your location to provide personalized recommendations, even when the app is in the background.',
                   style: TextStyle(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),
@@ -168,9 +168,10 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                     verifyPermissionsAndContinue();
                   },
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blue,
                     padding:
-                        EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                    EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16.0),
                     ),
