@@ -14,11 +14,27 @@
       },
       "oauth_client": [
         {
+          "client_id": "505998861423-egj5g0rsk0r2eflkbisck6h6unk2d66p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ai.getjourn.journai",
+            "certificate_hash": "9ecd5fd069dc9f14dd1dc37d71ccf114b90dc127"
+          }
+        },
+        {
           "client_id": "505998861423-p0osotpji585o7msotp3nqnjk6nbhj25.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "ai.getjourn.journai",
             "certificate_hash": "a4eb43340ec2403ee2392edeb4fdf2a9b48a3ce3"
+          }
+        },
+        {
+          "client_id": "505998861423-rn611v33iu71p5u6vcckmelgev77fksu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "ai.getjourn.journai",
+            "certificate_hash": "70a37c0ae536000d5dfddd5bb5d3087494ca8a75"
           }
         },
         {
