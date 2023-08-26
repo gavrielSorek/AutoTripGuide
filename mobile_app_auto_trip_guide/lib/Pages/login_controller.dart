@@ -1,36 +1,45 @@
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../Map/globals.dart';
 
 class LoginController extends GetxController {
-  var _googleSignin = GoogleSignIn();
+  final GoogleSignIn _googleSignin = GoogleSignIn();
   var googleAccount = Rx<GoogleSignInAccount?>(null);
-  bool _isSignedIn = false;
+  var _isSignedIn = false.obs;  // Using an observable for the signed-in state
 
-  login() async {
-    bool success = false;
+  Future<void> login() async {
+    // First, try silent sign-in
+    googleAccount.value = await _googleSignin.signInSilently();
 
-    while (!success) {
+    // If silent sign-in returns null, show the dialog
+    if (googleAccount.value == null) {
       try {
         googleAccount.value = await _googleSignin.signIn();
-        _isSignedIn = await _googleSignin.isSignedIn();
-        success = true;
+        (await SharedPreferences.getInstance()).setString('lastLoginMethod','GOOGLE');
       } catch (e) {
-        // Wait for 5 seconds before retrying
+        // You can handle or log the exception here if required
         await Future.delayed(Duration(seconds: 5));
+        return login();  // Retry the login method
       }
     }
-    _isSignedIn = await _googleSignin.isSignedIn();
+    _updateSignInStatus();
   }
 
-  logout() async {
+  Future<void> logout() async {
     googleAccount.value = await _googleSignin.signOut();
-    _isSignedIn = await _googleSignin.isSignedIn();
+    _updateSignInStatus();
   }
 
-  init() async {
-    _isSignedIn = await _googleSignin.isSignedIn();
+  Future<void> init() async {
+    _updateSignInStatus();
   }
 
-  get isUserSignIn => _isSignedIn;
+  void _updateSignInStatus() async {
+    _isSignedIn.value = await _googleSignin.isSignedIn();
+  }
+
+  bool get isUserGoogleSignIn => _isSignedIn.value;
 }

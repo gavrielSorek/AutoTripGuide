@@ -5,6 +5,7 @@ import 'package:journ_ai/Map/personalize_recommendation.dart';
 import 'package:journ_ai/Map/pois_attributes_calculator.dart';
 import 'package:journ_ai/Map/speed_slider_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Map/globals.dart';
 import '../Map/preferences_slider_tile.dart';
@@ -242,7 +243,10 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               style: TextStyle(color: Colors.red),
             ),
             onTap: () async {
+              Globals.isUserSignIn = false;
               await Globals.globalController.logout();
+              (await SharedPreferences.getInstance()).remove('userIdentifier');
+              (await SharedPreferences.getInstance()).remove('lastLoginMethod');
               await Globals.stopAll();
               Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.pushReplacementNamed(context, '/init-screen');

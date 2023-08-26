@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Map/globals.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -85,7 +86,7 @@ class LoginPage extends StatelessWidget {
                     Globals.appEvents.signIn('google');
                     // TODO: google sign in failed ?
                     await Globals.globalController.login();
-                    if (Globals.globalController.isUserSignIn) {
+                    if (Globals.globalController.isUserGoogleSignIn) {
                       await Globals.loadUserDetails();
                       Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
                     }
@@ -103,15 +104,48 @@ class LoginPage extends StatelessWidget {
               SizedBox(height: PADDING_BETWEEN_BUTTONS),
                 Platform.isIOS ? FloatingActionButton.extended(
                 onPressed: () async {
-                  try{
-                  final credential = await SignInWithApple.getAppleIDCredential(
-                    scopes: [
-                      AppleIDAuthorizationScopes.email,
-                      AppleIDAuthorizationScopes.fullName,
-                    ],
-                  );
-                  print(credential);
-                  } catch(e){
+                  try {
+                    final credential =
+                        await SignInWithApple.getAppleIDCredential(
+                      scopes: [
+                        AppleIDAuthorizationScopes.email,
+                        AppleIDAuthorizationScopes.fullName,
+                      ],
+                    );
+                    var savedEmail = (await SharedPreferences.getInstance()).getString('userEmail');
+                    var savedName = (await SharedPreferences.getInstance()).getString('userName');
+                    if (savedEmail== null && (credential.email == null ||
+                        credential.email!.isEmpty)) {
+                      // Display dialog to the user
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('Error'),
+                            content: Text(
+                                'Email is required to sign in. Please share your email address to proceed.'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pop(); // Close the dialog
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      return;
+                    } else{
+                      await Globals.loadUserDetails(loginMethod: LoginMethod.APPLE,userEmail: credential.email ?? savedEmail ,userName: credential.givenName ?? savedName);
+                      (await SharedPreferences.getInstance()).setString('userIdentifier',credential.userIdentifier!);
+                      (await SharedPreferences.getInstance()).setString('userEmail',credential.email ?? savedEmail!);
+                      (await SharedPreferences.getInstance()).setString('userName',credential.givenName?? savedName!);
+                      (await SharedPreferences.getInstance()).setString('lastLoginMethod','APPLE');                      
+                      Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
+                    }
+                  } catch (e) {
                     print(e);
                   }
                   // Use the credential to sign in to your backend service

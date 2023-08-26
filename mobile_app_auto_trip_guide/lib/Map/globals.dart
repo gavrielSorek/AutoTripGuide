@@ -9,13 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../General/generals.dart';
 import '../Utils/BufferedStream.dart';
 import 'background_audio_player.dart';
 import '../Pages/login_controller.dart';
 import 'apps_launcher.dart';
 import 'map.dart';
-
+enum LoginMethod {
+  GOOGLE,
+  APPLE,
+}
 class Globals {
   static Sizes globalWidgetsSizes = Sizes();
   static final GlobalKey<UserMapState> globalUserMapKey = GlobalKey();
@@ -44,6 +48,7 @@ class Globals {
   static IconsBytesHolder svgPoiMarkerBytes = IconsBytesHolder();
   static late AppEvents appEvents;
   static late Mixpanel mixpanel;
+  static bool isUserSignIn = false;
 
   static void setGlobalVisitedPoisList(List<VisitedPoi> visitedPoisList) {
     globalVisitedPoi = visitedPoisList;
@@ -114,14 +119,34 @@ class Globals {
 
 
     await globalGuideAudioPlayerHandler.initAudioPlayer();
-    await globalController.init();
-    if (globalController.isUserSignIn) {
-      await globalController.login();
-      Globals.appEvents.signInCompleted('success');
-      await loadUserDetails();
-      if(globalUserInfoObj != null && globalUserInfoObj!.emailAddr != null){
-       appEvents.email = globalUserInfoObj!.emailAddr!;
-      }
+    // check if user is signed in or not
+    var lastLoginMethod = (await SharedPreferences.getInstance()).getString('lastLoginMethod');
+    switch(lastLoginMethod){
+      case 'GOOGLE':
+          await globalController.login();
+          await loadUserDetails();
+          isUserSignIn = true;
+          Globals.appEvents.signInCompleted('success');
+          break;
+      case 'APPLE':
+          var userIdentifier = (await SharedPreferences.getInstance()).getString('userIdentifier');
+          var credential = await SignInWithApple.getCredentialState(userIdentifier ?? '');
+          if(credential == CredentialState.authorized){
+            var email = (await SharedPreferences.getInstance()).getString('userEmail');
+            var userName = (await SharedPreferences.getInstance()).getString('userName');
+            await loadUserDetails(loginMethod: LoginMethod.APPLE,userEmail: email,userName: userName);
+            Globals.appEvents.signInCompleted('success');
+            isUserSignIn = true;
+            
+          } else{
+           (await SharedPreferences.getInstance()).remove('userIdentifier');
+           (await SharedPreferences.getInstance()).remove('lastLoginMethod');
+          }
+          break;
+    }
+
+    if(globalUserInfoObj != null && globalUserInfoObj!.emailAddr != null){
+      appEvents.email = globalUserInfoObj!.emailAddr!;
     }
   }
 
@@ -139,11 +164,19 @@ class Globals {
     globalGuideAudioPlayerHandler.stop();
   }
 
-  static loadUserDetails() async {
-    Globals.globalEmail =
-        Globals.globalController.googleAccount.value?.email ?? ' ';
+  static loadUserDetails({loginMethod = LoginMethod.GOOGLE,userEmail='',userName=''}) async {
+    var email = '';
+    var displayName = '';
+    if(loginMethod == LoginMethod.GOOGLE){
+      email = globalController.googleAccount.value?.email ?? ' ';
+      displayName = globalController.googleAccount.value?.displayName ?? ' ';
+    } else if(loginMethod == LoginMethod.APPLE){
+      email = userEmail;
+      displayName = userName;
+    }
+    Globals.globalEmail = email;
     Globals.globalServerCommunication.addNewUser(UserInfo(
-        Globals.globalController.googleAccount.value?.displayName ?? ' ',
+        displayName,
         Globals.globalEmail,
         ' ',
         ' ',
@@ -165,7 +198,7 @@ class Globals {
         .getCategories(Globals.globalDefaultLanguage);
     Globals.setFavoriteCategories(await Globals.globalServerCommunication
         .getFavorCategories(
-        Globals.globalController.googleAccount.value?.email ?? ' '));
+        email ?? ' '));
     Globals.setGlobalVisitedPoisList(await Globals.globalServerCommunication
         .getPoisHistory(Globals.globalEmail));
   }

@@ -56,7 +56,7 @@ class _AppInitializationPageState extends State<AppInitializationPage> {
     await Globals.init(context);
 
     String route;
-   if(Globals.globalController.isUserSignIn){
+   if( Globals.isUserSignIn ){
       route = '/HomePage';
     } else {
       route = '/login-screen';
