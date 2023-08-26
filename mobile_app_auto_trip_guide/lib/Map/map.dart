@@ -221,7 +221,7 @@ class UserMapState extends State<UserMap>
   late mapbox.MapboxMap map;
   Key _mapboxUniqueKey = UniqueKey(); // for recreating the widget purposes
   late mapbox.CameraPosition _cameraPosition;
-  bool _compassEnabled = true;
+  bool _compassEnabled = false;
   mapbox.CameraTargetBounds _cameraTargetBounds =
       mapbox.CameraTargetBounds.unbounded;
   mapbox.MinMaxZoomPreference _minMaxZoomPreference =

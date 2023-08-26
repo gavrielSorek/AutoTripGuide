@@ -104,6 +104,7 @@ class _JournAiState extends State<JournAi> {
         primarySwatch: generateMaterialColor(Globals.globalColor),
         fontFamily: 'Roboto',
       ),
+      debugShowCheckedModeBanner: false,
       initialRoute: '/init-screen',
       routes: {
         // When navigating to the "/" route, build the FirstScreen widget.
