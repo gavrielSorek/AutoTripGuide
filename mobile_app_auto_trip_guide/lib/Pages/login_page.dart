@@ -113,38 +113,14 @@ class LoginPage extends StatelessWidget {
                       ],
                     );
                     var savedEmail = (await SharedPreferences.getInstance()).getString('userEmail');
+                    var nameFromEmail = (credential.email != null && credential.email!.contains('@')) ? credential.email!.split('@')[0] : null;
                     var savedName = (await SharedPreferences.getInstance()).getString('userName');
-                    if (savedEmail== null && (credential.email == null ||
-                        credential.email!.isEmpty)) {
-                      // Display dialog to the user
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text('Error'),
-                            content: Text(
-                                'Email is required to sign in. Please share your email address to proceed.'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('OK'),
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .pop(); // Close the dialog
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                      return;
-                    } else{
-                      await Globals.loadUserDetails(loginMethod: LoginMethod.APPLE,userEmail: credential.email ?? savedEmail ,userName: credential.givenName ?? savedName);
-                      (await SharedPreferences.getInstance()).setString('userIdentifier',credential.userIdentifier!);
-                      (await SharedPreferences.getInstance()).setString('userEmail',credential.email ?? savedEmail!);
-                      (await SharedPreferences.getInstance()).setString('userName',credential.givenName?? savedName!);
-                      (await SharedPreferences.getInstance()).setString('lastLoginMethod','APPLE');                      
-                      Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
-                    }
+                    await Globals.loadUserDetails(loginMethod: LoginMethod.APPLE,userEmail: credential.email ?? savedEmail ,userName: credential.givenName?? nameFromEmail ??savedName!);
+                    (await SharedPreferences.getInstance()).setString('userIdentifier',credential.userIdentifier!);
+                    (await SharedPreferences.getInstance()).setString('userEmail',credential.email ?? savedEmail!);
+                    (await SharedPreferences.getInstance()).setString('userName',credential.givenName?? nameFromEmail ??savedName!);
+                    (await SharedPreferences.getInstance()).setString('lastLoginMethod','APPLE');                      
+                    Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
                   } catch (e) {
                     print(e);
                   }
