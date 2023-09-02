@@ -88,6 +88,7 @@ class LoginPage extends StatelessWidget {
                     await Globals.globalController.login();
                     if (Globals.globalController.isUserGoogleSignIn) {
                       await Globals.loadUserDetails();
+                      Globals.appEvents.email = Globals.globalUserInfoObj?.emailAddr ?? '';;                
                       Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
                     }
                   },
@@ -105,6 +106,7 @@ class LoginPage extends StatelessWidget {
                 Platform.isIOS ? FloatingActionButton.extended(
                 onPressed: () async {
                   try {
+                    Globals.appEvents.signIn('apple');
                     final credential =
                         await SignInWithApple.getAppleIDCredential(
                       scopes: [
@@ -119,7 +121,8 @@ class LoginPage extends StatelessWidget {
                     (await SharedPreferences.getInstance()).setString('userIdentifier',credential.userIdentifier!);
                     (await SharedPreferences.getInstance()).setString('userEmail',credential.email ?? savedEmail!);
                     (await SharedPreferences.getInstance()).setString('userName',credential.givenName?? nameFromEmail ??savedName!);
-                    (await SharedPreferences.getInstance()).setString('lastLoginMethod','APPLE');                      
+                    (await SharedPreferences.getInstance()).setString('lastLoginMethod','APPLE');    
+                    Globals.appEvents.email = credential.email ?? savedEmail!;                  
                     Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
                   } catch (e) {
                     print(e);

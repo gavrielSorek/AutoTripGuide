@@ -123,18 +123,24 @@ class Globals {
     var lastLoginMethod = (await SharedPreferences.getInstance()).getString('lastLoginMethod');
     switch(lastLoginMethod){
       case 'GOOGLE':
+          Globals.appEvents.signIn('google');
           await globalController.login();
           await loadUserDetails();
           isUserSignIn = true;
+          Globals.appEvents.email = globalUserInfoObj!.emailAddr!;
+          appEvents.email = globalUserInfoObj!.emailAddr!;
           Globals.appEvents.signInCompleted('success');
           break;
       case 'APPLE':
+          Globals.appEvents.signIn('apple');
           var userIdentifier = (await SharedPreferences.getInstance()).getString('userIdentifier');
           var credential = await SignInWithApple.getCredentialState(userIdentifier ?? '');
           if(credential == CredentialState.authorized){
             var email = (await SharedPreferences.getInstance()).getString('userEmail');
             var userName = (await SharedPreferences.getInstance()).getString('userName');
             await loadUserDetails(loginMethod: LoginMethod.APPLE,userEmail: email,userName: userName);
+            Globals.appEvents.email = email!;
+            appEvents.email = email!;
             Globals.appEvents.signInCompleted('success');
             isUserSignIn = true;
             
@@ -145,9 +151,6 @@ class Globals {
           break;
     }
 
-    if(globalUserInfoObj != null && globalUserInfoObj!.emailAddr != null){
-      appEvents.email = globalUserInfoObj!.emailAddr!;
-    }
   }
 
   static clearAll() async {
