@@ -75,14 +75,14 @@ class PoisAttributesCalculator {
     return USER_RELATIVE_DIRECTIONS[directionNum] ?? '';
   }
 
-  static List<Poi> filterPois(List<Poi> pois, Position position) {
+  static List<Poi> filterPois(List<Poi> pois, bg.Coords position) {
     // can add more filters
     pois = filterPoisByDistance(pois, position);
     pois = filterHistoricalPois(pois);
     return pois;
   }
 
-  static List<Poi> filterPoisByDistance(List<Poi> pois, Position position) {
+  static List<Poi> filterPoisByDistance(List<Poi> pois, bg.Coords position) {
     pois.removeWhere((poi) =>
         getDistBetweenPoints(poi.latitude, poi.longitude, position.latitude,
             position.longitude) >
@@ -96,7 +96,7 @@ class PoisAttributesCalculator {
         userLocation.longitude) < _MAX_DIST;
   }
 
-  static List<MapPoi> filterMapPoisByDistance(List<MapPoi> mapPois, Position position) {
+  static List<MapPoi> filterMapPoisByDistance(List<MapPoi> mapPois, bg.Coords position) {
     mapPois.removeWhere((mapPoi) =>
     getDistBetweenPoints(mapPoi.poi.latitude, mapPoi.poi.longitude, position.latitude,
         position.longitude) >

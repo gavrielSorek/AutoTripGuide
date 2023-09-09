@@ -1,9 +1,8 @@
 import 'dart:math';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 import 'package:journ_ai/Map/globals.dart';
 import 'package:journ_ai/Map/pois_attributes_calculator.dart';
 import 'package:journ_ai/Map/types.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:geolocator/geolocator.dart';
 
 class PersonalizeRecommendation {
   static double _DISTANCE_WEIGHT = 0.6;
@@ -28,7 +27,7 @@ class PersonalizeRecommendation {
 
   // get distance of poi from user
   static double getDistanceInKm(Poi poi) {
-    Position userLocation = Globals.globalUserMap.userLocation;
+    bg.Coords userLocation = Globals.globalUserMap.userLocation;
     double dist = calculateDistance(userLocation.latitude,
         userLocation.longitude, poi.latitude, poi.longitude);
     return dist;

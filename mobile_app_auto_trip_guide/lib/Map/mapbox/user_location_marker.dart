@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
-import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
 import '../../Utils/background_location_service.dart';
@@ -27,7 +26,6 @@ abstract class UserLocationMarker {
   dynamic onMarkerUpdated;
   late HeadingTween _headingTween;
   late LatLngTween _locationTween;
-  StreamSubscription<Position>? _positionSubscription;
   late Animation<double> _headingAnimation;
   late Animation<LatLng> _moveAnimation;
   late VoidCallback _headingListener;
@@ -82,8 +80,7 @@ abstract class UserLocationMarker {
     _userSymbolManager = UserSymbolManager(mapController,
         iconAllowOverlap: true, textAllowOverlap: true);
     // Get the user's current location
-    bg.Coords coordinates = await BackgroundLocationService.locationService.getCurrentLocation();
-    Position position = Position(longitude: coordinates.longitude, latitude: coordinates.latitude, timestamp: null, accuracy: coordinates.accuracy, altitude: coordinates.altitude, heading: coordinates.heading, speed: coordinates.speed, speedAccuracy: coordinates.speedAccuracy);
+    bg.Coords position = await BackgroundLocationService.locationService.getCurrentLocation();
 
     // Create a LatLng object from the user's location
     LatLng userLocation = LatLng(position.latitude, position.longitude);
@@ -91,7 +88,6 @@ abstract class UserLocationMarker {
     await _userSymbolManager!.add(_symbol);
     locationMarkerInfo.heading = mapController.cameraPosition?.bearing ?? 0;
     _updateSymbol();
-    _positionSubscription?.cancel();
     BackgroundLocationService.locationService.onLocationChanged.listen((coordinates) {
         _locationTween.begin = _symbol.options.geometry;
         _locationTween.end = LatLng(coordinates.latitude, coordinates.longitude);
@@ -107,7 +103,6 @@ abstract class UserLocationMarker {
     _userSymbolManager?.dispose();
     _moveAnimationController.stop();
     _headingAnimationController.stop();
-    _positionSubscription?.cancel();
   }
 
   dispose() {
@@ -118,7 +113,6 @@ abstract class UserLocationMarker {
     _userSymbolManager?.dispose();
     _moveAnimationController.dispose();
     _headingAnimationController.dispose();
-    _positionSubscription?.cancel();
   }
 }
 

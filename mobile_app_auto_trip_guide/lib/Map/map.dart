@@ -59,13 +59,13 @@ class UserMap extends StatefulWidget {
   Timer? _scanningTimer;
 
   // inits
-  late Position userLocation; // the heading here isn't updated
+  late bg.Coords userLocation; // the heading here isn't updated
   double userHeading = 0; // the correct heading
   MapPoi? currentHighlightedPoi = null;
   bool isFirstScanning = true;
 
   // the last known location of the user in the old area - for new pois purposes
-  late Position lastAreaUserLocation;
+  late bg.Coords lastAreaUserLocation;
   static double DISTANCE_BETWEEN_AREAS = 1000; //1000 meters
 
   static Map<String, String> STYLE_NAME_TO_STYLE = {
@@ -90,14 +90,13 @@ class UserMap extends StatefulWidget {
 
   Future<void> mapInit(context) async {
     await LocationUtils.checkAndRequestLocationPermission(context);
-    bg.Coords coordinates = await BackgroundLocationService.locationService.getCurrentLocation();
-    userLocation = Position(longitude: coordinates.longitude, latitude: coordinates.latitude, timestamp: null, accuracy: coordinates.accuracy, altitude: coordinates.altitude, heading: coordinates.heading, speed: coordinates.speed, speedAccuracy: coordinates.speedAccuracy);
+    userLocation = await BackgroundLocationService.locationService.getCurrentLocation();
     lastAreaUserLocation = userLocation;
     BackgroundLocationService.locationService.listenToLocationChanges();
 
 
     BackgroundLocationService.locationService.onLocationChanged.listen((coordinates) {
-       locationChangedEvent(Position(longitude: coordinates.longitude, latitude: coordinates.latitude, timestamp: null, accuracy: coordinates.accuracy, altitude: coordinates.altitude, heading: coordinates.heading, speed: coordinates.speed, speedAccuracy: coordinates.speedAccuracy));
+       locationChangedEvent(coordinates);
     });
 
   }
@@ -117,7 +116,7 @@ class UserMap extends StatefulWidget {
     return false;
   }
 
-  void locationChangedEvent(Position currentLocation) async {
+  void locationChangedEvent(bg.Coords currentLocation) async {
     userLocation = currentLocation;
     for (int i = 0; i < userChangeLocationFuncs.length; i++) {
       userChangeLocationFuncs[i](currentLocation);
@@ -172,9 +171,9 @@ class UserMap extends StatefulWidget {
     mapPoiActionStreamController.add(mapPoiAction);
   }
 
-  Future<void> loadNewPois({Position? location = null}) async {
+  Future<void> loadNewPois({bg.Coords? location = null}) async {
     // TODO move this function to guide
-    Position selectedLocation = location ?? userLocation;
+    bg.Coords selectedLocation = location ?? userLocation;
     List<Poi> pois;
     pois = await Globals.globalServerCommunication.getPoisByLocation(
         LocationInfo(selectedLocation.latitude, selectedLocation.longitude,
@@ -531,7 +530,7 @@ class UserMapState extends State<UserMap>
   }
 
   // add new pois if location changed
-  void onLocationChanged(Position currentLocation) async {
+  void onLocationChanged(bg.Coords currentLocation) async {
     if (!mounted) return;
     print("hello from location changed");
     // TODO add a condition that won't crazy the server
@@ -541,8 +540,8 @@ class UserMapState extends State<UserMap>
     print("old location: " + currentLocation.heading.toString());
   }
 
-  Future<void> loadNewPois({Position? location = null}) async {
-    Position selectedLocation = location ?? widget.userLocation;
+  Future<void> loadNewPois({bg.Coords? location = null}) async {
+    bg.Coords selectedLocation = location ?? widget.userLocation;
     List<Poi> pois;
     Globals.appEvents.scanningStarted(
       widget.isFirstScanning,
