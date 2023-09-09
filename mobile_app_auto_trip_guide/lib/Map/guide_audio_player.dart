@@ -41,6 +41,7 @@ class _GuideAudioPlayer extends State<GuideAudioPlayer> {
       updatePlayerButton();
       savedOnPlay != null ? savedOnPlay() : null;
     };
+    updatePlayerButton();
     super.initState();
   }
 
