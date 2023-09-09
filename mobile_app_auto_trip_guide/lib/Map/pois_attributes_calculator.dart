@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 import 'package:journ_ai/Map/globals.dart';
 import 'package:journ_ai/Map/map_configuration.dart';
 import 'package:journ_ai/Map/types.dart';
@@ -8,6 +9,8 @@ import 'package:geolocator/geolocator.dart';
 import '../General/generals.dart';
 import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 import 'dart:math' as Math;
+
+import '../Utils/background_location_service.dart';
 
 class PoisAttributesCalculator {
   static double _MAX_DIST = 2000; //2000 meter
@@ -88,8 +91,7 @@ class PoisAttributesCalculator {
   }
 
   Future<bool> isPoiNearUser(Poi poi) async {
-    Position userLocation = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
+    bg.Coords userLocation = await BackgroundLocationService.locationService.getCurrentLocation();;
     return getDistBetweenPoints(poi.latitude, poi.longitude, userLocation.latitude,
         userLocation.longitude) < _MAX_DIST;
   }

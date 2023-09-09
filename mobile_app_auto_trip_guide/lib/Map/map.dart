@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
 import 'package:journ_ai/General/menu.dart' as menu;
 import 'package:journ_ai/Map/globals.dart';
 import 'package:journ_ai/Map/map_configuration.dart';
@@ -15,12 +16,14 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 import '../General/UniversalPanGestureRecognizer.dart';
 import '../Pages/location_permission_page.dart';
+import '../Utils/background_location_service.dart';
 import 'guide.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
 import 'package:wakelock/wakelock.dart';
 import 'guide_audio_player.dart';
 import 'mapbox/user_location_marker_foot.dart';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 
 double log2(num x) => log(x) / ln2;
 
@@ -87,12 +90,16 @@ class UserMap extends StatefulWidget {
 
   Future<void> mapInit(context) async {
     await LocationUtils.checkAndRequestLocationPermission(context);
-    userLocation = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
-    Geolocator.getPositionStream(
-            locationSettings: LocationSettings(accuracy: LocationAccuracy.high))
-        .listen(locationChangedEvent);
+    bg.Coords coordinates = await BackgroundLocationService.locationService.getCurrentLocation();
+    userLocation = Position(longitude: coordinates.longitude, latitude: coordinates.latitude, timestamp: null, accuracy: coordinates.accuracy, altitude: coordinates.altitude, heading: coordinates.heading, speed: coordinates.speed, speedAccuracy: coordinates.speedAccuracy);
     lastAreaUserLocation = userLocation;
+    BackgroundLocationService.locationService.listenToLocationChanges();
+
+
+    BackgroundLocationService.locationService.onLocationChanged.listen((coordinates) {
+       locationChangedEvent(Position(longitude: coordinates.longitude, latitude: coordinates.latitude, timestamp: null, accuracy: coordinates.accuracy, altitude: coordinates.altitude, heading: coordinates.heading, speed: coordinates.speed, speedAccuracy: coordinates.speedAccuracy));
+    });
+
   }
 
   bool isUserInNewArea() {
@@ -531,6 +538,7 @@ class UserMapState extends State<UserMap>
     if (isNewPoisNeeded()) {
       loadNewPois(location: currentLocation);
     }
+    print("old location: " + currentLocation.heading.toString());
   }
 
   Future<void> loadNewPois({Position? location = null}) async {
