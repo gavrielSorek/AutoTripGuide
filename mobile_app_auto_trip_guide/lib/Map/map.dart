@@ -90,6 +90,7 @@ class UserMap extends StatefulWidget {
 
   Future<void> mapInit(context) async {
     await LocationUtils.checkAndRequestLocationPermission(context);
+    await BackgroundLocationService.locationService.init();
     userLocation = await BackgroundLocationService.locationService.getCurrentLocation();
     lastAreaUserLocation = userLocation;
     BackgroundLocationService.locationService.listenToLocationChanges();

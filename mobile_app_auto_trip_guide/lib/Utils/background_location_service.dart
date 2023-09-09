@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 
 class BackgroundLocationService {
@@ -17,12 +18,11 @@ class BackgroundLocationService {
   }
 
   BackgroundLocationService() {
-    _configure();
   }
 
   // Method to configure the background geolocation
-  void _configure() {
-    bg.BackgroundGeolocation.ready(bg.Config(
+  Future<void> init() async {
+    await bg.BackgroundGeolocation.ready(bg.Config(
       desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,  // High accuracy
       distanceFilter: 1.0,  // Distance in meters to trigger location updates
       stopOnTerminate: true,  // Stop tracking after app terminates
