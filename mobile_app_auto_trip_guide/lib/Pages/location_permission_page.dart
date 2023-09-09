@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
 import 'package:geolocator/geolocator.dart';
+import 'package:journ_ai/Utils/background_location_service.dart';
+import 'dart:io';
 
 class LocationUtils {
-  static Future<void> checkAndRequestLocationPermission(
-      BuildContext context) async {
+  static Future<void> checkAndRequestLocationPermission(BuildContext context) async {
+    // Check location service
     final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    final LocationPermission permission = await Geolocator.checkPermission();
 
-    if (!serviceEnabled || permission == LocationPermission.denied) {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    bool hasBackgroundLocationPermission = false;
+
+    if (Platform.isAndroid) {
+      // On Android, if you've granted location permission and declared
+      // ACCESS_BACKGROUND_LOCATION in your manifest, you have background access.
+      hasBackgroundLocationPermission = (permission == LocationPermission.always || permission == LocationPermission.whileInUse);
+    } else if (Platform.isIOS) {
+      // On iOS, the 'always' permission level inherently allows background updates.
+      hasBackgroundLocationPermission = (permission == LocationPermission.always);
+    }
+
+    if (!serviceEnabled || !hasBackgroundLocationPermission) {
       await Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => LocationPermissionPage(),
@@ -33,9 +48,25 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
 
   Future<void> verifyPermissionsAndContinue() async {
     if (await _askEnableLocationIfNeeded() &&
-        await _askLocationPermissionIfNeeded()) Navigator.of(context).pop();
+        await _askBackgroundLocationPermissionIfNeeded()) Navigator.of(context).pop();
   }
 
+
+  Future<bool> _isBackgroundPermissions() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    bool hasBackgroundLocationPermission = false;
+
+    if (Platform.isAndroid) {
+      // On Android, if you've granted location permission and declared
+      // ACCESS_BACKGROUND_LOCATION in your manifest, you have background access.
+      hasBackgroundLocationPermission = (permission == LocationPermission.always || permission == LocationPermission.whileInUse);
+    } else if (Platform.isIOS) {
+      // On iOS, the 'always' permission level inherently allows background updates.
+      hasBackgroundLocationPermission = (permission == LocationPermission.always);
+    }
+    return hasBackgroundLocationPermission;
+  }
   Future<bool> _askEnableLocationIfNeeded() async {
     _serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!_serviceEnabled) {
@@ -45,14 +76,17 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
     return _serviceEnabled;
   }
 
-  Future<bool> _askLocationPermissionIfNeeded() async {
-    _permission = await Geolocator.checkPermission();
-    if (_permission == LocationPermission.denied ||
-        _permission == LocationPermission.deniedForever) {
-      _permission = await Geolocator.requestPermission();
-      _permission = await Geolocator.checkPermission();
-      if (_permission == LocationPermission.denied ||
-          _permission == LocationPermission.deniedForever) {
+  Future<bool> _askBackgroundLocationPermissionIfNeeded() async {
+
+    bool isBGPermissions = await _isBackgroundPermissions();
+
+
+    if (!isBGPermissions) {
+      // You can customize how you want to request permissions here.
+      await bg.BackgroundGeolocation.requestPermission();
+      // Re-check the state
+      isBGPermissions = await _isBackgroundPermissions();
+      if (!isBGPermissions) {
         return false;
       }
     }
