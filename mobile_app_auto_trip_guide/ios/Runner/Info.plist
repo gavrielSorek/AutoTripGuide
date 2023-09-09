@@ -42,11 +42,11 @@
 		<true/>
 	</dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs access to location when in the background.</string>
+	<string>Our app uses your location to provide personalized recommendations, even when the app is in the background</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Needed to access location when the app is open and run in background..</string>
+	<string>Our app uses your location to provide personalized recommendations, even when the app is in the background</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open.</string>
+	<string>Our app uses your location to provide personalized recommendations, even when the app is in the background</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app need microphone access</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
