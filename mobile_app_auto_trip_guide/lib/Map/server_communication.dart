@@ -23,15 +23,27 @@ class ServerCommunication {
 
     final newUri = addInfoToUrl(serverUrl, '/checkForUpdates', queryParameters);
 
-    final response = await client.get(newUri);
+    int retries = 2;
+    while (retries > 0) {
+      try {
+        final response = await client.get(newUri);
 
-    if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      return responseData['upgradeStatus'];
-    } else {
-      throw Exception('Failed to check for updates');
+        if (response.statusCode == 200) {
+          final responseData = jsonDecode(response.body);
+          return responseData['upgradeStatus'];
+        } else {
+          throw Exception('Failed to check for updates');
+        }
+      } catch (e) {
+        print('Caught error: $e');
+        retries--;
+        if (retries > 0) {
+          print('Retrying...');
+        }
     }
   }
+    throw Exception('Failed to check for updates');
+}
 
   Future<List<Poi>> getPoisByLocation(LocationInfo locationInfo) async {
     final queryParameters = {

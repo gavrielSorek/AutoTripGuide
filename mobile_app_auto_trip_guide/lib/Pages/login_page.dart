@@ -107,6 +107,20 @@ class LoginPage extends StatelessWidget {
                 onPressed: () async {
                   try {
                     Globals.appEvents.signIn('apple');
+                    //check if the user is alreday logged in..
+                    var userIdentifier = (await SharedPreferences.getInstance()).getString('userIdentifier');
+                    if(userIdentifier != null){
+                    var tempCred = await SignInWithApple.getCredentialState(userIdentifier);
+                    if(tempCred == CredentialState.authorized){
+                      var email = (await SharedPreferences.getInstance()).getString('userEmail');
+                      var userName = (await SharedPreferences.getInstance()).getString('userName');
+                      await Globals.loadUserDetails(loginMethod: LoginMethod.APPLE,userEmail: email,userName: userName);
+                      Globals.appEvents.email = email!;
+                      Navigator.of(context).pushNamedAndRemoveUntil('/HomePage', (Route<dynamic> route) => false);
+                      return;
+                    }
+                    }
+                    // if not logged in, then login and save the user details
                     final credential =
                         await SignInWithApple.getAppleIDCredential(
                       scopes: [
@@ -127,7 +141,6 @@ class LoginPage extends StatelessWidget {
                   } catch (e) {
                     print(e);
                   }
-                  // Use the credential to sign in to your backend service
                 },
                 icon: Image.asset(
                   "assets/images/apple_logo_black.png", // Change this to the path of your Apple logo asset

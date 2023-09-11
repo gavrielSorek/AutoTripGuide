@@ -1,9 +1,7 @@
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Map/globals.dart';
 
 class LoginController extends GetxController {
   final GoogleSignIn _googleSignin = GoogleSignIn();
@@ -25,19 +23,20 @@ class LoginController extends GetxController {
         return login();  // Retry the login method
       }
     }
-    _updateSignInStatus();
+    await _updateSignInStatus();
   }
 
   Future<void> logout() async {
     googleAccount.value = await _googleSignin.signOut();
-    _updateSignInStatus();
+    await _updateSignInStatus();
   }
 
   Future<void> init() async {
-    _updateSignInStatus();
+    await _updateSignInStatus();
   }
 
-  void _updateSignInStatus() async {
+  Future<void> _updateSignInStatus()  async {
+    var a = await _googleSignin.isSignedIn();
     _isSignedIn.value = await _googleSignin.isSignedIn();
   }
 
