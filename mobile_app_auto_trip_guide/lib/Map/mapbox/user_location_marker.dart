@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
+import 'package:background_location/background_location.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
 import '../../Utils/background_location_service.dart';
@@ -80,17 +80,17 @@ abstract class UserLocationMarker {
     _userSymbolManager = UserSymbolManager(mapController,
         iconAllowOverlap: true, textAllowOverlap: true);
     // Get the user's current location
-    bg.Coords position = await BackgroundLocationService.locationService.getCurrentLocation();
+    Location position = await BackgroundLocationService.locationService.getCurrentLocation();
 
     // Create a LatLng object from the user's location
-    LatLng userLocation = LatLng(position.latitude, position.longitude);
+    LatLng userLocation = LatLng(position.latitude!, position.longitude!);
     _locationMarkerInfo.latLng = userLocation;
     await _userSymbolManager!.add(_symbol);
     locationMarkerInfo.heading = mapController.cameraPosition?.bearing ?? 0;
     _updateSymbol();
     BackgroundLocationService.locationService.onLocationChanged.listen((coordinates) {
         _locationTween.begin = _symbol.options.geometry;
-        _locationTween.end = LatLng(coordinates.latitude, coordinates.longitude);
+        _locationTween.end = LatLng(coordinates.latitude!, coordinates.longitude!);
         // Reset and start the animation
         _moveAnimationController.reset();
         _moveAnimationController.forward();

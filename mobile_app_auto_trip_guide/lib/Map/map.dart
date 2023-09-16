@@ -23,7 +23,7 @@ import 'dart:math' as math;
 import 'package:wakelock/wakelock.dart';
 import 'guide_audio_player.dart';
 import 'mapbox/user_location_marker_foot.dart';
-import 'package:flutter_background_geolocation/flutter_background_geolocation.dart' as bg;
+import 'package:background_location/background_location.dart';
 
 double log2(num x) => log(x) / ln2;
 
@@ -59,13 +59,13 @@ class UserMap extends StatefulWidget {
   Timer? _scanningTimer;
 
   // inits
-  late bg.Coords userLocation; // the heading here isn't updated
+  late Location userLocation; // the heading here isn't updated
   double userHeading = 0; // the correct heading
   MapPoi? currentHighlightedPoi = null;
   bool isFirstScanning = true;
 
   // the last known location of the user in the old area - for new pois purposes
-  late bg.Coords lastAreaUserLocation;
+  late Location lastAreaUserLocation;
   static double DISTANCE_BETWEEN_AREAS = 1000; //1000 meters
 
   static Map<String, String> STYLE_NAME_TO_STYLE = {
@@ -104,10 +104,10 @@ class UserMap extends StatefulWidget {
 
   bool isUserInNewArea() {
     double dist = PoisAttributesCalculator.getDistBetweenPoints(
-        lastAreaUserLocation.latitude,
-        lastAreaUserLocation.longitude,
-        userLocation.latitude,
-        userLocation.longitude);
+        lastAreaUserLocation.latitude!,
+        lastAreaUserLocation.longitude!,
+        userLocation.latitude!,
+        userLocation.longitude!);
 
     if (dist > DISTANCE_BETWEEN_AREAS) {
       lastAreaUserLocation = userLocation;
@@ -117,7 +117,7 @@ class UserMap extends StatefulWidget {
     return false;
   }
 
-  void locationChangedEvent(bg.Coords currentLocation) async {
+  void locationChangedEvent(Location currentLocation) async {
     userLocation = currentLocation;
     for (int i = 0; i < userChangeLocationFuncs.length; i++) {
       userChangeLocationFuncs[i](currentLocation);
@@ -172,13 +172,13 @@ class UserMap extends StatefulWidget {
     mapPoiActionStreamController.add(mapPoiAction);
   }
 
-  Future<void> loadNewPois({bg.Coords? location = null}) async {
+  Future<void> loadNewPois({Location? location = null}) async {
     // TODO move this function to guide
-    bg.Coords selectedLocation = location ?? userLocation;
+    Location selectedLocation = location ?? userLocation;
     List<Poi> pois;
     pois = await Globals.globalServerCommunication.getPoisByLocation(
-        LocationInfo(selectedLocation.latitude, selectedLocation.longitude,
-            selectedLocation.heading, selectedLocation.speed));
+        LocationInfo(selectedLocation.latitude!, selectedLocation.longitude!,
+            selectedLocation.heading!, selectedLocation.speed!));
 
     pois = PoisAttributesCalculator.filterPois(pois, selectedLocation);
     // add all the new poi
@@ -415,14 +415,14 @@ class UserMapState extends State<UserMap>
   Future<double> _getZoomPointInDistFromUser(
       double distInPixels, mapbox.LatLng point) async {
     double distanceInMeters = await Geolocator.distanceBetween(
-      widget.userLocation.latitude, // latitude of first location
-      widget.userLocation.longitude, // longitude of first location
+      widget.userLocation.latitude!, // latitude of first location
+      widget.userLocation.longitude!, // longitude of first location
       point.latitude, // latitude of second location
       point.longitude, // longitude of second location
     );
 
     return _getZoomLevel(
-        distanceInMeters / distInPixels, widget.userLocation.latitude);
+        distanceInMeters / distInPixels, widget.userLocation.latitude!);
   }
 
   void reloadPois() {
@@ -531,28 +531,28 @@ class UserMapState extends State<UserMap>
   }
 
   // add new pois if location changed
-  void onLocationChanged(bg.Coords currentLocation) async {
+  void onLocationChanged(Location currentLocation) async {
     if (!mounted) return;
     print("hello from location changed");
     // TODO add a condition that won't crazy the server
     if (isNewPoisNeeded()) {
       loadNewPois(location: currentLocation);
     }
-    print("old location: " + currentLocation.heading.toString());
+    print("old location: " + currentLocation.bearing.toString());
   }
 
-  Future<void> loadNewPois({bg.Coords? location = null}) async {
-    bg.Coords selectedLocation = location ?? widget.userLocation;
+  Future<void> loadNewPois({Location? location = null}) async {
+    Location selectedLocation = location ?? widget.userLocation;
     List<Poi> pois;
     Globals.appEvents.scanningStarted(
       widget.isFirstScanning,
       true,
-      selectedLocation.latitude,
-      selectedLocation.longitude,
+      selectedLocation.latitude!,
+      selectedLocation.longitude!,
     );
     pois = await Globals.globalServerCommunication.getPoisByLocation(
-        LocationInfo(selectedLocation.latitude, selectedLocation.longitude,
-            selectedLocation.heading, selectedLocation.speed));
+        LocationInfo(selectedLocation.latitude!, selectedLocation.longitude!,
+            selectedLocation.bearing, selectedLocation.speed!));
     Globals.appEvents.scanningFinished(true, pois.length);
     widget.isFirstScanning = false;
     pois = PoisAttributesCalculator.filterPois(pois, selectedLocation);
@@ -603,7 +603,7 @@ class UserMapState extends State<UserMap>
   var isLight = true;
 
   mapbox.LatLng _getRelativeCenterLatLng(double zoom) {
-    double meterPerPixel = metersPerPixel(widget.userLocation.latitude, zoom);
+    double meterPerPixel = metersPerPixel(widget.userLocation.latitude!, zoom);
     double padding = Globals.globalWidgetsSizes.poiGuideBoxTotalHeight / 4;
     double dist = meterPerPixel * padding;
     mapbox.LatLng userPosition;
@@ -619,7 +619,7 @@ class UserMapState extends State<UserMap>
               .longitude);
     } else {
       userPosition = mapbox.LatLng(
-          widget.userLocation.latitude, widget.userLocation.longitude);
+          widget.userLocation.latitude!, widget.userLocation.longitude!);
     }
 
     mapbox.LatLng newPos = PoisAttributesCalculator.calculateNewPosition(
