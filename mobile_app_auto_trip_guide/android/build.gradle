@@ -1,12 +1,5 @@
 buildscript {
     ext.kotlin_version = '1.8.22' // Updated Kotlin version
-    ext {
-       compileSdkVersion   = 33                // or higher
-       targetSdkVersion    = 33                // or higher
-       minSdkVersion       = 23                // Required minimum
-       appCompatVersion    = "1.4.2"           // or higher
-       playServicesLocationVersion = "20.0.0"  // or higher
-    }
     repositories {
         google()
         mavenCentral()
@@ -38,12 +31,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        // [required] flutter_background_geolocation
-        maven { url "${project(':flutter_background_geolocation').projectDir}/libs" }
-        maven { url 'https://developer.huawei.com/repo/' }
-        // [required] background_fetch
-        maven { url "${project(':background_fetch').projectDir}/libs" }
         maven {
+//            url 'https://google.bintray.com/exoplayer/'
             url 'https://api.mapbox.com/downloads/v2/releases/maven'
             authentication {
                 basic(BasicAuthentication)
