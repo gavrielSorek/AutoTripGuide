@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:background_location/background_location.dart';
+import 'package:location/location.dart';
 
 class BackgroundLocationService {
   // Private constructor for singleton pattern
@@ -9,48 +9,39 @@ class BackgroundLocationService {
   static final BackgroundLocationService _instance = BackgroundLocationService._();
   static BackgroundLocationService get instance => _instance;
 
-  Location? location;
+  LocationData? locationData;
+  final location = Location();
 
   // StreamController for location changes
-  final StreamController<Location> _locationController = StreamController<Location>.broadcast();
+  final StreamController<LocationData> _locationController = StreamController<LocationData>.broadcast();
 
   // Stream to expose for other classes to listen to
-  Stream<Location> get onLocationChanged => _locationController.stream;
+  Stream<LocationData> get onLocationChanged => _locationController.stream;
 
   // Method to configure the background geolocation
   Future<void> init() async {
-    try {
-      await BackgroundLocation.setAndroidNotification(
-        title: "Location is on",
-        message: "Background location is running",
-        icon: "@mipmap/ic_launcher", // Provide your app icon here for the notification
-      );
-      await BackgroundLocation.setAndroidConfiguration(1000);
-      print("Location service initialized");
-      await BackgroundLocation.startLocationService(distanceFilter: 1);
-    } catch (e) {
-      print("Error initializing location service: $e");
-    }
+    location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 1);
+    print("Location service initialized");
   }
 
   // Method to listen to location changes
   void listenToLocationChanges() {
-    BackgroundLocation.getLocationUpdates((location) {
-      print("Location updated: ${location.toMap()}");
-      this.location = location;
-      _locationController.sink.add(location);
+    location.onLocationChanged.listen((LocationData currentLocation) {
+      print("Location updated: ${currentLocation}");
+      this.locationData = currentLocation;
+      _locationController.sink.add(currentLocation);
     });
   }
 
   // Method to stop listening to location changes
   void stopListening() {
-    BackgroundLocation.stopLocationService();
+    // This will be handled automatically by disposing of the stream subscription from listenToLocationChanges()
   }
 
-  Future<Location> getCurrentLocation() async {
+  Future<LocationData?> getCurrentLocation() async {
     try {
-      location = await BackgroundLocation().getCurrentLocation();
-      return location!;
+      locationData = await location.getLocation();
+      return locationData;
     } catch (e) {
       print("Error getting current location: $e");
       rethrow;

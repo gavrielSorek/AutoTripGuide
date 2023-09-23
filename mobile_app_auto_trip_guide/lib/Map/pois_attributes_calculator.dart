@@ -1,10 +1,10 @@
 import 'dart:math';
 
-import 'package:background_location/background_location.dart';
 import 'package:journ_ai/Map/globals.dart';
 import 'package:journ_ai/Map/map_configuration.dart';
 import 'package:journ_ai/Map/types.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 
 import '../General/generals.dart';
 import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
@@ -75,14 +75,14 @@ class PoisAttributesCalculator {
     return USER_RELATIVE_DIRECTIONS[directionNum] ?? '';
   }
 
-  static List<Poi> filterPois(List<Poi> pois, Location position) {
+  static List<Poi> filterPois(List<Poi> pois, LocationData position) {
     // can add more filters
     pois = filterPoisByDistance(pois, position);
     pois = filterHistoricalPois(pois);
     return pois;
   }
 
-  static List<Poi> filterPoisByDistance(List<Poi> pois, Location position) {
+  static List<Poi> filterPoisByDistance(List<Poi> pois, LocationData position) {
     pois.removeWhere((poi) =>
         getDistBetweenPoints(poi.latitude, poi.longitude, position.latitude!,
             position.longitude!) >
@@ -91,12 +91,12 @@ class PoisAttributesCalculator {
   }
 
   Future<bool> isPoiNearUser(Poi poi) async {
-    Location userLocation = await BackgroundLocationService.instance.getCurrentLocation();;
-    return getDistBetweenPoints(poi.latitude, poi.longitude, userLocation.latitude!,
+    LocationData? userLocation = await BackgroundLocationService.instance.getCurrentLocation();;
+    return getDistBetweenPoints(poi.latitude, poi.longitude, userLocation!.latitude!,
         userLocation.longitude!) < _MAX_DIST;
   }
 
-  static List<MapPoi> filterMapPoisByDistance(List<MapPoi> mapPois, Location position) {
+  static List<MapPoi> filterMapPoisByDistance(List<MapPoi> mapPois, LocationData position) {
     mapPois.removeWhere((mapPoi) =>
     getDistBetweenPoints(mapPoi.poi.latitude, mapPoi.poi.longitude, position.latitude!,
         position.longitude!) >
