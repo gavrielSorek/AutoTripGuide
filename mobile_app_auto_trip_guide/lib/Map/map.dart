@@ -90,13 +90,13 @@ class UserMap extends StatefulWidget {
 
   Future<void> mapInit(context) async {
     await LocationUtils.checkAndRequestLocationPermission(context);
-    await BackgroundLocationService.locationService.init();
-    userLocation = await BackgroundLocationService.locationService.getCurrentLocation();
+    await BackgroundLocationService.instance.init();
+    userLocation = await BackgroundLocationService.instance.getCurrentLocation();
     lastAreaUserLocation = userLocation;
-    BackgroundLocationService.locationService.listenToLocationChanges();
+    BackgroundLocationService.instance.listenToLocationChanges();
 
 
-    BackgroundLocationService.locationService.onLocationChanged.listen((coordinates) {
+    BackgroundLocationService.instance.onLocationChanged.listen((coordinates) {
        locationChangedEvent(coordinates);
     });
 
@@ -178,7 +178,7 @@ class UserMap extends StatefulWidget {
     List<Poi> pois;
     pois = await Globals.globalServerCommunication.getPoisByLocation(
         LocationInfo(selectedLocation.latitude!, selectedLocation.longitude!,
-            selectedLocation.heading!, selectedLocation.speed!));
+            selectedLocation.bearing!, selectedLocation.speed!));
 
     pois = PoisAttributesCalculator.filterPois(pois, selectedLocation);
     // add all the new poi
@@ -439,7 +439,7 @@ class UserMapState extends State<UserMap>
         zoom: initialZoom);
     mapPoiActionSubscription =
         widget.mapPoiActionStreamController.stream.listen((event) {
-      setMapPoiAction(event);
+      //setMapPoiAction(event);
       updateState();
     });
     print("init _UserMapState");
@@ -552,7 +552,7 @@ class UserMapState extends State<UserMap>
     );
     pois = await Globals.globalServerCommunication.getPoisByLocation(
         LocationInfo(selectedLocation.latitude!, selectedLocation.longitude!,
-            selectedLocation.bearing, selectedLocation.speed!));
+            selectedLocation.bearing!, selectedLocation.speed!));
     Globals.appEvents.scanningFinished(true, pois.length);
     widget.isFirstScanning = false;
     pois = PoisAttributesCalculator.filterPois(pois, selectedLocation);

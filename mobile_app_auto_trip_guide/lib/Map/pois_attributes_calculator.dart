@@ -91,7 +91,7 @@ class PoisAttributesCalculator {
   }
 
   Future<bool> isPoiNearUser(Poi poi) async {
-    Location userLocation = await BackgroundLocationService.locationService.getCurrentLocation();;
+    Location userLocation = await BackgroundLocationService.instance.getCurrentLocation();;
     return getDistBetweenPoints(poi.latitude, poi.longitude, userLocation.latitude!,
         userLocation.longitude!) < _MAX_DIST;
   }
