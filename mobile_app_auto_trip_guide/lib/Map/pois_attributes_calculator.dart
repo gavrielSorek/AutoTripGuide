@@ -1,10 +1,8 @@
-import 'dart:math';
 
 import 'package:journ_ai/Map/globals.dart';
 import 'package:journ_ai/Map/map_configuration.dart';
 import 'package:journ_ai/Map/types.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:location/location.dart';
 
 import '../General/generals.dart';
 import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
@@ -64,8 +62,8 @@ class PoisAttributesCalculator {
   static String getDirectionStr(Poi poi) {
     // double bearing = getBearingBetweenPoints(lat1, lng1, lat2, lng2);
     double bearing = getBearingBetweenPointsWithHeading(
-        Globals.globalUserMap.userLocation.latitude!,
-        Globals.globalUserMap.userLocation.longitude!,
+        Globals.globalUserMap.userLocation.latitude,
+        Globals.globalUserMap.userLocation.longitude,
         Globals.globalUserMap.userHeading,
         poi.latitude,
         poi.longitude);
@@ -75,31 +73,31 @@ class PoisAttributesCalculator {
     return USER_RELATIVE_DIRECTIONS[directionNum] ?? '';
   }
 
-  static List<Poi> filterPois(List<Poi> pois, LocationData position) {
+  static List<Poi> filterPois(List<Poi> pois, LocationLimitedData position) {
     // can add more filters
     pois = filterPoisByDistance(pois, position);
     pois = filterHistoricalPois(pois);
     return pois;
   }
 
-  static List<Poi> filterPoisByDistance(List<Poi> pois, LocationData position) {
+  static List<Poi> filterPoisByDistance(List<Poi> pois, LocationLimitedData position) {
     pois.removeWhere((poi) =>
-        getDistBetweenPoints(poi.latitude, poi.longitude, position.latitude!,
-            position.longitude!) >
+        getDistBetweenPoints(poi.latitude, poi.longitude, position.latitude,
+            position.longitude) >
             _MAX_DIST);
     return pois;
   }
 
   Future<bool> isPoiNearUser(Poi poi) async {
-    LocationData? userLocation = await BackgroundLocationService.instance.getCurrentLocation();;
-    return getDistBetweenPoints(poi.latitude, poi.longitude, userLocation!.latitude!,
+    LocationLimitedData userLocation = await BackgroundLocationService.instance.getCurrentLocation();;
+    return getDistBetweenPoints(poi.latitude, poi.longitude, userLocation.latitude,
         userLocation.longitude!) < _MAX_DIST;
   }
 
-  static List<MapPoi> filterMapPoisByDistance(List<MapPoi> mapPois, LocationData position) {
+  static List<MapPoi> filterMapPoisByDistance(List<MapPoi> mapPois, LocationLimitedData position) {
     mapPois.removeWhere((mapPoi) =>
-    getDistBetweenPoints(mapPoi.poi.latitude, mapPoi.poi.longitude, position.latitude!,
-        position.longitude!) >
+    getDistBetweenPoints(mapPoi.poi.latitude, mapPoi.poi.longitude, position.latitude,
+        position.longitude) >
         _MAX_DIST);
     return mapPois;
   }
@@ -121,8 +119,8 @@ class PoisAttributesCalculator {
   }
 
   static String getPoiIntro(Poi poi) {
-    int distInMeters = Geolocator.distanceBetween(Globals.globalUserMap.userLocation.latitude!,
-        Globals.globalUserMap.userLocation.longitude!, poi.latitude, poi.longitude).toInt();
+    int distInMeters = Geolocator.distanceBetween(Globals.globalUserMap.userLocation.latitude,
+        Globals.globalUserMap.userLocation.longitude, poi.latitude, poi.longitude).toInt();
     int distInTensOfMeters = (distInMeters / 10).round() * 10;
     String directionStr = getDirectionStr(poi);
     String poiName = poi.poiName ?? "";

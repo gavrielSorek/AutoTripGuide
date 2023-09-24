@@ -1,6 +1,14 @@
 import 'dart:async';
 import 'package:location/location.dart';
 
+class LocationLimitedData {
+  double latitude;
+  double longitude;
+  double heading;
+  double speed;
+  LocationLimitedData({required this.latitude, required this.longitude,required this.heading, this.speed = 0});
+}
+
 class BackgroundLocationService {
   // Private constructor for singleton pattern
   BackgroundLocationService._();
@@ -9,19 +17,22 @@ class BackgroundLocationService {
   static final BackgroundLocationService _instance = BackgroundLocationService._();
   static BackgroundLocationService get instance => _instance;
 
-  LocationData? locationData;
+  LocationLimitedData locationInfo = LocationLimitedData(latitude: 0, longitude: 0, heading: 0);
   final location = Location();
 
   // StreamController for location changes
-  final StreamController<LocationData> _locationController = StreamController<LocationData>.broadcast();
+  final StreamController<LocationLimitedData> _locationController = StreamController<LocationLimitedData>.broadcast();
 
   // Stream to expose for other classes to listen to
-  Stream<LocationData> get onLocationChanged => _locationController.stream;
+  Stream<LocationLimitedData> get onLocationChanged => _locationController.stream;
 
   // Method to configure the background geolocation
   Future<void> init() async {
     location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 1);
-    locationData = await getCurrentLocation();
+    LocationLimitedData currentLocation = await getCurrentLocation();
+    if (currentLocation != null) {
+      locationInfo = currentLocation;
+    }
     print("Location service initialized");
   }
 
@@ -29,8 +40,11 @@ class BackgroundLocationService {
   void listenToLocationChanges() {
     location.onLocationChanged.listen((LocationData currentLocation) {
       print("Location updated: ${currentLocation}");
-      this.locationData = currentLocation;
-      _locationController.sink.add(currentLocation);
+      locationInfo.latitude = currentLocation.latitude ?? locationInfo.latitude;
+      locationInfo.longitude = currentLocation.longitude ?? locationInfo.longitude;
+      locationInfo.heading = currentLocation.heading ?? locationInfo.heading;
+      locationInfo.speed = currentLocation.speed ?? locationInfo.speed;
+      _locationController.sink.add(locationInfo);
     });
   }
 
@@ -39,14 +53,20 @@ class BackgroundLocationService {
     // This will be handled automatically by disposing of the stream subscription from listenToLocationChanges()
   }
 
-  LocationData getLastLocation() {
-    return locationData!;
+  // Method to get the last known location
+  LocationLimitedData? getLastLocation() {
+    return locationInfo;
   }
 
-  Future<LocationData?> getCurrentLocation() async {
+  // Method to get the current location
+  Future<LocationLimitedData> getCurrentLocation() async {
     try {
-      locationData = await location.getLocation();
-      return locationData;
+      var currentLocationData = await location.getLocation();
+      locationInfo.latitude = currentLocationData.latitude ?? locationInfo.latitude;
+      locationInfo.longitude = currentLocationData.longitude ?? locationInfo.longitude;
+      locationInfo.heading = currentLocationData.heading ?? locationInfo.heading;
+      locationInfo.speed = currentLocationData.speed ?? locationInfo.speed;
+      return locationInfo;
     } catch (e) {
       print("Error getting current location: $e");
       rethrow;

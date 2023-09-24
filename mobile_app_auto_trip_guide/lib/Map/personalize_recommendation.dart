@@ -4,6 +4,8 @@ import 'package:journ_ai/Map/pois_attributes_calculator.dart';
 import 'package:journ_ai/Map/types.dart';
 import 'package:location/location.dart';
 
+import '../Utils/background_location_service.dart';
+
 class PersonalizeRecommendation {
   static double _DISTANCE_WEIGHT = 0.6;
 
@@ -27,7 +29,7 @@ class PersonalizeRecommendation {
 
   // get distance of poi from user
   static double getDistanceInKm(Poi poi) {
-    LocationData userLocation = Globals.globalUserMap.userLocation;
+    LocationLimitedData userLocation = Globals.globalUserMap.userLocation;
     double dist = calculateDistance(userLocation.latitude,
         userLocation.longitude, poi.latitude, poi.longitude);
     return dist;
