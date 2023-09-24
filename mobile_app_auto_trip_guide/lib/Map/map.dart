@@ -439,7 +439,7 @@ class UserMapState extends State<UserMap>
         zoom: initialZoom);
     mapPoiActionSubscription =
         widget.mapPoiActionStreamController.stream.listen((event) {
-      //setMapPoiAction(event);
+      setMapPoiAction(event);
       updateState();
     });
     print("init _UserMapState");

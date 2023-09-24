@@ -2,10 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 
-import '../../Utils/background_location_service.dart';
 import 'animations.dart';
 
 class LocationMarkerInfo {
@@ -26,6 +25,7 @@ abstract class UserLocationMarker {
   dynamic onMarkerUpdated;
   late HeadingTween _headingTween;
   late LatLngTween _locationTween;
+  StreamSubscription<Position>? _positionSubscription;
   late Animation<double> _headingAnimation;
   late Animation<LatLng> _moveAnimation;
   late VoidCallback _headingListener;
@@ -80,20 +80,26 @@ abstract class UserLocationMarker {
     _userSymbolManager = UserSymbolManager(mapController,
         iconAllowOverlap: true, textAllowOverlap: true);
     // Get the user's current location
-    LocationData? position = await BackgroundLocationService.instance.getCurrentLocation();
-
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
     // Create a LatLng object from the user's location
-    LatLng userLocation = LatLng(position!.latitude!, position.longitude!);
+    LatLng userLocation = LatLng(position.latitude, position.longitude);
     _locationMarkerInfo.latLng = userLocation;
     await _userSymbolManager!.add(_symbol);
     locationMarkerInfo.heading = mapController.cameraPosition?.bearing ?? 0;
     _updateSymbol();
-    BackgroundLocationService.instance.onLocationChanged.listen((coordinates) {
-        _locationTween.begin = _symbol.options.geometry;
-        _locationTween.end = LatLng(coordinates.latitude!, coordinates.longitude!);
-        // Reset and start the animation
-        _moveAnimationController.reset();
-        _moveAnimationController.forward();
+    _positionSubscription?.cancel();
+    _positionSubscription = Geolocator.getPositionStream(
+      locationSettings: LocationSettings(
+        accuracy: LocationAccuracy.best,
+        distanceFilter: 0,
+      ),
+    ).listen((Position position) {
+      _locationTween.begin = _symbol.options.geometry;
+      _locationTween.end = LatLng(position.latitude, position.longitude);
+      // Reset and start the animation
+      _moveAnimationController.reset();
+      _moveAnimationController.forward();
     });
   }
 
@@ -103,6 +109,7 @@ abstract class UserLocationMarker {
     _userSymbolManager?.dispose();
     _moveAnimationController.stop();
     _headingAnimationController.stop();
+    _positionSubscription?.cancel();
   }
 
   dispose() {
@@ -113,6 +120,7 @@ abstract class UserLocationMarker {
     _userSymbolManager?.dispose();
     _moveAnimationController.dispose();
     _headingAnimationController.dispose();
+    _positionSubscription?.cancel();
   }
 }
 

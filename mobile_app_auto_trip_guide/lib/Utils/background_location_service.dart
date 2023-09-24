@@ -21,6 +21,7 @@ class BackgroundLocationService {
   // Method to configure the background geolocation
   Future<void> init() async {
     location.changeSettings(accuracy: LocationAccuracy.high, distanceFilter: 1);
+    locationData = await getCurrentLocation();
     print("Location service initialized");
   }
 
@@ -36,6 +37,10 @@ class BackgroundLocationService {
   // Method to stop listening to location changes
   void stopListening() {
     // This will be handled automatically by disposing of the stream subscription from listenToLocationChanges()
+  }
+
+  LocationData getLastLocation() {
+    return locationData!;
   }
 
   Future<LocationData?> getCurrentLocation() async {
