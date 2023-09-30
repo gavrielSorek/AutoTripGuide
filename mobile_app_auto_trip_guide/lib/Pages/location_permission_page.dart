@@ -47,30 +47,20 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
   }
 
   Future<bool> _askLocationPermissionIfNeeded() async {
-    // Request permissions
     PermissionStatus status = await Permission.location.request();
 
-    // Additionally, if you want background location access:
-    PermissionStatus backgroundStatus = await Permission.locationAlways.request();
+    if (status.isGranted) {
+      PermissionStatus backgroundStatus = await Permission.locationAlways.request();
 
-    // You can check if your permissions were granted
-    if (status.isGranted && backgroundStatus.isGranted) {
-      return true;
+      if (backgroundStatus.isGranted) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
 
-    // _permission = await Geolocator.checkPermission();
-    // if (_permission == LocationPermission.denied ||
-    //     _permission == LocationPermission.deniedForever) {
-    //   _permission = await Geolocator.requestPermission();
-    //   _permission = await Geolocator.checkPermission();
-    //   if (_permission == LocationPermission.denied ||
-    //       _permission == LocationPermission.deniedForever) {
-    //     return false;
-    //   }
-    // }
-    // return true;
   }
 
   void _showLocationDialog() {
